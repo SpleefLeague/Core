@@ -1,0 +1,344 @@
+author: MultiCube
+authors: [Codepanda, chd_, notrodash, bemacized, Wouto1997]
+description: MultiCube Core Plugin
+main: be.multicu.core.MultiCube
+name: MultiCube
+url: http://www.multicu.be/
+version: 1.0.0
+softdepend: [TagAPI, iTag]
+loadbefore: [Essentials]
+commands:
+    op:
+        description: Ops a player globally
+        aliases: []
+        usage: |
+          /<command> <player>
+    trailer:
+        description: Command to help film
+        aliases: []
+        usage: |
+          /<command> <action> arguments..
+    me:
+        description: Me
+        aliases: []
+        usage: |
+          /<command> <message>
+    deop:
+        description: Deops a player globally
+        aliases: []
+        usage: |
+          /<command> <player>
+    oplist:
+        description: Lists global operators
+        aliases: []
+        usage:
+          /<command> [page]
+    kickall:
+        description: Kicks all players from the server.
+        aliases: []
+        usage: |
+          /<command>
+    hub:
+        description: Brings you back to the hub server.
+        aliases: []
+        usage: |
+          /<command>
+    softstop:
+        description: Prepares the server for a stop/restart and stops it.
+        aliases: []
+        usage: |
+          /<command>
+    fix:
+        description: Fix yourself or someone else, in case of wrong location or glitching
+        aliases: [unstuck]
+        usage: |
+          /<command> [player/all]
+    getposition:
+        description: Gets current location.
+        usage: |
+          /<command>
+    teleport:
+        description: Teleports you to a player.
+        aliases: [tp]
+        usage: |
+          /<command> <player>
+    teleporthere:
+        description: Teleports a player to you.
+        aliases: [tphere, tph]
+        usage: |
+          /<command> <player>
+    teleportposition:
+        description: Teleports you to a specific location.
+        aliases: [tppos]
+        usage: |
+          /<command> [world] <x> <y> <z>
+    hideserver:
+        description: Hides current server.
+        usage: |
+          /<command>
+    time:
+        description: Set the time.
+        aliases: []
+        usage: |
+          /<command> <day|night|dawn|dusk> <[world]>
+          World parameter is optional for in-game players.
+    skull:
+        description: Give yourself someones skull.
+        aliases: []
+        usage: |
+          /<command>
+    help:
+        description: Get help with a command.
+        aliases: [h, '?']
+        usage: |
+          /<command> [page]
+    getconnectioninfo:
+        description: Get a players connection information.
+        aliases: [getip, getconn, getci, getconni]
+        usage: |
+          /<command> <player>
+    debugcore:
+        description: Debug stuff
+        aliases: []
+        usage: |
+          /<command> <debug stuff>
+    localmaintenance:
+        description: Sets the local server into maintenance mode.
+        aliases: []
+        usage: |
+          /<command> [reason]
+    killmobs:
+        description: Kills mobs
+        aliases: []
+        usage: |
+          /<command>
+    serverinfo:
+        description: Shows info of servers.
+        aliases: []
+        usage: |
+          /<command> [name]
+    chat:
+        description: Set chat channel, default chat will always be listened to.
+        aliases: []
+        usage: |
+          /<command> <channel>
+    friend:
+        description: Friend command.
+        aliases: []
+        usage: |
+          /<command>
+    friends:
+        description: Friend list.
+        aliases: []
+        usage: |
+          /<command>
+    tell:
+        description: Tells a friend a message.
+        aliases: [msg, whisper, w]
+        usage: |
+          /<command> <friend> <message>
+    reply:
+        description: Replies to the last chat message.
+        aliases: [r]
+        usage: |
+          /<command> <message>
+    stafflist:
+        description: Lists all online staff members.
+        aliases: [sl]
+        usage: |
+          /<command>
+    viplist:
+        description: Lists all online VIPs.
+        aliases: []
+        usage: |
+          /<command>
+    nicklist:
+        description: Lists all nicks online ( or offline too if flag given )
+        aliases: []
+        usage: |
+          /<command> [page] [offline]
+    nick:
+        description: Change your nick and shown rank
+        aliases: []
+        usage:
+          /<command> off
+          /<command> <nick> [shown rank]
+    playerinfo:
+        description: Displays basic info about a player.
+        aliases: [pi]
+        usage: |
+          /<command> <player>
+    infractions:
+        description: Displays infractions of a player.
+        aliases: [inf]
+        usage: |
+          /<command> <player> [page] [filter]
+    unlock:
+        description: Unlocks an achievement for a player.
+        aliases: []
+        usage: |
+          /<command> <achievement> <player>
+    modifysign:
+        description: allows Unicode characters on signs and edit just a single line of a sign
+        aliases: []
+        usage: |
+          'null' will show empty line, 'old' keeps previous line
+          /<command> [line] <message>
+          /<command> <line-1> <line-2> <line-3> <line-4>
+    modifyskull:
+        description: edit skull owner
+        aliases: []
+        usage: |
+          /<command> <owner>
+    servervote:
+        description: Shows your daily voting deal.
+        aliases: []
+        usage: |
+          /<command>
+    sayraw:
+        description: Send message without formattings ( allows '&' color codes )
+        aliases: []
+        usage: |
+          /<command> <player> <message>
+    party:
+        description: Party command.
+        aliases: []
+        usage: |
+          /<command>
+    partychat:
+        description: Sends a message to all party players.
+        aliases: [pc]
+        usage: |
+          /<command> <message>
+    forcebattle:
+        description: Starts a 1vs1 match with two players.
+        aliases: [pc]
+        usage: |
+          /<command> <server> <arena> <player1> <player2>
+    whois:
+        description: Finds out player behind nick.
+        aliases: []
+        usage: |
+          /<command> <nick>
+    sendall:
+        description: Sends all players on the current server to specific server.
+        aliases: []
+        usage: |
+          /<command> <server>
+    servermanager:
+        description: Server management command.
+        aliases: []
+        usage: |
+          /<command> <action> [...]
+    cubics:
+        description: Displays your cubics.
+        aliases: []
+        usage: |
+          /<command>
+    tokens:
+        description: Displays your tokens.
+        aliases: []
+        usage: |
+          /<command>
+    setcubicsmultiplier:
+        description: Set Cubics Multiplier
+        aliases: []
+        usage: |
+          /<command> <Multiplier (Double) / Default: 1.0>
+    achievements:
+        description: Shows your unlocked/locked achievements
+        aliases: []
+        usage: |
+          /<command>
+    manageplayer:
+        description: Group of moderating commands, for click menu's
+        aliases: []
+        usage: |
+          /<command> <player>
+    relog:
+        description: Kicks a player that hasn't been properly loaded (white chat/tab name)
+        aliases: []
+        usage: |
+          /<command> <player>
+    ticket:
+        description: Sends a support ticket to all moderators on this server.
+        aliases: []
+        usage: |
+          /<command> <message>
+    ticketreply:
+        description: Replies to the ticket chat.
+        aliases: [treply,tr]
+        usage: |
+          /<command> <player> <message>
+    staffchat:
+        description: Alias for /chat staff
+        aliases: [sc]
+        usage: |
+          /<command>
+    twitter:
+        description: Twitter connection command.
+        aliases: []
+        usage: |
+          /<command>
+    resetstats:
+        description: Resets stats for a player.
+        aliases: []
+        usage: |
+          /<command>
+    register:
+        description: Creates a forum account.
+        aliases: []
+        usage: |
+          /<command> <email>
+    verifyts:
+        description: Connects a minecraft account with a teamspeak profile.
+        aliases: []
+        usage: |
+          /<command> [tsuuid]      
+    spread:
+        description: Moves all players from this server to different hubs, prefering empty hubs.
+        aliases: []
+        usage: |
+          /<command>
+    searchplayer:
+        description: Searches for partly know player names in the db
+        aliases: []
+        usage: |
+          /<command> <regex|pseudoRegex> [page]
+    joinswc:
+        description: Signs a player up for the SWC
+        aliases: []
+        usage: |
+          /<command>
+    nolag:
+        description: Toggle No-Lag Mode
+        aliases: []
+        usage: |
+          /<command>
+    resetpm:
+        description: Makes no one able to /r to you again if they're not friends with you
+        aliases: []
+        usage: |
+          /<command>
+    checkstats:
+        description: Displaying the moderation stats of a staff member
+        aliases: []
+        usage: |
+          /<command> <username>
+    runtimedebug: 
+        description: Load a debug class at runtime
+        aliases: [rd]
+        usage:
+            /<command> <hastebinId>
+            /<command> cmd <debuggerId> <cmd> [args]
+            /<command> stop <debuggerId>
+    ping:
+        description: Shows your own ping, or possibly that of another if you're helper+
+        aliases: []
+        usage:
+            /<command> [username]
+    tournament:
+        description: Tournament command
+        aliases: []
+        usage:
+            /<command>
