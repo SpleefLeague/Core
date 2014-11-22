@@ -6,6 +6,7 @@
 package net.spleefleague.core;
 
 import com.mongodb.DB;
+import java.util.logging.Logger;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -14,15 +15,21 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public abstract class CorePlugin extends JavaPlugin {
     
-    private final String prefix;
+    private final String prefix, chatPrefix;
+    public static Logger LOG = Logger.getLogger("Minecraft");
     
-    public CorePlugin(String prefix) {
+    public CorePlugin(String prefix, String chatPrefix) {
         this.prefix = prefix;
+        this.chatPrefix = chatPrefix;
     }
     
     public abstract DB getPluginDB();
     
     public String getPrefix() {
         return prefix;
+    }
+    
+    public String getChatPrefix() {
+        return chatPrefix;
     }
 }

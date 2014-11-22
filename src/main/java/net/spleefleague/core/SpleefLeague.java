@@ -9,6 +9,10 @@ import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.spleefleague.core.command.CommandLoader;
+import net.spleefleague.core.player.PlayerManager;
+import net.spleefleague.core.player.SLPlayer;
+import org.bukkit.ChatColor;
 
 /**
  *
@@ -17,9 +21,10 @@ import java.util.logging.Logger;
 public class SpleefLeague extends CorePlugin {
     
     private MongoClient mongo;
+    private PlayerManager<SLPlayer> playerManager;
 
     public SpleefLeague() {
-        super("SpleefLeague");
+        super("[SpleefLeague]", ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
     }
     
     @Override
@@ -33,6 +38,9 @@ public class SpleefLeague extends CorePlugin {
         } catch (Exception ex) {
             Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        CommandLoader.loadCommands(this, "net.spleefleague.command.commands");
+        playerManager = new PlayerManager<>(getPluginDB());
     }
     
     @Override
@@ -43,6 +51,10 @@ public class SpleefLeague extends CorePlugin {
     @Override
     public DB getPluginDB() {
         return mongo.getDB("SpleefLeague");
+    }
+    
+    public PlayerManager<SLPlayer> getPlayerManager() {
+        return playerManager;
     }
     
     private static SpleefLeague instance;

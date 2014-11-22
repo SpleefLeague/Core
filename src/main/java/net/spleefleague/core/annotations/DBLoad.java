@@ -10,6 +10,7 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import net.spleefleague.core.utils.TypeConverter;
 
 /**
  *
@@ -19,6 +20,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Inherited
 public @interface DBLoad {
-    String columnName();
-    Class referenceClass() default Object.class; //null is not allowed
+    String fieldName();
+    Class<? extends TypeConverter> typeConverter() default TypeConverter.class;
 }

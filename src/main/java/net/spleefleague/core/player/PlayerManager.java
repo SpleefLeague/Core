@@ -50,7 +50,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
         map.put(player, gp);
     }
     
-    public void load(Player player, Class<G> c) {
+    private void load(Player player, Class<G> c) {
         try {
             G generalPlayer = c.newInstance();
             generalPlayer.setUUID(player.getUniqueId());
@@ -64,12 +64,12 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
     
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        
+        this.load(event.getPlayer(), getPlayerClass());
     }
     
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        
+        this.map.remove(event.getPlayer());
     }
     
     private void callEvent(Player player, GeneralPlayer generalPlayer) {

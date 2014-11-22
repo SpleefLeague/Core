@@ -14,6 +14,7 @@ import java.util.UUID;
 import net.spleefleague.core.annotations.DBLoad;
 import net.spleefleague.core.annotations.DBSave;
 import net.spleefleague.core.utils.DatabaseLookup;
+import net.spleefleague.core.utils.TypeConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -27,7 +28,7 @@ public abstract class GeneralPlayer {
     private UUID uuid;
     
     protected GeneralPlayer() {
- 
+        
     }
     
     public GeneralPlayer(UUID uuid) {
@@ -45,6 +46,7 @@ public abstract class GeneralPlayer {
         this.username = username;
     }
     
+    @DBSave(columnName = "uuid")
     public UUID getUUID() {
         return uuid;
     }
@@ -66,6 +68,10 @@ public abstract class GeneralPlayer {
         this.uuid = uuid;
     }
     
+    public void sendMessage() {
+        
+    }
+    
     protected void load(DB db) {
         HashMap<String, Method> methods = new HashMap<>();
         try {
@@ -74,18 +80,42 @@ public abstract class GeneralPlayer {
                 for(Method m : current.getDeclaredMethods()) {
                     DBLoad annotation = m.getAnnotation(DBLoad.class);
                     if(annotation != null) {
-                        methods.put(annotation.columnName(), m);
+                        methods.put(annotation.fieldName(), m);
                     }
                 }
                 current = current.getSuperclass();
             }
             DBObject dbo = db.getCollection("Players").findOne(new BasicDBObject("uuid", uuid.toString()));
+            if(dbo == null) {
+                setDefaults();
+                save(db);
+            }
+            else {
+                for(String key : dbo.keySet()) {
+                    Method m = methods.get(key);
+                    if(m != null) {
+                        Object o = dbo.get(key);
+                        if(m.getParameterTypes()[0].isEnum() && o instanceof String) {
+                            m.invoke(this, Enum.valueOf((Class<Enum>)m.getParameterTypes()[0], (String)o));
+                        }
+                        else if(m.getAnnotation(DBLoad.class).typeConverter().equals(TypeConverter.class)) {
+                            TypeConverter tc = m.getAnnotation(DBLoad.class).typeConverter().newInstance();
+                            m.invoke(this, tc.convert(o));
+                        }
+                        else {
+                            m.invoke(this, o);
+                        }
+                    }
+                }
+            }
         } catch(Exception e) {
-            
+            e.printStackTrace();
         }
     }
     
     protected void save(DB db) {
         
     }
+    
+    abstract void setDefaults();
 }
