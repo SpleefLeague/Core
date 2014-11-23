@@ -23,10 +23,6 @@ public class SLPlayer extends GeneralPlayer {
         super();
     }
     
-    public SLPlayer(UUID uuid, String username) {
-        super(uuid, username);
-    }
-    
     @DBSave(fieldName = "rank")
     public Rank getRank() {
         return rank;

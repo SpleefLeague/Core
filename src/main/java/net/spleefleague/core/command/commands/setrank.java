@@ -43,7 +43,7 @@ public class setrank extends BasicCommand {
                     if(rank != null) {
                         slp.setRank(rank);
                         slp.requestSave("rank");
-                        success(cs, "Rank as been set.");
+                        success(cs, "Rank has been set.");
                     }
                     else {
                         error(cs, "The rank " + args[1] + " does not exist!");

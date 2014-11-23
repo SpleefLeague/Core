@@ -46,24 +46,6 @@ public abstract class GeneralPlayer {
         loadMethods();
     }
     
-    //USE TO CREATE FAKE PLAYERS ONLY!
-    public GeneralPlayer(UUID uuid) {
-        this.uuid = uuid;
-        this.username = DatabaseConnection.getUsername(uuid);
-    }
-    
-    //USE TO CREATE FAKE PLAYERS ONLY!
-    public GeneralPlayer(String username) {
-        this.uuid = DatabaseConnection.getUUID(username);
-        this.username = username;
-    }
-    
-    //USE TO CREATE FAKE PLAYERS ONLY!
-    public GeneralPlayer(UUID uuid, String username) {
-        this.uuid = uuid;
-        this.username = username;
-    }
-    
     @DBSave(fieldName = "uuid", typeConverter = UUIDStringConverter.class)
     public UUID getUUID() {
         return uuid;
@@ -175,16 +157,16 @@ public abstract class GeneralPlayer {
         for(String name : saveMethods.keySet()) {
             try {
                 Method m = saveMethods.get(name);
-                Object o;
-                if (Enum.class.isAssignableFrom(m.getReturnType())) {
-                    o = m.invoke(this).toString();
-                } else if (!m.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
-                    TypeConverter tc = m.getAnnotation(DBSave.class).typeConverter().newInstance();
-                    o = tc.convertSave(m.invoke(this));
-                } else {
-                    o = m.invoke(this);
+                Object o = m.invoke(this);
+                if(o != null) {
+                    if (Enum.class.isAssignableFrom(m.getReturnType())) {
+                        o = o.toString();
+                    } else if (!m.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
+                        TypeConverter tc = m.getAnnotation(DBSave.class).typeConverter().newInstance();
+                        o = tc.convertSave(o);
+                    }
+                    dbo.put(name, o);
                 }
-                dbo.put(name, o);
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException ex) {
                 Logger.getLogger(GeneralPlayer.class.getName()).log(Level.SEVERE, null, ex);
             }

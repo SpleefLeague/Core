@@ -13,6 +13,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.weather.WeatherChangeEvent;
 
 /**
  *
@@ -40,10 +43,20 @@ public class EnvironmentListener implements Listener{
     
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
-        if(!(event.getEntity() instanceof Player)) {
-            event.setCancelled(true);
-        }
+        if((event.getEntity() instanceof Player)) {
+            if(event.getCause() == DamageCause.FALL) {
+                event.setCancelled(true);
+            }
+        } 
     }
     
+    @EventHandler
+    public void onFood(FoodLevelChangeEvent event) {
+        event.setCancelled(true);
+    }
     
+    @EventHandler
+    public void onTime(WeatherChangeEvent event) {
+        event.setCancelled(true);
+    }
 }
