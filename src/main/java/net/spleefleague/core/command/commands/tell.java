@@ -29,8 +29,8 @@ public class tell extends BasicCommand {
         if(args.length > 1) {
             SLPlayer target = SpleefLeague.getInstance().getPlayerManager().get(Bukkit.getPlayer(args[0]));
             if(target != null) {
-                String prefix1 = ChatColor.GRAY + "[me -> " + target.getRank().getColor() + target.getName() + ChatColor.GRAY + "]";
-                String prefix2 = ChatColor.GRAY + "[" + slp.getRank().getColor() + slp.getName() + ChatColor.GRAY + " -> me]";
+                String prefix1 = ChatColor.GRAY + "[me -> " + target.getRank().getColor() + target.getName() + ChatColor.GRAY + "] " + ChatColor.RESET;
+                String prefix2 = ChatColor.GRAY + "[" + slp.getRank().getColor() + slp.getName() + ChatColor.GRAY + " -> me] " + ChatColor.RESET;
                 String message = toMessage(args);
                 p.sendMessage(prefix1 + message);
                 target.getPlayer().sendMessage(prefix2 + message);

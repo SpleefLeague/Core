@@ -47,7 +47,7 @@ public class reply extends BasicCommand {
     
     private String toMessage(String[] msg) {
         StringBuilder sb = new StringBuilder();
-        for(int i = 1; i < msg.length; i++) {
+        for(int i = 0; i < msg.length; i++) {
             sb.append(msg[i]).append((i + 1 < msg.length) ? " " : "");
         }
         return sb.toString();

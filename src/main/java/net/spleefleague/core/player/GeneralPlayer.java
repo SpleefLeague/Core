@@ -108,7 +108,6 @@ public abstract class GeneralPlayer {
             }
             else {
                 for(String key : dbo.keySet()) {
-                    System.out.println("Loading " + key);
                     Method m = loadMethods.get(key);
                     if(m != null) {
                         Object o = dbo.get(key);
@@ -122,7 +121,6 @@ public abstract class GeneralPlayer {
                         else {
                             m.invoke(this, o);
                         }
-                        System.out.println(o);
                     }
                 }
             }

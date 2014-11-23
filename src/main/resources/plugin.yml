@@ -16,3 +16,13 @@ commands:
         aliases: []
         usage: |
           /<command> <player> <rank>
+    tell:
+        description: A command
+        aliases: []
+        usage: |
+          /<command> <player> <message>
+    reply:
+        description: A reply command
+        aliases: [r]
+        usage: |
+          /<command> <message>
