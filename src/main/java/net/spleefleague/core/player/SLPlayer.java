@@ -8,6 +8,7 @@ package net.spleefleague.core.player;
 import java.util.UUID;
 import net.spleefleague.core.annotations.DBLoad;
 import net.spleefleague.core.annotations.DBSave;
+import net.spleefleague.core.utils.TypeConverter.UUIDStringConverter;
 
 /**
  *
@@ -16,7 +17,8 @@ import net.spleefleague.core.annotations.DBSave;
 public class SLPlayer extends GeneralPlayer {
     
     private Rank rank;
-
+    private UUID lastChatPartner;
+    
     public SLPlayer() {
         super();
     }
@@ -33,6 +35,16 @@ public class SLPlayer extends GeneralPlayer {
     @DBLoad(fieldName = "rank")
     public void setRank(Rank rank) {
         this.rank = rank;
+    }
+    
+    @DBSave(fieldName = "lastChatPartner", typeConverter = UUIDStringConverter.class)
+    public UUID getLastChatPartner() {
+        return lastChatPartner;
+    }
+    
+    @DBLoad(fieldName = "lastChatPartner", typeConverter = UUIDStringConverter.class)
+    public void setLastChatPartner(UUID lastChatPartner) {
+        this.lastChatPartner = lastChatPartner;
     }
 
     @Override

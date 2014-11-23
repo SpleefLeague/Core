@@ -5,6 +5,8 @@
  */
 package net.spleefleague.core.utils;
 
+import java.util.UUID;
+
 /**
  *
  * @author Jonas
@@ -14,4 +16,16 @@ package net.spleefleague.core.utils;
 public abstract class TypeConverter<T, V> {
     public abstract V convertLoad(T t);
     public abstract T convertSave(V v);
+    
+    public static class UUIDStringConverter extends TypeConverter<String, UUID> {
+        @Override
+        public String convertSave(UUID t) {
+            return t.toString();
+        } 
+
+        @Override
+        public UUID convertLoad(String v) {
+            return UUID.fromString(v);
+        }
+    }
 }

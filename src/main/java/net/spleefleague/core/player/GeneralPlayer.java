@@ -20,6 +20,7 @@ import net.spleefleague.core.annotations.DBLoad;
 import net.spleefleague.core.annotations.DBSave;
 import net.spleefleague.core.utils.DatabaseConnection;
 import net.spleefleague.core.utils.TypeConverter;
+import net.spleefleague.core.utils.TypeConverter.UUIDStringConverter;
 import org.bson.types.ObjectId;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -63,7 +64,7 @@ public abstract class GeneralPlayer {
         this.username = username;
     }
     
-    @DBSave(fieldName = "uuid", typeConverter = UUIDToStringConverter.class)
+    @DBSave(fieldName = "uuid", typeConverter = UUIDStringConverter.class)
     public UUID getUUID() {
         return uuid;
     }
@@ -223,16 +224,4 @@ public abstract class GeneralPlayer {
     }
     
     abstract void setDefaults();
-    
-    public static class UUIDToStringConverter extends TypeConverter<String, UUID> {
-        @Override
-        public String convertSave(UUID t) {
-            return t.toString();
-        } 
-
-        @Override
-        public UUID convertLoad(String v) {
-            return UUID.fromString(v);
-        }
-    }
 }

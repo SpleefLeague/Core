@@ -6,7 +6,6 @@
 package net.spleefleague.core.player;
 
 import com.mongodb.DB;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
