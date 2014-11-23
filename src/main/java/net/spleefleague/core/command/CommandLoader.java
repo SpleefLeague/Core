@@ -13,7 +13,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import net.spleefleague.core.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 /**
@@ -68,7 +67,7 @@ public class CommandLoader {
     }
     
     private void logCommandLoadError(String command, Exception e) {
-        SpleefLeague.LOG.log(Level.WARNING, "{0}Failed to load command \"{1}\": {2}", new Object[]{SpleefLeague.getInstance().getPrefix(), command, e.getMessage()});
+        SpleefLeague.LOG.log(Level.WARNING, " {0}Failed to load command \"{1}\": {2}", new Object[]{SpleefLeague.getInstance().getPrefix(), command, e.getMessage()});
     }
     
     public LoadedCommand getCommand(String command) {

@@ -12,5 +12,6 @@ package net.spleefleague.core.utils;
  * @param <V>
  */
 public abstract class TypeConverter<T, V> {
-    public abstract V convert(T t);
+    public abstract V convertLoad(T t);
+    public abstract T convertSave(V v);
 }

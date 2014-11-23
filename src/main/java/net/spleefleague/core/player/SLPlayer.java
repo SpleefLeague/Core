@@ -5,8 +5,9 @@
  */
 package net.spleefleague.core.player;
 
+import java.util.UUID;
 import net.spleefleague.core.annotations.DBLoad;
-import net.spleefleague.core.utils.TypeConverter;
+import net.spleefleague.core.annotations.DBSave;
 
 /**
  *
@@ -15,11 +16,16 @@ import net.spleefleague.core.utils.TypeConverter;
 public class SLPlayer extends GeneralPlayer {
     
     private Rank rank;
-    
+
     public SLPlayer() {
-        
+        super();
     }
     
+    public SLPlayer(UUID uuid, String username) {
+        super(uuid, username);
+    }
+    
+    @DBSave(fieldName = "rank")
     public Rank getRank() {
         return rank;
     }

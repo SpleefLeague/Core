@@ -15,7 +15,7 @@ public enum Rank {
     
     OWNER(100, "Owner", ChatColor.GREEN),
     DEVELOPER(90, "Dev", ChatColor.BLUE),
-    ADMINISTRATOR(80, "Admin", ChatColor.DARK_RED),
+    ADMIN(80, "Admin", ChatColor.DARK_RED),
     SENIOR_MODERATOR(70, "Sr. Mod", ChatColor.RED),
     MODERATOR(60, "Mod", ChatColor.RED),
     HELPER(50, "Helper", ChatColor.AQUA),

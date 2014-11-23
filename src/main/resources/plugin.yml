@@ -11,3 +11,8 @@ commands:
         aliases: [testi]
         usage: |
           /<command> <player>
+    setrank:
+        description: Command to set ranks
+        aliases: []
+        usage: |
+          /<command> <player> <rank>

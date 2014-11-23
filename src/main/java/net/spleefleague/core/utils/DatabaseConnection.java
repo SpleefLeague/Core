@@ -6,17 +6,19 @@
 package net.spleefleague.core.utils;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.UUID;
 import net.spleefleague.core.SpleefLeague;
+import org.bukkit.Bukkit;
 
 /**
  *
  * @author Jonas
  */
-public class DatabaseLookup {
+public class DatabaseConnection {
     
     private static final UUIDCache uuidCache = new UUIDCache(1000);
     
@@ -56,6 +58,16 @@ public class DatabaseLookup {
         }
     }
     
+    public static void updateFields(final DBCollection dbcoll, final DBObject index, final DBObject update) {
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                dbcoll.update(index, new BasicDBObject("$set", update));
+            }
+        }); 
+    }
+    
+    //Private classes
     private static class UUIDCache {
         
         private final FixedSizeList list;
@@ -91,24 +103,6 @@ public class DatabaseLookup {
                 }
             }
             return null;
-        }
-
-        private boolean containsUsername(UUID uuid) {
-            for(UUIDMapEntry e : list) {
-                if(e.uuid.equals(uuid)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private boolean containsUUID(String username) {
-            for(UUIDMapEntry e : list) {
-                if(e.username.equals(username)) {
-                    return true;
-                }
-            }
-            return false;
         }
         
         private static class UUIDMapEntry {

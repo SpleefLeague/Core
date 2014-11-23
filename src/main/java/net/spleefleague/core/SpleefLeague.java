@@ -10,6 +10,7 @@ import com.mongodb.MongoClient;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.spleefleague.core.command.CommandLoader;
+import net.spleefleague.core.listeners.ChatListener;
 import net.spleefleague.core.player.PlayerManager;
 import net.spleefleague.core.player.SLPlayer;
 import org.bukkit.ChatColor;
@@ -38,9 +39,9 @@ public class SpleefLeague extends CorePlugin {
         } catch (Exception ex) {
             Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        CommandLoader.loadCommands(this, "net.spleefleague.command.commands");
-        playerManager = new PlayerManager<>(getPluginDB());
+        CommandLoader.loadCommands(this, "net.spleefleague.core.command.commands");
+        playerManager = new PlayerManager<>(getPluginDB(), SLPlayer.class);
+        ChatListener.init();
     }
     
     @Override
