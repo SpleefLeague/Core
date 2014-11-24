@@ -5,6 +5,7 @@
  */
 package net.spleefleague.core.command.commands;
 
+import java.util.UUID;
 import net.spleefleague.core.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.command.BasicCommand;
@@ -27,17 +28,23 @@ public class reply extends BasicCommand {
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
         if(args.length > 0) {
-            SLPlayer target = SpleefLeague.getInstance().getPlayerManager().get(Bukkit.getPlayer(slp.getLastChatPartner()));
-            if(target != null) {
-                String prefix1 = ChatColor.GRAY + "[me -> " + target.getRank().getColor() + target.getName() + ChatColor.GRAY + "] " + ChatColor.RESET;
-                String prefix2 = ChatColor.GRAY + "[" + slp.getRank().getColor() + slp.getName() + ChatColor.GRAY + " -> me] " + ChatColor.RESET;
-                String message = toMessage(args);
-                p.sendMessage(prefix1 + message);
-                target.getPlayer().sendMessage(prefix2 + message);
-                target.setLastChatPartner(slp.getUUID());
+            UUID lastChatpartner = slp.getLastChatPartner();
+            if(lastChatpartner != null) {
+                SLPlayer target = SpleefLeague.getInstance().getPlayerManager().get(Bukkit.getPlayer(lastChatpartner));
+                if(target != null) {
+                    String prefix1 = ChatColor.GRAY + "[me -> " + target.getRank().getColor() + target.getName() + ChatColor.GRAY + "] " + ChatColor.RESET;
+                    String prefix2 = ChatColor.GRAY + "[" + slp.getRank().getColor() + slp.getName() + ChatColor.GRAY + " -> me] " + ChatColor.RESET;
+                    String message = toMessage(args);
+                    p.sendMessage(prefix1 + message);
+                    target.getPlayer().sendMessage(prefix2 + message);
+                    target.setLastChatPartner(slp.getUUID());
+                }
+                else {
+                    error(p, args[0] + " is not online!");
+                }
             }
             else {
-                error(p, args[0] + " is not online!");
+                error(p, "You don't have anyone to reply to!");
             }
         }
         else {

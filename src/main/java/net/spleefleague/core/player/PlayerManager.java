@@ -5,12 +5,16 @@
  */
 package net.spleefleague.core.player;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
+import com.mongodb.DBObject;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.utils.EntityBuilder;
+import org.bson.types.ObjectId;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -54,13 +58,24 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
     
     private void load(Player player, Class<G> c) {
         try {
-            G generalPlayer = c.newInstance();
-            generalPlayer.setDB(db);
-            generalPlayer.setUUID(player.getUniqueId());
-            generalPlayer.setName(player.getName());
-            generalPlayer.load(db);
+            DBObject dbo = db.getCollection("Players").findOne(new BasicDBObject("uuid", player.getUniqueId().toString()));
+            G generalPlayer;
+            if(dbo == null) {
+                generalPlayer = c.newInstance();
+                generalPlayer.setUUID(player.getUniqueId());
+                generalPlayer.setName(player.getName());
+                generalPlayer.setDefaults();
+                ObjectId _id = EntityBuilder.save(generalPlayer, db.getCollection("Players"), new BasicDBObject("uuid", player.getUniqueId().toString()), true);
+                System.out.println(_id);
+                generalPlayer.setObjectId(_id);
+            }
+            else {
+                generalPlayer = EntityBuilder.load(dbo, c);
+                generalPlayer.setUUID(player.getUniqueId());
+                generalPlayer.setName(player.getName());
+            }
             map.put(player, generalPlayer);
-            callEvent(player, generalPlayer);
+            callEvent(player, generalPlayer);    
         } catch (InstantiationException | IllegalAccessException | SecurityException | IllegalArgumentException ex) {
             Logger.getLogger(PlayerManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -78,12 +93,12 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
     
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        final G slp = get(event.getPlayer());
+        final G gp = get(event.getPlayer());
         this.map.remove(event.getPlayer());
         Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), new Runnable() {
             @Override
             public void run() {
-                slp.save();
+                EntityBuilder.save(gp, db.getCollection("Players"), new BasicDBObject("_id", gp.getObjectId()));
             }
         });
     }

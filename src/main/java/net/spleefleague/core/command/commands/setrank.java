@@ -39,10 +39,14 @@ public class setrank extends BasicCommand {
             if(player != null) {
                 SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(player);
                 if(slp != null) {
-                    Rank rank = Rank.valueOf(args[1]);
+                    Rank rank;
+                    try {
+                        rank = Rank.valueOf(args[1]);
+                    } catch(Exception e) {
+                        rank = null;
+                    }
                     if(rank != null) {
                         slp.setRank(rank);
-                        slp.requestSave("rank");
                         success(cs, "Rank has been set.");
                     }
                     else {
