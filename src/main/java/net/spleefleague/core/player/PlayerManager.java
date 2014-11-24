@@ -62,17 +62,12 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
             G generalPlayer;
             if(dbo == null) {
                 generalPlayer = c.newInstance();
-                generalPlayer.setUUID(player.getUniqueId());
-                generalPlayer.setName(player.getName());
                 generalPlayer.setDefaults();
                 ObjectId _id = EntityBuilder.save(generalPlayer, db.getCollection("Players"), new BasicDBObject("uuid", player.getUniqueId().toString()), true);
-                System.out.println(_id);
                 generalPlayer.setObjectId(_id);
             }
             else {
                 generalPlayer = EntityBuilder.load(dbo, c);
-                generalPlayer.setUUID(player.getUniqueId());
-                generalPlayer.setName(player.getName());
             }
             map.put(player, generalPlayer);
             callEvent(player, generalPlayer);    

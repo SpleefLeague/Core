@@ -5,21 +5,9 @@
  */
 package net.spleefleague.core.player;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.annotations.DBLoad;
 import net.spleefleague.core.annotations.DBSave;
-import net.spleefleague.core.utils.EntityBuilder;
-import net.spleefleague.core.utils.TypeConverter;
 import net.spleefleague.core.utils.TypeConverter.UUIDStringConverter;
 import org.bson.types.ObjectId;
 import org.bukkit.Bukkit;
@@ -62,13 +50,15 @@ public abstract class GeneralPlayer {
         return Bukkit.getPlayer(uuid);
     }
     
+    @DBLoad(fieldName = "username")
     protected void setName(String username) {
         this.username = username;
     }
     
+    @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class)
     protected void setUUID(UUID uuid) {
         this.uuid = uuid;
     }
     
-    abstract void setDefaults();
+    public abstract void setDefaults();
 }
