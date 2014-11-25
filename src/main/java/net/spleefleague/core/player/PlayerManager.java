@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.utils.DatabaseConnection;
 import net.spleefleague.core.utils.EntityBuilder;
 import org.bson.types.ObjectId;
 import org.bukkit.Bukkit;
@@ -84,6 +85,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
             @Override
             public void run() {
                 load(event.getPlayer(), getPlayerClass());
+                DatabaseConnection.updateCache(event.getPlayer().getUniqueId(), event.getPlayer().getName());
             }
         });
     }
