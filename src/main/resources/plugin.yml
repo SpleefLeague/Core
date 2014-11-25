@@ -16,13 +16,20 @@ commands:
         aliases: []
         usage: |
           /<command> <player> <rank>
-    tell:
-        description: A command
-        aliases: []
-        usage: |
-          /<command> <player> <message>
     reply:
         description: A reply command
         aliases: [r]
         usage: |
           /<command> <message>
+    debug: 
+        description: Load a debug class at runtime
+        aliases: [d]
+        usage:
+            /<command> <hastebinId>
+            /<command> cmd <debuggerId> <cmd> [args]
+            /<command> stop <debuggerId>
+    ping:
+        description: Shows your own ping, or possibly that of another if you're helper+
+        aliases: []
+        usage:
+            /<command> [username]
