@@ -51,12 +51,12 @@ public abstract class GeneralPlayer {
     }
     
     @DBLoad(fieldName = "username")
-    protected void setName(String username) {
+    public void setName(String username) {
         this.username = username;
     }
     
     @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class)
-    protected void setUUID(UUID uuid) {
+    public void setUUID(UUID uuid) {
         this.uuid = uuid;
     }
     

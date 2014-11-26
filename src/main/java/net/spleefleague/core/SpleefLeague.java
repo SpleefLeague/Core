@@ -65,17 +65,4 @@ public class SpleefLeague extends CorePlugin {
     public static SpleefLeague getInstance() {
         return instance;
     }
-    
-    public static void main(String[] args) {
-        try {
-            MongoClient mongo = new MongoClient("127.0.0.1", 27017);
-            mongo.getMongoOptions().autoConnectRetry = true;
-            mongo.getMongoOptions().connectionsPerHost = 10;
-            for(String dbname : mongo.getDatabaseNames()) {
-                System.out.println(dbname);
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 }
