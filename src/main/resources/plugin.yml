@@ -26,3 +26,33 @@ commands:
         aliases: [r]
         usage: |
           /<command> <message>
+    gamemode:
+        description: Sets a player's gamemode
+        aliases: [gm]
+        usage: |
+          /<command> <gamemode> [player]
+    warn:
+        description: warn a player
+        aliases: []
+        usage: |
+          /<command> <player> <message>
+    kick:
+        description: kick a player
+        aliases: []
+        usage: |
+          /<command> <player> <message>
+    tempban:
+        description: tempban a player
+        aliases: []
+        usage: |
+          /<command> <milliseconds> <player> <message>
+    ban:
+        description: ban a player
+        aliases: []
+        usage: |
+          /<command> <player> <message>
+    unban:
+        description: unban a player
+        aliases: []
+        usage: |
+          /<command> <player> <message>
