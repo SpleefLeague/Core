@@ -49,7 +49,7 @@ public class unban extends BasicCommand{
             Infraction ban = new Infraction(id, InfractionType.UNBAN, System.currentTimeMillis(), -1, unbanMessage);
             SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").remove(new BasicDBObject("uuid", id.toString()));
             EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), new BasicDBObject("uuid", id.toString()), true);
-            success(cs, "The player has been banned!");
+            success(cs, "The player has been unbanned!");
         }
         else{
             sendUsage(cs);
