@@ -11,10 +11,13 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 /**
@@ -56,7 +59,22 @@ public class EnvironmentListener implements Listener{
     }
     
     @EventHandler
-    public void onTime(WeatherChangeEvent event) {
+    public void onWeather(WeatherChangeEvent event) {
         event.setCancelled(true);
+    }
+    
+    @EventHandler
+    public void onBreak(BlockBreakEvent event) {
+        event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
+    }
+    
+    @EventHandler
+    public void onPlace(BlockPlaceEvent event) {
+        event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
+    }
+    
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent event) {
+        event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
 }

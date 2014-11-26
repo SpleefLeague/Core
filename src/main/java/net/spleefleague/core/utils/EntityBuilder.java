@@ -8,7 +8,6 @@ package net.spleefleague.core.utils;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -42,7 +41,8 @@ public class EntityBuilder {
     public static <T> ObjectId save(T object, DBCollection dbcoll, DBObject index, boolean insert) {
         try {
             HashMap<String, Method> saveMethods = getSaveMethods(object.getClass());
-            DBObject dbo = new BasicDBObject();
+            DBObject set = new BasicDBObject();
+            DBObject unset = new BasicDBObject();
             for(String name : saveMethods.keySet()) {
                 try {
                     Method m = saveMethods.get(name);
@@ -54,18 +54,31 @@ public class EntityBuilder {
                             TypeConverter tc = m.getAnnotation(DBSave.class).typeConverter().newInstance();
                             o = tc.convertSave(o);
                         }
-                        dbo.put(name, o);
+                        set.put(name, o);
+                    }
+                    else {
+                        unset.put(name, "");
                     }
                 } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException ex) {
                     Logger.getLogger(GeneralPlayer.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             if(insert) {
-                dbcoll.insert(dbo);
-                return (ObjectId) dbcoll.findOne(index).get("_id");
+                dbcoll.insert(set);
+                if(index != null)
+                    return (ObjectId) dbcoll.findOne(index).get("_id");
+                else
+                    return null;
             }
             else {
-                return (ObjectId)dbcoll.update(index, new BasicDBObject("$set", dbo)).getField("_id");
+                if(index != null) {
+                    DBObject query = new BasicDBObject();
+                    query.put("$set", set);
+                    query.put("$unset", set);
+                    return (ObjectId)dbcoll.update(index, new BasicDBObject("$set", set)).getField("_id");
+                }
+                else
+                    return null;
             }
         } catch(Exception e) {
             e.printStackTrace();
