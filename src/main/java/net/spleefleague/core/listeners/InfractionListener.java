@@ -8,13 +8,18 @@ package net.spleefleague.core.listeners;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.Temporal;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.utils.EntityBuilder;
+import net.spleefleague.core.utils.TimeUtil;
 import net.spleefleague.infraction.Infraction;
 import net.spleefleague.infraction.InfractionType;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerPreLoginEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 /**
  *
@@ -26,22 +31,28 @@ public class InfractionListener implements Listener{
         Bukkit.getPluginManager().registerEvents(new InfractionListener(), SpleefLeague.getInstance());
     }
     
-    public void banCheck(PlayerPreLoginEvent e){
+    @EventHandler
+    public void banCheck(AsyncPlayerPreLoginEvent e){
         DBObject dbo = SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").findOne(new BasicDBObject("uuid", e.getUniqueId().toString()));
         if(dbo == null){
-            e.setResult(PlayerPreLoginEvent.Result.ALLOWED);
+            e.setLoginResult(AsyncPlayerPreLoginEvent.Result.ALLOWED);
         }
         else{
             Infraction inf = EntityBuilder.load(dbo, Infraction.class);
-            if(inf.getType() == InfractionType.BAN)
-                e.setResult(PlayerPreLoginEvent.Result.KICK_OTHER);
+            if(inf.getType() == InfractionType.BAN) {
+                e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+                e.setKickMessage("You have been banned for: " + inf.getMessage());
+            }
             else if(inf.getType() == InfractionType.TEMPBAN){
                 if(inf.getTime() + inf.getDuration() <= System.currentTimeMillis()){
                     SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").remove(new BasicDBObject("uuid", e.getUniqueId().toString()));
-                    e.setResult(PlayerPreLoginEvent.Result.ALLOWED);
+                    e.setLoginResult(AsyncPlayerPreLoginEvent.Result.ALLOWED);
                 }
-                else
-                    e.setResult(PlayerPreLoginEvent.Result.KICK_OTHER);
+                else {
+                    e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+                    e.setKickMessage("You have been tempbanned for " + TimeUtil.getFormatted(Duration.between(Instant.now(), Instant.ofEpochMilli(inf.getTime() + inf.getDuration()))) + ". " + inf.getMessage());
+            
+                }
             }
         }
     }

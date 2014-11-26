@@ -18,7 +18,7 @@ import org.bukkit.Bukkit;
  */
 public class DatabaseConnection {
 
-    private static final UUIDCache uuidCache = new UUIDCache(100);
+    private static final UUIDCache uuidCache = new UUIDCache(1000);
     
     public static void updateCache(UUID uuid, String username) {
         uuidCache.insert(uuid, username);
@@ -73,7 +73,6 @@ public class DatabaseConnection {
         }
 
         public void insert(UUID uuid, String username) {
-            System.out.println(username + uuid);
             for (UUIDMapEntry e : list) {
                 if (e.username.equals(username) || e.uuid.equals(uuid)) {
                     e.username = username;

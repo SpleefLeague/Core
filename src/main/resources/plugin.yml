@@ -6,11 +6,6 @@ name: SpleefLeague
 url: http://www.spleefleague.net/
 version: 0.1
 commands:
-    test:
-        description: Test command
-        aliases: [testi]
-        usage: |
-          /<command> <player>
     setrank:
         description: Command to set ranks
         aliases: []
@@ -52,7 +47,7 @@ commands:
         description: tempban a player
         aliases: []
         usage: |
-          /<command> <milliseconds> <player> <message>
+          /<command> <duration> <player> <message>
     ban:
         description: ban a player
         aliases: []

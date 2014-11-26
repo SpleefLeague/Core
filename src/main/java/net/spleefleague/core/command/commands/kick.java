@@ -18,6 +18,7 @@ import net.spleefleague.infraction.Infraction;
 import net.spleefleague.infraction.InfractionType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -26,12 +27,17 @@ import org.bukkit.entity.Player;
  */
 public class kick extends BasicCommand{
     public kick(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage, Rank.HELPER);
+        super(plugin, name, usage, Rank.MODERATOR);
     }
     
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(args.length >= 2){
+        runConsole(p, cmd, args);
+    }
+    
+    @Override
+    protected void runConsole(CommandSender cs, Command cmd, String[] args) {
+            if(args.length >= 2){
             Player pl;
             if((pl = Bukkit.getPlayerExact(args[0])) != null){
                 String kickMessage = Arrays.toString(args).replaceFirst(args[0], "");
@@ -39,14 +45,14 @@ public class kick extends BasicCommand{
                 Infraction kick = new Infraction(pl.getUniqueId(), InfractionType.KICK, System.currentTimeMillis(), -1, kickMessage);
                 SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").remove(new BasicDBObject("uuid", pl.getUniqueId().toString()));
                 EntityBuilder.save(kick, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), new BasicDBObject("uuid", pl.getUniqueId().toString()));
-                success(p, "The player has been kicked!");
+                success(cs, "The player has been kicked!");
             }
             else{
-                error(p, "The player \"" + args[0] + "\" is not online!");
+                error(cs, "The player \"" + args[0] + "\" is not online!");
             }
         }
         else{
-            sendUsage(p);
+            sendUsage(cs);
         }
     }
     

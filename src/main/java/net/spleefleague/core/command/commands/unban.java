@@ -16,10 +16,11 @@ import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.utils.DatabaseConnection;
 import net.spleefleague.core.utils.EntityBuilder;
+import net.spleefleague.core.utils.StringUtil;
 import net.spleefleague.infraction.Infraction;
 import net.spleefleague.infraction.InfractionType;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -33,20 +34,25 @@ public class unban extends BasicCommand{
     
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
+        runConsole(p, cmd, args);
+    }
+    
+    @Override
+    protected void runConsole(CommandSender cs, Command cmd, String[] args) {
         if(args.length >= 2){
             UUID id;
             if((id = DatabaseConnection.getUUID(args[0])) == null){
-                error(p, "The player \"" + "\" has not been on the server yet!");
+                error(cs, "The player \"" + args[0] + "\" has not been on the server yet!");
                 return;
             }
-            String unbanMessage = Arrays.toString(args).replaceFirst(args[0], "");
+            String unbanMessage = StringUtil.fromArgsArray(args, 1);
             Infraction ban = new Infraction(id, InfractionType.UNBAN, System.currentTimeMillis(), -1, unbanMessage);
             SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").remove(new BasicDBObject("uuid", id.toString()));
             EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), new BasicDBObject("uuid", id.toString()), true);
-            success(p, "The player has been banned!");
+            success(cs, "The player has been banned!");
         }
         else{
-            sendUsage(p);
+            sendUsage(cs);
         }
     }
     
