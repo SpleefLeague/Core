@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import net.spleefleague.core.utils.DatabaseConnection;
 import net.spleefleague.core.utils.EntityBuilder;
 import org.bson.types.ObjectId;
@@ -73,7 +74,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
                 generalPlayer = EntityBuilder.load(dbo, c);
             }
             map.put(player, generalPlayer);
-            callEvent(player, generalPlayer);    
+            callEvent(generalPlayer, dbo == null);    
         } catch (InstantiationException | IllegalAccessException | SecurityException | IllegalArgumentException ex) {
             Logger.getLogger(PlayerManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -102,8 +103,8 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
         });
     }
     
-    private void callEvent(Player player, GeneralPlayer generalPlayer) {
-        Event e = new PlayerLoadedEvent(player, generalPlayer);
+    private void callEvent(GeneralPlayer generalPlayer, boolean firstJoin) {
+        Event e = new GeneralPlayerLoadedEvent(generalPlayer, firstJoin);
         Bukkit.getPluginManager().callEvent(e);
     }
 }

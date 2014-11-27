@@ -18,6 +18,7 @@ public class SLPlayer extends GeneralPlayer {
     
     private Rank rank;
     private UUID lastChatPartner;
+    private int coins;
     
     public SLPlayer() {
         super();
@@ -33,6 +34,16 @@ public class SLPlayer extends GeneralPlayer {
         this.rank = rank;
     }
     
+    @DBLoad(fieldName = "coins")
+    public void setCoins(int coins) {
+        this.coins = coins;
+    }
+    
+    @DBSave(fieldName = "coins")
+    public int getCoins() {
+        return coins;
+    }
+    
     @DBSave(fieldName = "lastChatPartner", typeConverter = UUIDStringConverter.class)
     public UUID getLastChatPartner() {
         return lastChatPartner;
@@ -46,5 +57,6 @@ public class SLPlayer extends GeneralPlayer {
     @Override
     public void setDefaults() {
         this.rank = Rank.DEFAULT;
+        this.coins = 0;
     }
 }

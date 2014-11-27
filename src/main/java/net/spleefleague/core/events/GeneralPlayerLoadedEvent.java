@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.spleefleague.core.player;
+package net.spleefleague.core.events;
 
+import net.spleefleague.core.player.GeneralPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -13,23 +14,27 @@ import org.bukkit.event.HandlerList;
  *
  * @author Jonas
  */
-public class PlayerLoadedEvent extends Event{
+public class GeneralPlayerLoadedEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
-    private final Player player;
     private final GeneralPlayer gp;
+    private final boolean firstJoin;
     
-    public PlayerLoadedEvent(Player player, GeneralPlayer gp) {
-        this.player = player;
+    public GeneralPlayerLoadedEvent(GeneralPlayer gp, boolean firstJoin) {
         this.gp = gp;
-    }
-    
-    public Player getPlayer() {
-        return player;
+        this.firstJoin = firstJoin;
     }
     
     public GeneralPlayer getGeneralPlayer() {
         return gp;
+    }
+    
+    public boolean isFirstJoin() {
+        return firstJoin;
+    }
+    
+    public Player getPlayer() {
+        return gp.getPlayer();
     }
     
     @Override

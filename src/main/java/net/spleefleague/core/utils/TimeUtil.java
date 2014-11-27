@@ -48,7 +48,6 @@ public class TimeUtil {
 
         Pattern timePattern = Pattern.compile("([1-9][0-9]*y)|([1-9][0-9]*mo)|([1-9][0-9]*w)|([1-9][0-9]*h)|([1-9][0-9]*d)|([1-9][0-9]*m)|([1-9][0-9]*s)");
         Matcher matcher = timePattern.matcher(time);
-
         int years = 0;
         int months = 0;
         int weeks = 0;
