@@ -23,6 +23,7 @@ public class SLPlayer extends GeneralPlayer {
     private UUID lastChatPartner;
     private int coins;
     private HashSet<String> chatChannels;
+    private String sendingChannel;
     
     public SLPlayer() {
         super();
@@ -60,13 +61,23 @@ public class SLPlayer extends GeneralPlayer {
     }
     
     @DBLoad(fieldName = "chatChannels", typeConverter = HashSetConverter.class)
-    public void setChatChannels(HashSet<String> chatChannels) {
+    public void setReceivingChatChannels(HashSet<String> chatChannels) {
         this.chatChannels = chatChannels;
     }
     
     @DBSave(fieldName = "chatChannels", typeConverter = HashSetConverter.class)
-    public HashSet<String> getChatChannels() {
+    public HashSet<String> getReceivingChatChannels() {
         return chatChannels;
+    }
+    
+    @DBSave(fieldName = "sendingChannel")
+    public void setSendingChannel(String channel) {
+        this.sendingChannel = channel;
+    }
+    
+    @DBLoad(fieldName = "sendingChannel")
+    public String getSendingChannel() {
+        return sendingChannel;
     }
     
     public boolean isInChatChannel(String channel) {
@@ -88,6 +99,7 @@ public class SLPlayer extends GeneralPlayer {
         this.coins = 0;
         this.chatChannels.clear();
         this.chatChannels.add("DEFAULT");
+        this.sendingChannel = "DEFAULT";
     }
     
     private static class HashSetConverter extends TypeConverter<BasicDBList, HashSet<String>> {

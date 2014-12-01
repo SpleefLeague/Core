@@ -58,6 +58,10 @@ public class SpleefLeague extends CorePlugin {
         return mongo.getDB("SpleefLeague");
     }
     
+    public MongoClient getMongo() {
+        return mongo;
+    }
+    
     public PlayerManager<SLPlayer> getPlayerManager() {
         return playerManager;
     }
