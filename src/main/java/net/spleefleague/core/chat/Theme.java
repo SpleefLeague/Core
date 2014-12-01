@@ -38,4 +38,9 @@ public enum Theme {
     public String buildTheme() {
         return prefix + " " + color;
     }
+    
+    @Override
+    public String toString() {
+        return buildTheme();
+    }
 }

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package net.spleefleague.infraction;
+package net.spleefleague.core.infraction;
 
 import org.bukkit.ChatColor;
 

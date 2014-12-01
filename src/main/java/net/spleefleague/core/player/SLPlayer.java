@@ -5,9 +5,12 @@
  */
 package net.spleefleague.core.player;
 
+import com.mongodb.BasicDBList;
+import java.util.HashSet;
 import java.util.UUID;
 import net.spleefleague.core.annotations.DBLoad;
 import net.spleefleague.core.annotations.DBSave;
+import net.spleefleague.core.utils.TypeConverter;
 import net.spleefleague.core.utils.TypeConverter.UUIDStringConverter;
 
 /**
@@ -19,9 +22,11 @@ public class SLPlayer extends GeneralPlayer {
     private Rank rank;
     private UUID lastChatPartner;
     private int coins;
+    private HashSet<String> chatChannels;
     
     public SLPlayer() {
         super();
+        chatChannels = new HashSet<>();
     }
     
     @DBSave(fieldName = "rank")
@@ -53,10 +58,57 @@ public class SLPlayer extends GeneralPlayer {
     public void setLastChatPartner(UUID lastChatPartner) {
         this.lastChatPartner = lastChatPartner;
     }
+    
+    @DBLoad(fieldName = "chatChannels", typeConverter = HashSetConverter.class)
+    public void setChatChannels(HashSet<String> chatChannels) {
+        this.chatChannels = chatChannels;
+    }
+    
+    @DBSave(fieldName = "chatChannels", typeConverter = HashSetConverter.class)
+    public HashSet<String> getChatChannels() {
+        return chatChannels;
+    }
+    
+    public boolean isInChatChannel(String channel) {
+        return chatChannels.contains(channel);
+    }
+    
+    public void addChatChannel(String channel) {
+        this.chatChannels.add(channel);
+    }
+    
+    public void removeChatChannel(String channel) {
+        this.chatChannels.remove(channel);
+    }
 
     @Override
     public void setDefaults() {
+        super.setDefaults();
         this.rank = Rank.DEFAULT;
         this.coins = 0;
+        this.chatChannels.clear();
+        this.chatChannels.add("DEFAULT");
+    }
+    
+    private static class HashSetConverter extends TypeConverter<BasicDBList, HashSet<String>> {
+
+        @Override
+        public HashSet<String> convertLoad(BasicDBList t) {
+            HashSet<String> hs = new HashSet<>();
+            for(Object o : t) {
+                hs.add((String)o);
+            }
+            return hs;
+        }
+
+        @Override
+        public BasicDBList convertSave(HashSet<String> v) {
+            BasicDBList bdbl = new BasicDBList();
+            for(String s : v) {
+                bdbl.add(s);
+            }
+            return bdbl;
+        }
+        
     }
 }

@@ -6,6 +6,7 @@
 package net.spleefleague.core.listeners;
 
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.chat.ChatManager;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
 import org.bukkit.Bukkit;
@@ -35,6 +36,7 @@ public class ChatListener implements Listener {
         if(slp.getRank() != Rank.DEFAULT) {
             prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getName() + ChatColor.DARK_GRAY + "] ";
         }
-        event.setFormat(ChatColor.DARK_GRAY + "<" + prefix + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET + " " + event.getMessage());
+        event.setCancelled(true);
+        ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET + " " + event.getMessage(), "DEFAULT");
     }
 }

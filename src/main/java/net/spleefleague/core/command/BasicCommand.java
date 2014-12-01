@@ -8,7 +8,6 @@ package net.spleefleague.core.command;
 import java.util.regex.Pattern;
 import net.spleefleague.core.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
-import net.spleefleague.core.chat.Message;
 import net.spleefleague.core.chat.Theme;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
@@ -31,8 +30,8 @@ public abstract class BasicCommand implements CommandExecutor {
     protected Rank requiredRank;
     protected boolean hasCommandBlockExecutor = false;
     private String[] usages = null;
-    private static final Message NO_COMMAND_PERMISSION_MESSAGE = new Message(Theme.ERROR, "You don't have permission to use this command!");
-    private static final Message PLAYERDATA_ERROR_MESSAGE = new Message(Theme.ERROR, "Your player data hasn't yet been loaded. Please try again.");
+    private static final String NO_COMMAND_PERMISSION_MESSAGE = Theme.ERROR + "You don't have permission to use this command!";
+    private static final String PLAYERDATA_ERROR_MESSAGE = Theme.ERROR + "Your player data hasn't yet been loaded. Please try again.";
     
     
     public BasicCommand(CorePlugin plugin, String name, String usage) {
@@ -58,10 +57,10 @@ public abstract class BasicCommand implements CommandExecutor {
                     if (slp.getRank().hasPermission(requiredRank)) {
                         run(p, slp, cmd, args);
                     } else {
-                        NO_COMMAND_PERMISSION_MESSAGE.sendMessage(sender);
+                        sender.sendMessage(NO_COMMAND_PERMISSION_MESSAGE);
                     }
                 } else {
-                    PLAYERDATA_ERROR_MESSAGE.sendMessage(sender);
+                    sender.sendMessage(PLAYERDATA_ERROR_MESSAGE);
                 }
             } else if (sender instanceof ConsoleCommandSender) {
                 runConsole(sender, cmd, args);
@@ -79,26 +78,26 @@ public abstract class BasicCommand implements CommandExecutor {
     }
     
     protected void error(CommandSender cs, String message) {    
-        Message.sendMessage(Theme.ERROR, message, cs);
+        cs.sendMessage(Theme.ERROR + message);
     }
 
     protected void success(CommandSender cs, String message) {
-        Message.sendMessage(Theme.SUCCESS, message, cs);
+        cs.sendMessage(Theme.ERROR + message);
     }
 
     protected void sendUsage(CommandSender cs) {
-        Message.sendMessage(Theme.ERROR, "Correct Usage: ", cs);
+        cs.sendMessage(Theme.ERROR + "Correct Usage: ");
         for (String m : usages) {
-            Message.sendMessage(Theme.INCOGNITO, m, cs);
+            cs.sendMessage(Theme.INCOGNITO + m);
         }
     }
     
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
-        Message.sendMessage(Theme.WARNING, "This command can only be run by an instance of a player.", cs);
+        cs.sendMessage(Theme.WARNING + "This command can only be run by an instance of a player.");
     }
 
     protected int runBlock(CommandSender cs, Command cmd, String[] args) {
-        Message.sendMessage(Theme.WARNING, "This command can only be run by an instance of a player.", cs);
+        cs.sendMessage(Theme.WARNING + "This command can only be run by an instance of a player.");
         return 0;
     }
     

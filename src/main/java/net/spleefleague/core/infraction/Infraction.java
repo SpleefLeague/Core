@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package net.spleefleague.infraction;
+package net.spleefleague.core.infraction;
 
 import java.util.UUID;
 import net.spleefleague.core.annotations.DBLoad;
