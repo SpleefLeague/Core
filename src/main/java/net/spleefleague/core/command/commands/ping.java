@@ -5,16 +5,15 @@
  */
 package net.spleefleague.core.command.commands;
 
-import net.minecraft.server.v1_7_R4.EntityPlayer;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
 import net.spleefleague.core.CorePlugin;
 import net.spleefleague.core.command.BasicCommand;
-import net.spleefleague.core.player.PlayerManager;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 /**

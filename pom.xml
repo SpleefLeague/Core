@@ -57,10 +57,6 @@
             <url>file://${project.basedir}/repo/</url>
         </repository>
         <repository>
-            <id>multicube-repo</id>
-            <url>http://panel.multicu.be/repo/</url>
-        </repository>
-        <repository>
             <id>shadowvolt-repo</id>
             <url>http://ci.shadowvolt.com/plugin/repository/everything/</url>
         </repository>
@@ -75,12 +71,12 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.7.10-R0.1-SNAPSHOT</version>
+            <version>1.8-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.7.10-R0.1-SNAPSHOT</version>
+            <version>1.8-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
