@@ -17,7 +17,7 @@ import net.spleefleague.core.utils.TypeConverter;
  * @author Jonas
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Inherited
 public @interface DBSave {
     String fieldName();

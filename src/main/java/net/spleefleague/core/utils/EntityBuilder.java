@@ -8,6 +8,7 @@ package net.spleefleague.core.utils;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -41,17 +42,59 @@ public class EntityBuilder {
     public static <T> ObjectId save(T object, DBCollection dbcoll, DBObject index, boolean insert) {
         try {
             HashMap<String, Method> saveMethods = getSaveMethods(object.getClass());
+            HashMap<String, Field> saveFields = getSaveFields(object.getClass());
             DBObject set = new BasicDBObject();
             DBObject unset = new BasicDBObject();
             for(String name : saveMethods.keySet()) {
                 try {
                     Method m = saveMethods.get(name);
-                    Object o = m.invoke(object);
+                    if(m != null) {
+                        m.setAccessible(true);
+                        Object o = m.invoke(object);
+                        if(o != null) {
+                            if (Enum.class.isAssignableFrom(m.getReturnType())) {
+                                o = o.toString();
+                            } else if (!m.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
+                                TypeConverter tc = m.getAnnotation(DBSave.class).typeConverter().newInstance();
+                                o = tc.convertSave(o);
+                            }
+                            set.put(name, o);
+                        }
+                        else {
+                            unset.put(name, "");
+                        }
+                    }
+                    else {
+                        Field f = saveFields.get(name);
+                        f.setAccessible(true);
+                        Object o = f.get(object);
+                        if(o != null) {
+                            if (Enum.class.isAssignableFrom(o.getClass())) {
+                                o = o.toString();
+                            } else if (!f.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
+                                TypeConverter tc = f.getAnnotation(DBSave.class).typeConverter().newInstance();
+                                o = tc.convertSave(o);
+                            }
+                            set.put(name, o);
+                        }
+                        else {
+                            unset.put(name, "");
+                        }
+                    }
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException ex) {
+                    Logger.getLogger(GeneralPlayer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            for(String name : saveFields.keySet()) {
+                try {
+                    Field f = saveFields.get(name);
+                    f.setAccessible(true);
+                    Object o = f.get(object);
                     if(o != null) {
-                        if (Enum.class.isAssignableFrom(m.getReturnType())) {
+                        if (Enum.class.isAssignableFrom(o.getClass())) {
                             o = o.toString();
-                        } else if (!m.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
-                            TypeConverter tc = m.getAnnotation(DBSave.class).typeConverter().newInstance();
+                        } else if (!f.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
+                            TypeConverter tc = f.getAnnotation(DBSave.class).typeConverter().newInstance();
                             o = tc.convertSave(o);
                         }
                         set.put(name, o);
@@ -59,7 +102,7 @@ public class EntityBuilder {
                     else {
                         unset.put(name, "");
                     }
-                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException ex) {
+                } catch (IllegalAccessException | IllegalArgumentException | InstantiationException ex) {
                     Logger.getLogger(GeneralPlayer.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -90,9 +133,11 @@ public class EntityBuilder {
         try {
             T t = c.newInstance();
             HashMap<String, Method> loadMethods = getLoadMethods(c);
+            HashMap<String, Field> loadFields = getLoadFields(c);
             for (String key : dbo.keySet()) {
                 Method m = loadMethods.get(key);
-                if (m != null) {
+                if(m != null) {
+                    m.setAccessible(true);
                     Object o = dbo.get(key);
                     if (m.getParameterTypes()[0].isEnum() && o instanceof String) {
                         m.invoke(t, Enum.valueOf((Class<Enum>) m.getParameterTypes()[0], (String) o));
@@ -101,6 +146,21 @@ public class EntityBuilder {
                         m.invoke(t, tc.convertLoad(o));
                     } else {
                         m.invoke(t, o);
+                    }
+                }
+                else {
+                    Field f = loadFields.get(key);
+                    if(f != null) {
+                        f.setAccessible(true);
+                        Object o = dbo.get(key);
+                        if (f.getType().isEnum() && o instanceof String) {
+                            f.set(t, Enum.valueOf((Class<Enum>) f.getType(), (String) o));
+                        } else if (!f.getAnnotation(DBLoad.class).typeConverter().equals(TypeConverter.class)) {
+                            TypeConverter tc = f.getAnnotation(DBLoad.class).typeConverter().newInstance();
+                            f.set(t, tc.convertLoad(o));
+                        } else {
+                            f.set(t, o);
+                        }
                     }
                 }
             }
@@ -141,5 +201,36 @@ public class EntityBuilder {
             current = current.getSuperclass();
         }
         return saveMethods;
+    }
+    
+    public static HashMap<String, Field> getLoadFields(Class c) {
+        HashMap<String, Field> loadFields = new HashMap<>();
+        Class current = c;
+        while (current != null && current.isAssignableFrom(c)) {
+            for (Field f : current.getDeclaredFields()) {
+                DBLoad dbload = f.getAnnotation(DBLoad.class);
+                if (dbload != null) {
+                    loadFields.put(dbload.fieldName(), f);
+                }
+
+            }
+            current = current.getSuperclass();
+        }
+        return loadFields;
+    }
+    
+    public static HashMap<String, Field> getSaveFields(Class c) {
+        HashMap<String, Field> saveFields = new HashMap<>();
+        Class current = c;
+        while (current != null && current.isAssignableFrom(c)) {
+            for (Field f : current.getDeclaredFields()) {
+                DBSave dbload = f.getAnnotation(DBSave.class);
+                if (dbload != null) {
+                    saveFields.put(dbload.fieldName(), f);
+                }
+            }
+            current = current.getSuperclass();
+        }
+        return saveFields;
     }
 }

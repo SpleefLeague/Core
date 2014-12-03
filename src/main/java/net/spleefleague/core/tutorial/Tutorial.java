@@ -7,7 +7,9 @@ package net.spleefleague.core.tutorial;
 
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Random;
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.events.ChatChannelMessageEvent;
 import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.tutorial.part.Introduction;
 import org.bukkit.Bukkit;
@@ -36,8 +38,9 @@ public class Tutorial {
     public void start() {
         this.receivingChannels = (HashSet<String>)slp.getReceivingChatChannels().clone();
         this.sendingChannel = slp.getSendingChannel();
-        this.slp.setSendingChannel("TUTORIAL");
+        this.slp.setSendingChannel("TUTORIAL-" + slp.getUUID().toString());
         this.slp.getReceivingChatChannels().clear();
+        this.slp.addChatChannel(this.slp.getSendingChannel());
         for(Player player : Bukkit.getOnlinePlayers()) {
             if(player != slp.getPlayer()) {
                 player.hidePlayer(slp.getPlayer());
@@ -62,7 +65,7 @@ public class Tutorial {
     
     private void initialize() {
         this.parts = new LinkedList<>();
-        parts.push(new Introduction(slp));
+        parts.push(new Introduction(slp, random.nextInt(100000)));
     }
     
     protected void next() {
@@ -75,6 +78,7 @@ public class Tutorial {
     }
     
     private static final HashSet<Tutorial> tutorials = new HashSet<>();
+    protected static final Random random = new Random();
     
     private boolean isInTutorial(SLPlayer slp) {
         return getTutorial(slp) != null;
@@ -97,6 +101,16 @@ public class Tutorial {
                 for(Tutorial t : tutorials) {
                     p.hidePlayer(t.getPlayer().getPlayer());
                     t.getPlayer().getPlayer().hidePlayer(p);
+                }
+            }
+            
+            @EventHandler
+            public void onMessage(ChatChannelMessageEvent event) {
+                for(Tutorial t : tutorials) {
+                    if(event.getChannel().equals("TUTORIAL-" + t.getPlayer().getUUID().toString())) {
+                        t.parts.peek().onPlayerMessage(event.getMessage());
+                        break;
+                    }
                 }
             }
         }, SpleefLeague.getInstance());

@@ -5,6 +5,8 @@
  */
 package net.spleefleague.core;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import java.util.logging.Level;
@@ -25,9 +27,15 @@ public class SpleefLeague extends CorePlugin {
     
     private MongoClient mongo;
     private PlayerManager<SLPlayer> playerManager;
-
+    private ProtocolManager protocolManager;
+    
     public SpleefLeague() {
         super("[SpleefLeague]", ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
+    }
+    
+    @Override
+    public void onLoad() {
+        protocolManager = ProtocolLibrary.getProtocolManager();
     }
     
     @Override
@@ -66,9 +74,14 @@ public class SpleefLeague extends CorePlugin {
         return playerManager;
     }
     
+    public ProtocolManager getProtocolManager() {
+        return protocolManager;
+    }
+    
     private static SpleefLeague instance;
     
     public static SpleefLeague getInstance() {
         return instance;
     }
+    
 }

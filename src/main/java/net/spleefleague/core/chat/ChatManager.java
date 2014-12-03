@@ -6,7 +6,9 @@
 package net.spleefleague.core.chat;
 
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.events.ChatChannelMessageEvent;
 import net.spleefleague.core.player.SLPlayer;
+import org.bukkit.Bukkit;
 
 /**
  *
@@ -15,10 +17,16 @@ import net.spleefleague.core.player.SLPlayer;
 public class ChatManager {
     
     public static void sendMessage(String message, String channel) {
-        for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-            if(slp.isInChatChannel(channel)) {
-                slp.getPlayer().sendMessage(message);
-            }
-        } 
+        ChatChannelMessageEvent ccme = new ChatChannelMessageEvent(channel, message);
+        Bukkit.getPluginManager().callEvent(ccme);
+        message = ccme.getMessage();
+        channel = ccme.getChannel();
+        if(!ccme.isCancelled()) {
+            for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
+                if(slp.isInChatChannel(channel)) {
+                    slp.getPlayer().sendMessage(message);
+                }
+            } 
+        }
     }
 }

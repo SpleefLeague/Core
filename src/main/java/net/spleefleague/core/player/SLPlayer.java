@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.spleefleague.core.player;
 
 import com.mongodb.BasicDBList;
@@ -38,6 +33,9 @@ public class SLPlayer extends GeneralPlayer {
     @DBLoad(fieldName = "rank")
     public void setRank(Rank rank) {
         this.rank = rank;
+        if(rank.hasPermission(Rank.MODERATOR)) {
+            chatChannels.add("STAFF");
+        }
     }
     
     @DBLoad(fieldName = "coins")
@@ -120,7 +118,6 @@ public class SLPlayer extends GeneralPlayer {
                 bdbl.add(s);
             }
             return bdbl;
-        }
-        
+        }        
     }
 }

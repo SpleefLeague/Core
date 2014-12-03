@@ -13,10 +13,12 @@ import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.tutorial.TutorialPart;
 import net.spleefleague.core.utils.EntityBuilder;
 import net.spleefleague.core.utils.TypeConverter;
+import net.spleefleague.core.utils.packetwrapper.WrapperPlayServerSpawnEntityLiving;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
+import org.bukkit.util.Vector;
 
 /**
  *
@@ -24,12 +26,10 @@ import org.bukkit.entity.EntityType;
  */
 public class Introduction extends TutorialPart {
 
-    private static Metadata meta;
-    private int currentStep;
+    private static final Metadata meta;
     
-    public Introduction(SLPlayer gp) {
-        super(gp);
-        this.currentStep = 0;
+    public Introduction(SLPlayer gp, int entityID) {
+        super(gp, entityID);
     }
 
     @Override
@@ -43,9 +43,31 @@ public class Introduction extends TutorialPart {
     }
     
     @Override
+    public void onPlayerMessage(String message) {
+        
+    }
+    
+    @Override
     public void start() {
         this.getPlayer().getPlayer().teleport(meta.playerSpawn);
-        meta.villagerSpawn.getWorld().spawnEntity(meta.villagerSpawn, EntityType.VILLAGER);
+        spawnVillager(entityID);
+        String[] messages = new String[]{
+            "Hello! My name is Villager #4 and I'm going to explain you how SpleefLeague works.",
+        };
+        sendMessages(messages, true);
+    }
+    
+    private void spawnVillager(int entityID) {
+        WrapperPlayServerSpawnEntityLiving packet = new WrapperPlayServerSpawnEntityLiving();
+        packet.setType(EntityType.VILLAGER);
+        meta.villagerSpawn.setDirection(new Vector(meta.playerSpawn.getX() - meta.villagerSpawn.getX(), meta.playerSpawn.getY() - meta.villagerSpawn.getY(), meta.playerSpawn.getZ() - meta.villagerSpawn.getZ()));
+        packet.setX(meta.villagerSpawn.getX());
+        packet.setY(meta.villagerSpawn.getY());
+        packet.setZ(meta.villagerSpawn.getZ());
+        packet.setHeadPitch(meta.villagerSpawn.getPitch());
+        packet.setHeadYaw(meta.villagerSpawn.getYaw());
+        packet.setEntityID(entityID);
+        packet.sendPacket(getPlayer().getPlayer());
     }
     
     static {
@@ -64,14 +86,6 @@ public class Introduction extends TutorialPart {
         @DBLoad(fieldName = "villagerSpawn", typeConverter = LocationConverter.class)
         public void setVillagerSpawn(Location spawn) {
             this.villagerSpawn = spawn;
-        }
-        
-        public Location getPlayerSpawn() {
-            return playerSpawn;
-        }
-        
-        public Location getVillagerSpawn() {
-            return villagerSpawn;
         }
         
         private static class LocationConverter extends TypeConverter<BasicDBList, Location> {
