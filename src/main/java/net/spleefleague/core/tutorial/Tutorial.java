@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.Random;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.events.ChatChannelMessageEvent;
+import net.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.tutorial.part.Introduction;
 import org.bukkit.Bukkit;
@@ -17,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  *
@@ -51,9 +53,10 @@ public class Tutorial {
         parts.peek().start();
     }
     
-    public void end() {
+    public void end(boolean completed) {
         slp.setSendingChannel(sendingChannel);
         slp.setReceivingChatChannels(receivingChannels);
+        if(completed) slp.setCompletedTutorial(true);
         tutorials.remove(this);
         for(SLPlayer p : SpleefLeague.getInstance().getPlayerManager().getAll()) {
             if(!isInTutorial(p)) {
@@ -70,7 +73,12 @@ public class Tutorial {
     
     protected void next() {
         parts.poll().onComplete();
-        parts.peek().start();
+        if(parts.isEmpty()) {
+            end(true);
+        }
+        else {
+            parts.peek().start();
+        }
     }
     
     public SLPlayer getPlayer() {
@@ -80,11 +88,11 @@ public class Tutorial {
     private static final HashSet<Tutorial> tutorials = new HashSet<>();
     protected static final Random random = new Random();
     
-    private boolean isInTutorial(SLPlayer slp) {
+    public static boolean isInTutorial(SLPlayer slp) {
         return getTutorial(slp) != null;
     }
     
-    private Tutorial getTutorial(SLPlayer slp) {
+    public static Tutorial getTutorial(SLPlayer slp) {
         for(Tutorial t : tutorials) {
             if(slp == t.slp) {
                 return t;
@@ -109,6 +117,25 @@ public class Tutorial {
                 for(Tutorial t : tutorials) {
                     if(event.getChannel().equals("TUTORIAL-" + t.getPlayer().getUUID().toString())) {
                         t.parts.peek().onPlayerMessage(event.getMessage());
+                        break;
+                    }
+                }
+            }
+            @EventHandler
+            public void onLoaded(GeneralPlayerLoadedEvent event) {
+                if(event.getGeneralPlayer() instanceof SLPlayer) {
+                    SLPlayer slp = (SLPlayer)event.getGeneralPlayer();
+                    if(!slp.hasCompletedTutorial()) {
+                        Tutorial tutorial = new Tutorial(slp);
+                        tutorial.start();
+                    }
+                }
+            }
+            @EventHandler
+            public void onQuit(PlayerQuitEvent event) {
+                for(Tutorial t : tutorials) {
+                    if(t.getPlayer().getPlayer() == event.getPlayer()) {
+                        t.end(false);
                         break;
                     }
                 }

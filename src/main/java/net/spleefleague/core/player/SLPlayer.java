@@ -19,6 +19,7 @@ public class SLPlayer extends GeneralPlayer {
     private int coins;
     private HashSet<String> chatChannels;
     private String sendingChannel;
+    boolean hasCompletedTutorial;
     
     public SLPlayer() {
         super();
@@ -78,6 +79,16 @@ public class SLPlayer extends GeneralPlayer {
         return sendingChannel;
     }
     
+    @DBLoad(fieldName = "tutorialCompleted")
+    public void setCompletedTutorial(boolean hasCompletedTutorial) {
+        this.hasCompletedTutorial = hasCompletedTutorial;
+    }
+    
+    @DBSave(fieldName = "tutorialCompleted")
+    public boolean hasCompletedTutorial() {
+        return this.hasCompletedTutorial;
+    }
+    
     public boolean isInChatChannel(String channel) {
         return chatChannels.contains(channel);
     }
@@ -98,9 +109,10 @@ public class SLPlayer extends GeneralPlayer {
         this.chatChannels.clear();
         this.chatChannels.add("DEFAULT");
         this.sendingChannel = "DEFAULT";
+        this.hasCompletedTutorial = false;
     }
     
-    private static class HashSetConverter extends TypeConverter<BasicDBList, HashSet<String>> {
+    public static class HashSetConverter extends TypeConverter<BasicDBList, HashSet<String>> {
 
         @Override
         public HashSet<String> convertLoad(BasicDBList t) {

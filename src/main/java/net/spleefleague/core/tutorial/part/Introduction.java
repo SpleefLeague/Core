@@ -10,6 +10,7 @@ import com.mongodb.BasicDBObject;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.annotations.DBLoad;
 import net.spleefleague.core.player.SLPlayer;
+import net.spleefleague.core.tutorial.Tutorial;
 import net.spleefleague.core.tutorial.TutorialPart;
 import net.spleefleague.core.utils.EntityBuilder;
 import net.spleefleague.core.utils.TypeConverter;
@@ -44,7 +45,14 @@ public class Introduction extends TutorialPart {
     
     @Override
     public void onPlayerMessage(String message) {
-        
+        if(currentStep <= 1) {
+            if(message.equals("yes")) {
+                currentStep++;
+            }
+            else {
+                Tutorial.getTutorial(getPlayer()).end(true);
+            }
+        }
     }
     
     @Override
@@ -52,7 +60,9 @@ public class Introduction extends TutorialPart {
         this.getPlayer().getPlayer().teleport(meta.playerSpawn);
         spawnVillager(entityID);
         String[] messages = new String[]{
-            "Hello! My name is Villager #4 and I'm going to explain you how SpleefLeague works.",
+            "Welcome on SpleefLeague!",
+            "My name is Villager #4 and I'm going to explain you how this server works.",
+            "If you want to see this tutorial, write \"yes\", otherwise write \"no\""
         };
         sendMessages(messages, true);
     }
@@ -74,7 +84,7 @@ public class Introduction extends TutorialPart {
         meta = EntityBuilder.load(SpleefLeague.getInstance().getPluginDB().getCollection("Tutorials").findOne(new BasicDBObject("name", "Introduction")), Metadata.class);
     }
     
-    private static class Metadata {
+    public static class Metadata {
         
         private Location playerSpawn, villagerSpawn;
         
@@ -88,7 +98,7 @@ public class Introduction extends TutorialPart {
             this.villagerSpawn = spawn;
         }
         
-        private static class LocationConverter extends TypeConverter<BasicDBList, Location> {
+        public static class LocationConverter extends TypeConverter<BasicDBList, Location> {
 
             @Override
             public Location convertLoad(BasicDBList t) {

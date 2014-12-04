@@ -19,7 +19,9 @@ import org.bukkit.entity.Player;
  */
 public abstract class GeneralPlayer {
     
+    @DBLoad(fieldName = "username")
     private String username;
+    @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class)
     private UUID uuid;
     private ObjectId _id;
     
@@ -50,13 +52,11 @@ public abstract class GeneralPlayer {
         return Bukkit.getPlayer(uuid);
     }
     
-    @DBLoad(fieldName = "username")
-    public void setName(String username) {
+    protected void setName(String username) {
         this.username = username;
     }
     
-    @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class)
-    public void setUUID(UUID uuid) {
+    protected void setUUID(UUID uuid) {
         this.uuid = uuid;
     }
     
