@@ -52,8 +52,8 @@ public class ban extends BasicCommand{
                 pl.kickPlayer("You have been banned for: " + banMessage);
             Infraction ban = new Infraction(id, InfractionType.BAN, System.currentTimeMillis(), -1, banMessage);
             SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").remove(new BasicDBObject("uuid", id.toString()));
-            EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), new BasicDBObject("uuid", id.toString()), true);
-            EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), new BasicDBObject("uuid", id.toString()), true);
+            EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), null);
+            EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), null);
             success(cs, "The player has been banned!");
         }
         else{

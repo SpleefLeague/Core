@@ -40,6 +40,7 @@ public class SpleefLeague extends CorePlugin {
     
     @Override
     public void onEnable() {
+        super.onEnable();
         instance = this;
         Config.loadConfig();
         try {

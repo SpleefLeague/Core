@@ -69,12 +69,12 @@ public class SLPlayer extends GeneralPlayer {
         return chatChannels;
     }
     
-    @DBSave(fieldName = "sendingChannel")
+    @DBLoad(fieldName = "sendingChannel")
     public void setSendingChannel(String channel) {
         this.sendingChannel = channel;
     }
     
-    @DBLoad(fieldName = "sendingChannel")
+    @DBSave(fieldName = "sendingChannel")
     public String getSendingChannel() {
         return sendingChannel;
     }

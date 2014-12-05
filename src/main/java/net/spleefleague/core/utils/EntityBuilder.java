@@ -35,11 +35,7 @@ public class EntityBuilder {
         }
     }
     
-    public static <T> void save(T object, DBCollection dbcoll, DBObject index) {
-        save(object, dbcoll, index, false);
-    }
-    
-    public static <T> ObjectId save(T object, DBCollection dbcoll, DBObject index, boolean insert) {
+    public static <T> ObjectId save(T object, DBCollection dbcoll, DBObject index) {
         try {
             HashMap<String, Method> saveMethods = getSaveMethods(object.getClass());
             HashMap<String, Field> saveFields = getSaveFields(object.getClass());
@@ -106,22 +102,15 @@ public class EntityBuilder {
                     Logger.getLogger(GeneralPlayer.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            if(insert) {
-                dbcoll.insert(set);
-                if(index != null)
-                    return (ObjectId) dbcoll.findOne(index).get("_id");
-                else
-                    return null;
+            if(index != null) {
+                DBObject query = new BasicDBObject();
+                query.put("$set", set);
+                query.put("$unset", set);
+                return (ObjectId)dbcoll.update(index, new BasicDBObject("$set", set)).getField("_id");
             }
             else {
-                if(index != null) {
-                    DBObject query = new BasicDBObject();
-                    query.put("$set", set);
-                    query.put("$unset", set);
-                    return (ObjectId)dbcoll.update(index, new BasicDBObject("$set", set)).getField("_id");
-                }
-                else
-                    return null;
+                dbcoll.insert(set);
+                return (ObjectId) dbcoll.findOne(index).get("_id");
             }
         } catch(Exception e) {
             e.printStackTrace();

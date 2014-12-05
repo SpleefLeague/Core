@@ -82,7 +82,7 @@ public abstract class BasicCommand implements CommandExecutor {
     }
 
     protected void success(CommandSender cs, String message) {
-        cs.sendMessage(Theme.ERROR + message);
+        cs.sendMessage(Theme.SUCCESS + message);
     }
 
     protected void sendUsage(CommandSender cs) {

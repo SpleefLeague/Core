@@ -19,11 +19,16 @@ public abstract class CorePlugin extends JavaPlugin {
     
     private final String prefix, chatPrefix;
     public static Logger LOG = Logger.getLogger("Minecraft");
-    public static World DEFAULT_WORLD = Bukkit.getWorlds().get(0);
+    public static World DEFAULT_WORLD;
     
     public CorePlugin(String prefix, String chatPrefix) {
         this.prefix = prefix;
         this.chatPrefix = chatPrefix;
+    }
+    
+    @Override
+    public void onEnable() {
+        DEFAULT_WORLD = Bukkit.getWorlds().get(0);
     }
     
     public abstract DB getPluginDB();
