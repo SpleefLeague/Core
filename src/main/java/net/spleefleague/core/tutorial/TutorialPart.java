@@ -9,6 +9,7 @@ import java.util.Random;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.chat.Theme;
 import net.spleefleague.core.player.SLPlayer;
+import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -20,11 +21,11 @@ public abstract class TutorialPart {
     private final SLPlayer slp;
     protected static final Random random = new Random();
     protected int currentStep = 0;
-    protected final int entityID;
+    protected final Tutorial tutorial;
     
-    public TutorialPart(SLPlayer slp, int entityID) {
+    public TutorialPart(SLPlayer slp, Tutorial tutorial) {
         this.slp = slp;
-        this.entityID = entityID;
+        this.tutorial = tutorial;
     }
     
     public SLPlayer getPlayer() {
@@ -42,12 +43,16 @@ public abstract class TutorialPart {
                     }
                 }
                 else {
-                    getPlayer().getPlayer().sendMessage(Theme.INFO + messages[0]);
+                    getPlayer().getPlayer().sendMessage(Theme.INFO + messages[tick]);
                     tick++;
                 }
             }
         };
         br.runTaskTimer(SpleefLeague.getInstance(), 20, 60);
+    }
+    
+    protected void moveVillager(Location to) {
+        
     }
     
     public abstract void onComplete();

@@ -12,13 +12,12 @@ import net.spleefleague.core.annotations.DBLoad;
 import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.tutorial.Tutorial;
 import net.spleefleague.core.tutorial.TutorialPart;
+import net.spleefleague.core.utils.ControllableVillager;
 import net.spleefleague.core.utils.EntityBuilder;
 import net.spleefleague.core.utils.TypeConverter;
-import net.spleefleague.core.utils.packetwrapper.WrapperPlayServerSpawnEntityLiving;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 
 /**
@@ -29,8 +28,8 @@ public class Introduction extends TutorialPart {
 
     private static final Metadata meta;
     
-    public Introduction(SLPlayer gp, int entityID) {
-        super(gp, entityID);
+    public Introduction(SLPlayer gp, Tutorial tutorial) {
+        super(gp, tutorial);
     }
 
     @Override
@@ -45,11 +44,13 @@ public class Introduction extends TutorialPart {
     
     @Override
     public void onPlayerMessage(String message) {
-        if(currentStep <= 1) {
-            if(message.equals("yes")) {
-                currentStep++;
+        System.out.println(currentStep + message);
+        if(currentStep == 1) {
+            if(message.equalsIgnoreCase("yes") || message.equalsIgnoreCase("y") || message.equalsIgnoreCase("ja")) {
+                sendMessages(new String[]{"That's nice to hear!"}, true);
             }
-            else {
+            else if(message.equalsIgnoreCase("no") || message.equalsIgnoreCase("n") || message.equalsIgnoreCase("nein")) {
+                sendMessages(new String[]{"If you ever need help, just enter /tutorial :)"}, false);
                 Tutorial.getTutorial(getPlayer()).end(true);
             }
         }
@@ -58,7 +59,7 @@ public class Introduction extends TutorialPart {
     @Override
     public void start() {
         this.getPlayer().getPlayer().teleport(meta.playerSpawn);
-        spawnVillager(entityID);
+        spawnVillager();
         String[] messages = new String[]{
             "Welcome on SpleefLeague!",
             "My name is Villager #4 and I'm going to explain you how this server works.",
@@ -67,17 +68,13 @@ public class Introduction extends TutorialPart {
         sendMessages(messages, true);
     }
     
-    private void spawnVillager(int entityID) {
-        WrapperPlayServerSpawnEntityLiving packet = new WrapperPlayServerSpawnEntityLiving();
-        packet.setType(EntityType.VILLAGER);
+    private void spawnVillager() {
         meta.villagerSpawn.setDirection(new Vector(meta.playerSpawn.getX() - meta.villagerSpawn.getX(), meta.playerSpawn.getY() - meta.villagerSpawn.getY(), meta.playerSpawn.getZ() - meta.villagerSpawn.getZ()));
-        packet.setX(meta.villagerSpawn.getX());
-        packet.setY(meta.villagerSpawn.getY());
-        packet.setZ(meta.villagerSpawn.getZ());
-        packet.setHeadPitch(meta.villagerSpawn.getPitch());
-        packet.setHeadYaw(meta.villagerSpawn.getYaw());
-        packet.setEntityID(entityID);
-        packet.sendPacket(getPlayer().getPlayer());
+        Location l = meta.villagerSpawn;
+        ControllableVillager cv = new ControllableVillager(l, getPlayer().getPlayer());
+        cv.spawn();
+        tutorial.setEntity(cv.getBukkitEntity());
+        cv.walkTo(getPlayer().getPlayer().getLocation());
     }
     
     static {
@@ -104,9 +101,9 @@ public class Introduction extends TutorialPart {
             public Location convertLoad(BasicDBList t) {
                 double x, y, z;
                 World world;
-                x = (double) t.get(0);
-                y = (double) t.get(1);
-                z = (double) t.get(2);
+                x = (double)(Integer)t.get(0);
+                y = (double)(Integer) t.get(1);
+                z = (double)(Integer) t.get(2);
                 world = (t.size() == 4) ? Bukkit.getWorld((String)t.get(3)) : SpleefLeague.DEFAULT_WORLD;
                 return new Location(world, x, y, z);
             }

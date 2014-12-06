@@ -37,6 +37,6 @@ public class ChatListener implements Listener {
             prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getName() + ChatColor.DARK_GRAY + "] ";
         }
         event.setCancelled(true);
-        ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET + " " + event.getMessage(), slp.getSendingChannel());
+        ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, event.getMessage(), slp.getSendingChannel());
     }
 }

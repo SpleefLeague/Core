@@ -45,7 +45,7 @@ public class warn extends BasicCommand{
                 String warnMessage = StringUtil.fromArgsArray(args, 1);
                 pl.sendMessage("You have been warned: " + warnMessage);
                 Infraction warn = new Infraction(pl.getUniqueId(), InfractionType.WARNING, System.currentTimeMillis(), -1, warnMessage);
-                EntityBuilder.save(warn, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), new BasicDBObject("uuid", pl.getUniqueId().toString()));
+                EntityBuilder.save(warn, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), null);
                 success(cs, "The player has been warned!");
             }
             else{

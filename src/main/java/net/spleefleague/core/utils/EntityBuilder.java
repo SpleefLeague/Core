@@ -105,8 +105,8 @@ public class EntityBuilder {
             if(index != null) {
                 DBObject query = new BasicDBObject();
                 query.put("$set", set);
-                query.put("$unset", set);
-                return (ObjectId)dbcoll.update(index, new BasicDBObject("$set", set)).getField("_id");
+                query.put("$unset", unset);
+                return (ObjectId)dbcoll.update(index, query).getField("_id");
             }
             else {
                 dbcoll.insert(set);

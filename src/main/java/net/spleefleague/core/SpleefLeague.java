@@ -17,6 +17,7 @@ import net.spleefleague.core.listeners.EnvironmentListener;
 import net.spleefleague.core.listeners.InfractionListener;
 import net.spleefleague.core.player.PlayerManager;
 import net.spleefleague.core.player.SLPlayer;
+import net.spleefleague.core.tutorial.Tutorial;
 import org.bukkit.ChatColor;
 
 /**
@@ -34,11 +35,6 @@ public class SpleefLeague extends CorePlugin {
     }
     
     @Override
-    public void onLoad() {
-        protocolManager = ProtocolLibrary.getProtocolManager();
-    }
-    
-    @Override
     public void onEnable() {
         super.onEnable();
         instance = this;
@@ -50,16 +46,21 @@ public class SpleefLeague extends CorePlugin {
         } catch (Exception ex) {
             Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
         }
+        protocolManager = ProtocolLibrary.getProtocolManager();
         CommandLoader.loadCommands(this, "net.spleefleague.core.command.commands");
         playerManager = new PlayerManager<>(getPluginDB(), SLPlayer.class);
         ChatListener.init();
         EnvironmentListener.init();
         InfractionListener.init();
+        Tutorial.initialize();
     }
     
     @Override
     public void onDisable() {
         mongo.close();
+        for(Tutorial tutorial : Tutorial.getTutorials()) {
+            tutorial.end(false);
+        }
     }
     
     @Override

@@ -29,4 +29,11 @@ public class ChatManager {
             } 
         }
     }
+    
+    public static void sendMessage(String prefix, String message, String channel) {
+        ChatChannelMessageEvent ccme = new ChatChannelMessageEvent(channel, message);
+        Bukkit.getPluginManager().callEvent(ccme);
+        System.out.println(message);
+        sendMessage(prefix + " " + message, channel);
+    }
 }

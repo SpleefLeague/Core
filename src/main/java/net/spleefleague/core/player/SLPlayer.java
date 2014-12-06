@@ -20,6 +20,7 @@ public class SLPlayer extends GeneralPlayer {
     private HashSet<String> chatChannels;
     private String sendingChannel;
     boolean hasCompletedTutorial;
+    private PlayerState state = PlayerState.IDLE;
     
     public SLPlayer() {
         super();
@@ -100,6 +101,14 @@ public class SLPlayer extends GeneralPlayer {
     public void removeChatChannel(String channel) {
         this.chatChannels.remove(channel);
     }
+    
+    public void setState(PlayerState state) {
+        this.state = state;
+    }
+    
+    public PlayerState getState() {
+        return state;
+    }
 
     @Override
     public void setDefaults() {
@@ -111,14 +120,14 @@ public class SLPlayer extends GeneralPlayer {
         this.sendingChannel = "DEFAULT";
         this.hasCompletedTutorial = false;
     }
-    
+
     public static class HashSetConverter extends TypeConverter<BasicDBList, HashSet<String>> {
 
         @Override
         public HashSet<String> convertLoad(BasicDBList t) {
             HashSet<String> hs = new HashSet<>();
-            for(Object o : t) {
-                hs.add((String)o);
+            for (Object o : t) {
+                hs.add((String) o);
             }
             return hs;
         }
@@ -126,10 +135,10 @@ public class SLPlayer extends GeneralPlayer {
         @Override
         public BasicDBList convertSave(HashSet<String> v) {
             BasicDBList bdbl = new BasicDBList();
-            for(String s : v) {
+            for (String s : v) {
                 bdbl.add(s);
             }
             return bdbl;
-        }        
+        }
     }
 }

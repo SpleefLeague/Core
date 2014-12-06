@@ -44,7 +44,7 @@ public class kick extends BasicCommand{
                 pl.kickPlayer("You have been warned: " + kickMessage);
                 Infraction kick = new Infraction(pl.getUniqueId(), InfractionType.KICK, System.currentTimeMillis(), -1, kickMessage);
                 SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").remove(new BasicDBObject("uuid", pl.getUniqueId().toString()));
-                EntityBuilder.save(kick, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), new BasicDBObject("uuid", pl.getUniqueId().toString()));
+                EntityBuilder.save(kick, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), null);
                 success(cs, "The player has been kicked!");
             }
             else{
