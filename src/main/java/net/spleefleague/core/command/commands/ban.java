@@ -8,7 +8,7 @@ package net.spleefleague.core.command.commands;
 
 import com.mongodb.BasicDBObject;
 import java.util.UUID;
-import net.spleefleague.core.CorePlugin;
+import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.command.BasicCommand;
 import net.spleefleague.core.player.Rank;

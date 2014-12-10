@@ -5,6 +5,7 @@
  */
 package net.spleefleague.core;
 
+import net.spleefleague.core.plugin.CorePlugin;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.mongodb.DB;
@@ -35,7 +36,7 @@ public class SpleefLeague extends CorePlugin {
     }
     
     @Override
-    public void onEnable() {
+    public void start() {
         super.onEnable();
         instance = this;
         Config.loadConfig();
@@ -56,7 +57,7 @@ public class SpleefLeague extends CorePlugin {
     }
     
     @Override
-    public void onDisable() {
+    public void stop() {
         mongo.close();
         for(Tutorial tutorial : Tutorial.getTutorials()) {
             tutorial.end(false);

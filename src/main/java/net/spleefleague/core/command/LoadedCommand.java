@@ -5,7 +5,7 @@
  */
 package net.spleefleague.core.command;
 
-import net.spleefleague.core.CorePlugin;
+import net.spleefleague.core.plugin.CorePlugin;
 
 /**
  *

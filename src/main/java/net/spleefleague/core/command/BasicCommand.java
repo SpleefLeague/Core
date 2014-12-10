@@ -6,7 +6,7 @@
 package net.spleefleague.core.command;
 
 import java.util.regex.Pattern;
-import net.spleefleague.core.CorePlugin;
+import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.chat.Theme;
 import net.spleefleague.core.player.Rank;

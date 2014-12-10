@@ -14,10 +14,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static net.minecraft.server.v1_8_R1.AchievementList.o;
-import static net.minecraft.server.v1_8_R1.AchievementList.t;
-import static net.minecraft.server.v1_8_R1.MaterialMapColor.f;
-import static net.minecraft.server.v1_8_R1.MaterialMapColor.m;
 import net.spleefleague.core.io.DBEntity;
 import net.spleefleague.core.io.DBLoad;
 import net.spleefleague.core.io.DBLoadable;
@@ -48,10 +44,10 @@ public class EntityBuilder {
             dbcoll.insert(dbo);
             _id = (ObjectId) dbcoll.findOne(dbo).get("_id");
             try {
-                Field _idField = dbe.getClass().getDeclaredField("_id");
+                Field _idField = DBEntity.class.getDeclaredField("_id");
                 _idField.setAccessible(true);
                 _idField.set(dbe, _id);
-            } catch(Exception e) {
+            } catch(NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }

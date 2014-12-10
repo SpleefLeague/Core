@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.spleefleague.core.CorePlugin;
+import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import net.spleefleague.core.utils.DatabaseConnection;
