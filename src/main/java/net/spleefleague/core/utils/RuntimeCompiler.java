@@ -102,11 +102,6 @@ public class RuntimeCompiler {
             File pluginDirectory = new File(jar.getAbsolutePath().substring(0, jar.getAbsolutePath().length() - jar.getName().length()));
             String classes = buildClassPath(getJar(Bukkit.class).getAbsolutePath(), pluginDirectory.getAbsolutePath() + "/*");
             optionList.addAll(Arrays.asList("-classpath",classes));
-            System.out.println(compiler);
-            System.out.println(optionList.toString());
-            System.out.println(jar.getAbsolutePath());
-            System.out.println(pluginDirectory.getAbsolutePath());
-            System.out.println(classes);
             boolean success;
             try (StandardJavaFileManager fileManager = compiler.getStandardFileManager( null, null, null )) {
                 Iterable<? extends JavaFileObject> units;
@@ -253,5 +248,9 @@ public class RuntimeCompiler {
         if (inst instanceof Stoppable) {
             ((Stoppable)inst).stop();
         }
+    }
+    
+    static {
+        System.setProperty("java.home", System.getProperty("java.home").replace("jre", "jdk"));
     }
 }

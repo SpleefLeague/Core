@@ -18,7 +18,7 @@ commands:
           /<command> <message>
     debug: 
         description: Load a debug class at runtime
-        aliases: [d]
+        aliases: [d,rd]
         usage:
             /<command> <hastebinId>
             /<command> cmd <debuggerId> <cmd> [args]
