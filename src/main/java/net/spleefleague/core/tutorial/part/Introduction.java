@@ -74,7 +74,7 @@ public class Introduction extends TutorialPart {
         ControllableVillager cv = new ControllableVillager(l, getPlayer().getPlayer());
         cv.spawn();
         tutorial.setEntity(cv.getBukkitEntity());
-        cv.walkTo(getPlayer().getPlayer().getLocation());
+        cv.walkTo(cv.getBukkitEntity().getLocation().add(6, 0, 6));
     }
     
     static {
