@@ -197,14 +197,19 @@ public class Tutorial {
                 }
             }
             @EventHandler
-            public void onLoaded(GeneralPlayerLoadedEvent event) {
-                if(event.getGeneralPlayer() instanceof SLPlayer) {
-                    SLPlayer slp = (SLPlayer)event.getGeneralPlayer();
-                    if(!slp.hasCompletedTutorial()) {
-                        Tutorial tutorial = new Tutorial(slp);
-                        tutorial.start();
+            public void onLoaded(final GeneralPlayerLoadedEvent event) {
+                Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), new Runnable() {
+                    @Override
+                    public void run() {
+                        if(event.getGeneralPlayer() instanceof SLPlayer) {
+                            SLPlayer slp = (SLPlayer)event.getGeneralPlayer();
+                            if(!slp.hasCompletedTutorial()) {
+                                Tutorial tutorial = new Tutorial(slp);
+                                tutorial.start();
+                            }
+                        }
                     }
-                }
+                });
             }
             @EventHandler
             public void onQuit(PlayerQuitEvent event) {

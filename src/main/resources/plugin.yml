@@ -12,10 +12,15 @@ commands:
         usage: |
           /<command> <player> <rank>
     reply:
-        description: A reply command
+        description: Reply to the last private message
         aliases: [r]
         usage: |
           /<command> <message>
+    tell:
+        description: A command to send a private message to a certain command
+        aliases: [w]
+        usage: |
+          /<command> <player> <message>
     debug: 
         description: Load a debug class at runtime
         aliases: [d,rd]

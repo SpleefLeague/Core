@@ -3,8 +3,8 @@ package net.spleefleague.core.player;
 import com.mongodb.BasicDBList;
 import java.util.HashSet;
 import java.util.UUID;
-import net.spleefleague.core.annotations.DBLoad;
-import net.spleefleague.core.annotations.DBSave;
+import net.spleefleague.core.io.DBLoad;
+import net.spleefleague.core.io.DBSave;
 import net.spleefleague.core.utils.TypeConverter;
 import net.spleefleague.core.utils.TypeConverter.UUIDStringConverter;
 

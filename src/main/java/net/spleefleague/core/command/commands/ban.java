@@ -7,7 +7,6 @@
 package net.spleefleague.core.command.commands;
 
 import com.mongodb.BasicDBObject;
-import java.util.Arrays;
 import java.util.UUID;
 import net.spleefleague.core.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
@@ -52,8 +51,8 @@ public class ban extends BasicCommand{
                 pl.kickPlayer("You have been banned for: " + banMessage);
             Infraction ban = new Infraction(id, InfractionType.BAN, System.currentTimeMillis(), -1, banMessage);
             SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").remove(new BasicDBObject("uuid", id.toString()));
-            EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), null);
-            EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), null);
+            EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"));
+            EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"));
             success(cs, "The player has been banned!");
         }
         else{

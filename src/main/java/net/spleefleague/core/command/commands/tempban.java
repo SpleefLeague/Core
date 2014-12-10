@@ -54,8 +54,8 @@ public class tempban extends BasicCommand{
                 pl.kickPlayer("You have been tempbanned for " + TimeUtil.getFormatted(duration) + ". " + tempbanMessage);
             Infraction tempban = new Infraction(id, InfractionType.TEMPBAN, System.currentTimeMillis(), duration.toMillis(), tempbanMessage);
             SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").remove(new BasicDBObject("uuid", id.toString()));
-            EntityBuilder.save(tempban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), null);
-            EntityBuilder.save(tempban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), null);
+            EntityBuilder.save(tempban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"));
+            EntityBuilder.save(tempban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"));
             success(cs, "The player has been tempbanned!");
         }
         else{

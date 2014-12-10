@@ -6,8 +6,11 @@
 package net.spleefleague.core.player;
 
 import java.util.UUID;
-import net.spleefleague.core.annotations.DBLoad;
-import net.spleefleague.core.annotations.DBSave;
+import net.spleefleague.core.io.DBEntity;
+import net.spleefleague.core.io.DBLoad;
+import net.spleefleague.core.io.DBLoadable;
+import net.spleefleague.core.io.DBSave;
+import net.spleefleague.core.io.DBSaveable;
 import net.spleefleague.core.utils.TypeConverter.UUIDStringConverter;
 import org.bson.types.ObjectId;
 import org.bukkit.Bukkit;
@@ -17,13 +20,12 @@ import org.bukkit.entity.Player;
  *
  * @author Jonas
  */
-public abstract class GeneralPlayer {
+public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSaveable {
     
     @DBLoad(fieldName = "username")
     private String username;
     @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class)
     private UUID uuid;
-    private ObjectId _id;
     
     public GeneralPlayer() {
         
@@ -37,15 +39,6 @@ public abstract class GeneralPlayer {
     @DBSave(fieldName = "username")
     public String getName() {
         return username;
-    }
-    
-    @DBLoad(fieldName = "_id")
-    public void setObjectId(ObjectId _id) {
-        this._id = _id;
-    }
-    
-    public ObjectId getObjectId() {
-        return _id;
     }
     
     public Player getPlayer() {

@@ -48,7 +48,7 @@ public class SpleefLeague extends CorePlugin {
         }
         protocolManager = ProtocolLibrary.getProtocolManager();
         CommandLoader.loadCommands(this, "net.spleefleague.core.command.commands");
-        playerManager = new PlayerManager<>(getPluginDB(), SLPlayer.class);
+        playerManager = new PlayerManager<>(this, SLPlayer.class);
         ChatListener.init();
         EnvironmentListener.init();
         InfractionListener.init();

@@ -14,8 +14,15 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.spleefleague.core.annotations.DBLoad;
-import net.spleefleague.core.annotations.DBSave;
+import static net.minecraft.server.v1_8_R1.AchievementList.o;
+import static net.minecraft.server.v1_8_R1.AchievementList.t;
+import static net.minecraft.server.v1_8_R1.MaterialMapColor.f;
+import static net.minecraft.server.v1_8_R1.MaterialMapColor.m;
+import net.spleefleague.core.io.DBEntity;
+import net.spleefleague.core.io.DBLoad;
+import net.spleefleague.core.io.DBLoadable;
+import net.spleefleague.core.io.DBSave;
+import net.spleefleague.core.io.DBSaveable;
 import net.spleefleague.core.player.GeneralPlayer;
 import org.bson.types.ObjectId;
 
@@ -24,18 +31,33 @@ import org.bson.types.ObjectId;
  * @author Jonas
  */
 public class EntityBuilder {
-
-    public static <T> void save(T object, DBCollection dbcoll, DBObject index, String field) {
-        try {
-            DBObject dbo = new BasicDBObject();
-            dbo.put(field, getSaveMethods(object.getClass()).get(field).invoke(object));
-            dbcoll.update(index, new BasicDBObject("$set", dbo));
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-            Logger.getLogger(GeneralPlayer.class.getName()).log(Level.SEVERE, null, ex);
+    
+    public static <T extends DBEntity & DBSaveable> void save(T object, DBCollection dbcoll) {
+        DBEntity dbe = (DBEntity)object;
+        ObjectId _id = dbe.getObjectId();
+        DBObject index = null;
+        if(_id != null) {
+            index = new BasicDBObject("_id", _id);
+        }
+        DBObject dbo = serialize(object);
+        if(index != null) {
+            dbcoll.update(index, dbo);
+        }
+        else {
+            dbo = (DBObject)dbo.get("$set");
+            dbcoll.insert(dbo);
+            _id = (ObjectId) dbcoll.findOne(dbo).get("_id");
+            try {
+                Field _idField = dbe.getClass().getDeclaredField("_id");
+                _idField.setAccessible(true);
+                _idField.set(dbe, _id);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     
-    public static <T> ObjectId save(T object, DBCollection dbcoll, DBObject index) {
+    public static DBObject serialize(DBSaveable object) {
         try {
             HashMap<String, Method> saveMethods = getSaveMethods(object.getClass());
             HashMap<String, Field> saveFields = getSaveFields(object.getClass());
@@ -53,23 +75,8 @@ public class EntityBuilder {
                             } else if (!m.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
                                 TypeConverter tc = m.getAnnotation(DBSave.class).typeConverter().newInstance();
                                 o = tc.convertSave(o);
-                            }
-                            set.put(name, o);
-                        }
-                        else {
-                            unset.put(name, "");
-                        }
-                    }
-                    else {
-                        Field f = saveFields.get(name);
-                        f.setAccessible(true);
-                        Object o = f.get(object);
-                        if(o != null) {
-                            if (Enum.class.isAssignableFrom(o.getClass())) {
-                                o = o.toString();
-                            } else if (!f.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
-                                TypeConverter tc = f.getAnnotation(DBSave.class).typeConverter().newInstance();
-                                o = tc.convertSave(o);
+                            } else if (DBSaveable.class.isAssignableFrom(m.getReturnType())) {
+                                o = serialize((DBSaveable)o);
                             }
                             set.put(name, o);
                         }
@@ -92,6 +99,8 @@ public class EntityBuilder {
                         } else if (!f.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
                             TypeConverter tc = f.getAnnotation(DBSave.class).typeConverter().newInstance();
                             o = tc.convertSave(o);
+                        } else if (DBSaveable.class.isAssignableFrom(f.getType())) {
+                            o = serialize((DBSaveable)o);
                         }
                         set.put(name, o);
                     }
@@ -102,23 +111,21 @@ public class EntityBuilder {
                     Logger.getLogger(GeneralPlayer.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            if(index != null) {
-                DBObject query = new BasicDBObject();
-                query.put("$set", set);
-                query.put("$unset", unset);
-                return (ObjectId)dbcoll.update(index, query).getField("_id");
-            }
-            else {
-                dbcoll.insert(set);
-                return (ObjectId) dbcoll.findOne(index).get("_id");
-            }
+            DBObject query = new BasicDBObject();
+            query.put("$set", set);    
+            query.put("$unset", unset);
+            return query;
         } catch(Exception e) {
             e.printStackTrace();
         }
         return null;
     }
     
-    public static <T> T load(DBObject dbo, Class<T> c) {
+    public static <T extends DBEntity & DBLoadable> T load(DBObject dbo, Class<T> c) {
+        return deserialize(dbo, c);
+    }
+    
+    public static <T> T deserialize(DBObject dbo, Class<T> c) {
         try {
             T t = c.newInstance();
             HashMap<String, Method> loadMethods = getLoadMethods(c);
@@ -133,6 +140,8 @@ public class EntityBuilder {
                     } else if (!m.getAnnotation(DBLoad.class).typeConverter().equals(TypeConverter.class)) {
                         TypeConverter tc = m.getAnnotation(DBLoad.class).typeConverter().newInstance();
                         m.invoke(t, tc.convertLoad(o));
+                    } else if (o instanceof DBObject && DBLoadable.class.isAssignableFrom(m.getParameterTypes()[0])) {
+                        m.invoke(t, deserialize((DBObject)o, m.getParameterTypes()[0]));
                     } else {
                         m.invoke(t, o);
                     }
@@ -147,6 +156,8 @@ public class EntityBuilder {
                         } else if (!f.getAnnotation(DBLoad.class).typeConverter().equals(TypeConverter.class)) {
                             TypeConverter tc = f.getAnnotation(DBLoad.class).typeConverter().newInstance();
                             f.set(t, tc.convertLoad(o));
+                        } else if (o instanceof DBObject && DBLoadable.class.isAssignableFrom(f.getType())) {
+                            f.set(t, deserialize((DBObject)o, f.getType()));
                         } else {
                             f.set(t, o);
                         }

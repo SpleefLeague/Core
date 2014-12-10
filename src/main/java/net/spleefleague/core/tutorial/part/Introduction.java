@@ -5,19 +5,18 @@
  */
 package net.spleefleague.core.tutorial.part;
 
-import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import net.spleefleague.core.SpleefLeague;
-import net.spleefleague.core.annotations.DBLoad;
+import net.spleefleague.core.io.DBEntity;
+import net.spleefleague.core.io.DBLoad;
+import net.spleefleague.core.io.DBLoadable;
 import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.tutorial.Tutorial;
 import net.spleefleague.core.tutorial.TutorialPart;
 import net.spleefleague.core.utils.ControllableVillager;
 import net.spleefleague.core.utils.EntityBuilder;
-import net.spleefleague.core.utils.TypeConverter;
-import org.bukkit.Bukkit;
+import net.spleefleague.core.utils.TypeConverter.LocationConverter;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 /**
@@ -81,7 +80,7 @@ public class Introduction extends TutorialPart {
         meta = EntityBuilder.load(SpleefLeague.getInstance().getPluginDB().getCollection("Tutorials").findOne(new BasicDBObject("name", "Introduction")), Metadata.class);
     }
     
-    public static class Metadata {
+    public static class Metadata extends DBEntity implements DBLoadable{
         
         private Location playerSpawn, villagerSpawn;
         
@@ -93,32 +92,6 @@ public class Introduction extends TutorialPart {
         @DBLoad(fieldName = "villagerSpawn", typeConverter = LocationConverter.class)
         public void setVillagerSpawn(Location spawn) {
             this.villagerSpawn = spawn;
-        }
-        
-        public static class LocationConverter extends TypeConverter<BasicDBList, Location> {
-
-            @Override
-            public Location convertLoad(BasicDBList t) {
-                double x, y, z;
-                World world;
-                x = (double)(Integer)t.get(0);
-                y = (double)(Integer) t.get(1);
-                z = (double)(Integer) t.get(2);
-                world = (t.size() == 4) ? Bukkit.getWorld((String)t.get(3)) : SpleefLeague.DEFAULT_WORLD;
-                return new Location(world, x, y, z);
-            }
-
-            @Override
-            public BasicDBList convertSave(Location v) {
-                BasicDBList bdbl = new BasicDBList();
-                bdbl.add(v.getX());
-                bdbl.add(v.getY());
-                bdbl.add(v.getZ());
-                if(v.getWorld() != SpleefLeague.DEFAULT_WORLD) {
-                    bdbl.add(v.getWorld().getName());
-                }
-                return bdbl;
-            }
         }
     }
 }

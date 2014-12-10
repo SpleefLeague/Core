@@ -12,11 +12,11 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.spleefleague.core.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import net.spleefleague.core.utils.DatabaseConnection;
 import net.spleefleague.core.utils.EntityBuilder;
-import org.bson.types.ObjectId;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -36,14 +36,14 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
     private final DB db;
     private final Class<G> playerClass;
     
-    public PlayerManager(DB db, Class<G> playerClass) {
+    public PlayerManager(CorePlugin plugin, Class<G> playerClass) {
         this.map = new ConcurrentHashMap<>();
-        this.db = db;
+        this.db = plugin.getPluginDB();
         this.playerClass = playerClass;
         for(Player player : Bukkit.getOnlinePlayers()) {
             load(player, getPlayerClass());
         }
-        Bukkit.getPluginManager().registerEvents(this, SpleefLeague.getInstance());
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
     
     public Class<G> getPlayerClass() {
@@ -67,8 +67,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
                 generalPlayer.setName(player.getName());
                 generalPlayer.setUUID(player.getUniqueId());
                 generalPlayer.setDefaults();
-                ObjectId _id = EntityBuilder.save(generalPlayer, db.getCollection("Players"), null);
-                generalPlayer.setObjectId(_id);
+                EntityBuilder.save(generalPlayer, db.getCollection("Players"));
             }
             else {
                 generalPlayer = EntityBuilder.load(dbo, c);
@@ -98,7 +97,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
         Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), new Runnable() {
             @Override
             public void run() {
-                EntityBuilder.save(gp, db.getCollection("Players"), new BasicDBObject("_id", gp.getObjectId()));
+                EntityBuilder.save(gp, db.getCollection("Players"));
             }
         });
     }

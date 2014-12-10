@@ -7,15 +7,18 @@
 package net.spleefleague.core.infraction;
 
 import java.util.UUID;
-import net.spleefleague.core.annotations.DBLoad;
-import net.spleefleague.core.annotations.DBSave;
+import net.spleefleague.core.io.DBEntity;
+import net.spleefleague.core.io.DBLoad;
+import net.spleefleague.core.io.DBLoadable;
+import net.spleefleague.core.io.DBSave;
+import net.spleefleague.core.io.DBSaveable;
 import net.spleefleague.core.utils.TypeConverter;
 
 /**
  *
  * @author Manuel
  */
-public class Infraction {
+public class Infraction extends DBEntity implements DBLoadable, DBSaveable {
     private UUID uuid;
     private InfractionType type;
     private long time;

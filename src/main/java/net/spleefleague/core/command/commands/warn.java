@@ -6,8 +6,6 @@
 
 package net.spleefleague.core.command.commands;
 
-import com.mongodb.BasicDBObject;
-import java.util.Arrays;
 import net.spleefleague.core.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.command.BasicCommand;
@@ -45,7 +43,7 @@ public class warn extends BasicCommand{
                 String warnMessage = StringUtil.fromArgsArray(args, 1);
                 pl.sendMessage("You have been warned: " + warnMessage);
                 Infraction warn = new Infraction(pl.getUniqueId(), InfractionType.WARNING, System.currentTimeMillis(), -1, warnMessage);
-                EntityBuilder.save(warn, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), null);
+                EntityBuilder.save(warn, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"));
                 success(cs, "The player has been warned!");
             }
             else{
