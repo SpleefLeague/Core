@@ -18,25 +18,24 @@ import net.spleefleague.core.player.GeneralPlayer;
  * @author Jonas
  * @param <P>
  */
-public class GameQueue<P extends GeneralPlayer> {
+public class GameQueue<P extends GeneralPlayer, K> {
         
-    private static final String DEFAULT = "DEFAULT";
-    private final Map<String, Queue<P>> queues = new HashMap<>();
+    private final Map<K, Queue<P>> queues = new HashMap<>();
     private final Queue<P> all = new LinkedList<>();
     
     public GameQueue() {
-        queues.put(DEFAULT, new LinkedList<P>());
+        queues.put(null, new LinkedList<P>());
     }
     
-    public void register(String queue) {
+    public void register(K queue) {
         if(getQueue(queue) != null) {
             throw new UnsupportedOperationException("Queue \"" + queue + "\" already exists!");
         }
         queues.put(queue, new LinkedList<P>());
     }
     
-    public void unregister(String queue) {
-        if(queue.equals(DEFAULT)) {
+    public void unregister(K queue) {
+        if(queue == null) {
             throw new UnsupportedOperationException("Default queue can't be removed!");
         }
         Queue<P> q = queues.get(queue);
@@ -46,7 +45,11 @@ public class GameQueue<P extends GeneralPlayer> {
         }
     }
     
-    public void queue(P player, String queue) {
+    public void queue(P player, K queue) {
+        queue(player, queue, true);
+    }
+    
+    public void queue(P player, K queue, boolean general) {
         Queue<P> q = getQueue(queue);
         if(isQueued(player)) {
             dequeue(player);
@@ -56,18 +59,18 @@ public class GameQueue<P extends GeneralPlayer> {
         }
         else {
             q.add(player);
-            all.add(player);
+            if(general) all.add(player);
         }
     }
     
     public void queue(P player) {
-        queue(player, DEFAULT);
+        queue(player, null);
     }
     
     public void dequeue(GeneralPlayer player) {
         all.remove(player);
-        for(String name : queues.keySet()) {
-            Queue<P> q = queues.get(name);
+        for(K queue : queues.keySet()) {
+            Queue<P> q = queues.get(queue);
             q.remove(player);
         }
     }
@@ -76,9 +79,9 @@ public class GameQueue<P extends GeneralPlayer> {
         return all.contains(player);
     }
     
-    public Collection<P> request(String requestedQueue, int amount) {
+    public Collection<P> request(K requestedQueue, int amount) {
         Queue<P> r = getQueue(requestedQueue);
-        Queue<P> d = getQueue(DEFAULT);
+        Queue<P> d = getQueue(null);
         P[] array = (P[])all.toArray();
         Collection<P> result = new ArrayList<>();
         for(int i = 0; i < array.length && amount > 0; i++) {
@@ -99,7 +102,7 @@ public class GameQueue<P extends GeneralPlayer> {
         }
     }
     
-    private Queue<P> getQueue(String name) {
+    private Queue<P> getQueue(K name) {
         return queues.get(name);
     }
 }

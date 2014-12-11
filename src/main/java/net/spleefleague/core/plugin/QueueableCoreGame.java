@@ -13,16 +13,16 @@ import net.spleefleague.core.queue.GameQueue;
  * @author Jonas
  * @param <P>
  */
-public abstract class QueueableCoreGame<P extends GeneralPlayer> extends CoreGame {
+public abstract class QueueableCoreGame<P extends GeneralPlayer, K> extends CoreGame {
     
-    private final GameQueue<P> queue;
+    private final GameQueue<P, K> queue;
     
     public QueueableCoreGame(String prefix, String chatPrefix) {
         super(prefix, chatPrefix);
         queue = new GameQueue();
     }
     
-    public GameQueue<P> getGameQueue() {
+    public GameQueue<P, K> getGameQueue() {
         return queue;
     }
     

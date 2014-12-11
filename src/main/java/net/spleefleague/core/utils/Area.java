@@ -21,8 +21,8 @@ public class Area extends DBEntity implements DBLoadable, DBSaveable {
     @DBLoad(fieldName = "low", typeConverter = TypeConverter.LocationConverter.class)
     @DBSave(fieldName = "low", typeConverter = TypeConverter.LocationConverter.class)
     private Location low;
-    @DBLoad(fieldName = "low", typeConverter = TypeConverter.LocationConverter.class)
-    @DBSave(fieldName = "low", typeConverter = TypeConverter.LocationConverter.class)
+    @DBLoad(fieldName = "high", typeConverter = TypeConverter.LocationConverter.class)
+    @DBSave(fieldName = "high", typeConverter = TypeConverter.LocationConverter.class)
     private Location high;
     
     public Area() {
