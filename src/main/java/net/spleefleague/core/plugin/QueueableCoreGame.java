@@ -7,22 +7,24 @@ package net.spleefleague.core.plugin;
 
 import net.spleefleague.core.player.GeneralPlayer;
 import net.spleefleague.core.queue.GameQueue;
+import net.spleefleague.core.queue.Queue;
 
 /**
  *
  * @author Jonas
  * @param <P>
+ * @param <Q>
  */
-public abstract class QueueableCoreGame<P extends GeneralPlayer, K> extends CoreGame {
+public abstract class QueueableCoreGame<P extends GeneralPlayer, Q extends Queue> extends CoreGame {
     
-    private final GameQueue<P, K> queue;
+    private final GameQueue<P, Q> queue;
     
     public QueueableCoreGame(String prefix, String chatPrefix) {
         super(prefix, chatPrefix);
         queue = new GameQueue();
     }
     
-    public GameQueue<P, K> getGameQueue() {
+    public GameQueue<P, Q> getGameQueue() {
         return queue;
     }
     

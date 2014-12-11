@@ -17,24 +17,25 @@ import net.spleefleague.core.player.GeneralPlayer;
  *
  * @author Jonas
  * @param <P>
+ * @param <Q>
  */
-public class GameQueue<P extends GeneralPlayer, K> {
+public class GameQueue<P extends GeneralPlayer, Q extends net.spleefleague.core.queue.Queue> {
         
-    private final Map<K, Queue<P>> queues = new HashMap<>();
+    private final Map<Q, Queue<P>> queues = new HashMap<>();
     private final Queue<P> all = new LinkedList<>();
     
     public GameQueue() {
         queues.put(null, new LinkedList<P>());
     }
     
-    public void register(K queue) {
+    public void register(Q queue) {
         if(getQueue(queue) != null) {
             throw new UnsupportedOperationException("Queue \"" + queue + "\" already exists!");
         }
         queues.put(queue, new LinkedList<P>());
     }
     
-    public void unregister(K queue) {
+    public void unregister(Q queue) {
         if(queue == null) {
             throw new UnsupportedOperationException("Default queue can't be removed!");
         }
@@ -45,11 +46,11 @@ public class GameQueue<P extends GeneralPlayer, K> {
         }
     }
     
-    public void queue(P player, K queue) {
+    public void queue(P player, Q queue) {
         queue(player, queue, true);
     }
     
-    public void queue(P player, K queue, boolean general) {
+    public void queue(P player, Q queue, boolean general) {
         Queue<P> q = getQueue(queue);
         if(isQueued(player)) {
             dequeue(player);
@@ -69,7 +70,7 @@ public class GameQueue<P extends GeneralPlayer, K> {
     
     public void dequeue(GeneralPlayer player) {
         all.remove(player);
-        for(K queue : queues.keySet()) {
+        for(Q queue : queues.keySet()) {
             Queue<P> q = queues.get(queue);
             q.remove(player);
         }
@@ -79,7 +80,21 @@ public class GameQueue<P extends GeneralPlayer, K> {
         return all.contains(player);
     }
     
-    public Collection<P> request(K requestedQueue, int amount) {
+    public HashMap<Q, Collection<P>> request() {
+        HashMap<Q, Collection<P>> requested = new HashMap<>();
+        for(Q q : queues.keySet()) {
+            if(q != null) {
+                Collection<P> players = request(q);
+                if(players != null) {
+                    requested.put(q, players);
+                }
+            }
+        }
+        return requested;
+    }
+    
+    public Collection<P> request(Q requestedQueue) {
+        int amount = requestedQueue.getSize();
         Queue<P> r = getQueue(requestedQueue);
         Queue<P> d = getQueue(null);
         P[] array = (P[])all.toArray();
@@ -102,7 +117,7 @@ public class GameQueue<P extends GeneralPlayer, K> {
         }
     }
     
-    private Queue<P> getQueue(K name) {
+    private Queue<P> getQueue(Q name) {
         return queues.get(name);
     }
 }
