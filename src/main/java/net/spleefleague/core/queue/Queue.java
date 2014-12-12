@@ -12,4 +12,5 @@ package net.spleefleague.core.queue;
 public interface Queue {
     public boolean isOccupied();
     public int getSize();
+    public String getName();
 }

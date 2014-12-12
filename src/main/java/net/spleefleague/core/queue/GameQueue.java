@@ -84,6 +84,7 @@ public class GameQueue<P extends GeneralPlayer, Q extends net.spleefleague.core.
         HashMap<Q, Collection<P>> requested = new HashMap<>();
         for(Q q : queues.keySet()) {
             if(q != null) {
+                if(q.isOccupied()) continue;
                 Collection<P> players = request(q);
                 if(players != null) {
                     requested.put(q, players);
@@ -93,11 +94,12 @@ public class GameQueue<P extends GeneralPlayer, Q extends net.spleefleague.core.
         return requested;
     }
     
+    //Will return players even when queue is occupied
     public Collection<P> request(Q requestedQueue) {
         int amount = requestedQueue.getSize();
         Queue<P> r = getQueue(requestedQueue);
         Queue<P> d = getQueue(null);
-        P[] array = (P[])all.toArray();
+        P[] array = (P[])all.toArray(new GeneralPlayer[0]);
         Collection<P> result = new ArrayList<>();
         for(int i = 0; i < array.length && amount > 0; i++) {
             P q = array[i];
