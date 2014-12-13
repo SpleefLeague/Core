@@ -9,8 +9,6 @@ import com.mongodb.DB;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.logging.Logger;
-import net.spleefleague.core.player.GeneralPlayer;
-import net.spleefleague.core.player.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;

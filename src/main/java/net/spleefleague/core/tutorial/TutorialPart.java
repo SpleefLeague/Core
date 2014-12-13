@@ -41,6 +41,7 @@ public abstract class TutorialPart {
                     if(increaseStep) {
                         currentStep++;
                     }
+                    super.cancel();
                 }
                 else {
                     getPlayer().getPlayer().sendMessage(Theme.INFO + messages[tick]);
