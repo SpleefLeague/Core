@@ -18,7 +18,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 /**
@@ -27,8 +26,13 @@ import org.bukkit.event.weather.WeatherChangeEvent;
  */
 public class EnvironmentListener implements Listener{
     
+    private static Listener instance;
+    
     public static void init() {
-        Bukkit.getPluginManager().registerEvents(new EnvironmentListener(), SpleefLeague.getInstance());
+        if(instance == null) {
+            instance = new EnvironmentListener();
+            Bukkit.getPluginManager().registerEvents(instance, SpleefLeague.getInstance());
+        }
     }
     
     private EnvironmentListener() {
@@ -66,6 +70,7 @@ public class EnvironmentListener implements Listener{
     
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
+        event.setExpToDrop(0);
         event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
     

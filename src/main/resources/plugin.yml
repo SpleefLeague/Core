@@ -68,3 +68,13 @@ commands:
         aliases: []
         usage: |
           /<command>
+    surrender:
+        description: surrenders the current game
+        aliases: []
+        usage: |
+          /<command>
+    leave:
+        description: Leaves the current queue
+        aliases: []
+        usage: |
+          /<command>

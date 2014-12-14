@@ -32,7 +32,7 @@ public abstract class BasicCommand implements CommandExecutor {
     private String[] usages = null;
     private static final String NO_COMMAND_PERMISSION_MESSAGE = Theme.ERROR + "You don't have permission to use this command!";
     private static final String PLAYERDATA_ERROR_MESSAGE = Theme.ERROR + "Your player data hasn't yet been loaded. Please try again.";
-    
+    private static final String NO_PLAYER_INSTANCE = Theme.WARNING + "This command can only be run by an instance of a player.";
     
     public BasicCommand(CorePlugin plugin, String name, String usage) {
         this(plugin, name, usage, Rank.DEFAULT);
@@ -93,11 +93,11 @@ public abstract class BasicCommand implements CommandExecutor {
     }
     
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
-        cs.sendMessage(Theme.WARNING + "This command can only be run by an instance of a player.");
+        cs.sendMessage(NO_PLAYER_INSTANCE);
     }
 
     protected int runBlock(CommandSender cs, Command cmd, String[] args) {
-        cs.sendMessage(Theme.WARNING + "This command can only be run by an instance of a player.");
+        cs.sendMessage(NO_PLAYER_INSTANCE);
         return 0;
     }
     

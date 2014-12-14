@@ -58,24 +58,4 @@ public abstract class CorePlugin extends JavaPlugin {
     public static Collection<CorePlugin> getAll() {
         return plugins;
     }
-    
-    public static Collection<CoreGame> getCoreGames() {
-        Collection<CoreGame> coreGames = new HashSet<>();
-        for(CorePlugin plugin : getAll()) {
-            if(plugin instanceof CoreGame) {
-                coreGames.add((CoreGame)plugin);
-            }
-        }
-        return coreGames;
-    }
-    
-    public static Collection<QueueableCoreGame> getQueueableCoreGames() {
-        Collection<QueueableCoreGame> coreGames = new HashSet<>();
-        for(CorePlugin plugin : getAll()) {
-            if(plugin instanceof CoreGame) {
-                coreGames.add((QueueableCoreGame)plugin);
-            }
-        }
-        return coreGames;
-    }
 }

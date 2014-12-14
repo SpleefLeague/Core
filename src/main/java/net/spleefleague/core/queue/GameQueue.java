@@ -68,7 +68,8 @@ public class GameQueue<P extends GeneralPlayer, Q extends net.spleefleague.core.
         queue(player, null);
     }
     
-    public void dequeue(GeneralPlayer player) {
+    public void dequeue(P player) {
+        
         all.remove(player);
         for(Q queue : queues.keySet()) {
             Queue<P> q = queues.get(queue);
@@ -76,7 +77,7 @@ public class GameQueue<P extends GeneralPlayer, Q extends net.spleefleague.core.
         }
     }
     
-    public boolean isQueued(GeneralPlayer player) {
+    public boolean isQueued(P player) {
         return all.contains(player);
     }
     

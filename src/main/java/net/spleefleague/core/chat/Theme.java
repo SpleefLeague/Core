@@ -35,12 +35,12 @@ public enum Theme {
         this(SpleefLeague.getInstance().getChatPrefix(), color);
     }
     
-    public String buildTheme() {
-        return prefix + " " + color;
+    public String buildTheme(boolean prefix) {
+        return (prefix ? this.prefix + " " : "") + color;
     }
     
     @Override
     public String toString() {
-        return buildTheme();
+        return buildTheme(true);
     }
 }

@@ -21,8 +21,13 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
  */
 public class ChatListener implements Listener {
     
+    private static Listener instance;
+    
     public static void init() {
-        Bukkit.getPluginManager().registerEvents(new ChatListener(), SpleefLeague.getInstance());
+        if(instance == null) {
+            instance = new ChatListener();
+            Bukkit.getPluginManager().registerEvents(instance, SpleefLeague.getInstance());
+        }
     }
     
     private ChatListener() {

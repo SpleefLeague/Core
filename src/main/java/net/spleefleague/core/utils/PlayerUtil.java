@@ -6,6 +6,7 @@
 package net.spleefleague.core.utils;
 
 import net.minecraft.server.v1_8_R1.ChatSerializer;
+import net.minecraft.server.v1_8_R1.Entity;
 import net.minecraft.server.v1_8_R1.EnumTitleAction;
 import net.minecraft.server.v1_8_R1.IChatBaseComponent;
 import net.minecraft.server.v1_8_R1.PacketPlayOutTitle;
@@ -28,5 +29,15 @@ public class PlayerUtil {
         PacketPlayOutTitle subtitlePacket = new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, subtitleJSON);
         connection.sendPacket(titlePacket);
         connection.sendPacket(subtitlePacket);
+    }
+    
+    public static boolean isInWater(Player player) {
+        Entity e = ((CraftPlayer)player).getHandle();
+        return e.V();
+    }
+    
+    public static boolean isInLava(Player player) {
+        Entity e = ((CraftPlayer)player).getHandle();
+        return e.ab();
     }
 }

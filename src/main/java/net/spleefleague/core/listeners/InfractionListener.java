@@ -26,8 +26,17 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
  */
 public class InfractionListener implements Listener{
     
+    private static Listener instance;
+    
     public static void init() {
-        Bukkit.getPluginManager().registerEvents(new InfractionListener(), SpleefLeague.getInstance());
+        if(instance == null) {
+            instance = new InfractionListener();
+            Bukkit.getPluginManager().registerEvents(instance, SpleefLeague.getInstance());
+        }
+    }
+    
+    private InfractionListener() {
+        
     }
     
     @EventHandler
