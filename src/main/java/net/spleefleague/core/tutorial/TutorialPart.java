@@ -22,6 +22,7 @@ public abstract class TutorialPart {
     protected static final Random random = new Random();
     protected int currentStep = 0;
     protected final Tutorial tutorial;
+    protected MessageRunnable messageRunnable;
     
     public TutorialPart(SLPlayer slp, Tutorial tutorial) {
         this.slp = slp;
@@ -33,23 +34,14 @@ public abstract class TutorialPart {
     }
     
     protected void sendMessages(final String[] messages, final boolean increaseStep) {
-        BukkitRunnable br = new BukkitRunnable() {
-            private int tick = 0;
-            @Override
-            public void run() {
-                if(messages.length <= tick) {
-                    if(increaseStep) {
-                        currentStep++;
-                    }
-                    super.cancel();
-                }
-                else {
-                    getPlayer().getPlayer().sendMessage(Theme.INFO + messages[tick]);
-                    tick++;
-                }
-            }
-        };
-        br.runTaskTimer(SpleefLeague.getInstance(), 20, 60);
+        messageRunnable = new MessageRunnable(messages, increaseStep);
+        messageRunnable.runTaskTimer(SpleefLeague.getInstance(), 20, 60);
+    }
+    
+    protected void cancelMessages(boolean incrementAnyways) {
+        if(messageRunnable != null) {
+            messageRunnable.cancel(incrementAnyways);
+        }
     }
     
     protected void moveVillager(Location to) {
@@ -61,5 +53,41 @@ public abstract class TutorialPart {
     public abstract void start();
     public void onPlayerMessage(String message) {
         //Do nothing
+    }
+    
+    private class MessageRunnable extends BukkitRunnable {
+
+        private int tick = 0;
+        private final String[] messages;
+        private final boolean increaseStep;
+        private boolean increased = false;
+        
+        public MessageRunnable(String[] messages, boolean increaseStep) {
+            this.messages = messages;
+            this.increaseStep = increaseStep;
+        }
+        
+        @Override
+        public void run() {
+            if(messages.length <= tick) {
+                if(increaseStep && !increased) {
+                    currentStep++;
+                    increased = true;
+                }
+                super.cancel();
+            }
+            else {
+                getPlayer().getPlayer().sendMessage(Theme.INFO + messages[tick]);
+                tick++;
+            }
+        }
+        
+        public void cancel(boolean increaseAnyways) {
+            super.cancel();
+            if(increaseAnyways && increaseStep && !increased) {
+                currentStep++;
+                increased = true;
+            }
+        }
     }
 }

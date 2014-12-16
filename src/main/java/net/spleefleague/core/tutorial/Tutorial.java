@@ -136,8 +136,6 @@ public class Tutorial {
         return tutorials;
     }
     
-    public static void initialize() {}
-    
     public static class TutorialData {
         public Entity entity;
     }
@@ -152,7 +150,6 @@ public class Tutorial {
                 @Override
                 public void onPacketSending(PacketEvent event) {
                     WrapperPlayServerEntity packet = new WrapperPlayServerEntity(event.getPacket());
-                    System.out.println(packet.getEntity(event) + ": " + (packet.getEntity(event) instanceof ControllableVillager));
                     if(packet.getEntityID() == tutorial.getEntity().getEntityId()) {
                         if(event.getPlayer() != tutorial.getPlayer().getPlayer()) {
                             event.setCancelled(true);
@@ -176,7 +173,7 @@ public class Tutorial {
         }
     }
     
-    static {
+    public static void initialize() {
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
             public void onJoin(PlayerJoinEvent event) {

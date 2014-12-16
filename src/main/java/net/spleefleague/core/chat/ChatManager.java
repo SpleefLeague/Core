@@ -32,7 +32,16 @@ public class ChatManager {
     
     public static void sendMessage(String prefix, String message, String channel) {
         ChatChannelMessageEvent ccme = new ChatChannelMessageEvent(channel, message);
+        message = prefix + message;
         Bukkit.getPluginManager().callEvent(ccme);
-        sendMessage(prefix + " " + message, channel);
+        message = ccme.getMessage();
+        channel = ccme.getChannel();
+        if(!ccme.isCancelled()) {
+            for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
+                if(slp.isInChatChannel(channel)) {
+                    slp.getPlayer().sendMessage(message);
+                }
+            } 
+        }
     }
 }

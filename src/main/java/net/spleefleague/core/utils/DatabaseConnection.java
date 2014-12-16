@@ -11,6 +11,9 @@ import com.mongodb.DBObject;
 import java.util.UUID;
 import net.spleefleague.core.SpleefLeague;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
  *
@@ -19,6 +22,15 @@ import org.bukkit.Bukkit;
 public class DatabaseConnection {
 
     private static final UUIDCache uuidCache = new UUIDCache(1000);
+    
+    public static void initialize() {
+        Bukkit.getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onJoin(PlayerJoinEvent event) {
+                DatabaseConnection.updateCache(event.getPlayer().getUniqueId(), event.getPlayer().getName());
+            }
+        },SpleefLeague.getInstance());
+    }
     
     public static void updateCache(UUID uuid, String username) {
         uuidCache.insert(uuid, username);

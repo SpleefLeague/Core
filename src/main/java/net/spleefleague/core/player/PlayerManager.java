@@ -73,6 +73,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
                 generalPlayer = EntityBuilder.load(dbo, c);
             }
             map.put(player, generalPlayer);
+            System.out.println(get(player));
             callEvent(generalPlayer, dbo == null);    
         } catch (InstantiationException | IllegalAccessException | SecurityException | IllegalArgumentException ex) {
             Logger.getLogger(PlayerManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -85,7 +86,6 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
             @Override
             public void run() {
                 load(event.getPlayer(), getPlayerClass());
-                DatabaseConnection.updateCache(event.getPlayer().getUniqueId(), event.getPlayer().getName());
             }
         });
     }

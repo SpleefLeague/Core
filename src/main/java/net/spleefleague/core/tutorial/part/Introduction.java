@@ -43,12 +43,13 @@ public class Introduction extends TutorialPart {
     
     @Override
     public void onPlayerMessage(String message) {
-        System.out.println(currentStep + message);
-        if(currentStep == 1) {
+        if(currentStep <= 1) {
             if(message.equalsIgnoreCase("yes") || message.equalsIgnoreCase("y") || message.equalsIgnoreCase("ja")) {
+                cancelMessages(true);
                 sendMessages(new String[]{"That's nice to hear!"}, true);
             }
             else if(message.equalsIgnoreCase("no") || message.equalsIgnoreCase("n") || message.equalsIgnoreCase("nein")) {
+                cancelMessages(true);
                 sendMessages(new String[]{"If you ever need help, just enter /tutorial :)"}, false);
                 Tutorial.getTutorial(getPlayer()).end(true);
             }
