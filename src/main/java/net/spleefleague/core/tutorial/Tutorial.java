@@ -9,7 +9,6 @@ import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Random;
@@ -42,7 +41,7 @@ public class Tutorial {
     //Previous settings
     private HashSet<String> receivingChannels;
     private String sendingChannel;
-    private Entity entity;
+    private ControllableVillager entity;
     private PacketListener pl;
     
     public Tutorial(SLPlayer slplayer) {
@@ -72,7 +71,7 @@ public class Tutorial {
     
     public void end(boolean completed) {
         if(this.entity != null) {
-            this.entity.remove();
+            this.entity.getBukkitEntity().remove();
         }
         slp.getPlayer().teleport(this.startLocation);
         slp.setSendingChannel(sendingChannel);
@@ -108,11 +107,11 @@ public class Tutorial {
         return slp;
     }
     
-    public Entity getEntity() {
+    public ControllableVillager getEntity() {
         return entity;
     }
     
-    public void setEntity(Entity entity) {
+    public void setEntity(ControllableVillager entity) {
         this.entity = entity;
     }
     
@@ -150,7 +149,7 @@ public class Tutorial {
                 @Override
                 public void onPacketSending(PacketEvent event) {
                     WrapperPlayServerEntity packet = new WrapperPlayServerEntity(event.getPacket());
-                    if(packet.getEntityID() == tutorial.getEntity().getEntityId()) {
+                    if(packet.getEntityID() == tutorial.getEntity().getId()) {
                         if(event.getPlayer() != tutorial.getPlayer().getPlayer()) {
                             event.setCancelled(true);
                         }

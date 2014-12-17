@@ -55,6 +55,10 @@ public abstract class CorePlugin extends JavaPlugin {
         return chatPrefix;
     }
     
+    public void log(String message) {
+        System.out.println(prefix + " " + message);
+    }
+    
     public static Collection<CorePlugin> getAll() {
         return plugins;
     }

@@ -32,16 +32,6 @@ public class Introduction extends TutorialPart {
     }
 
     @Override
-    public void onComplete() {
-        
-    }
-
-    @Override
-    public void onCancel() {
-    
-    }
-    
-    @Override
     public void onPlayerMessage(String message) {
         if(currentStep <= 1) {
             if(message.equalsIgnoreCase("yes") || message.equalsIgnoreCase("y") || message.equalsIgnoreCase("ja")) {
@@ -73,7 +63,7 @@ public class Introduction extends TutorialPart {
         Location l = meta.villagerSpawn;
         ControllableVillager cv = new ControllableVillager(l, getPlayer().getPlayer());
         cv.spawn();
-        tutorial.setEntity(cv.getBukkitEntity());
+        tutorial.setEntity(cv);
         cv.walkTo(cv.getBukkitEntity().getLocation().add(6, 0, 6));
     }
     

@@ -22,4 +22,5 @@ import net.spleefleague.core.utils.TypeConverter;
 public @interface DBSave {
     String fieldName();
     Class<? extends TypeConverter> typeConverter() default TypeConverter.class;
+    int priority() default -1;
 }

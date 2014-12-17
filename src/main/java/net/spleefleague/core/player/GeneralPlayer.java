@@ -12,7 +12,6 @@ import net.spleefleague.core.io.DBLoadable;
 import net.spleefleague.core.io.DBSave;
 import net.spleefleague.core.io.DBSaveable;
 import net.spleefleague.core.utils.TypeConverter.UUIDStringConverter;
-import org.bson.types.ObjectId;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -22,9 +21,9 @@ import org.bukkit.entity.Player;
  */
 public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSaveable {
     
-    @DBLoad(fieldName = "username")
+    @DBLoad(fieldName = "username", priority = Integer.MAX_VALUE)
     private String username;
-    @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class)
+    @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class, priority = Integer.MAX_VALUE)
     private UUID uuid;
     
     public GeneralPlayer() {

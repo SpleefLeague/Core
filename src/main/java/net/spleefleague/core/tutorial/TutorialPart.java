@@ -48,8 +48,13 @@ public abstract class TutorialPart {
         
     }
     
-    public abstract void onComplete();
-    public abstract void onCancel();
+    public void onComplete() {
+        cancelMessages(true);
+    }
+    public void onCancel() {
+        cancelMessages(true);
+    }
+    
     public abstract void start();
     public void onPlayerMessage(String message) {
         //Do nothing
@@ -77,8 +82,7 @@ public abstract class TutorialPart {
                 super.cancel();
             }
             else {
-                getPlayer().getPlayer().sendMessage(Theme.INFO + messages[tick]);
-                tick++;
+                getPlayer().getPlayer().sendMessage(Theme.INFO + messages[tick++]);
             }
         }
         

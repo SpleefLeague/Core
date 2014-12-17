@@ -15,12 +15,12 @@ import java.util.logging.Logger;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.events.GeneralPlayerLoadedEvent;
-import net.spleefleague.core.utils.DatabaseConnection;
 import net.spleefleague.core.utils.EntityBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -64,16 +64,16 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
             G generalPlayer;
             if(dbo == null) {
                 generalPlayer = c.newInstance();
+                generalPlayer.setDefaults();
                 generalPlayer.setName(player.getName());
                 generalPlayer.setUUID(player.getUniqueId());
-                generalPlayer.setDefaults();
                 EntityBuilder.save(generalPlayer, db.getCollection("Players"));
             }
             else {
                 generalPlayer = EntityBuilder.load(dbo, c);
+                generalPlayer.setName(player.getName()); //Necessary when changing usernames are allowed
             }
             map.put(player, generalPlayer);
-            System.out.println(get(player));
             callEvent(generalPlayer, dbo == null);    
         } catch (InstantiationException | IllegalAccessException | SecurityException | IllegalArgumentException ex) {
             Logger.getLogger(PlayerManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -90,7 +90,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
         });
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST) //Misleading, has to be called last
     public void onQuit(PlayerQuitEvent event) {
         final G gp = get(event.getPlayer());
         this.map.remove(event.getPlayer());
