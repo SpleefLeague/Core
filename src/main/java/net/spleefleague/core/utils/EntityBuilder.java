@@ -222,6 +222,8 @@ public class EntityBuilder {
                 try {
                     Field f = super.field;
                     Object o = f.get(instance);
+                    if(o == null)
+                        return null;
                     if (Enum.class.isAssignableFrom(o.getClass())) {
                         o = o.toString();
                     } else if (!f.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
@@ -241,6 +243,8 @@ public class EntityBuilder {
                 try {
                     Method m = super.method;
                     Object o = m.invoke(instance);
+                    if(o == null)
+                        return null;
                     if (Enum.class.isAssignableFrom(m.getReturnType())) {
                         o = o.toString();
                     } else if (!m.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
