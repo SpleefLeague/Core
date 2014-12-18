@@ -45,9 +45,24 @@ public abstract class TypeConverter<T, V> {
         public Location convertLoad(BasicDBList t) {
             double x, y, z;
             World world;
-            x = (double) (Integer) t.get(0);
-            y = (double) (Integer) t.get(1);
-            z = (double) (Integer) t.get(2);
+            if(t.get(0) instanceof Integer) {
+                x = (Integer)t.get(0);
+            }
+            else {
+                x = (double)t.get(0);
+            }
+            if(t.get(1) instanceof Integer) {
+                y = (Integer)t.get(1);
+            }
+            else {
+                y = (double)t.get(1);
+            }
+            if(t.get(2) instanceof Integer) {
+                z = (Integer)t.get(2);
+            }
+            else {
+                z = (double)t.get(2);
+            }
             world = (t.size() == 4) ? Bukkit.getWorld((String) t.get(3)) : SpleefLeague.DEFAULT_WORLD;
             return new Location(world, x, y, z);
         }

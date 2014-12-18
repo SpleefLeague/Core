@@ -35,7 +35,6 @@ public class SLPlayer extends GeneralPlayer {
     @DBLoad(fieldName = "rank")
     public void setRank(Rank rank) {
         this.rank = rank;
-        getPlayer().setDisplayName(rank.getColor() + getName());
         getPlayer().setPlayerListName(rank.getColor() + getName());
         if(rank.hasPermission(Rank.MODERATOR)) {
             chatChannels.add("STAFF");

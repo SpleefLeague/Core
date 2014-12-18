@@ -69,7 +69,6 @@ public class GameQueue<P extends GeneralPlayer, Q extends net.spleefleague.core.
     }
     
     public void dequeue(P player) {
-        
         all.remove(player);
         for(Q queue : queues.keySet()) {
             Queue<P> q = queues.get(queue);
