@@ -78,3 +78,8 @@ commands:
         aliases: []
         usage: |
           /<command>
+    cancel:
+        description: Cancels a game
+        aliases: []
+        usage: |
+          /<command> <player>

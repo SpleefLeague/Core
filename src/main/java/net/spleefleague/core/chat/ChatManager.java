@@ -5,6 +5,7 @@
  */
 package net.spleefleague.core.chat;
 
+import java.util.HashSet;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.events.ChatChannelMessageEvent;
 import net.spleefleague.core.player.SLPlayer;
@@ -54,5 +55,28 @@ public class ChatManager {
                 }
             }
         });
+    }
+    
+    private static HashSet<ChatChannel> publicChannels = new HashSet<>();
+    
+    public static void registerPublicChannel(ChatChannel channel) {
+        publicChannels.add(channel);
+        if(channel.isDefault()) {
+            for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
+                if(!slp.isInChatChannel(channel.getName())) {
+                    slp.addChatChannel(channel.getName());
+                }
+            }
+        }
+    }
+    
+    public static HashSet<ChatChannel> getAvailableChatChannels(SLPlayer slp) {
+        HashSet<ChatChannel> channels = new HashSet<>();
+        for(ChatChannel channel : publicChannels) {
+            if(slp.getRank().hasPermission(channel.getMinRank())) {
+                channels.add(channel);
+            }
+        }
+        return channels;
     }
 }
