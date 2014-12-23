@@ -32,7 +32,7 @@ import org.bukkit.event.Listener;
 
 /**
  *
- * @author Jonas
+ * @author Jonas Balsfulland
  */
 public class RuntimeCompiler {
     
@@ -121,18 +121,6 @@ public class RuntimeCompiler {
         }
     }
     
-    public static Class load(File file) {
-        try {
-            URL url = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - file.getName().length())).toURI().toURL();
-            ClassLoader cl = new URLClassLoader(new URL[]{url}, SpleefLeague.class.getClassLoader());
-            Class c = cl.loadClass(file.getName().substring(0, file.getName().length() - 6));
-            return c;
-        } catch (MalformedURLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
-    
     private static String buildClassPath(String... paths) {
         StringBuilder sb = new StringBuilder();
         for (String path : paths) {
@@ -151,7 +139,21 @@ public class RuntimeCompiler {
                 sb.append(System.getProperty("path.separator"));
             }
         }
-        return sb.toString();
+        String s = sb.toString();
+        s = s.substring(0,s.length() - 1);
+        return s;
+    }
+    
+    public static Class load(File file) {
+        try {
+            URL url = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - file.getName().length())).toURI().toURL();
+            ClassLoader cl = new URLClassLoader(new URL[]{url}, SpleefLeague.class.getClassLoader());
+            Class c = cl.loadClass(file.getName().substring(0, file.getName().length() - 6));
+            return c;
+        } catch (MalformedURLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
     
     public static File getJar(Class aclass) {
@@ -250,6 +252,7 @@ public class RuntimeCompiler {
         }
     }
     
+    //Can be necessary on some windows and java versions.
     static {
         System.setProperty("java.home", System.getProperty("java.home").replace("jre", "jdk"));
     }

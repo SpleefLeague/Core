@@ -6,7 +6,6 @@
 package net.spleefleague.core.utils;
 
 import com.mongodb.BasicDBList;
-import com.mongodb.DBObject;
 import java.util.UUID;
 import net.spleefleague.core.SpleefLeague;
 import org.bukkit.Bukkit;

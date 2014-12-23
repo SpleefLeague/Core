@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 
 /**
  *
- * @author Wouter
+ * @author Jonas Balsfulland
  */
 public interface Debugger {
 
