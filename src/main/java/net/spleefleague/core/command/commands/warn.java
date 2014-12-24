@@ -11,7 +11,7 @@ import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.command.BasicCommand;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
-import net.spleefleague.core.utils.EntityBuilder;
+import net.spleefleague.core.io.EntityBuilder;
 import net.spleefleague.core.utils.StringUtil;
 import net.spleefleague.core.infraction.Infraction;
 import net.spleefleague.core.infraction.InfractionType;

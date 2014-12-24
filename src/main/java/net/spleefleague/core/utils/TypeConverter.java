@@ -78,28 +78,4 @@ public abstract class TypeConverter<T, V> {
             return bdbl;
         }
     }
-    
-    public static class LocationArrayConverter extends TypeConverter<BasicDBList, Location[]> {
-
-        private static final LocationConverter lc = new LocationConverter();
-        
-        @Override
-        public Location[] convertLoad(BasicDBList t) {
-            Location[] array = new Location[t.size()];
-            for(int i = 0; i < array.length; i++) {
-                BasicDBList loc = (BasicDBList)t.get(i);
-                array[i] = lc.convertLoad(loc);
-            }
-            return array;
-        }
-
-        @Override
-        public BasicDBList convertSave(Location[] v) {
-            BasicDBList bdbl = new BasicDBList();
-            for(Location loc : v) {
-                bdbl.add(lc.convertSave(loc));
-            }
-            return bdbl;
-        }
-    }
 }

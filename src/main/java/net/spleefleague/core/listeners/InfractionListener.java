@@ -11,7 +11,7 @@ import com.mongodb.DBObject;
 import java.time.Duration;
 import java.time.Instant;
 import net.spleefleague.core.SpleefLeague;
-import net.spleefleague.core.utils.EntityBuilder;
+import net.spleefleague.core.io.EntityBuilder;
 import net.spleefleague.core.utils.TimeUtil;
 import net.spleefleague.core.infraction.Infraction;
 import net.spleefleague.core.infraction.InfractionType;

@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.events.GeneralPlayerLoadedEvent;
-import net.spleefleague.core.utils.EntityBuilder;
+import net.spleefleague.core.io.EntityBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

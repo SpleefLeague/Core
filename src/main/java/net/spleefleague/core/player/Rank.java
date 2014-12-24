@@ -14,6 +14,7 @@ import org.bukkit.ChatColor;
 public enum Rank {
     
     ADMIN(100, "Admin", ChatColor.DARK_RED),
+    COUNCIL(100, "Council", ChatColor.DARK_RED),
     DEVELOPER(90, "Dev", ChatColor.BLUE),
     SENIOR_MODERATOR(80, "Sr. Mod", ChatColor.RED),
     MODERATOR(60, "Mod", ChatColor.RED),
