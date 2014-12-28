@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.spleefleague.core.utils;
+package net.spleefleague.core.io;
 
 import com.mongodb.BasicDBList;
 import java.util.UUID;

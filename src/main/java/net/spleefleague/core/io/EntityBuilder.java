@@ -17,8 +17,8 @@ import java.util.Map;
 import net.spleefleague.core.io.EntityBuilder.IOClass.Input;
 import net.spleefleague.core.io.EntityBuilder.IOClass.Output;
 import net.spleefleague.core.utils.MapUtil;
-import net.spleefleague.core.utils.TypeConverter;
 import org.bson.types.ObjectId;
+import org.bukkit.util.Vector;
 
 /**
  *
@@ -27,6 +27,7 @@ import org.bson.types.ObjectId;
 public class EntityBuilder {
 
     public static <T extends DBEntity & DBSaveable> void save(T object, DBCollection dbcoll) {
+        Vector v = new Vector();
         DBEntity dbe = (DBEntity)object;
         ObjectId _id = dbe.getObjectId();
         DBObject index = null;

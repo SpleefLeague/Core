@@ -12,7 +12,7 @@ import net.spleefleague.core.io.DBLoad;
 import net.spleefleague.core.io.DBLoadable;
 import net.spleefleague.core.io.DBSave;
 import net.spleefleague.core.io.DBSaveable;
-import net.spleefleague.core.utils.TypeConverter;
+import net.spleefleague.core.io.TypeConverter;
 
 /**
  *

@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.UUID;
 import net.spleefleague.core.io.DBLoad;
 import net.spleefleague.core.io.DBSave;
-import net.spleefleague.core.utils.TypeConverter;
-import net.spleefleague.core.utils.TypeConverter.UUIDStringConverter;
+import net.spleefleague.core.io.TypeConverter;
+import net.spleefleague.core.io.TypeConverter.UUIDStringConverter;
 
 /**
  *

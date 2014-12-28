@@ -15,7 +15,7 @@ import net.spleefleague.core.tutorial.Tutorial;
 import net.spleefleague.core.tutorial.TutorialPart;
 import net.spleefleague.core.utils.ControllableVillager;
 import net.spleefleague.core.io.EntityBuilder;
-import net.spleefleague.core.utils.TypeConverter.LocationConverter;
+import net.spleefleague.core.io.TypeConverter.LocationConverter;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 

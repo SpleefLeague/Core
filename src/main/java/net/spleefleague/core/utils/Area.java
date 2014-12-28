@@ -5,6 +5,7 @@
  */
 package net.spleefleague.core.utils;
 
+import net.spleefleague.core.io.TypeConverter;
 import net.spleefleague.core.io.DBEntity;
 import net.spleefleague.core.io.DBLoad;
 import net.spleefleague.core.io.DBLoadable;

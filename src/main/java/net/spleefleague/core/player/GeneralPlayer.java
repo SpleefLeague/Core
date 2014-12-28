@@ -11,7 +11,7 @@ import net.spleefleague.core.io.DBLoad;
 import net.spleefleague.core.io.DBLoadable;
 import net.spleefleague.core.io.DBSave;
 import net.spleefleague.core.io.DBSaveable;
-import net.spleefleague.core.utils.TypeConverter.UUIDStringConverter;
+import net.spleefleague.core.io.TypeConverter.UUIDStringConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
