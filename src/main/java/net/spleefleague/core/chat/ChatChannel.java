@@ -14,17 +14,22 @@ import net.spleefleague.core.player.Rank;
 public class ChatChannel {
     
     private Rank minRank;
-    private final String name;
+    private final String name, displayName;
     private final boolean defaultChannel;
     
-    public ChatChannel(String name, Rank minRank, boolean defaultChannel) {
+    public ChatChannel(String name, String displayName, Rank minRank, boolean defaultChannel) {
         this.minRank = minRank;
         this.name = name;
+        this.displayName = displayName;
         this.defaultChannel = defaultChannel;
     }
     
     public String getName() {
         return name;
+    }
+    
+    public String getDisplayName() {
+        return displayName;
     }
     
     public Rank getMinRank() {

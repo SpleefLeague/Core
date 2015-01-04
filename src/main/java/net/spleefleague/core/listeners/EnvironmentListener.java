@@ -6,8 +6,10 @@
 package net.spleefleague.core.listeners;
 
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.menus.MenuRepository;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,7 +20,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -37,6 +41,14 @@ public class EnvironmentListener implements Listener{
     
     private EnvironmentListener() {
         
+    }
+    
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        player.teleport(SpleefLeague.DEFAULT_WORLD.getSpawnLocation());
+        player.getInventory().setItem(0, MenuRepository.getOptionsMenuItem());
+        event.setJoinMessage(null);
     }
     
     @EventHandler

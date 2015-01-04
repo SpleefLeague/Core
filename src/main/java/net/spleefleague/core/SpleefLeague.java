@@ -20,6 +20,7 @@ import net.spleefleague.core.command.CommandLoader;
 import net.spleefleague.core.listeners.ChatListener;
 import net.spleefleague.core.listeners.EnvironmentListener;
 import net.spleefleague.core.listeners.InfractionListener;
+import net.spleefleague.core.listeners.ItemMenuListener;
 import net.spleefleague.core.player.PlayerManager;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
@@ -50,12 +51,13 @@ public class SpleefLeague extends CorePlugin {
         CommandLoader.loadCommands(this, "net.spleefleague.core.command.commands");
         DatabaseConnection.initialize();
         playerManager = new PlayerManager<>(this, SLPlayer.class);
-        ChatManager.registerPublicChannel(new ChatChannel("DEFAULT", Rank.DEFAULT, true));
-        ChatManager.registerPublicChannel(new ChatChannel("STAFF", Rank.MODERATOR, true));
+        ChatManager.registerPublicChannel(new ChatChannel("DEFAULT", "Normal chat", Rank.DEFAULT, true));
+        ChatManager.registerPublicChannel(new ChatChannel("STAFF", "Staff chat", Rank.MODERATOR, true));
         ChatListener.init();
         EnvironmentListener.init();
         InfractionListener.init();
-        Tutorial.initialize();
+        ItemMenuListener.init();
+//        Tutorial.initialize();
     }
     
     private void initMongo() {

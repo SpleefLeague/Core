@@ -49,7 +49,7 @@ public class ChatListener implements Listener {
     
     @EventHandler
     public void onLoaded(GeneralPlayerLoadedEvent event) {
-        if(event.getGeneralPlayer() instanceof SLPlayer) {
+        if(event.isFirstJoin() && event.getGeneralPlayer() instanceof SLPlayer) {
             SLPlayer slp = (SLPlayer)event.getGeneralPlayer();
             for(ChatChannel channel : ChatManager.getAvailableChatChannels(slp)) {
                 if(channel.isDefault() && !slp.isInChatChannel(channel.getName())) {

@@ -5,6 +5,7 @@
  */
 package net.spleefleague.core.chat;
 
+import java.util.Collection;
 import java.util.HashSet;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.events.ChatChannelMessageEvent;
@@ -70,7 +71,7 @@ public class ChatManager {
         }
     }
     
-    public static HashSet<ChatChannel> getAvailableChatChannels(SLPlayer slp) {
+    public static Collection<ChatChannel> getAvailableChatChannels(SLPlayer slp) {
         HashSet<ChatChannel> channels = new HashSet<>();
         for(ChatChannel channel : publicChannels) {
             if(slp.getRank().hasPermission(channel.getMinRank())) {

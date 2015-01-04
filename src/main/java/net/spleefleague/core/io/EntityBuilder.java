@@ -244,8 +244,8 @@ public class EntityBuilder {
                         }
                         else {
                             for(Object value : array) {
-                                if(DBSaveable.class.isAssignableFrom(f.getType())) {
-                                    value = serialize((DBSaveable)o);
+                                if(DBSaveable.class.isAssignableFrom(f.getType().getComponentType())) {
+                                    value = serialize((DBSaveable)value).get("$set");
                                 }
                                 list.add(value);
                             }
@@ -257,7 +257,7 @@ public class EntityBuilder {
                         o = tc.convertSave(o);
                     }
                     else if(DBSaveable.class.isAssignableFrom(f.getType())) {
-                        o = serialize((DBSaveable)o);
+                        o = serialize((DBSaveable)o).get("$set");
                     }
                     return o;
                 } catch(Exception e) {
@@ -287,8 +287,8 @@ public class EntityBuilder {
                         }
                         else {
                             for(Object value : array) {
-                                if(DBSaveable.class.isAssignableFrom(m.getReturnType())) {
-                                    value = serialize((DBSaveable)o);
+                                if(DBSaveable.class.isAssignableFrom(m.getReturnType().getComponentType())) {
+                                    value = serialize((DBSaveable)value).get("$set");
                                 }
                                 list.add(value);
                             }
@@ -300,7 +300,7 @@ public class EntityBuilder {
                         o = tc.convertSave(o);
                     }
                     else if(DBSaveable.class.isAssignableFrom(m.getReturnType())) {
-                        o = serialize((DBSaveable)o);
+                        o = serialize((DBSaveable)o).get("$set");
                     }
                     return o;
                 } catch(Exception e) {
