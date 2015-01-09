@@ -1,11 +1,11 @@
 package net.spleefleague.core.player;
 
-import com.mongodb.BasicDBList;
 import java.util.HashSet;
 import java.util.UUID;
 import net.spleefleague.core.io.DBLoad;
 import net.spleefleague.core.io.DBSave;
-import net.spleefleague.core.io.TypeConverter;
+import net.spleefleague.core.io.TypeConverter.HashSetIntegerConverter;
+import net.spleefleague.core.io.TypeConverter.HashSetStringConverter;
 import net.spleefleague.core.io.TypeConverter.UUIDStringConverter;
 
 /**
@@ -18,6 +18,8 @@ public class SLPlayer extends GeneralPlayer {
     private UUID lastChatPartner;
     private int coins;
     private HashSet<String> chatChannels;
+    @DBLoad(fieldName = "easteregg", typeConverter = HashSetIntegerConverter.class)
+    private HashSet<Integer> eastereggs;
     private String sendingChannel;
     boolean hasCompletedTutorial;
     private PlayerState state = PlayerState.IDLE;
@@ -25,6 +27,7 @@ public class SLPlayer extends GeneralPlayer {
     public SLPlayer() {
         super();
         chatChannels = new HashSet<>();
+        eastereggs = new HashSet<>();
     }
     
     @DBSave(fieldName = "rank")
@@ -51,6 +54,11 @@ public class SLPlayer extends GeneralPlayer {
         return coins;
     }
     
+    @DBSave(fieldName = "easteregg", typeConverter = HashSetIntegerConverter.class)
+    public HashSet<Integer> getEastereggs() {
+        return eastereggs;
+    }
+    
     @DBSave(fieldName = "lastChatPartner", typeConverter = UUIDStringConverter.class)
     public UUID getLastChatPartner() {
         return lastChatPartner;
@@ -61,12 +69,12 @@ public class SLPlayer extends GeneralPlayer {
         this.lastChatPartner = lastChatPartner;
     }
     
-    @DBLoad(fieldName = "chatChannels", typeConverter = HashSetConverter.class)
+    @DBLoad(fieldName = "chatChannels", typeConverter = HashSetStringConverter.class)
     public void setReceivingChatChannels(HashSet<String> chatChannels) {
         this.chatChannels = chatChannels;
     }
     
-    @DBSave(fieldName = "chatChannels", typeConverter = HashSetConverter.class)
+    @DBSave(fieldName = "chatChannels", typeConverter = HashSetStringConverter.class)
     public HashSet<String> getReceivingChatChannels() {
         return chatChannels;
     }
@@ -117,29 +125,9 @@ public class SLPlayer extends GeneralPlayer {
         this.rank = Rank.DEFAULT;
         this.coins = 0;
         this.chatChannels.clear();
+        this.eastereggs.clear();
         this.chatChannels.add("DEFAULT");
         this.sendingChannel = "DEFAULT";
         this.hasCompletedTutorial = false;
-    }
-
-    public static class HashSetConverter extends TypeConverter<BasicDBList, HashSet<String>> {
-
-        @Override
-        public HashSet<String> convertLoad(BasicDBList t) {
-            HashSet<String> hs = new HashSet<>();
-            for (Object o : t) {
-                hs.add((String) o);
-            }
-            return hs;
-        }
-
-        @Override
-        public BasicDBList convertSave(HashSet<String> v) {
-            BasicDBList bdbl = new BasicDBList();
-            for (String s : v) {
-                bdbl.add(s);
-            }
-            return bdbl;
-        }
     }
 }

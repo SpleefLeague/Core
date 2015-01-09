@@ -39,22 +39,22 @@ public class ItemMenuListener implements Listener {
     public void onRightClick(PlayerInteractEvent event) {
         if(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             ItemStack is = event.getItem();
-            if(is.equals(MenuRepository.getOptionsMenuItem())) {
-                MenuRepository.showOptionsMenu(SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer()));
+            if(is.equals(MenuRepository.getSLMenuItem())) {
+                MenuRepository.showMenu(SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer()));
             }
         }
     }
     
     @EventHandler
     public void onInventoryAction(InventoryClickEvent event) {
-        if(event.getCurrentItem() != null && event.getCurrentItem().equals(MenuRepository.getOptionsMenuItem())) {
+        if(event.getCurrentItem() != null && event.getCurrentItem().equals(MenuRepository.getSLMenuItem())) {
             event.setCancelled(true);
         }
     }
     
     @EventHandler
     public void onDrop(PlayerDropItemEvent event) {
-        if(event.getItemDrop().equals(MenuRepository.getOptionsMenuItem())) {
+        if(event.getItemDrop().equals(MenuRepository.getSLMenuItem())) {
             event.setCancelled(true);
         }
     }

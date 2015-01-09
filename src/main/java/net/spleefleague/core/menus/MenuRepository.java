@@ -8,7 +8,11 @@ package net.spleefleague.core.menus;
 import java.util.Collection;
 import net.spleefleague.core.chat.ChatChannel;
 import net.spleefleague.core.chat.ChatManager;
+import net.spleefleague.core.player.GeneralPlayer;
 import net.spleefleague.core.player.SLPlayer;
+import net.spleefleague.core.plugin.CorePlugin;
+import net.spleefleague.core.queue.GameQueue;
+import net.spleefleague.core.queue.Queue;
 import net.spleefleague.core.utils.menu.MenuClickListener;
 import net.spleefleague.core.utils.menu.MenuItem;
 import net.spleefleague.core.utils.menu.SubMenu;
@@ -25,7 +29,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class MenuRepository {
 
-    public static ItemStack getOptionsMenuItem() {
+    public static ItemStack getSLMenuItem() {
         ItemStack is = new ItemStack(Material.GHAST_TEAR);
         ItemMeta im = is.getItemMeta();
         im.setDisplayName(ChatColor.GREEN + "Options");
@@ -33,36 +37,86 @@ public class MenuRepository {
         return is;
     }
     
-    public static void showOptionsMenu(final SLPlayer slp) {
-        Player p = slp.getPlayer();
-        Collection<ChatChannel> available = ChatManager.getAvailableChatChannels(slp);
-        SubMenu options = new SubMenu("Options", p, null, getOptionsMenuItem());
-            //Chat
-            SubMenu chat = new SubMenu("Chat Options", p, options, Material.PAPER);
-                //Game
-                final SubMenu games = new SubMenu("Game Messages", p, chat, Material.DIAMOND_SPADE);
-                for(final ChatChannel channel : available) {
-                    if(channel.getName().startsWith("GAME_MESSAGE")) {
-                        final String word = slp.isInChatChannel(channel.getName()) ? "disable" : "enable";
-                        games.addItem(new MenuItem(channel.getDisplayName(), Material.PAPER).setLore(new String[]{ChatColor.GRAY + "Click to " + word + " the " + ChatColor.GREEN + channel.getDisplayName() + "."}).setListener(new MenuClickListener() {
-                            @Override
-                            public void onClick(InventoryClickEvent event, MenuItem item) {
-                                System.out.println(channel.getName());
-                                if(word.equals("disable")) {
-                                    slp.removeChatChannel(channel.getName());
-                                    item.setLore(item.getLore()[0].replace("disable", "enable"));
-                                }
-                                else {
-                                    slp.addChatChannel(channel.getName());
-                                    item.setLore(item.getLore()[0].replace("enable", "disable"));
-                                }
-                                games.update();
-                            }
-                        }));
+    public static void showMenu(final SLPlayer slp) {
+        final Player p = slp.getPlayer();
+        SubMenu slmenu = new SubMenu("SL Menu", p, null, getSLMenuItem());
+            //Spleef - Start
+            SubMenu spleef = new SubMenu("Spleef", p, slmenu, Material.DIAMOND_SPADE);
+                CorePlugin spleefPlugin = null;
+                for(CorePlugin cp : CorePlugin.getAll()) {
+                    if(cp.getName().equals("SuperSpleef")) {
+                        spleefPlugin = cp;
                     }
                 }
-                chat.addSubMenu(games);
-            options.addSubMenu(chat);
-        options.show();
+                //Queues
+                final SubMenu queues = new SubMenu("Queues", p, spleef, Material.SIGN);
+                final GameQueue<? extends GeneralPlayer, ? extends Queue> gameQueue = (GameQueue<? extends GeneralPlayer, ? extends Queue>)GameQueue.getQueueFromPlugin(spleefPlugin);
+                for(Queue q : gameQueue.getQueues()) {
+                    boolean general = q == null;
+                    if(general) {
+                        q = gameQueue.getGeneralQueue();
+                    }
+                    final Queue queue = q;
+                    MenuItem item = new MenuItem(queue.getName(), general ? Material.DIAMOND_SPADE : Material.MAP);
+                    if(queue.isQueued(slp)) {
+                        item.setLore(new String[] {
+                            ChatColor.GRAY + "Position: " + ChatColor.GOLD + queue.getQueuePosition(slp) + ChatColor.GRAY + "/" + queue.getQueueLength(),
+                            queue.getCurrentState() == null ? "" : queue.getCurrentState()
+                        });
+                    }
+                    else {
+                        item.setLore(new String[] {
+                            ChatColor.GRAY + "Queued: " + ChatColor.GOLD + queue.getQueueLength(),
+                            queue.getCurrentState() == null ? "" : queue.getCurrentState()
+                        });
+                    }
+                    item.setListener(new MenuClickListener() {
+                        @Override
+                        public void onClick(InventoryClickEvent event, MenuItem item) {
+                            if(queue.isQueued(slp)) {
+                                    gameQueue.dequeue(p);
+                            }
+                            else {
+                                gameQueue.dequeue(p);
+                                gameQueue.queue(p, queue);
+                            }
+                            queues.update();
+                        }
+                    });
+                    queues.addItem(item);
+                }
+            slmenu.addSubMenu(spleef);
+            //Spleef - End
+            //Options - Start
+            SubMenu options = new SubMenu("Options", p, slmenu, Material.BOOK_AND_QUILL);
+                //Chat
+                SubMenu chat = new SubMenu("Chat Options", p, options, Material.PAPER);
+                Collection<ChatChannel> available = ChatManager.getAvailableChatChannels(slp);
+                    //Game
+                    final SubMenu games = new SubMenu("Game Messages", p, chat, Material.DIAMOND_SPADE);
+                    for(final ChatChannel channel : available) {
+                        if(channel.getName().startsWith("GAME_MESSAGE")) {
+                            final String word = slp.isInChatChannel(channel.getName()) ? "disable" : "enable";
+                            games.addItem(new MenuItem(channel.getDisplayName(), Material.PAPER).setLore(new String[]{ChatColor.GRAY + "Click to " + word + " the " + ChatColor.GREEN + channel.getDisplayName() + "."}).setListener(new MenuClickListener() {
+                                @Override
+                                public void onClick(InventoryClickEvent event, MenuItem item) {
+                                    if(word.equals("disable")) {
+                                        slp.removeChatChannel(channel.getName());
+                                        item.setLore(item.getLore()[0].replace("disable", "enable"));
+                                    }
+                                    else {
+                                        slp.addChatChannel(channel.getName());
+                                        item.setLore(item.getLore()[0].replace("enable", "disable"));
+                                    }
+                                    games.update();
+                                }
+                            }));
+                        }
+                    }
+                    chat.addSubMenu(games);
+                options.addSubMenu(chat);
+            slmenu.addSubMenu(options);    
+            //Options - End
+        slmenu.show();
     }
 }

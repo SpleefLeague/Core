@@ -52,6 +52,10 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
         this.uuid = uuid;
     }
     
+    public void sendMessage(String message) {
+        getPlayer().sendMessage(message);
+    }
+    
     public void setDefaults() {
         
     }

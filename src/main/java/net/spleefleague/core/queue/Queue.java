@@ -5,12 +5,18 @@
  */
 package net.spleefleague.core.queue;
 
+import net.spleefleague.core.player.GeneralPlayer;
+
 /**
  *
  * @author Jonas
  */
 public interface Queue {
     public boolean isOccupied();
+    public boolean isQueued(GeneralPlayer gp);
     public int getSize();
+    public int getQueueLength();
+    public int getQueuePosition(GeneralPlayer gp);
     public String getName();
+    public String getCurrentState();
 }

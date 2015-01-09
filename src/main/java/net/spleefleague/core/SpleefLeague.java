@@ -18,6 +18,7 @@ import net.spleefleague.core.chat.ChatChannel;
 import net.spleefleague.core.chat.ChatManager;
 import net.spleefleague.core.command.CommandLoader;
 import net.spleefleague.core.listeners.ChatListener;
+import net.spleefleague.core.listeners.EastereggListener;
 import net.spleefleague.core.listeners.EnvironmentListener;
 import net.spleefleague.core.listeners.InfractionListener;
 import net.spleefleague.core.listeners.ItemMenuListener;
@@ -57,6 +58,7 @@ public class SpleefLeague extends CorePlugin {
         EnvironmentListener.init();
         InfractionListener.init();
         ItemMenuListener.init();
+        EastereggListener.init();
 //        Tutorial.initialize();
     }
     
