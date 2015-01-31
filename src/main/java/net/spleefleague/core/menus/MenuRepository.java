@@ -5,6 +5,7 @@
  */
 package net.spleefleague.core.menus;
 
+import com.mongodb.BasicDBObject;
 import java.util.Collection;
 import net.spleefleague.core.chat.ChatChannel;
 import net.spleefleague.core.chat.ChatManager;
@@ -39,9 +40,11 @@ public class MenuRepository {
     
     public static void showMenu(final SLPlayer slp) {
         final Player p = slp.getPlayer();
-        SubMenu slmenu = new SubMenu("SL Menu", p, null, getSLMenuItem());
+        SubMenu slmenu = new SubMenu("SL Menu", p, null, getSLMenuItem()); 
+        {
             //Spleef - Start
-            SubMenu spleef = new SubMenu("Spleef", p, slmenu, Material.DIAMOND_SPADE);
+            SubMenu spleef = new SubMenu("Spleef", p, slmenu, Material.DIAMOND_SPADE); 
+            {
                 CorePlugin spleefPlugin = null;
                 for(CorePlugin cp : CorePlugin.getAll()) {
                     if(cp.getName().equals("SuperSpleef")) {
@@ -85,10 +88,61 @@ public class MenuRepository {
                     });
                     queues.addItem(item);
                 }
+            }
             slmenu.addSubMenu(spleef);
             //Spleef - End
+            //SuperJump - Start
+            SubMenu jump = new SubMenu("SuperJump", p, slmenu, Material.LEATHER_BOOTS);
+            {
+                CorePlugin jumpPlugin = null;
+                for(CorePlugin cp : CorePlugin.getAll()) {
+                    if(cp.getName().equals("SuperJump")) {
+                        jumpPlugin = cp;
+                    }
+                }
+                //Queues
+                final SubMenu queues = new SubMenu("Queues", p, jump, Material.SIGN);
+                final GameQueue<? extends GeneralPlayer, ? extends Queue> gameQueue = (GameQueue<? extends GeneralPlayer, ? extends Queue>)GameQueue.getQueueFromPlugin(jumpPlugin);
+                for(Queue q : gameQueue.getQueues()) {
+                    boolean general = q == null;
+                    if(general) {
+                        q = gameQueue.getGeneralQueue();
+                    }
+                    final Queue queue = q;
+                    MenuItem item = new MenuItem(queue.getName(), general ? Material.LEATHER_BOOTS : Material.MAP);
+                    if(queue.isQueued(slp)) {
+                        item.setLore(new String[] {
+                            ChatColor.GRAY + "Position: " + ChatColor.GOLD + queue.getQueuePosition(slp) + ChatColor.GRAY + "/" + queue.getQueueLength(),
+                            queue.getCurrentState() == null ? "" : queue.getCurrentState()
+                        });
+                    }
+                    else {
+                        item.setLore(new String[] {
+                            ChatColor.GRAY + "Queued: " + ChatColor.GOLD + queue.getQueueLength(),
+                            queue.getCurrentState() == null ? "" : queue.getCurrentState()
+                        });
+                    }
+                    item.setListener(new MenuClickListener() {
+                        @Override
+                        public void onClick(InventoryClickEvent event, MenuItem item) {
+                            if(queue.isQueued(slp)) {
+                                    gameQueue.dequeue(p);
+                            }
+                            else {
+                                gameQueue.dequeue(p);
+                                gameQueue.queue(p, queue);
+                            }
+                            queues.update();
+                        }
+                    });
+                    queues.addItem(item);
+                }
+            }
+            slmenu.addSubMenu(jump);
+            //SuperJump - End
             //Options - Start
             SubMenu options = new SubMenu("Options", p, slmenu, Material.BOOK_AND_QUILL);
+            {
                 //Chat
                 SubMenu chat = new SubMenu("Chat Options", p, options, Material.PAPER);
                 Collection<ChatChannel> available = ChatManager.getAvailableChatChannels(slp);
@@ -115,8 +169,10 @@ public class MenuRepository {
                     }
                     chat.addSubMenu(games);
                 options.addSubMenu(chat);
+            }
             slmenu.addSubMenu(options);    
             //Options - End
+        }
         slmenu.show();
     }
 }

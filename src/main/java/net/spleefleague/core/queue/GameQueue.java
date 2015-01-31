@@ -225,7 +225,7 @@ public class GameQueue<P extends GeneralPlayer, Q extends net.spleefleague.core.
         return queues.get(name);
     }
     
-    private static HashMap<CorePlugin, GameQueue> queueMap;
+    private static HashMap<CorePlugin, GameQueue> queueMap = new HashMap<>();
     
     public static GameQueue getQueueFromPlugin(CorePlugin cp) {
         return queueMap.get(cp);

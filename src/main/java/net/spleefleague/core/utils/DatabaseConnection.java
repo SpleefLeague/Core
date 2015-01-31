@@ -5,6 +5,7 @@
  */
 package net.spleefleague.core.utils;
 
+import net.spleefleague.core.utils.collections.FixedSizeList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;

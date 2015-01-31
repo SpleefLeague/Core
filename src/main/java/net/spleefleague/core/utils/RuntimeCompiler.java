@@ -32,7 +32,7 @@ import org.bukkit.event.Listener;
 
 /**
  *
- * @author Jonas Balsfulland
+ * @author Jonas Balsfulland and @fixer Josh Keighley
  */
 public class RuntimeCompiler {
     
@@ -55,7 +55,7 @@ public class RuntimeCompiler {
             File directory = new File(getPluginDirectory().getAbsolutePath() + "/debug");
             if(!directory.exists())
                 directory.mkdir();
-            File javaFile = new File(directory.getPath() + "/" + id + ".java");
+            File javaFile = new File(directory.getPath() + "/" + id + ".java"); 
             javaFile.createNewFile();
             FileOutputStream fos = new FileOutputStream(javaFile);
             String className = "";
@@ -100,8 +100,8 @@ public class RuntimeCompiler {
             List<String> optionList = new ArrayList<>();
             File jar = getJar(RuntimeCompiler.class);
             File pluginDirectory = new File(jar.getAbsolutePath().substring(0, jar.getAbsolutePath().length() - jar.getName().length()));
-            String classes = buildClassPath(getJar(Bukkit.class).getAbsolutePath(), pluginDirectory.getAbsolutePath() + "/*");
-            optionList.addAll(Arrays.asList("-classpath",classes));
+            String classes = buildClassPath(getJar(Bukkit.class).getName(), pluginDirectory.getName() + "/*");
+            optionList.addAll(Arrays.asList("-classpath", classes));
             boolean success;
             try (StandardJavaFileManager fileManager = compiler.getStandardFileManager( null, null, null )) {
                 Iterable<? extends JavaFileObject> units;
@@ -117,6 +117,18 @@ public class RuntimeCompiler {
             }
         } catch (IOException ex) {
             Logger.getLogger(RuntimeCompiler.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public static Class load(File file) {
+        try {
+            URL url = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - file.getName().length())).toURI().toURL();
+            ClassLoader cl = new URLClassLoader(new URL[]{url}, SpleefLeague.class.getClassLoader());
+            Class c = cl.loadClass(file.getName().substring(0, file.getName().length() - 6));
+            return c;
+        } catch (MalformedURLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
             return null;
         }
     }
@@ -139,21 +151,7 @@ public class RuntimeCompiler {
                 sb.append(System.getProperty("path.separator"));
             }
         }
-        String s = sb.toString();
-        s = s.substring(0,s.length() - 1);
-        return s;
-    }
-    
-    public static Class load(File file) {
-        try {
-            URL url = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - file.getName().length())).toURI().toURL();
-            ClassLoader cl = new URLClassLoader(new URL[]{url}, SpleefLeague.class.getClassLoader());
-            Class c = cl.loadClass(file.getName().substring(0, file.getName().length() - 6));
-            return c;
-        } catch (MalformedURLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
-            return null;
-        }
+        return sb.toString();
     }
     
     public static File getJar(Class aclass) {

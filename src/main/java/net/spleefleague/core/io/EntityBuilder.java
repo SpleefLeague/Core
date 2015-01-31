@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import net.spleefleague.core.io.EntityBuilder.IOClass.Input;
 import net.spleefleague.core.io.EntityBuilder.IOClass.Output;
-import net.spleefleague.core.utils.MapUtil;
+import net.spleefleague.core.utils.collections.MapUtil;
 import org.bson.types.ObjectId;
 import org.bukkit.util.Vector;
 
