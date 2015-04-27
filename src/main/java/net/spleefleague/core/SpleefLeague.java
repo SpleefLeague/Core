@@ -5,18 +5,20 @@
  */
 package net.spleefleague.core;
 
+import net.spleefleague.core.io.Config;
 import net.spleefleague.core.plugin.CorePlugin;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.spleefleague.core.chat.ChatChannel;
 import net.spleefleague.core.chat.ChatManager;
 import net.spleefleague.core.command.CommandLoader;
+import net.spleefleague.core.io.Settings;
 import net.spleefleague.core.listeners.ChatListener;
 import net.spleefleague.core.listeners.EastereggListener;
 import net.spleefleague.core.listeners.EnvironmentListener;
@@ -25,9 +27,10 @@ import net.spleefleague.core.listeners.ItemMenuListener;
 import net.spleefleague.core.player.PlayerManager;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
-import net.spleefleague.core.tutorial.Tutorial;
 import net.spleefleague.core.utils.DatabaseConnection;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 
 /**
  *
@@ -37,7 +40,6 @@ public class SpleefLeague extends CorePlugin {
     
     private MongoClient mongo;
     private PlayerManager<SLPlayer> playerManager;
-    private ProtocolManager protocolManager;
     
     public SpleefLeague() {
         super("[SpleefLeague]", ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
@@ -48,7 +50,8 @@ public class SpleefLeague extends CorePlugin {
         instance = this;
         Config.loadConfig();
         initMongo();
-        protocolManager = ProtocolLibrary.getProtocolManager();
+        Settings.loadSettings();
+        applySettings();
         CommandLoader.loadCommands(this, "net.spleefleague.core.command.commands");
         DatabaseConnection.initialize();
         playerManager = new PlayerManager<>(this, SLPlayer.class);
@@ -57,9 +60,32 @@ public class SpleefLeague extends CorePlugin {
         ChatListener.init();
         EnvironmentListener.init();
         InfractionListener.init();
-        ItemMenuListener.init();
+        //ItemMenuListener.init();
         EastereggListener.init();
-//        Tutorial.initialize();
+    }
+    
+    private void applySettings() {
+        if(Settings.hasKey("default_world")) {
+            String defaultWorld = Settings.getString("default_world");
+            CorePlugin.DEFAULT_WORLD = Bukkit.getWorld(defaultWorld);
+        }
+        if(Settings.hasKey("spawn")) {
+            Location spawn = Settings.getLocation("spawn");
+            if(spawn != null) {
+                CorePlugin.DEFAULT_WORLD.setSpawnLocation(spawn.getBlockX(), spawn.getBlockY(), spawn.getBlockZ());
+            }
+        }
+        if (Settings.hasKey("max_players")) {
+            try {
+                String bukkitversion = Bukkit.getServer().getClass().getPackage().getName().substring(23);
+                Object playerlist = Class.forName("org.bukkit.craftbukkit." + bukkitversion + ".CraftServer").getDeclaredMethod("getHandle", null).invoke(Bukkit.getServer(), null);
+                Field maxplayers = playerlist.getClass().getSuperclass().getDeclaredField("maxPlayers");
+                maxplayers.setAccessible(true);
+                maxplayers.set(playerlist, Settings.getInteger("max_players"));
+            } catch (IllegalArgumentException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | SecurityException | NoSuchFieldException | InvocationTargetException ex) {
+                Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
     private void initMongo() {
@@ -86,9 +112,6 @@ public class SpleefLeague extends CorePlugin {
     @Override
     public void stop() {
         mongo.close();
-        for(Tutorial tutorial : Tutorial.getTutorials()) {
-            tutorial.end(false);
-        }
     }
     
     @Override
@@ -102,10 +125,6 @@ public class SpleefLeague extends CorePlugin {
     
     public PlayerManager<SLPlayer> getPlayerManager() {
         return playerManager;
-    }
-    
-    public ProtocolManager getProtocolManager() {
-        return protocolManager;
     }
     
     private static SpleefLeague instance;

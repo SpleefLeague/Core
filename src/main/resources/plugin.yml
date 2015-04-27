@@ -63,11 +63,6 @@ commands:
         aliases: []
         usage: |
           /<command> <player> <message>
-    tutorial:
-        description: starts the tutorial
-        aliases: []
-        usage: |
-          /<command>
     surrender:
         description: surrenders the current game
         aliases: []

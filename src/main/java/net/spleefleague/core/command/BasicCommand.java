@@ -30,9 +30,9 @@ public abstract class BasicCommand implements CommandExecutor {
     protected Rank requiredRank;
     protected boolean hasCommandBlockExecutor = false;
     private String[] usages = null;
-    private static final String NO_COMMAND_PERMISSION_MESSAGE = Theme.ERROR + "You don't have permission to use this command!";
-    private static final String PLAYERDATA_ERROR_MESSAGE = Theme.ERROR + "Your player data hasn't yet been loaded. Please try again.";
-    private static final String NO_PLAYER_INSTANCE = Theme.WARNING + "This command can only be run by an instance of a player.";
+    private static final String NO_COMMAND_PERMISSION_MESSAGE = Theme.ERROR.buildTheme(false) + "You don't have permission to use this command!";
+    private static final String PLAYERDATA_ERROR_MESSAGE = Theme.ERROR.buildTheme(false) + "Your player data hasn't yet been loaded. Please try again.";
+    private static final String NO_PLAYER_INSTANCE = Theme.WARNING.buildTheme(false) + "This command can only be run by an instance of a player.";
     
     public BasicCommand(CorePlugin plugin, String name, String usage) {
         this(plugin, name, usage, Rank.DEFAULT);
@@ -57,10 +57,10 @@ public abstract class BasicCommand implements CommandExecutor {
                     if (slp.getRank().hasPermission(requiredRank)) {
                         run(p, slp, cmd, args);
                     } else {
-                        sender.sendMessage(NO_COMMAND_PERMISSION_MESSAGE);
+                        sender.sendMessage(plugin.getChatPrefix() + " " + NO_COMMAND_PERMISSION_MESSAGE);
                     }
                 } else {
-                    sender.sendMessage(PLAYERDATA_ERROR_MESSAGE);
+                    sender.sendMessage(plugin.getChatPrefix() + " " + PLAYERDATA_ERROR_MESSAGE);
                 }
             } else if (sender instanceof ConsoleCommandSender) {
                 runConsole(sender, cmd, args);
@@ -78,26 +78,26 @@ public abstract class BasicCommand implements CommandExecutor {
     }
     
     protected void error(CommandSender cs, String message) {    
-        cs.sendMessage(Theme.ERROR + message);
+        cs.sendMessage(plugin.getChatPrefix() + " " + Theme.ERROR.buildTheme(false) + message);
     }
 
     protected void success(CommandSender cs, String message) {
-        cs.sendMessage(Theme.SUCCESS + message);
+        cs.sendMessage(plugin.getChatPrefix() + " " + Theme.SUCCESS.buildTheme(false) + message);
     }
 
     protected void sendUsage(CommandSender cs) {
-        cs.sendMessage(Theme.ERROR + "Correct Usage: ");
+        cs.sendMessage(plugin.getChatPrefix() + " " + Theme.ERROR.buildTheme(false) + "Correct Usage: ");
         for (String m : usages) {
-            cs.sendMessage(Theme.INCOGNITO + m);
+            cs.sendMessage(plugin.getChatPrefix() + " " + Theme.INCOGNITO.buildTheme(false) + m);
         }
     }
     
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
-        cs.sendMessage(NO_PLAYER_INSTANCE);
+        cs.sendMessage(plugin.getChatPrefix() + " " + NO_PLAYER_INSTANCE);
     }
 
     protected int runBlock(CommandSender cs, Command cmd, String[] args) {
-        cs.sendMessage(NO_PLAYER_INSTANCE);
+        cs.sendMessage(plugin.getChatPrefix() + " " + NO_PLAYER_INSTANCE);
         return 0;
     }
     
