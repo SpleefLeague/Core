@@ -65,10 +65,18 @@ public abstract class TypeConverter<T, V> {
                 z = (double)t.get(2);
             }
             if(t.size() >= 5) {
-                pitch = (float)t.get(3);
-            }
-            if(t.size() >= 5) {
-                yaw = (float)t.get(4);
+                if(t.get(3) instanceof Integer) {
+                    pitch = ((Integer)t.get(3)).floatValue();
+                }
+                else {
+                    pitch = (float)t.get(3);
+                }
+                if(t.get(4) instanceof Integer) {
+                    yaw = ((Integer)t.get(4)).floatValue();
+                }
+                else {
+                    yaw = (float)t.get(4);
+                }
             }
             world = (t.size() % 2 == 0) ? Bukkit.getWorld((String) t.get(t.size() - 1)) : SpleefLeague.DEFAULT_WORLD;
             return t.size() < 5 ? new Location(world, x, y, z) : new Location(world, x, y, z, pitch, yaw);

@@ -6,13 +6,13 @@
 package net.spleefleague.core.listeners;
 
 import net.spleefleague.core.SpleefLeague;
-import net.spleefleague.core.io.Settings;
 import net.spleefleague.core.menus.MenuRepository;
+import net.spleefleague.core.plugin.GamePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -82,8 +82,10 @@ public class EnvironmentListener implements Listener{
     
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
+        Bukkit.broadcastMessage("SL: " + event.isCancelled());
         event.setExpToDrop(0);
-        event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
+        if(!(event.isCancelled() || GamePlugin.isIngameAll(event.getPlayer()))) event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
+        Bukkit.broadcastMessage("SL: " + event.isCancelled());
     }
     
     @EventHandler
