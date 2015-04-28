@@ -7,11 +7,11 @@ package net.spleefleague.core.command.commands;
 
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.command.BasicCommand;
-import net.spleefleague.core.events.BattleCancelEvent;
 import net.spleefleague.core.player.GeneralPlayer;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.plugin.CorePlugin;
+import net.spleefleague.core.plugin.GamePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -39,17 +39,19 @@ public class cancel extends BasicCommand {
         if (tp != null) {
             GeneralPlayer gp = SpleefLeague.getInstance().getPlayerManager().get(tp);
             if (gp != null) {
-                BattleCancelEvent event = new BattleCancelEvent(gp);
-                Bukkit.getPluginManager().callEvent(event);
-                if (event.wasSuccessful()) {
+                if (GamePlugin.isIngameAll(tp)) {
+                    GamePlugin.cancelAll(tp);
                     success(cs, "The battle will be cancelled.");
-                } else {
+                } 
+                else {
                     error(cs, "The player " + ChatColor.WHITE + tp.getName() + ChatColor.RED + " is not playing!");
                 }
-            } else {
+            } 
+            else {
                 error(cs, "The player " + ChatColor.WHITE + args[0] + ChatColor.RED + " is not initialized yet!");
             }
-        } else {
+        } 
+        else {
             error(cs, "The player " + ChatColor.WHITE + args[0] + ChatColor.RED + " is not online!");
         }
     }

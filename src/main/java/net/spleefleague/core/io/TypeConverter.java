@@ -44,6 +44,7 @@ public abstract class TypeConverter<T, V> {
         @Override
         public Location convertLoad(BasicDBList t) {
             double x, y, z;
+            float pitch = 0, yaw = 0;
             World world;
             if(t.get(0) instanceof Integer) {
                 x = (Integer)t.get(0);
@@ -63,8 +64,14 @@ public abstract class TypeConverter<T, V> {
             else {
                 z = (double)t.get(2);
             }
-            world = (t.size() == 4) ? Bukkit.getWorld((String) t.get(3)) : SpleefLeague.DEFAULT_WORLD;
-            return new Location(world, x, y, z);
+            if(t.size() >= 5) {
+                pitch = (float)t.get(3);
+            }
+            if(t.size() >= 5) {
+                yaw = (float)t.get(4);
+            }
+            world = (t.size() % 2 == 0) ? Bukkit.getWorld((String) t.get(t.size() - 1)) : SpleefLeague.DEFAULT_WORLD;
+            return t.size() < 5 ? new Location(world, x, y, z) : new Location(world, x, y, z, pitch, yaw);
         }
 
         @Override

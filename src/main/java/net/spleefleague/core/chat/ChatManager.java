@@ -8,7 +8,6 @@ package net.spleefleague.core.chat;
 import java.util.Collection;
 import java.util.HashSet;
 import net.spleefleague.core.SpleefLeague;
-import net.spleefleague.core.events.ChatChannelMessageEvent;
 import net.spleefleague.core.player.SLPlayer;
 import org.bukkit.Bukkit;
 
@@ -22,37 +21,23 @@ public class ChatManager {
         Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), new Runnable() {
             @Override
             public void run() {
-                String message = m, channel = c;
-                ChatChannelMessageEvent ccme = new ChatChannelMessageEvent(channel, message);
-                Bukkit.getPluginManager().callEvent(ccme);
-                message = ccme.getMessage();
-                channel = ccme.getChannel();
-                if(!ccme.isCancelled()) {
-                    for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-                        if(slp.isInChatChannel(channel)) {
-                            slp.getPlayer().sendMessage(message);
-                        }
-                    } 
+                for (SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
+                    if (slp.isInChatChannel(c)) {
+                        slp.getPlayer().sendMessage(m);
+                    }
                 }
             }
         });
     }
-    
+
     public static void sendMessage(final String p, final String m, final String c) {
         Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), new Runnable() {
             @Override
             public void run() {
-                String message = m, channel = c;
-                ChatChannelMessageEvent ccme = new ChatChannelMessageEvent(channel, message);
-                Bukkit.getPluginManager().callEvent(ccme);
-                message = p + " " + ccme.getMessage();
-                channel = ccme.getChannel();
-                if(!ccme.isCancelled()) {
-                    for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-                        if(slp.isInChatChannel(channel)) {
-                            slp.getPlayer().sendMessage(message);
-                        }
-                    } 
+                for (SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
+                    if (slp.isInChatChannel(c)) {
+                        slp.getPlayer().sendMessage(p + " " + m);
+                    }
                 }
             }
         });

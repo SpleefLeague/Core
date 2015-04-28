@@ -23,7 +23,6 @@ import net.spleefleague.core.listeners.ChatListener;
 import net.spleefleague.core.listeners.EastereggListener;
 import net.spleefleague.core.listeners.EnvironmentListener;
 import net.spleefleague.core.listeners.InfractionListener;
-import net.spleefleague.core.listeners.ItemMenuListener;
 import net.spleefleague.core.player.PlayerManager;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
