@@ -19,15 +19,14 @@ import net.spleefleague.core.io.TypeConverter;
  * @author Manuel
  */
 public class Infraction extends DBEntity implements DBLoadable, DBSaveable {
-    private UUID uuid;
-    private UUID punisher;
+    private UUID uuid,  punisher;
     private InfractionType type;
-    private long time;
-    private long duration;
+    private long time, duration;
     private String message;
     
     public Infraction(UUID uuid, UUID punisher, InfractionType type, long time, long duration, String message) {
         this.uuid = uuid;
+        this.punisher = punisher;
         this.type = type;
         this.time = time;
         this.duration = duration;

@@ -6,7 +6,6 @@
 
 package net.spleefleague.core.command.commands;
 
-import com.mongodb.BasicDBObject;
 import java.util.Arrays;
 import java.util.UUID;
 import net.spleefleague.core.plugin.CorePlugin;
