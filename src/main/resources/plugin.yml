@@ -18,7 +18,7 @@ commands:
           /<command> <message>
     tell:
         description: A command to send a private message to a certain command
-        aliases: [w]
+        aliases: [w, msg]
         usage: |
           /<command> <player> <message>
     debug: 
