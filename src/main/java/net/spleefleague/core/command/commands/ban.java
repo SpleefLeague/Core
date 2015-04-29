@@ -34,14 +34,17 @@ public class ban extends BasicCommand{
     
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        runConsole(p, cmd, args);
+        ban(p, cmd, args);
     }
     
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
-        if(args.length >= 2){
+        ban(cs, cmd, args);
+    }
+    private void ban(CommandSender cs, Command cmd, String[] args) {
+        if(args.length >= 2) {
             UUID id;
-            if((id = DatabaseConnection.getUUID(args[0])) == null){
+            if((id = DatabaseConnection.getUUID(args[0])) == null) {
                 error(cs, "The player \"" + args[0] + "\" has not been on the server yet!");
                 return;
             }
@@ -49,13 +52,13 @@ public class ban extends BasicCommand{
             String banMessage = StringUtil.fromArgsArray(args, 1);
             if((pl = Bukkit.getPlayerExact(args[0])) != null)
                 pl.kickPlayer("You have been banned for: " + banMessage);
-            Infraction ban = new Infraction(id, InfractionType.BAN, System.currentTimeMillis(), -1, banMessage);
+            Infraction ban = new Infraction(id, cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.BAN, System.currentTimeMillis(), -1, banMessage);
             SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").remove(new BasicDBObject("uuid", id.toString()));
             EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"));
             EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"));
             success(cs, "The player has been banned!");
         }
-        else{
+        else {
             sendUsage(cs);
         }
     }

@@ -6,11 +6,7 @@
 package net.spleefleague.core.utils;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.time.Period;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,7 +42,7 @@ public class TimeUtil {
     
     public static Duration parseDurationString(String time) {
 
-        Pattern timePattern = Pattern.compile("([1-9][0-9]*y)|([1-9][0-9]*mo)|([1-9][0-9]*w)|([1-9][0-9]*h)|([1-9][0-9]*d)|([1-9][0-9]*m)|([1-9][0-9]*s)");
+        Pattern timePattern = Pattern.compile("[1-9][0-9]*(y|mo|w|h|d|m|s)");
         Matcher matcher = timePattern.matcher(time);
         int years = 0;
         int months = 0;

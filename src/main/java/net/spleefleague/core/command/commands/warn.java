@@ -6,6 +6,7 @@
 
 package net.spleefleague.core.command.commands;
 
+import java.util.UUID;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.command.BasicCommand;
@@ -32,25 +33,28 @@ public class warn extends BasicCommand{
     
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        runConsole(p, cmd, args);
+        warn(p, cmd, args);
     }
     
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
-        if(args.length >= 2){
+        warn(cs, cmd, args);
+    }
+    private void warn(CommandSender cs, Command cmd, String[] args) {
+        if(args.length >= 2) {
             Player pl;
-            if((pl = Bukkit.getPlayerExact(args[0])) != null){
+            if((pl = Bukkit.getPlayerExact(args[0])) != null) {
                 String warnMessage = StringUtil.fromArgsArray(args, 1);
                 pl.sendMessage("You have been warned: " + warnMessage);
-                Infraction warn = new Infraction(pl.getUniqueId(), InfractionType.WARNING, System.currentTimeMillis(), -1, warnMessage);
+                Infraction warn = new Infraction(pl.getUniqueId(), cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.WARNING, System.currentTimeMillis(), -1, warnMessage);
                 EntityBuilder.save(warn, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"));
                 success(cs, "The player has been warned!");
             }
-            else{
+            else {
                 error(cs, "The player \"" + args[0] + "\" is not online!");
             }
         }
-        else{
+        else {
             sendUsage(cs);
         }
     }

@@ -8,6 +8,7 @@ package net.spleefleague.core.command.commands;
 
 import com.mongodb.BasicDBObject;
 import java.util.Arrays;
+import java.util.UUID;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.command.BasicCommand;
@@ -32,28 +33,29 @@ public class kick extends BasicCommand{
     
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        runConsole(p, cmd, args);
+        kick(p, cmd, args);
     }
     
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
-            if(args.length >= 2){
+        kick(cs, cmd, args);
+    }
+    private void kick(CommandSender cs, Command cmd, String[] args) {
+        if(args.length >= 2) {
             Player pl;
-            if((pl = Bukkit.getPlayerExact(args[0])) != null){
+            if((pl = Bukkit.getPlayerExact(args[0])) != null) {
                 String kickMessage = Arrays.toString(args).replaceFirst(args[0], "");
                 pl.kickPlayer("You have been warned: " + kickMessage);
-                Infraction kick = new Infraction(pl.getUniqueId(), InfractionType.KICK, System.currentTimeMillis(), -1, kickMessage);
-                SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").remove(new BasicDBObject("uuid", pl.getUniqueId().toString()));
+                Infraction kick = new Infraction(pl.getUniqueId(), cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.KICK, System.currentTimeMillis(), -1, kickMessage);
                 EntityBuilder.save(kick, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"));
                 success(cs, "The player has been kicked!");
             }
-            else{
+            else {
                 error(cs, "The player \"" + args[0] + "\" is not online!");
             }
         }
-        else{
+        else {
             sendUsage(cs);
         }
     }
-    
 }

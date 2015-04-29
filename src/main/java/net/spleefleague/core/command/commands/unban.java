@@ -33,26 +33,28 @@ public class unban extends BasicCommand{
     
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        runConsole(p, cmd, args);
+        unban(p, cmd, args);
     }
     
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
-        if(args.length >= 2){
+        unban(cs, cmd, args);
+    }
+    private void unban(CommandSender cs, Command cmd, String[] args) {
+        if(args.length >= 2) {
             UUID id;
-            if((id = DatabaseConnection.getUUID(args[0])) == null){
+            if((id = DatabaseConnection.getUUID(args[0])) == null) {
                 error(cs, "The player \"" + args[0] + "\" has not been on the server yet!");
                 return;
             }
             String unbanMessage = StringUtil.fromArgsArray(args, 1);
-            Infraction unban = new Infraction(id, InfractionType.UNBAN, System.currentTimeMillis(), -1, unbanMessage);
+            Infraction unban = new Infraction(id, cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.UNBAN, System.currentTimeMillis(), -1, unbanMessage);
             SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").remove(new BasicDBObject("uuid", id.toString()));
             EntityBuilder.save(unban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"));
             success(cs, "The player has been unbanned!");
         }
-        else{
+        else {
             sendUsage(cs);
         }
     }
-    
 }
