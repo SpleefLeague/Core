@@ -82,10 +82,8 @@ public class EnvironmentListener implements Listener{
     
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
-        Bukkit.broadcastMessage("SL: " + event.isCancelled());
         event.setExpToDrop(0);
         if(!(event.isCancelled() || GamePlugin.isIngameAll(event.getPlayer()))) event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
-        Bukkit.broadcastMessage("SL: " + event.isCancelled());
     }
     
     @EventHandler

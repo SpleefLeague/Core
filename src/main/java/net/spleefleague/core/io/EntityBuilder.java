@@ -18,7 +18,6 @@ import net.spleefleague.core.io.EntityBuilder.IOClass.Input;
 import net.spleefleague.core.io.EntityBuilder.IOClass.Output;
 import net.spleefleague.core.utils.collections.MapUtil;
 import org.bson.types.ObjectId;
-import org.bukkit.util.Vector;
 
 /**
  *
@@ -27,11 +26,14 @@ import org.bukkit.util.Vector;
 public class EntityBuilder {
 
     public static <T extends DBEntity & DBSaveable> void save(T object, DBCollection dbcoll) {
-        Vector v = new Vector();
+        save(object, dbcoll, true);
+    }
+    
+    public static <T extends DBEntity & DBSaveable> void save(T object, DBCollection dbcoll, boolean override) {
         DBEntity dbe = (DBEntity)object;
         ObjectId _id = dbe.getObjectId();
         DBObject index = null;
-        if(_id != null) {
+        if(override && _id != null) {
             index = new BasicDBObject("_id", _id);
         }
         DBObject dbo = serialize(object);
