@@ -13,11 +13,11 @@ import org.bukkit.ChatColor;
  * @author Manuel
  */
 public enum InfractionType {
-    WARNING("warning", ChatColor.YELLOW),
-    KICK("kick", ChatColor.YELLOW),
-    TEMPBAN("tempban", ChatColor.RED),
-    BAN("ban", ChatColor.DARK_RED),
-    UNBAN("unban", ChatColor.GREEN);
+    WARNING("Warning", ChatColor.YELLOW),
+    KICK("Kick", ChatColor.GOLD),
+    TEMPBAN("Tempban", ChatColor.RED),
+    BAN("Ban", ChatColor.DARK_RED),
+    UNBAN("Unban", ChatColor.GREEN);
     
     private final String name;
     private final ChatColor color;
