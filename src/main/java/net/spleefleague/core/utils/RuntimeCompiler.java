@@ -251,7 +251,7 @@ public class RuntimeCompiler {
     }
     
     //Can be necessary on some windows and java versions.
-    static {
-        System.setProperty("java.home", System.getProperty("java.home").replace("jre", "jdk"));
-    }
+//    static {
+//        System.setProperty("java.home", System.getProperty("java.home").replace("jre", "jdk"));
+//    }
 }

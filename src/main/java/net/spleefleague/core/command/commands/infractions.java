@@ -7,7 +7,6 @@ package net.spleefleague.core.command.commands;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import java.util.Date;
 import java.util.UUID;
 import net.spleefleague.core.SpleefLeague;
@@ -43,7 +42,7 @@ public class infractions extends BasicCommand {
         infractions(cs, cmd, args);
     }
     
-    private void infractions(CommandSender cs, Command cmd, String args[]) {
+    private void infractions(CommandSender cs, Command cmd, String[] args) {
         if(args.length >= 1) {
             UUID id;
             if((id = DatabaseConnection.getUUID(args[0])) == null) {

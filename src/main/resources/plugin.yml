@@ -78,3 +78,8 @@ commands:
         aliases: []
         usage: |
           /<command> <player>
+    infractions:
+        description: Displays the infractions of a player
+        aliases: []
+        usages: |
+          /<command> <player> [page]
