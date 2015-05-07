@@ -27,6 +27,7 @@ import net.spleefleague.core.player.PlayerManager;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.utils.DatabaseConnection;
+import net.spleefleague.core.utils.RuntimeCompiler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -51,6 +52,7 @@ public class SpleefLeague extends CorePlugin {
         initMongo();
         Settings.loadSettings();
         applySettings();
+        RuntimeCompiler.loadPermanentDebuggers();
         CommandLoader.loadCommands(this, "net.spleefleague.core.command.commands");
         DatabaseConnection.initialize();
         playerManager = new PlayerManager<>(this, SLPlayer.class);

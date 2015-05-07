@@ -2,6 +2,7 @@ package net.spleefleague.core.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,11 +34,13 @@ import org.bukkit.event.Listener;
 
 /**
  *
- * @author Jonas Balsfulland and @fixer Josh Keighley
+ * @author Jonas Balsfulland
  */
 public class RuntimeCompiler {
     
     private static HashMap<String, Debugger> debuggerList;
+    private static File directoryTemp;
+    private static File directoryPermanent;
     
     public static Object loadHastebin(String id) {
         try {
@@ -49,10 +52,7 @@ public class RuntimeCompiler {
                 e.printStackTrace();
                 return null;
             }
-            File directory = new File(getPluginDirectory().getAbsolutePath() + "/debug");
-            if(!directory.exists())
-                directory.mkdir();
-            File javaFile = new File(directory.getPath() + "/" + id + ".java"); 
+            File javaFile = new File(directoryTemp.getPath() + "/" + id + ".java"); 
             javaFile.createNewFile();
             FileOutputStream fos = new FileOutputStream(javaFile);
             String className = "";
@@ -78,7 +78,7 @@ public class RuntimeCompiler {
                 }
             }
             br.close();
-            File correctName = new File(directory.getAbsolutePath() + "/" + className + ".java");
+            File correctName = new File(directoryTemp.getAbsolutePath() + "/" + className + ".java");
             correctName.delete();
             javaFile.renameTo(correctName);
             File classFile = RuntimeCompiler.compile(correctName);
@@ -159,6 +159,32 @@ public class RuntimeCompiler {
         }
         return null;
     }
+    
+    private static void debugFromClass(Class c) {
+        try {
+            Object o = c.newInstance();
+            if (!(o instanceof Debugger)) {
+                throw new Exception("Runtime script isn't extending the Debugger class");   
+            }
+            Debugger debugger = (Debugger)o;
+            startDebugger(debugger);
+            if (RuntimeCompiler.debuggerList == null) {
+                RuntimeCompiler.debuggerList = new HashMap<>();
+            }
+            if (debugger instanceof CommandExecutor || debugger instanceof Listener || debugger instanceof Stoppable) {
+                int uid = 1;
+                while (RuntimeCompiler.debuggerList.containsKey((o.getClass().getName() + Integer.toString(uid)).toLowerCase())) {
+                    uid++;
+                }
+                String n = o.getClass().getName() + Integer.toString(uid);
+                RuntimeCompiler.debuggerList.put(n.toLowerCase(), debugger);
+            }
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            Logger.getLogger(RuntimeCompiler.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(RuntimeCompiler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    } 
     
     public static String[] debugFromHastebin(String id) {
         Object o = RuntimeCompiler.loadHastebin(id);
@@ -247,8 +273,46 @@ public class RuntimeCompiler {
         }
     }
     
+    public static void loadPermanentDebuggers() {
+        for(File file : directoryPermanent.listFiles(ClassFilter.getInstance())) {
+            Class<? extends Debugger> debugClass = RuntimeCompiler.load(file);
+            debugFromClass(debugClass);
+            System.out.println(SpleefLeague.getInstance().getPrefix() + " Loaded permanent debugger: " + file.getName().replace(".class", ""));
+        }
+    }
+    
+    public static class ClassFilter implements FileFilter {
+
+        private static final ClassFilter instance;
+        
+        private ClassFilter() {
+            
+        }
+        
+        @Override
+        public boolean accept(File file) {
+            return file.getName().toLowerCase().endsWith(".class");
+        }
+        
+        public static ClassFilter getInstance() {
+            return instance;
+        }
+        
+        static {
+            instance = new ClassFilter();
+        }
+    }
+    
     //Can be necessary on some windows and java versions.
-//    static {
+    static {
 //        System.setProperty("java.home", System.getProperty("java.home").replace("jre", "jdk"));
-//    }
+        directoryTemp = new File(getPluginDirectory().getAbsolutePath() + "/debug/temp");
+        directoryPermanent = new File(getPluginDirectory().getAbsolutePath() + "/debug/permanent");
+        if(!directoryTemp.exists()) {
+            directoryTemp.mkdirs();
+        }
+        if(!directoryPermanent.exists()) {
+            directoryPermanent.mkdirs();
+        }
+    }
 }
