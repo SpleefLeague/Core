@@ -23,6 +23,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.io.Settings;
 import net.spleefleague.core.utils.Debugger.CommandExecutor;
 import net.spleefleague.core.utils.Debugger.Stoppable;
 import org.bukkit.Bukkit;
@@ -42,15 +43,11 @@ public class RuntimeCompiler {
         try {
             InputStream is;
             try {
-                URL url = new URL("http://paste.multicu.be/raw/" + id);
+                URL url = new URL(Settings.getString("debugger_paste_raw").replace("{id}", id));
                 is = url.openStream();
             } catch(Exception e) {
-                try {
-                    URL url = new URL("http://hastebin.com/raw/" + id);
-                    is = url.openStream();
-                } catch (Exception ex) {
-                    return null;
-                }
+                e.printStackTrace();
+                return null;
             }
             File directory = new File(getPluginDirectory().getAbsolutePath() + "/debug");
             if(!directory.exists())
