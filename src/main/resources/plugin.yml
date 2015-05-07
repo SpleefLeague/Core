@@ -81,5 +81,5 @@ commands:
     infractions:
         description: Displays the infractions of a player
         aliases: []
-        usages: |
+        usage: |
           /<command> <player> [page]

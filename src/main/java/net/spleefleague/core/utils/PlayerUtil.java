@@ -5,6 +5,7 @@
  */
 package net.spleefleague.core.utils;
 
+
 import net.minecraft.server.v1_8_R2.Entity;
 import net.minecraft.server.v1_8_R2.IChatBaseComponent;
 import net.minecraft.server.v1_8_R2.IChatBaseComponent.ChatSerializer;

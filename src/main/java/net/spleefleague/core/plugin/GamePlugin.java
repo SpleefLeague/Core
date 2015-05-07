@@ -24,6 +24,7 @@ public abstract class GamePlugin extends CorePlugin {
     public abstract void spectate(Player p);
     public abstract void dequeue(Player p);
     public abstract void cancel(Player p);
+    public abstract void surrender(Player p);
     public abstract boolean isQueued(Player p);
     public abstract boolean isIngame(Player p);
     
@@ -42,6 +43,12 @@ public abstract class GamePlugin extends CorePlugin {
     public static void cancelAll(Player p) {
         for(GamePlugin gp : gamePlugins) {
             gp.cancel(p);
+        }
+    }
+    
+    public static void surrenderAll(Player p) {
+        for(GamePlugin gp : gamePlugins) {
+            gp.surrender(p);
         }
     }
     

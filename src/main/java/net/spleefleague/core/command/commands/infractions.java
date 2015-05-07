@@ -13,10 +13,10 @@ import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.command.BasicCommand;
 import net.spleefleague.core.infraction.Infraction;
 import net.spleefleague.core.io.EntityBuilder;
-import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.utils.DatabaseConnection;
+import net.spleefleague.core.utils.TimeUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -24,25 +24,25 @@ import org.bukkit.entity.Player;
 
 /**
  *
- * @author Manuel
+ * @author Jonas
  */
 public class infractions extends BasicCommand {
 
     public infractions(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage, Rank.MODERATOR);
+        super(plugin, name, usage);
     }
 
     @Override
-    protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        infractions(p, cmd, args);
+    protected void run(Player p, SLPlayer kp, Command cmd, String[] args) {
+        infractions(p, args);
     }
     
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
-        infractions(cs, cmd, args);
+        infractions(cs, args);
     }
     
-    private void infractions(CommandSender cs, Command cmd, String[] args) {
+    private void infractions(CommandSender cs, String[] args) {
         if(args.length >= 1) {
             UUID id;
             if((id = DatabaseConnection.getUUID(args[0])) == null) {
@@ -50,10 +50,12 @@ public class infractions extends BasicCommand {
                 return;
             }
             DBCursor dbc = SpleefLeague.getInstance().getPluginDB().getCollection("Infractions").find(new BasicDBObject("uuid", id.toString()));
+            dbc.sort(new BasicDBObject("time", -1));
             if(dbc.count() == 0) {
                 error(cs, "The player \"" + args[0] + "\" doesn't have any infractions yet!");
                 return;
             }
+            int maxPages = (dbc.count() - 1) / 10 + 1;
             int page = 1;
             if(args.length != 1) {
                 int argsPage;
@@ -64,7 +66,6 @@ public class infractions extends BasicCommand {
                     error(cs, "\"" + args[1] + "\" is not a number!");
                     return;
                 }
-                int maxPages = (dbc.count() - 1) / 10 + 1;
                 if(argsPage > 0 &&  maxPages >= argsPage) {
                     page = argsPage;
                 }
@@ -73,11 +74,11 @@ public class infractions extends BasicCommand {
                     return;
                 }
             }
-            cs.sendMessage("[==========(" + (page * 10 - 9) + "-" + (page * 10 <= dbc.count() ? page * 10 : dbc.count()) + ")==========]");
+            cs.sendMessage("[========== " + args[0] + "'s infractions (" + page + "/" + maxPages + ") ==========]");
             dbc.skip((page - 1) * 10);
-            for(int i = (page - 1) * 10; i < (page * 10 <= dbc.count() ? page * 10 : dbc.count()); i++) {
+            for(int i = 0; i < 10 && dbc.hasNext(); i++) {
                 Infraction inf = EntityBuilder.load(dbc.next(), Infraction.class);
-                cs.sendMessage((i + 1) + ". | " + inf.getType().getColor() + inf.getType() + ChatColor.WHITE + " | " + (inf.getPunisher().equals(UUID.fromString("00000000-0000-0000-0000-000000000000")) ? "CONSOLE" : DatabaseConnection.getUsername(inf.getPunisher())) + " | " + new Date(inf.getTime()) + " | " + inf.getMessage());
+                cs.sendMessage((page * 10 - 9 + i) + ". | " + inf.getType().getColor() + inf.getType() + ChatColor.WHITE + " | " + (inf.getPunisher().equals(UUID.fromString("00000000-0000-0000-0000-000000000000")) ? "CONSOLE" : DatabaseConnection.getUsername(inf.getPunisher())) + " | " + inf.getMessage() + " | " + TimeUtil.pastDateToString(new Date(inf.getTime())) + " ago");
             }
         }
         else {

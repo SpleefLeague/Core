@@ -58,7 +58,7 @@ public class InfractionListener implements Listener{
                 }
                 else {
                     e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-                    e.setKickMessage("You have been tempbanned for " + TimeUtil.getFormatted(Duration.between(Instant.now(), Instant.ofEpochMilli(inf.getTime() + inf.getDuration()))) + ". " + inf.getMessage());
+                    e.setKickMessage("You have been tempbanned for " + TimeUtil.durationToString(Duration.between(Instant.now(), Instant.ofEpochMilli(inf.getTime() + inf.getDuration()))) + ". " + inf.getMessage());
             
                 }
             }

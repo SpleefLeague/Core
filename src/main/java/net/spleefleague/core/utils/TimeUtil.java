@@ -6,6 +6,8 @@
 package net.spleefleague.core.utils;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,8 +16,22 @@ import java.util.regex.Pattern;
  * @author Jonas
  */
 public class TimeUtil {
-
-    public static String getFormatted(Duration d) {
+    //second, minute, hour, day, month, year
+    private final static int[] seconds = new int[]{1, 60,60 * 60,60 * 60 * 24, 60 * 60 * 24 * 30, 60 * 60 * 24 * 365};
+    private final static String[] names = new String[]{"second", "minute", "hour", "day", "month", "year"};
+    
+    public static String pastDateToString(Date date) {
+        long diff = Instant.now().getEpochSecond() - date.toInstant().getEpochSecond();
+        for(int i = 1; i < seconds.length; i++) {
+            if(diff < seconds[i]) {
+                long result = diff / seconds[i - 1];
+                return result + " " + names[i - 1] + ((result != 1) ? "s" : "");
+            }
+        }
+        return "";
+    }
+    
+    public static String durationToString(Duration d) {
         String s = "";
         boolean started = false;
         if (started || d.toDays() >= 365) {
@@ -55,7 +71,7 @@ public class TimeUtil {
     }
 
     public static Duration parseDurationString(String time) {
-
+        
         Pattern timePattern = Pattern.compile("[1-9][0-9]*(y|mo|w|h|d|m|s)");
         Matcher matcher = timePattern.matcher(time);
         int years = 0;
