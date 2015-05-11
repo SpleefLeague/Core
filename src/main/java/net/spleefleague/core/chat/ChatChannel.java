@@ -5,6 +5,8 @@
  */
 package net.spleefleague.core.chat;
 
+import java.util.HashMap;
+import java.util.Map;
 import net.spleefleague.core.player.Rank;
 
 /**
@@ -15,13 +17,19 @@ public class ChatChannel {
     
     private Rank minRank;
     private final String name, displayName;
-    private final boolean defaultChannel;
+    private final boolean defaultChannel, temporary;
     
     public ChatChannel(String name, String displayName, Rank minRank, boolean defaultChannel) {
+        this(name, displayName, minRank, defaultChannel, false);
+    }
+    
+    public ChatChannel(String name, String displayName, Rank minRank, boolean defaultChannel, boolean temporary) {
         this.minRank = minRank;
         this.name = name;
         this.displayName = displayName;
         this.defaultChannel = defaultChannel;
+        this.temporary = temporary;
+        channels.put(name, this);
     }
     
     public String getName() {
@@ -43,5 +51,15 @@ public class ChatChannel {
     
     public boolean isDefault() {
         return defaultChannel;
+    }
+    
+    public boolean isTemporary() {
+        return temporary;
+    }
+    
+    private static Map<String, ChatChannel> channels = new HashMap<>();
+    
+    public static ChatChannel fromString(String channel) {
+        return channels.get(channel);
     }
 }

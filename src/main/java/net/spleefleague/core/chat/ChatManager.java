@@ -43,10 +43,10 @@ public class ChatManager {
         });
     }
     
-    private static HashSet<ChatChannel> publicChannels = new HashSet<>();
+    private static HashSet<ChatChannel> channels = new HashSet<>();
     
-    public static void registerPublicChannel(ChatChannel channel) {
-        publicChannels.add(channel);
+    public static void registerChannel(ChatChannel channel) {
+        channels.add(channel);
         if(channel.isDefault()) {
             for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
                 if(!slp.isInChatChannel(channel.getName())) {
@@ -56,10 +56,19 @@ public class ChatManager {
         }
     }
     
+    public static void unregisterChannel(ChatChannel channel) {
+        channels.remove(channel);
+        for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
+            if(!slp.isInChatChannel(channel.getName())) {
+                slp.removeChatChannel(channel.getName());
+            }
+        }
+    }
+    
     public static Collection<ChatChannel> getAvailableChatChannels(SLPlayer slp) {
         HashSet<ChatChannel> channels = new HashSet<>();
-        for(ChatChannel channel : publicChannels) {
-            if(slp.getRank().hasPermission(channel.getMinRank())) {
+        for(ChatChannel channel : channels) {
+            if(!channel.isTemporary() && slp.getRank().hasPermission(channel.getMinRank())) {
                 channels.add(channel);
             }
         }

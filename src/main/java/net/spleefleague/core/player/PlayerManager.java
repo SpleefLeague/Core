@@ -90,7 +90,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
         });
     }
     
-    @EventHandler(priority = EventPriority.HIGHEST) //Misleading, has to be called last
+    @EventHandler(priority = EventPriority.MONITOR) //Misleading, has to be called last
     public void onQuit(PlayerQuitEvent event) {
         final G gp = get(event.getPlayer());
         this.map.remove(event.getPlayer());

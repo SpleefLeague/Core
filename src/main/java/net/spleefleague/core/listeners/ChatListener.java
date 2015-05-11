@@ -5,6 +5,7 @@
  */
 package net.spleefleague.core.listeners;
 
+import java.util.Iterator;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.chat.ChatChannel;
 import net.spleefleague.core.chat.ChatManager;
@@ -16,6 +17,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  *
@@ -55,6 +57,18 @@ public class ChatListener implements Listener {
                 if(channel.isDefault() && !slp.isInChatChannel(channel.getName())) {
                     slp.addChatChannel(channel.getName());
                 }
+            }
+        }
+    }
+    
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer());
+        Iterator<String> i = slp.getReceivingChatChannels().iterator();
+        while(i.hasNext()) {
+            ChatChannel cc = ChatChannel.fromString(i.next());
+            if(cc.isTemporary()) {
+                slp.removeChatChannel(cc.getName());
             }
         }
     }
