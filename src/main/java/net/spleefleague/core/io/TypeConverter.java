@@ -5,8 +5,9 @@
  */
 package net.spleefleague.core.io;
 
-import com.mongodb.BasicDBList;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 import net.spleefleague.core.SpleefLeague;
 import org.bukkit.Bukkit;
@@ -39,10 +40,10 @@ public abstract class TypeConverter<T, V> {
         }
     }
 
-    public static class LocationConverter extends TypeConverter<BasicDBList, Location> {
+    public static class LocationConverter extends TypeConverter<List, Location> {
 
         @Override
-        public Location convertLoad(BasicDBList t) {
+        public Location convertLoad(List t) {
             double x, y, z;
             float pitch = 0, yaw = 0;
             World world;
@@ -83,8 +84,8 @@ public abstract class TypeConverter<T, V> {
         }
 
         @Override
-        public BasicDBList convertSave(Location v) {
-            BasicDBList bdbl = new BasicDBList();
+        public List convertSave(Location v) {
+            List bdbl = new ArrayList();
             bdbl.add(v.getX());
             bdbl.add(v.getY());
             bdbl.add(v.getZ());
@@ -95,10 +96,10 @@ public abstract class TypeConverter<T, V> {
         }
     }
     
-    public static class HashSetStringConverter extends TypeConverter<BasicDBList, HashSet<String>> {
+    public static class HashSetStringConverter extends TypeConverter<List, HashSet<String>> {
 
         @Override
-        public HashSet<String> convertLoad(BasicDBList t) {
+        public HashSet<String> convertLoad(List t) {
             HashSet<String> hs = new HashSet<>();
             for (Object o : t) {
                 hs.add((String) o);
@@ -107,8 +108,8 @@ public abstract class TypeConverter<T, V> {
         }
 
         @Override
-        public BasicDBList convertSave(HashSet<String> v) {
-            BasicDBList bdbl = new BasicDBList();
+        public List convertSave(HashSet<String> v) {
+            List bdbl = new ArrayList();
             for (String s : v) {
                 bdbl.add(s);
             }
@@ -116,10 +117,10 @@ public abstract class TypeConverter<T, V> {
         }
     }
     
-    public static class HashSetIntegerConverter extends TypeConverter<BasicDBList, HashSet<Integer>> {
+    public static class HashSetIntegerConverter extends TypeConverter<List, HashSet<Integer>> {
 
         @Override
-        public HashSet<Integer> convertLoad(BasicDBList t) {
+        public HashSet<Integer> convertLoad(List t) {
             HashSet<Integer> hs = new HashSet<>();
             for (Object o : t) {
                 hs.add((Integer) o);
@@ -128,8 +129,8 @@ public abstract class TypeConverter<T, V> {
         }
 
         @Override
-        public BasicDBList convertSave(HashSet<Integer> v) {
-            BasicDBList bdbl = new BasicDBList();
+        public List convertSave(HashSet<Integer> v) {
+            List bdbl = new ArrayList();
             for (Integer s : v) {
                 bdbl.add(s);
             }

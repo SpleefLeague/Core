@@ -5,18 +5,18 @@
  */
 package net.spleefleague.core.io;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
+import com.mongodb.client.MongoCollection;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import net.spleefleague.core.io.EntityBuilder.IOClass.Input;
 import net.spleefleague.core.io.EntityBuilder.IOClass.Output;
 import net.spleefleague.core.utils.collections.MapUtil;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 
 /**
@@ -25,26 +25,26 @@ import org.bson.types.ObjectId;
  */
 public class EntityBuilder {
 
-    public static <T extends DBEntity & DBSaveable> void save(T object, DBCollection dbcoll) {
+    public static <T extends DBEntity & DBSaveable> void save(T object, MongoCollection<Document> dbcoll) {
         save(object, dbcoll, true);
     }
     
-    public static <T extends DBEntity & DBSaveable> void save(T object, DBCollection dbcoll, boolean override) {
+    public static <T extends DBEntity & DBSaveable> void save(T object, MongoCollection<Document> dbcoll, boolean override) {
         DBEntity dbe = (DBEntity)object;
         ObjectId _id = dbe.getObjectId();
-        DBObject index = null;
+        Document index = null;
         if(override && _id != null) {
-            index = new BasicDBObject("_id", _id);
+            index = new Document("_id", _id);
         }
-        DBObject dbo = serialize(object);
+        Document dbo = serialize(object);
         validate(dbo);
         if(index != null) {
-            dbcoll.update(index, dbo);
+            dbcoll.updateOne(index, dbo);
         }
         else {
-            dbo = (DBObject)dbo.get("$set");
-            dbcoll.insert(dbo);
-            _id = (ObjectId)dbcoll.findOne(dbo).get("_id");
+            dbo = (Document)dbo.get("$set");
+            dbcoll.insertOne(dbo);
+            _id = (ObjectId)dbcoll.find(dbo).first().get("_id");
             try {
                 Field _idField = DBEntity.class.getDeclaredField("_id");
                 _idField.setAccessible(true);
@@ -55,21 +55,21 @@ public class EntityBuilder {
         }
     }
 
-    private static void validate(DBObject dbo) {
-        DBObject unset = (DBObject)dbo.get("$unset");
+    private static void validate(Document dbo) {
+        Document unset = (Document)dbo.get("$unset");
         if(unset != null) {
             if(unset.keySet().isEmpty()) {
-                dbo.removeField("$unset");
+                dbo.remove("$unset");
             }
         }
     }
 
-    public static DBObject serialize(DBSaveable object) {
+    public static Document serialize(DBSaveable object) {
         try {
             HashMap<String, Output> outputs = getOutputs(object.getClass());
-            DBObject set = new BasicDBObject();
-            DBObject unset = new BasicDBObject();
-            DBObject query = new BasicDBObject();
+            Document set = new Document();
+            Document unset = new Document();
+            Document query = new Document();
             for(String name : outputs.keySet()) {
                 Object o = outputs.get(name).get(object);
                 if(o != null) {
@@ -88,11 +88,11 @@ public class EntityBuilder {
         return null;
     }
 
-    public static <T extends DBEntity & DBLoadable> T load(DBObject dbo, Class<T> c) {
+    public static <T extends DBEntity & DBLoadable> T load(Document dbo, Class<T> c) {
         return deserialize(dbo, c);
     }
 
-    public static <T> T deserialize(DBObject dbo, Class<T> c) {
+    public static <T> T deserialize(Document dbo, Class<T> c) {
         try {
             T t = c.newInstance();
             Map<String, Input> inputs = getInputs(c);
@@ -236,7 +236,7 @@ public class EntityBuilder {
                         o = o.toString();
                     }
                     else if(o.getClass().isArray()) {
-                        BasicDBList list = new BasicDBList();
+                        List list = new ArrayList<>();
                         Object[] array = (Object[])o;
                         if(!f.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
                             TypeConverter tc = f.getAnnotation(DBSave.class).typeConverter().newInstance();
@@ -279,7 +279,7 @@ public class EntityBuilder {
                         o = o.toString();
                     }
                     else if(m.getReturnType().isArray()) {
-                        BasicDBList list = new BasicDBList();
+                        List list = new ArrayList<>();
                         Object[] array = (Object[])o;
                         if(!m.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
                             TypeConverter tc = m.getAnnotation(DBSave.class).typeConverter().newInstance();
@@ -337,8 +337,8 @@ public class EntityBuilder {
                     if(f.getType().isEnum() && value instanceof String) {
                         f.set(instance, Enum.valueOf((Class<Enum>)f.getType(), (String)value));
                     }
-                    else if(f.getType().isArray() && value instanceof BasicDBList) {
-                        BasicDBList list = (BasicDBList)value;
+                    else if(f.getType().isArray() && value instanceof List) {
+                        List list = (List)value;
                         Object[] array = new Object[list.size()];
                         for(int i = 0; i < list.size(); i++) {
                             Object o = list.get(i);
@@ -347,8 +347,8 @@ public class EntityBuilder {
                                 o = tc.convertLoad(o);
                             }
                             else {
-                                if(o instanceof DBObject && DBLoadable.class.isAssignableFrom(f.getType().getComponentType())) {
-                                    o = deserialize((DBObject)o, f.getType().getComponentType());
+                                if(o instanceof Document && DBLoadable.class.isAssignableFrom(f.getType().getComponentType())) {
+                                    o = deserialize((Document)o, f.getType().getComponentType());
                                 }
                             }
                             array[i] = o;
@@ -359,8 +359,8 @@ public class EntityBuilder {
                         TypeConverter tc = f.getAnnotation(DBLoad.class).typeConverter().newInstance();
                         f.set(instance, tc.convertLoad(value));
                     }
-                    else if(value instanceof DBObject && DBLoadable.class.isAssignableFrom(f.getType())) {
-                        f.set(instance, deserialize((DBObject)value, f.getType()));
+                    else if(value instanceof Document && DBLoadable.class.isAssignableFrom(f.getType())) {
+                        f.set(instance, deserialize((Document)value, f.getType()));
                     }
                     else {
                         f.set(instance, value);
@@ -376,8 +376,8 @@ public class EntityBuilder {
                     if(m.getParameterTypes()[0].isEnum() && value instanceof String) {
                         m.invoke(instance, Enum.valueOf((Class<Enum>)m.getParameterTypes()[0], (String)value));
                     }
-                    else if(m.getReturnType().isArray() && value instanceof BasicDBList) {
-                        BasicDBList list = (BasicDBList)value;
+                    else if(m.getReturnType().isArray() && value instanceof List) {
+                        List list = (List)value;
                         Object[] array = new Object[list.size()];
                         for(int i = 0; i < list.size(); i++) {
                             Object o = list.get(i);
@@ -386,8 +386,8 @@ public class EntityBuilder {
                                 o = tc.convertLoad(o);
                             }
                             else {
-                                if(o instanceof DBObject && DBLoadable.class.isAssignableFrom(m.getReturnType().getComponentType())) {
-                                    o = deserialize((DBObject)o, m.getReturnType().getComponentType());
+                                if(o instanceof Document && DBLoadable.class.isAssignableFrom(m.getReturnType().getComponentType())) {
+                                    o = deserialize((Document)o, m.getReturnType().getComponentType());
                                 }
                             }
                             array[i] = o;
@@ -398,8 +398,8 @@ public class EntityBuilder {
                         TypeConverter tc = m.getAnnotation(DBLoad.class).typeConverter().newInstance();
                         m.invoke(instance, tc.convertLoad(value));
                     }
-                    else if(value instanceof DBObject && DBLoadable.class.isAssignableFrom(m.getParameterTypes()[0])) {
-                        m.invoke(instance, deserialize((DBObject)value, m.getParameterTypes()[0]));
+                    else if(value instanceof Document && DBLoadable.class.isAssignableFrom(m.getParameterTypes()[0])) {
+                        m.invoke(instance, deserialize((Document)value, m.getParameterTypes()[0]));
                     }
                     else {
                         m.invoke(instance, value);

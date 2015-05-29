@@ -7,12 +7,13 @@ package net.spleefleague.core;
 
 import net.spleefleague.core.io.Config;
 import net.spleefleague.core.plugin.CorePlugin;
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoDatabase;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.spleefleague.core.chat.ChatChannel;
@@ -90,21 +91,10 @@ public class SpleefLeague extends CorePlugin {
     }
     
     private void initMongo() {
-        HashMap<String, String> credentials = Config.getCredentials();
+        List<MongoCredential> credentials = Config.getCredentials();
         try {
             ServerAddress address = new ServerAddress(Config.DB_HOST, Config.DB_PORT);
-            mongo = new MongoClient(address);
-            this.mongo.getMongoOptions().autoConnectRetry = true;
-            this.mongo.getMongoOptions().connectionsPerHost = 10;
-            for(String db : credentials.keySet()) {
-                boolean successful = mongo.getDB(db).authenticate("Plugin", credentials.get(db).toCharArray());
-                if(!successful) {
-                    System.out.println(getPrefix() + " Authentication error: " + db);
-                }
-                else {
-                    System.out.println(getPrefix() + " Authentication successful: " + db);
-                }
-            }
+            mongo = new MongoClient(address, credentials);
         } catch (Exception ex) {
             Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -116,8 +106,8 @@ public class SpleefLeague extends CorePlugin {
     }
     
     @Override
-    public DB getPluginDB() {
-        return mongo.getDB("SpleefLeague");
+    public MongoDatabase getPluginDB() {
+        return mongo.getDatabase("SpleefLeague");
     }
     
     public MongoClient getMongo() {

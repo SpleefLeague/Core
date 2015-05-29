@@ -5,9 +5,11 @@
  */
 package net.spleefleague.core.command.commands;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCursor;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.command.BasicCommand;
@@ -17,6 +19,7 @@ import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.utils.DatabaseConnection;
 import net.spleefleague.core.utils.TimeUtil;
+import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -49,13 +52,16 @@ public class infractions extends BasicCommand {
                 error(cs, "The player \"" + args[0] + "\" has not been on the server yet!");
                 return;
             }
-            DBCursor dbc = SpleefLeague.getInstance().getPluginDB().getCollection("Infractions").find(new BasicDBObject("uuid", id.toString()));
-            dbc.sort(new BasicDBObject("time", -1));
-            if(dbc.count() == 0) {
+            FindIterable<Document> result = SpleefLeague.getInstance().getPluginDB().getCollection("Infractions").find(new Document("uuid", id.toString())).sort(new Document("time", -1));
+            List<Document> dbc = new ArrayList<>();
+            for(Document d : result) {
+                dbc.add(d);
+            }
+            if(dbc.isEmpty()) {
                 error(cs, "The player \"" + args[0] + "\" doesn't have any infractions yet!");
                 return;
             }
-            int maxPages = (dbc.count() - 1) / 10 + 1;
+            int maxPages = (dbc.size() - 1) / 10 + 1;
             int page = 1;
             if(args.length != 1) {
                 int argsPage;
@@ -75,9 +81,10 @@ public class infractions extends BasicCommand {
                 }
             }
             cs.sendMessage("[========== " + args[0] + "'s infractions (" + page + "/" + maxPages + ") ==========]");
-            dbc.skip((page - 1) * 10);
-            for(int i = 0; i < 10 && dbc.hasNext(); i++) {
-                Infraction inf = EntityBuilder.load(dbc.next(), Infraction.class);
+            result.skip((page - 1) * 10);
+            MongoCursor<Document> mc = result.iterator();
+            for(int i = 0; i < 10 && mc.hasNext(); i++) {
+                Infraction inf = EntityBuilder.load(mc.next(), Infraction.class);
                 cs.sendMessage((page * 10 - 9 + i) + ". | " + inf.getType().getColor() + inf.getType() + ChatColor.WHITE + " | " + (inf.getPunisher().equals(UUID.fromString("00000000-0000-0000-0000-000000000000")) ? "CONSOLE" : DatabaseConnection.getUsername(inf.getPunisher())) + " | " + inf.getMessage() + " | " + TimeUtil.pastDateToString(new Date(inf.getTime())) + " ago");
             }
         }

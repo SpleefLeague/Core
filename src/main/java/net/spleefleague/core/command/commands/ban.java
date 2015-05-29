@@ -6,7 +6,6 @@
 
 package net.spleefleague.core.command.commands;
 
-import com.mongodb.BasicDBObject;
 import java.util.UUID;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
@@ -18,6 +17,7 @@ import net.spleefleague.core.io.EntityBuilder;
 import net.spleefleague.core.utils.StringUtil;
 import net.spleefleague.core.infraction.Infraction;
 import net.spleefleague.core.infraction.InfractionType;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -51,7 +51,7 @@ public class ban extends BasicCommand{
             Player pl;
             String banMessage = StringUtil.fromArgsArray(args, 1);
             Infraction ban = new Infraction(id, cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.BAN, System.currentTimeMillis(), -1, banMessage);
-            SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").remove(new BasicDBObject("uuid", id.toString()));
+            SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").deleteOne(new Document("uuid", id.toString()));
             EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), false);
             EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), false);
             if((pl = Bukkit.getPlayerExact(args[0])) != null)

@@ -6,11 +6,10 @@
 package net.spleefleague.core.utils;
 
 import net.spleefleague.core.utils.collections.FixedSizeList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
+import com.mongodb.client.MongoCollection;
 import java.util.UUID;
 import net.spleefleague.core.SpleefLeague;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,7 +41,7 @@ public class DatabaseConnection {
         if (uuid != null) {
             return uuid;
         }
-        DBObject dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").findOne(new BasicDBObject("username", username));
+        Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").find(new Document("username", username)).first();
         if (dbo != null) {
             uuid = UUID.fromString((String) dbo.get("uuid"));
             updateCache(uuid, username);
@@ -57,7 +56,7 @@ public class DatabaseConnection {
         if (username != null) {
             return username;
         }
-        DBObject dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").findOne(new BasicDBObject("uuid", uuid.toString()));
+        Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").find(new Document("uuid", uuid.toString())).first();
         if (dbo != null) {
             username = (String) dbo.get("username");
             updateCache(uuid, username);
@@ -67,11 +66,11 @@ public class DatabaseConnection {
         }
     }
 
-    public static void updateFields(final DBCollection dbcoll, final DBObject index, final DBObject update) {
+    public static void updateFields(final MongoCollection<Document> dbcoll, final Document index, final Document update) {
         Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), new Runnable() {
             @Override
             public void run() {
-                dbcoll.update(index, new BasicDBObject("$set", update));
+                dbcoll.updateOne(index, new Document("$set", update));
             }
         });
     }

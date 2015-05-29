@@ -6,6 +6,7 @@
 package net.spleefleague.core.plugin;
 
 import com.mongodb.DB;
+import com.mongodb.client.MongoDatabase;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.logging.Logger;
@@ -45,7 +46,7 @@ public abstract class CorePlugin extends JavaPlugin {
     public void start(){}
     public void stop(){}
     
-    public abstract DB getPluginDB();
+    public abstract MongoDatabase getPluginDB();
     
     public String getPrefix() {
         return prefix;

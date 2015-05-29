@@ -5,9 +5,7 @@
  */
 package net.spleefleague.core.player;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBObject;
+import com.mongodb.client.MongoDatabase;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -16,6 +14,7 @@ import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import net.spleefleague.core.io.EntityBuilder;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -33,7 +32,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class PlayerManager<G extends GeneralPlayer> implements Listener {
     
     private final ConcurrentHashMap<Player, G> map;
-    private final DB db;
+    private final MongoDatabase db;
     private final Class<G> playerClass;
     
     public PlayerManager(CorePlugin plugin, Class<G> playerClass) {
@@ -60,9 +59,9 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
     
     private void load(Player player, Class<G> c) {
         try {
-            DBObject dbo = db.getCollection("Players").findOne(new BasicDBObject("uuid", player.getUniqueId().toString()));
+            Document doc = db.getCollection("Players").find(new Document("uuid", player.getUniqueId().toString())).first();
             G generalPlayer;
-            if(dbo == null) {
+            if(doc == null) {
                 generalPlayer = c.newInstance();
                 generalPlayer.setDefaults();
                 generalPlayer.setName(player.getName());
@@ -70,11 +69,11 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
                 EntityBuilder.save(generalPlayer, db.getCollection("Players"));
             }
             else {
-                generalPlayer = EntityBuilder.load(dbo, c);
+                generalPlayer = EntityBuilder.load(doc, c);
                 generalPlayer.setName(player.getName()); //Necessary when changing usernames are allowed
             }
             map.put(player, generalPlayer);
-            callEvent(generalPlayer, dbo == null);    
+            callEvent(generalPlayer, doc == null);    
         } catch (InstantiationException | IllegalAccessException | SecurityException | IllegalArgumentException ex) {
             Logger.getLogger(PlayerManager.class.getName()).log(Level.SEVERE, null, ex);
         }

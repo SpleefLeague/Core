@@ -6,8 +6,6 @@
 
 package net.spleefleague.core.listeners;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import java.time.Duration;
 import java.time.Instant;
 import net.spleefleague.core.SpleefLeague;
@@ -15,6 +13,7 @@ import net.spleefleague.core.io.EntityBuilder;
 import net.spleefleague.core.utils.TimeUtil;
 import net.spleefleague.core.infraction.Infraction;
 import net.spleefleague.core.infraction.InfractionType;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,7 +40,7 @@ public class InfractionListener implements Listener{
     
     @EventHandler
     public void banCheck(AsyncPlayerPreLoginEvent e){
-        DBObject dbo = SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").findOne(new BasicDBObject("uuid", e.getUniqueId().toString()));
+        Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").find(new Document("uuid", e.getUniqueId().toString())).first();
         if(dbo == null){
             e.setLoginResult(AsyncPlayerPreLoginEvent.Result.ALLOWED);
         }
@@ -53,7 +52,7 @@ public class InfractionListener implements Listener{
             }
             else if(inf.getType() == InfractionType.TEMPBAN){
                 if(inf.getTime() + inf.getDuration() <= System.currentTimeMillis()){
-                    SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").remove(new BasicDBObject("uuid", e.getUniqueId().toString()));
+                    SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").deleteOne(new Document("uuid", e.getUniqueId().toString()));
                     e.setLoginResult(AsyncPlayerPreLoginEvent.Result.ALLOWED);
                 }
                 else {

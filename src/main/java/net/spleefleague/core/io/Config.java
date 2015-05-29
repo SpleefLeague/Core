@@ -5,10 +5,14 @@
  */
 package net.spleefleague.core.io;
 
+import com.mongodb.MongoCredential;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -25,7 +29,7 @@ public class Config {
     }
 
     public static void loadConfig() {
-        if (!new File("server.conf").exists()) {
+        if (!new File("db.conf").exists()) {
             return;
         }
         try {
@@ -72,11 +76,14 @@ public class Config {
         return Boolean.parseBoolean(ADDITIONAL_CONFIG.get(key));
     }
 
-    public static HashMap<String, String> getCredentials() {
-        HashMap<String, String> credentials = new HashMap<>();
-        for (String key : ADDITIONAL_CONFIG.keySet()) {
+    public static List<MongoCredential> getCredentials() {
+        List<MongoCredential> credentials = new ArrayList<>();
+        Iterator<String> i = ADDITIONAL_CONFIG.keySet().iterator();
+        while (i.hasNext()) {
+            String key = i.next();
             if (key.startsWith("pw.")) {
-                credentials.put(key.substring(3), getString(key));
+                MongoCredential credential = MongoCredential.createCredential("plugin", key.substring(3), getString(key).toCharArray());
+                credentials.add(credential);
             }
         }
         return credentials;

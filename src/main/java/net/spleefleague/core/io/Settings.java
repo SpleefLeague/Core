@@ -5,10 +5,10 @@
  */
 package net.spleefleague.core.io;
 
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
+import com.mongodb.client.MongoCursor;
 import java.util.HashMap;
 import net.spleefleague.core.SpleefLeague;
+import org.bson.Document;
 import org.bukkit.Location;
 
 /**
@@ -17,16 +17,16 @@ import org.bukkit.Location;
  */
 public class Settings {
     
-    private static final HashMap<String, DBObject> settings;
+    private static final HashMap<String, Document> settings;
     
     static {
         settings = new HashMap<>();
     }
 
     public static void loadSettings() {
-        DBCursor dbc = SpleefLeague.getInstance().getMongo().getDB("SpleefLeague").getCollection("Settings").find();
+        MongoCursor<Document> dbc = SpleefLeague.getInstance().getPluginDB().getCollection("Settings").find().iterator();
         while(dbc.hasNext()) {
-            DBObject dbo = dbc.next();
+            Document dbo = dbc.next();
             String key = (String)dbo.get("key");
             settings.put(key, dbo);
         }
@@ -53,7 +53,7 @@ public class Settings {
     }
     
     public static <T extends DBEntity & DBLoadable> T get(String key, Class<? extends T> c) {
-        return EntityBuilder.load((DBObject)settings.get(key), c);
+        return EntityBuilder.load((Document)settings.get(key), c);
     }
     
     public static class LocationWrapper extends DBEntity implements DBLoadable {

@@ -6,7 +6,6 @@
 
 package net.spleefleague.core.command.commands;
 
-import com.mongodb.BasicDBObject;
 import java.time.Duration;
 import java.util.UUID;
 import net.spleefleague.core.plugin.CorePlugin;
@@ -20,6 +19,7 @@ import net.spleefleague.core.utils.StringUtil;
 import net.spleefleague.core.utils.TimeUtil;
 import net.spleefleague.core.infraction.Infraction;
 import net.spleefleague.core.infraction.InfractionType;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -56,7 +56,7 @@ public class tempban extends BasicCommand{
             if((pl = Bukkit.getPlayerExact(args[0])) != null)
                 pl.kickPlayer("You have been tempbanned for " + TimeUtil.durationToString(duration) + ". " + tempbanMessage);
             Infraction tempban = new Infraction(id, cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.TEMPBAN, System.currentTimeMillis(), duration.toMillis(), tempbanMessage);
-            SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").remove(new BasicDBObject("uuid", id.toString()));
+            SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").deleteOne(new Document("uuid", id.toString()));
             EntityBuilder.save(tempban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), false);
             EntityBuilder.save(tempban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), false);
             if((pl = Bukkit.getPlayerExact(args[0])) != null)

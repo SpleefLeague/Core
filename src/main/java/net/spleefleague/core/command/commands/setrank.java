@@ -5,13 +5,13 @@
  */
 package net.spleefleague.core.command.commands;
 
-import com.mongodb.BasicDBObject;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.command.BasicCommand;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.utils.DatabaseConnection;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -72,7 +72,7 @@ public class setrank extends BasicCommand {
             error(cs, "The rank " + r + " does not exist!");
         }
         else {    
-            DatabaseConnection.updateFields(SpleefLeague.getInstance().getPluginDB().getCollection("Players"), new BasicDBObject("username", name), new BasicDBObject("rank", rank.toString()));
+            DatabaseConnection.updateFields(SpleefLeague.getInstance().getPluginDB().getCollection("Players"), new Document("username", name), new Document("rank", rank.toString()));
         }
     }
 }

@@ -5,7 +5,6 @@
  */
 package net.spleefleague.core.menus;
 
-import com.mongodb.BasicDBObject;
 import java.util.Collection;
 import net.spleefleague.core.chat.ChatChannel;
 import net.spleefleague.core.chat.ChatManager;

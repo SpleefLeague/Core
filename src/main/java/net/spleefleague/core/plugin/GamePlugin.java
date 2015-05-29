@@ -5,7 +5,9 @@
  */
 package net.spleefleague.core.plugin;
 
+import java.util.Collection;
 import java.util.HashSet;
+import static net.spleefleague.core.plugin.CorePlugin.plugins;
 import org.bukkit.entity.Player;
 
 /**
@@ -21,18 +23,14 @@ public abstract class GamePlugin extends CorePlugin {
         gamePlugins.add(this);
     }
     
-    public abstract void spectate(Player p);
+    public abstract void spectate(Player target, Player p);
+    public abstract void unspectate(Player p);
     public abstract void dequeue(Player p);
     public abstract void cancel(Player p);
     public abstract void surrender(Player p);
     public abstract boolean isQueued(Player p);
     public abstract boolean isIngame(Player p);
-    
-    public static void spectateAll(Player p) {
-        for(GamePlugin gp : gamePlugins) {
-            gp.spectate(p);
-        }
-    }
+    public abstract boolean isSpectating(Player p);
     
     public static void dequeueAll(Player p) {
         for(GamePlugin gp : gamePlugins) {
@@ -52,6 +50,12 @@ public abstract class GamePlugin extends CorePlugin {
         }
     }
     
+    public static void unspectateAll(Player p) {
+        for(GamePlugin gp : gamePlugins) {
+            gp.unspectate(p);
+        }
+    }
+    
     public static boolean isQueuedAll(Player p) {
         for(GamePlugin gp : gamePlugins) {
              if(gp.isQueued(p)) {
@@ -68,5 +72,18 @@ public abstract class GamePlugin extends CorePlugin {
             }
         }
         return false;
+    }
+    
+    public static boolean isSpectatingAll(Player p) {
+        for(GamePlugin gp : gamePlugins) {
+            if(gp.isSpectating(p)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static Collection<GamePlugin> getGamePlugins() {
+        return gamePlugins;
     }
 }
