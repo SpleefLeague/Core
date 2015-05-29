@@ -7,6 +7,8 @@ package net.spleefleague.core.listeners;
 
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.menus.MenuRepository;
+import net.spleefleague.core.player.PlayerState;
+import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.plugin.GamePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;

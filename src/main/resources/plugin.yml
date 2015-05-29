@@ -83,3 +83,8 @@ commands:
         aliases: []
         usage: |
           /<command> <player> [page]
+    spectate:
+        description: Spectates a battle
+        aliases: []
+        usage: |
+          /<command> [player]
