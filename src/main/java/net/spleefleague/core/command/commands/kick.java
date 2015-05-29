@@ -16,6 +16,7 @@ import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.io.EntityBuilder;
 import net.spleefleague.core.infraction.Infraction;
 import net.spleefleague.core.infraction.InfractionType;
+import net.spleefleague.core.utils.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -43,7 +44,7 @@ public class kick extends BasicCommand{
         if(args.length >= 2) {
             Player pl;
             if((pl = Bukkit.getPlayerExact(args[0])) != null) {
-                String kickMessage = Arrays.toString(args).replaceFirst(args[0], "");
+                String kickMessage = StringUtil.fromArgsArray(args, 1);
                 pl.kickPlayer("You have been warned: " + kickMessage);
                 Infraction kick = new Infraction(pl.getUniqueId(), cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.KICK, System.currentTimeMillis(), -1, kickMessage);
                 EntityBuilder.save(kick, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"));
