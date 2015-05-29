@@ -34,6 +34,7 @@ public class spectate extends BasicCommand{
                             GamePlugin.unspectateAll(p);
                         }
                         gp.spectate(target, p);
+                        success(p, "You are now spectating " + target.getName());
                     }
                 }
             }
@@ -44,6 +45,7 @@ public class spectate extends BasicCommand{
         else if(args.length == 0) {
             if(GamePlugin.isSpectatingAll(p)) {
                 GamePlugin.unspectateAll(p);
+                success(p, "You are no longer spectating a match");
             }
             else {
                 error(p, "You are currently not spectating anyone!");
