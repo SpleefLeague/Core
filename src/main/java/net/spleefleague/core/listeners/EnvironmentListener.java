@@ -48,7 +48,7 @@ public class EnvironmentListener implements Listener{
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         player.teleport(SpleefLeague.DEFAULT_WORLD.getSpawnLocation());
-        player.getInventory().setItem(0, MenuRepository.getSLMenuItem());
+//        player.getInventory().setItem(0, MenuRepository.getSLMenuItem());
         event.setJoinMessage(null);
     }
     
