@@ -2,11 +2,13 @@ package net.spleefleague.core.player;
 
 import java.util.HashSet;
 import java.util.UUID;
+import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.io.DBLoad;
 import net.spleefleague.core.io.DBSave;
 import net.spleefleague.core.io.TypeConverter.HashSetIntegerConverter;
 import net.spleefleague.core.io.TypeConverter.HashSetStringConverter;
 import net.spleefleague.core.io.TypeConverter.UUIDStringConverter;
+import org.bukkit.Bukkit;
 
 /**
  *
@@ -36,9 +38,14 @@ public class SLPlayer extends GeneralPlayer {
     }
     
     @DBLoad(fieldName = "rank")
-    public void setRank(Rank rank) {
+    public void setRank(final Rank rank) {
         this.rank = rank;
-        getPlayer().setPlayerListName(rank.getColor() + getName());
+        Bukkit.getScheduler().runTaskLater(SpleefLeague.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                getPlayer().setPlayerListName(rank.getColor() + getName());
+            }
+        },20);
         if(rank.hasPermission(Rank.MODERATOR)) {
             chatChannels.add("STAFF");
         }
