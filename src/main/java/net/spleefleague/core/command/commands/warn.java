@@ -7,8 +7,10 @@
 package net.spleefleague.core.command.commands;
 
 import java.util.UUID;
+import net.md_5.bungee.api.ChatColor;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.chat.Theme;
 import net.spleefleague.core.command.BasicCommand;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
@@ -45,7 +47,7 @@ public class warn extends BasicCommand{
             Player pl;
             if((pl = Bukkit.getPlayerExact(args[0])) != null) {
                 String warnMessage = StringUtil.fromArgsArray(args, 1);
-                pl.sendMessage("You have been warned: " + warnMessage);
+                pl.sendMessage(Theme.ERROR + "You have been warned: " + ChatColor.GRAY + warnMessage);
                 Infraction warn = new Infraction(pl.getUniqueId(), cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.WARNING, System.currentTimeMillis(), -1, warnMessage);
                 EntityBuilder.save(warn, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"));
                 success(cs, "The player has been warned!");

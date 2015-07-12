@@ -45,7 +45,7 @@ public class kick extends BasicCommand{
             Player pl;
             if((pl = Bukkit.getPlayerExact(args[0])) != null) {
                 String kickMessage = StringUtil.fromArgsArray(args, 1);
-                pl.kickPlayer("You have been warned: " + kickMessage);
+                pl.kickPlayer("You have been kicked: " + kickMessage);
                 Infraction kick = new Infraction(pl.getUniqueId(), cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.KICK, System.currentTimeMillis(), -1, kickMessage);
                 EntityBuilder.save(kick, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"));
                 success(cs, "The player has been kicked!");

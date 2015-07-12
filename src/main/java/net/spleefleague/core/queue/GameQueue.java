@@ -48,6 +48,11 @@ public class GameQueue<P extends GeneralPlayer, Q extends net.spleefleague.core.
             public boolean isOccupied() {
                 return false;
             }
+            
+            @Override
+            public boolean isAvailable(GeneralPlayer gp) {
+                return true;
+            }
 
             @Override
             public int getSize() {

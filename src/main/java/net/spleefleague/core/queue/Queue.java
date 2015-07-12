@@ -14,6 +14,7 @@ import net.spleefleague.core.player.GeneralPlayer;
 public interface Queue {
     public boolean isOccupied();
     public boolean isQueued(GeneralPlayer gp);
+    public boolean isAvailable(GeneralPlayer gp);
     public int getSize();
     public int getQueueLength();
     public int getQueuePosition(GeneralPlayer gp);

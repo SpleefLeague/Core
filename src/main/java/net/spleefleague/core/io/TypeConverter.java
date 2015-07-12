@@ -70,13 +70,13 @@ public abstract class TypeConverter<T, V> {
                     pitch = ((Integer)t.get(3)).floatValue();
                 }
                 else {
-                    pitch = (float)t.get(3);
+                    pitch = ((Double)t.get(3)).floatValue();
                 }
                 if(t.get(4) instanceof Integer) {
                     yaw = ((Integer)t.get(4)).floatValue();
                 }
                 else {
-                    yaw = (float)t.get(4);
+                    yaw = ((Double)t.get(4)).floatValue();
                 }
             }
             world = (t.size() % 2 == 0) ? Bukkit.getWorld((String) t.get(t.size() - 1)) : SpleefLeague.DEFAULT_WORLD;

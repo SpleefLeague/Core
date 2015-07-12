@@ -23,7 +23,7 @@ public abstract class GamePlugin extends CorePlugin {
         gamePlugins.add(this);
     }
     
-    public abstract void spectate(Player target, Player p);
+    public abstract boolean spectate(Player target, Player p);
     public abstract void unspectate(Player p);
     public abstract void dequeue(Player p);
     public abstract void cancel(Player p);

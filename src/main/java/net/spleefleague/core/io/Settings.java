@@ -7,6 +7,7 @@ package net.spleefleague.core.io;
 
 import com.mongodb.client.MongoCursor;
 import java.util.HashMap;
+import java.util.List;
 import net.spleefleague.core.SpleefLeague;
 import org.bson.Document;
 import org.bukkit.Location;
@@ -50,6 +51,10 @@ public class Settings {
     
     public static Location getLocation(String key) {
         return get(key, LocationWrapper.class).location;
+    }
+    
+    public static List getList(String key) {
+        return (List)settings.get(key).get("value");
     }
     
     public static <T extends DBEntity & DBLoadable> T get(String key, Class<? extends T> c) {

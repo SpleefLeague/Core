@@ -31,6 +31,12 @@ public class debug extends BasicCommand {
     protected void run(Player p, SLPlayer kp, Command cmd, String[] args) {
         runConsole(p, cmd, args);
     }
+    
+    @Override
+    protected int runBlock(CommandSender cs, Command cmd, String[] args) {
+        runConsole(cs, cmd, args);
+        return 0;
+    }
 
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {

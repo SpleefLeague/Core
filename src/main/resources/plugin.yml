@@ -65,7 +65,7 @@ commands:
           /<command> <player> <message>
     surrender:
         description: surrenders the current game
-        aliases: []
+        aliases: [ragequit]
         usage: |
           /<command>
     leave:
@@ -88,3 +88,8 @@ commands:
         aliases: []
         usage: |
           /<command> [player]
+    spawn:
+        description: Teleports a player back to spawn
+        aliases: []
+        usage: |
+          /<command>

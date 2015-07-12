@@ -63,7 +63,7 @@ public class ping extends BasicCommand{
         if (same) {
             success(to, ChatColor.GRAY + "Your ping is: " + c + pingStr);
         } else {
-            success(to, ChatColor.GRAY + "Showing ping for " + ChatColor.WHITE + whose.getName() + ChatColor.GRAY + " is: " + c + pingStr);
+            success(to, ChatColor.GRAY + "Showing ping for " + ChatColor.RED + whose.getName() + ChatColor.GRAY + ": " + c + pingStr);
         }
     }
     
