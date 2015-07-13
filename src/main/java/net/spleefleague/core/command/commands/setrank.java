@@ -41,7 +41,7 @@ public class setrank extends BasicCommand {
                 if(slp != null) {
                     Rank rank;
                     try {
-                        rank = Rank.valueOf(args[1]);
+                        rank = Rank.valueOf(args[1].toUpperCase());
                     } catch(Exception e) {
                         rank = null;
                     }

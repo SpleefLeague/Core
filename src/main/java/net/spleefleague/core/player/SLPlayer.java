@@ -45,7 +45,7 @@ public class SLPlayer extends GeneralPlayer {
             public void run() {
                 getPlayer().setPlayerListName(rank.getColor() + getName());
             }
-        },20);
+        },40);
         if(rank.hasPermission(Rank.MODERATOR)) {
             chatChannels.add("STAFF");
         }

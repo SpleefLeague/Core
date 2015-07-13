@@ -25,35 +25,40 @@ public class spectate extends BasicCommand{
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(args.length == 1) {
-            Player target = Bukkit.getPlayer(args[0]);
-            if(target != null) {
-                for(GamePlugin gp : GamePlugin.getGamePlugins()) {
-                    if(gp.isIngame(target)) {
-                        if(GamePlugin.isSpectatingAll(p)) {
-                            GamePlugin.unspectateAll(p);
-                        }
-                        if(gp.spectate(target, p)) {
-                            success(p, "You are now spectating " + target.getName());
+        if(!GamePlugin.isSpectatingAll(p)) {
+            if(args.length == 1) {
+                Player target = Bukkit.getPlayer(args[0]);
+                if(target != null) {
+                    for(GamePlugin gp : GamePlugin.getGamePlugins()) {
+                        if(gp.isIngame(target)) {
+                            if(GamePlugin.isSpectatingAll(p)) {
+                                GamePlugin.unspectateAll(p);
+                            }
+                            if(gp.spectate(target, p)) {
+                                success(p, "You are now spectating " + target.getName());
+                            }
                         }
                     }
                 }
+                else {
+                    error(p, args[0] + " is not online!");
+                }
+            }
+            else if(args.length == 0) {
+                if(GamePlugin.isSpectatingAll(p)) {
+                    GamePlugin.unspectateAll(p);
+                    success(p, "You are no longer spectating a match");
+                }
+                else {
+                    error(p, "You are currently not spectating anyone!");
+                }
             }
             else {
-                error(p, args[0] + " is not online!");
-            }
-        }
-        else if(args.length == 0) {
-            if(GamePlugin.isSpectatingAll(p)) {
-                GamePlugin.unspectateAll(p);
-                success(p, "You are no longer spectating a match");
-            }
-            else {
-                error(p, "You are currently not spectating anyone!");
+                sendUsage(p);
             }
         }
         else {
-            sendUsage(p);
+            error(p, "You are currently ingame!");
         }
     }
 }

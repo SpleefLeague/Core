@@ -79,6 +79,17 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
         }
     }
     
+    public void saveAll() {
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                for (GeneralPlayer gp : getAll()) {
+                    EntityBuilder.save(gp, db.getCollection("Players"));
+                }
+            }
+        });
+    }
+    
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
         Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), new Runnable() {

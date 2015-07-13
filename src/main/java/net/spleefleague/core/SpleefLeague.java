@@ -66,6 +66,12 @@ public class SpleefLeague extends CorePlugin {
         EastereggListener.init();
     }
     
+    @Override
+    public void stop() {
+        playerManager.saveAll();
+        mongo.close();
+    }
+    
     private void applySettings() {
         if(Settings.hasKey("default_world")) {
             String defaultWorld = Settings.getString("default_world");
@@ -98,11 +104,6 @@ public class SpleefLeague extends CorePlugin {
         } catch (Exception ex) {
             Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-    @Override
-    public void stop() {
-        mongo.close();
     }
     
     @Override
