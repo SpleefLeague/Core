@@ -197,7 +197,7 @@ public class GameQueue<P extends GeneralPlayer, Q extends net.spleefleague.core.
         Collection<P> result = new ArrayList<>();
         for(int i = 0; i < array.length && amount > 0; i++) {
             P q = array[i];
-            if(r.contains(q) || d.contains(q)) {
+            if(r.contains(q) || d.contains(q) && requestedQueue.isAvailable(q)) {
                 result.add(q);
                 amount--;
             }

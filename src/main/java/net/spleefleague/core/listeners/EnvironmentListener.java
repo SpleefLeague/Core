@@ -5,14 +5,20 @@
  */
 package net.spleefleague.core.listeners;
 
+import net.md_5.bungee.api.ChatColor;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.plugin.GamePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -20,7 +26,9 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -41,12 +49,17 @@ public class EnvironmentListener implements Listener{
         
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        player.teleport(SpleefLeague.DEFAULT_WORLD.getSpawnLocation());
+        player.teleport(SpleefLeague.getInstance().getSpawnLocation());
 //        player.getInventory().setItem(0, MenuRepository.getSLMenuItem());
-        event.setJoinMessage(null);
+        event.setJoinMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has joined the server");
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onQuit(PlayerQuitEvent event) {
+        event.setQuitMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has left the server");
     }
     
     @EventHandler
@@ -81,7 +94,7 @@ public class EnvironmentListener implements Listener{
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
         event.setExpToDrop(0);
-        if(!(event.isCancelled() || GamePlugin.isIngameAll(event.getPlayer()))) event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
+        if(!(event.isCancelled() || GamePlugin.isIngameGlobal(event.getPlayer()))) event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
     
     @EventHandler
@@ -92,5 +105,15 @@ public class EnvironmentListener implements Listener{
     @EventHandler
     public void onDrop(PlayerDropItemEvent event) {
         event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
+    }
+    
+    @EventHandler
+    public void onDispense(BlockDispenseEvent event) {
+        Block block = event.getBlock();
+        if (block.getType() == Material.DISPENSER) {
+            Dispenser disp = (Dispenser) block.getState();
+            disp.getInventory().addItem(new ItemStack[]{event.getItem()});
+            disp.update();
+        }
     }
 }

@@ -25,14 +25,14 @@ public class spectate extends BasicCommand{
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(!GamePlugin.isSpectatingAll(p)) {
+        if(!GamePlugin.isSpectatingGlobal(p)) {
             if(args.length == 1) {
                 Player target = Bukkit.getPlayer(args[0]);
                 if(target != null) {
                     for(GamePlugin gp : GamePlugin.getGamePlugins()) {
                         if(gp.isIngame(target)) {
-                            if(GamePlugin.isSpectatingAll(p)) {
-                                GamePlugin.unspectateAll(p);
+                            if(GamePlugin.isSpectatingGlobal(p)) {
+                                GamePlugin.unspectateGlobal(p);
                             }
                             if(gp.spectate(target, p)) {
                                 success(p, "You are now spectating " + target.getName());
@@ -45,8 +45,8 @@ public class spectate extends BasicCommand{
                 }
             }
             else if(args.length == 0) {
-                if(GamePlugin.isSpectatingAll(p)) {
-                    GamePlugin.unspectateAll(p);
+                if(GamePlugin.isSpectatingGlobal(p)) {
+                    GamePlugin.unspectateGlobal(p);
                     success(p, "You are no longer spectating a match");
                 }
                 else {

@@ -30,8 +30,8 @@ public class spawn extends BasicCommand{
             error(p, "You are currently ingame!");
         }
         else if(slp.getState() == PlayerState.SPECTATING) {
-            GamePlugin.unspectateAll(p);
+            GamePlugin.unspectateGlobal(p);
         }
-        p.teleport(SpleefLeague.DEFAULT_WORLD.getSpawnLocation());
+        p.teleport(SpleefLeague.getInstance().getSpawnLocation());
     }
 }

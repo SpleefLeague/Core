@@ -129,12 +129,12 @@ public class SLPlayer extends GeneralPlayer {
     @Override
     public void setDefaults() {
         super.setDefaults();
-        this.rank = Rank.DEFAULT;
-        this.coins = 0;
+        setRank(Rank.DEFAULT);
+        setCoins(0);
         this.chatChannels.clear();
         this.eastereggs.clear();
         this.chatChannels.add("DEFAULT");
-        this.sendingChannel = "DEFAULT";
+        setSendingChannel("DEFAULT");
         this.hasCompletedTutorial = false;
     }
 }

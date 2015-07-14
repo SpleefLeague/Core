@@ -78,6 +78,11 @@ commands:
         aliases: []
         usage: |
           /<command> <player>
+    cancelall:
+        description: Cancels every game
+        aliases: []
+        usage: |
+          /<command>
     infractions:
         description: Displays the infractions of a player
         aliases: []

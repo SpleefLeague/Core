@@ -7,7 +7,6 @@ package net.spleefleague.core.plugin;
 
 import java.util.Collection;
 import java.util.HashSet;
-import static net.spleefleague.core.plugin.CorePlugin.plugins;
 import org.bukkit.entity.Player;
 
 /**
@@ -28,35 +27,42 @@ public abstract class GamePlugin extends CorePlugin {
     public abstract void dequeue(Player p);
     public abstract void cancel(Player p);
     public abstract void surrender(Player p);
+    public abstract void cancelAll();
     public abstract boolean isQueued(Player p);
     public abstract boolean isIngame(Player p);
     public abstract boolean isSpectating(Player p);
     
-    public static void dequeueAll(Player p) {
+    public static void dequeueGlobal(Player p) {
         for(GamePlugin gp : gamePlugins) {
             gp.dequeue(p);
         }
     }
     
-    public static void cancelAll(Player p) {
+    public static void cancelGlobal(Player p) {
         for(GamePlugin gp : gamePlugins) {
             gp.cancel(p);
         }
     }
     
-    public static void surrenderAll(Player p) {
+    public static void surrenderGlobal(Player p) {
         for(GamePlugin gp : gamePlugins) {
             gp.surrender(p);
         }
     }
     
-    public static void unspectateAll(Player p) {
+    public static void cancelAllMatches() {
+        for(GamePlugin gp : gamePlugins) {
+            gp.cancelAll();
+        }
+    }
+    
+    public static void unspectateGlobal(Player p) {
         for(GamePlugin gp : gamePlugins) {
             gp.unspectate(p);
         }
     }
     
-    public static boolean isQueuedAll(Player p) {
+    public static boolean isQueuedGlobal(Player p) {
         for(GamePlugin gp : gamePlugins) {
              if(gp.isQueued(p)) {
                  return true;
@@ -65,7 +71,7 @@ public abstract class GamePlugin extends CorePlugin {
         return false;
     }
     
-    public static boolean isIngameAll(Player p) {
+    public static boolean isIngameGlobal(Player p) {
         for(GamePlugin gp : gamePlugins) {
             if(gp.isIngame(p)) {
                 return true;
@@ -74,7 +80,7 @@ public abstract class GamePlugin extends CorePlugin {
         return false;
     }
     
-    public static boolean isSpectatingAll(Player p) {
+    public static boolean isSpectatingGlobal(Player p) {
         for(GamePlugin gp : gamePlugins) {
             if(gp.isSpectating(p)) {
                 return true;

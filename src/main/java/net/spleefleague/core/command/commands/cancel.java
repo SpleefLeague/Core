@@ -39,8 +39,8 @@ public class cancel extends BasicCommand {
         if (tp != null) {
             GeneralPlayer gp = SpleefLeague.getInstance().getPlayerManager().get(tp);
             if (gp != null) {
-                if (GamePlugin.isIngameAll(tp)) {
-                    GamePlugin.cancelAll(tp);
+                if (GamePlugin.isIngameGlobal(tp)) {
+                    GamePlugin.cancelGlobal(tp);
                     success(cs, "The battle will be cancelled.");
                 } 
                 else {

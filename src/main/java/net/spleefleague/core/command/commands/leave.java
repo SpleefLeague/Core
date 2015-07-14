@@ -24,8 +24,8 @@ public class leave extends BasicCommand{
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(GamePlugin.isQueuedAll(p)) {
-            GamePlugin.dequeueAll(p);
+        if(GamePlugin.isQueuedGlobal(p)) {
+            GamePlugin.dequeueGlobal(p);
             success(p, "You have successfully been removed from the queue.");
         }
         else {

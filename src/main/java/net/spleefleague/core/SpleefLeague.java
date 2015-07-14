@@ -41,6 +41,7 @@ public class SpleefLeague extends CorePlugin {
     
     private MongoClient mongo;
     private PlayerManager<SLPlayer> playerManager;
+    private Location spawn;
     
     public SpleefLeague() {
         super("[SpleefLeague]", ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
@@ -78,7 +79,7 @@ public class SpleefLeague extends CorePlugin {
             CorePlugin.DEFAULT_WORLD = Bukkit.getWorld(defaultWorld);
         }
         if(Settings.hasKey("spawn")) {
-            Location spawn = Settings.getLocation("spawn");
+            spawn = Settings.getLocation("spawn");
             if(spawn != null) {
                 CorePlugin.DEFAULT_WORLD.setSpawnLocation(spawn.getBlockX(), spawn.getBlockY(), spawn.getBlockZ());
             }
@@ -117,6 +118,10 @@ public class SpleefLeague extends CorePlugin {
     
     public PlayerManager<SLPlayer> getPlayerManager() {
         return playerManager;
+    }
+    
+    public Location getSpawnLocation() {
+        return spawn;
     }
     
     private static SpleefLeague instance;
