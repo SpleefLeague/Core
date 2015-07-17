@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.command.BasicCommand;
+import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.utils.RuntimeCompiler;
 import org.bukkit.ChatColor;
@@ -24,7 +25,7 @@ import org.bukkit.entity.Player;
 public class debug extends BasicCommand {
 
     public debug(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage);
+        super(plugin, name, usage, Rank.DEVELOPER);
     }
 
     @Override

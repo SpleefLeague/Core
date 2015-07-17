@@ -5,10 +5,11 @@
  */
 package net.spleefleague.core.listeners;
 
-import net.md_5.bungee.api.ChatColor;
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.command.commands.back;
 import net.spleefleague.core.plugin.GamePlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -24,9 +25,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -73,6 +78,13 @@ public class EnvironmentListener implements Listener{
     }
     
     @EventHandler
+    public void onTeleport(PlayerTeleportEvent event) {
+        if(event.getCause() == TeleportCause.COMMAND) {      
+            ((back)SpleefLeague.getInstance().getBasicCommand("back")).setLastTeleport(event.getPlayer(), event.getFrom());
+        }
+    }
+    
+    @EventHandler
     public void onDamage(EntityDamageEvent event) {
         if((event.getEntity() instanceof Player)) {
             if(event.getCause() == DamageCause.FALL) {
@@ -114,6 +126,21 @@ public class EnvironmentListener implements Listener{
             Dispenser disp = (Dispenser) block.getState();
             disp.getInventory().addItem(new ItemStack[]{event.getItem()});
             disp.update();
+        }
+    }
+    
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        if(event.getItem() != null && event.getItem().getType() == Material.WATER_BUCKET || event.getItem().getType() == Material.LAVA_BUCKET || event.getItem().getType() == Material.BUCKET) {
+            event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
+        }
+    }
+    
+    @EventHandler
+    public void onFrameBrake(HangingBreakEvent e) {
+        e.setCancelled(true);
+        if(e.getEntity() instanceof Player) {
+            e.setCancelled(((Player)e.getEntity()).getGameMode() != GameMode.CREATIVE);
         }
     }
 }

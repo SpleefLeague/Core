@@ -9,29 +9,34 @@ import net.spleefleague.core.command.BasicCommand;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.plugin.CorePlugin;
-import net.spleefleague.core.plugin.GamePlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 /**
  *
  * @author Jonas
  */
-public class cancelall extends BasicCommand {
-
-    public cancelall(CorePlugin plugin, String name, String usage) {
+public class tp extends BasicCommand{
+    
+    public tp(CorePlugin plugin, String name, String usage) {
         super(plugin, name, usage, Rank.MODERATOR);
     }
-
+    
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        runConsole(p, cmd, args);
-    }
-
-    @Override
-    protected void runConsole(CommandSender cs, Command cmd, String[] args) {
-        GamePlugin.cancelAllMatches();
-        success(cs, "All games have been cancelled.");
+        if(args.length == 1) {
+            Player target = Bukkit.getPlayer(args[0]);
+            if(target != null) {
+                p.teleport(target, TeleportCause.COMMAND);
+            }
+            else {
+                error(p, args[0] + " is not online!");
+            }
+        }
+        else {
+            sendUsage(p);
+        }
     }
 }

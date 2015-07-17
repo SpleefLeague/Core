@@ -5,6 +5,7 @@
  */
 package net.spleefleague.core.listeners;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.chat.ChatChannel;
@@ -64,11 +65,17 @@ public class ChatListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer());
-        Iterator<String> i = slp.getReceivingChatChannels().iterator();
+        Iterator<String> i = ((HashSet<String>)slp.getReceivingChatChannels().clone()).iterator();
         while(i.hasNext()) {
-            ChatChannel cc = ChatChannel.fromString(i.next());
-            if(cc.isTemporary()) {
-                slp.removeChatChannel(cc.getName());
+            String name = i.next();
+            ChatChannel cc = ChatChannel.fromString(name);
+            if(cc != null) {
+                if(cc.isTemporary()) {
+                    slp.removeChatChannel(cc.getName());
+                }
+            }
+            else {
+                slp.removeChatChannel(name);
             }
         }
     }

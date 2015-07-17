@@ -5,6 +5,7 @@
  */
 package net.spleefleague.core.command;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
@@ -28,6 +29,7 @@ public abstract class BasicCommand implements CommandExecutor {
     protected CorePlugin plugin;
     protected String name;
     protected Rank requiredRank;
+    protected Rank[] additionalRanks;
     protected boolean hasCommandBlockExecutor = false;
     private String[] usages = null;
     private static final String NO_COMMAND_PERMISSION_MESSAGE = Theme.ERROR.buildTheme(false) + "You don't have permission to use this command!";
@@ -38,10 +40,11 @@ public abstract class BasicCommand implements CommandExecutor {
         this(plugin, name, usage, Rank.DEFAULT);
     }
 
-    public BasicCommand(CorePlugin plugin, String name, String usage, Rank requiredPermission) {
+    public BasicCommand(CorePlugin plugin, String name, String usage, Rank requiredRank, Rank... additionalRanks) {
         this.plugin = plugin;
         this.name = name;
-        this.requiredRank = requiredPermission;
+        this.requiredRank = requiredRank;
+        this.additionalRanks = additionalRanks;
         usage = usage.replaceAll(Pattern.quote("<command>"), name);
         this.usages = StringUtils.split(usage, "\n");
         plugin.getCommand(name).setExecutor(this);
@@ -54,7 +57,7 @@ public abstract class BasicCommand implements CommandExecutor {
                 Player p = (Player) sender;
                 SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(p);
                 if (slp != null) {
-                    if (slp.getRank().hasPermission(requiredRank)) {
+                    if (slp.getRank().hasPermission(requiredRank) || Arrays.asList(additionalRanks).contains(slp.getRank())) {
                         run(p, slp, cmd, args);
                     } else {
                         sender.sendMessage(plugin.getChatPrefix() + " " + NO_COMMAND_PERMISSION_MESSAGE);

@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.spleefleague.core.chat.ChatChannel;
 import net.spleefleague.core.chat.ChatManager;
+import net.spleefleague.core.command.BasicCommand;
 import net.spleefleague.core.command.CommandLoader;
 import net.spleefleague.core.io.Settings;
 import net.spleefleague.core.listeners.ChatListener;
@@ -42,6 +43,7 @@ public class SpleefLeague extends CorePlugin {
     private MongoClient mongo;
     private PlayerManager<SLPlayer> playerManager;
     private Location spawn;
+    private CommandLoader commandLoader;
     
     public SpleefLeague() {
         super("[SpleefLeague]", ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
@@ -55,7 +57,7 @@ public class SpleefLeague extends CorePlugin {
         Settings.loadSettings();
         applySettings();
         RuntimeCompiler.loadPermanentDebuggers();
-        CommandLoader.loadCommands(this, "net.spleefleague.core.command.commands");
+        commandLoader = CommandLoader.loadCommands(this, "net.spleefleague.core.command.commands");
         DatabaseConnection.initialize();
         playerManager = new PlayerManager<>(this, SLPlayer.class);
         ChatManager.registerChannel(new ChatChannel("DEFAULT", "Normal chat", Rank.DEFAULT, true));
@@ -71,6 +73,10 @@ public class SpleefLeague extends CorePlugin {
     public void stop() {
         playerManager.saveAll();
         mongo.close();
+    }
+    
+    public BasicCommand getBasicCommand(String name) {
+        return commandLoader.getCommand(name).getExecutor();
     }
     
     private void applySettings() {

@@ -40,14 +40,15 @@ public class SLPlayer extends GeneralPlayer {
     @DBLoad(fieldName = "rank")
     public void setRank(final Rank rank) {
         this.rank = rank;
-        Bukkit.getScheduler().runTaskLater(SpleefLeague.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                getPlayer().setPlayerListName(rank.getColor() + getName());
-            }
-        },40);
+        getPlayer().setPlayerListName(rank.getColor() + getName());
         if(rank.hasPermission(Rank.MODERATOR)) {
             chatChannels.add("STAFF");
+        }
+        if(rank.hasPermission(Rank.DEVELOPER)) {
+            getPlayer().setOp(true);
+        }
+        else {
+            getPlayer().setOp(false);
         }
     }
     

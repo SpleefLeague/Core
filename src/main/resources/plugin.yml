@@ -98,3 +98,23 @@ commands:
         aliases: []
         usage: |
           /<command>
+    back:
+        description: Teleports a player back to their last location
+        aliases: []
+        usage: |
+          /<command>
+    tp:
+        description: Teleports you to another player
+        aliases: []
+        usage: |
+          /<command> <target>
+    tppos:
+        description: Teleports a player to certain coordinates
+        aliases: []
+        usage: |
+          /<command> [target] <x> <y> <z>
+    tphere:
+        description: Teleports a player to you
+        aliases: []
+        usage: |
+          /<command> <target>

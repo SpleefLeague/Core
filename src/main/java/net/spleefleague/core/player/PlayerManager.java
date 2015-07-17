@@ -63,9 +63,9 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
             G generalPlayer;
             if(doc == null) {
                 generalPlayer = c.newInstance();
-                generalPlayer.setDefaults();
                 generalPlayer.setName(player.getName());
                 generalPlayer.setUUID(player.getUniqueId());
+                generalPlayer.setDefaults();
                 EntityBuilder.save(generalPlayer, db.getCollection("Players"));
             }
             else {

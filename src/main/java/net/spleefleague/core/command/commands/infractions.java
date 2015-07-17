@@ -15,6 +15,7 @@ import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.command.BasicCommand;
 import net.spleefleague.core.infraction.Infraction;
 import net.spleefleague.core.io.EntityBuilder;
+import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.utils.DatabaseConnection;
@@ -32,7 +33,7 @@ import org.bukkit.entity.Player;
 public class infractions extends BasicCommand {
 
     public infractions(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage);
+        super(plugin, name, usage, Rank.MODERATOR);
     }
 
     @Override
