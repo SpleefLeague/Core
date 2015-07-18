@@ -10,6 +10,7 @@ import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.chat.ChatManager;
 import net.spleefleague.core.chat.Theme;
 import net.spleefleague.core.command.BasicCommand;
 import net.spleefleague.core.player.Rank;
@@ -50,6 +51,7 @@ public class warn extends BasicCommand{
                 pl.sendMessage(Theme.ERROR + "You have been warned: " + ChatColor.GRAY + warnMessage);
                 Infraction warn = new Infraction(pl.getUniqueId(), cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.WARNING, System.currentTimeMillis(), -1, warnMessage);
                 EntityBuilder.save(warn, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"));
+                ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix() + Theme.SUPER_SECRET.buildTheme(false) + " The player " + args[0] + " has been warned by " + cs.getName(), "STAFF");
                 success(cs, "The player has been warned!");
             }
             else {

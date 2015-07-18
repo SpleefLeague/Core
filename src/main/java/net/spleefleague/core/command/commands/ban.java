@@ -9,6 +9,8 @@ package net.spleefleague.core.command.commands;
 import java.util.UUID;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.chat.ChatManager;
+import net.spleefleague.core.chat.Theme;
 import net.spleefleague.core.command.BasicCommand;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
@@ -54,8 +56,10 @@ public class ban extends BasicCommand{
             SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").deleteOne(new Document("uuid", id.toString()));
             EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), false);
             EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), false);
-            if((pl = Bukkit.getPlayerExact(args[0])) != null)
+            ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix() + Theme.SUPER_SECRET.buildTheme(false) + " The player " + args[0] + " has been banned by " + cs.getName(), "STAFF");
+            if((pl = Bukkit.getPlayerExact(args[0])) != null) {
                 pl.kickPlayer("You have been banned for: " + banMessage);
+            }
             success(cs, "The player has been banned!");
         }
         else {

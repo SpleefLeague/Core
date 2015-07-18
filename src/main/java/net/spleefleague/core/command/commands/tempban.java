@@ -10,6 +10,8 @@ import java.time.Duration;
 import java.util.UUID;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.chat.ChatManager;
+import net.spleefleague.core.chat.Theme;
 import net.spleefleague.core.command.BasicCommand;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
@@ -59,6 +61,7 @@ public class tempban extends BasicCommand{
             SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").deleteOne(new Document("uuid", id.toString()));
             EntityBuilder.save(tempban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), false);
             EntityBuilder.save(tempban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), false);
+            ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix() + Theme.SUPER_SECRET.buildTheme(false) + " The player " + args[0] + " has been tempbanned by " + cs.getName(), "STAFF");
             if((pl = Bukkit.getPlayerExact(args[0])) != null)
                 pl.kickPlayer("You have been tempbanned for " + TimeUtil.durationToString(duration) + ". " + tempbanMessage);
             success(cs, "The player has been tempbanned!");

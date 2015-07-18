@@ -9,6 +9,8 @@ package net.spleefleague.core.command.commands;
 import java.util.UUID;
 import net.spleefleague.core.plugin.CorePlugin;
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.chat.ChatManager;
+import net.spleefleague.core.chat.Theme;
 import net.spleefleague.core.command.BasicCommand;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
@@ -51,6 +53,7 @@ public class unban extends BasicCommand{
             Infraction unban = new Infraction(id, cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.UNBAN, System.currentTimeMillis(), -1, unbanMessage);
             SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").deleteOne(new Document("uuid", id.toString()));
             EntityBuilder.save(unban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"));
+            ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix() + Theme.SUPER_SECRET.buildTheme(false) + " The player " + args[0] + " has been unbanned by " + cs.getName(), "STAFF");
             success(cs, "The player has been unbanned!");
         }
         else {

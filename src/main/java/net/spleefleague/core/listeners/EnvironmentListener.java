@@ -5,8 +5,12 @@
  */
 package net.spleefleague.core.listeners;
 
+import java.util.Arrays;
+import java.util.List;
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.chat.ChatManager;
 import net.spleefleague.core.command.commands.back;
+import net.spleefleague.core.io.Settings;
 import net.spleefleague.core.plugin.GamePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,18 +18,22 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -60,6 +68,9 @@ public class EnvironmentListener implements Listener{
         player.teleport(SpleefLeague.getInstance().getSpawnLocation());
 //        player.getInventory().setItem(0, MenuRepository.getSLMenuItem());
         event.setJoinMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has joined the server");
+        if(!player.hasPlayedBefore()) {
+            ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix(), ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + event.getPlayer().getName() + ChatColor.BLUE + " to SpleefLeague!", "DEFAULT");
+        }
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -131,16 +142,45 @@ public class EnvironmentListener implements Listener{
     
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if(event.getItem() != null && event.getItem().getType() == Material.WATER_BUCKET || event.getItem().getType() == Material.LAVA_BUCKET || event.getItem().getType() == Material.BUCKET) {
-            event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
+        if(event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+            if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                ItemStack item = event.getItem();
+                Material clicked = event.getClickedBlock().getType();
+                if(Arrays.asList(Material.CHEST, Material.DROPPER, Material.FURNACE, Material.REDSTONE_COMPARATOR, Material.DIODE, Material.DISPENSER, Material.ANVIL, Material.TRAP_DOOR, Material.BED, Material.HOPPER, Material.HOPPER_MINECART).contains(clicked)) {
+                    event.setCancelled(true);
+                }
+                if(item != null && Arrays.asList(Material.WATER_BUCKET, Material.LAVA_BUCKET, Material.BUCKET, Material.BOAT).contains(item.getType())) {
+                    event.setCancelled(true);
+                }
+            }
+            else if(event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                if(event.getClickedBlock().getType() == Material.FIRE) {
+                    event.setCancelled(true);
+                }
+            }
         }
     }
     
     @EventHandler
-    public void onFrameBrake(HangingBreakEvent e) {
+    public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        String cmd = event.getMessage().split(" ")[0];
+        if(((List<String>)Settings.getList("blocked_commands")).contains(cmd)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onEntityInteract(EntityInteractEvent event) {
+        if (event.getBlock().getType() == Material.SOIL && event.getEntity() instanceof Creature) {
+            event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler
+    public void onFrameBrake(HangingBreakByEntityEvent e) {
         e.setCancelled(true);
-        if(e.getEntity() instanceof Player) {
-            e.setCancelled(((Player)e.getEntity()).getGameMode() != GameMode.CREATIVE);
+        if(e.getRemover() instanceof Player) {
+            e.setCancelled(((Player)e.getRemover()).getGameMode() != GameMode.CREATIVE);
         }
     }
 }
