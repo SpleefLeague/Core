@@ -11,6 +11,7 @@ import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.chat.ChatManager;
 import net.spleefleague.core.command.commands.back;
 import net.spleefleague.core.io.Settings;
+import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.plugin.GamePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -67,6 +68,7 @@ public class EnvironmentListener implements Listener{
         Player player = event.getPlayer();
         player.teleport(SpleefLeague.getInstance().getSpawnLocation());
 //        player.getInventory().setItem(0, MenuRepository.getSLMenuItem());
+        player.setGameMode(SpleefLeague.getInstance().getPlayerManager().get(player).getRank().hasPermission(Rank.DEVELOPER) ? GameMode.CREATIVE : GameMode.SURVIVAL);
         event.setJoinMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has joined the server");
         if(!player.hasPlayedBefore()) {
             ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix(), ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + event.getPlayer().getName() + ChatColor.BLUE + " to SpleefLeague!", "DEFAULT");

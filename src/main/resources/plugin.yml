@@ -118,3 +118,8 @@ commands:
         aliases: []
         usage: |
           /<command> <target>
+    invsee:
+        description: Open a player's inventory
+        aliases: []
+        usage: |
+          /<command> <target>
