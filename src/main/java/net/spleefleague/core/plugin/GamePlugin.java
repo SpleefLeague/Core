@@ -27,10 +27,13 @@ public abstract class GamePlugin extends CorePlugin {
     public abstract void dequeue(Player p);
     public abstract void cancel(Player p);
     public abstract void surrender(Player p);
+    public abstract void requestEndgame(Player p);
     public abstract void cancelAll();
+    public abstract void setQueueStatus(boolean open);
     public abstract boolean isQueued(Player p);
     public abstract boolean isIngame(Player p);
     public abstract boolean isSpectating(Player p);
+    public abstract void printStats(Player p);
     
     public static void dequeueGlobal(Player p) {
         for(GamePlugin gp : gamePlugins) {
@@ -53,6 +56,12 @@ public abstract class GamePlugin extends CorePlugin {
     public static void cancelAllMatches() {
         for(GamePlugin gp : gamePlugins) {
             gp.cancelAll();
+        }
+    }
+    
+    public static void setQueueStatusGlobal(boolean open) {
+        for(GamePlugin gp : gamePlugins) {
+            gp.setQueueStatus(open);
         }
     }
     
@@ -87,6 +96,18 @@ public abstract class GamePlugin extends CorePlugin {
             }
         }
         return false;
+    }
+    
+    public static void requestEndgameGlobal(Player p) {
+        for(GamePlugin gp : gamePlugins) {
+            gp.requestEndgame(p);
+        }
+    }
+    
+    public static void printAllStats(Player p) {
+        for(GamePlugin gp : gamePlugins) {
+            gp.printStats(p);
+        }
     }
     
     public static Collection<GamePlugin> getGamePlugins() {

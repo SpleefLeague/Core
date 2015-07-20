@@ -2,13 +2,12 @@ package net.spleefleague.core.player;
 
 import java.util.HashSet;
 import java.util.UUID;
-import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.io.DBLoad;
 import net.spleefleague.core.io.DBSave;
 import net.spleefleague.core.io.TypeConverter.HashSetIntegerConverter;
 import net.spleefleague.core.io.TypeConverter.HashSetStringConverter;
 import net.spleefleague.core.io.TypeConverter.UUIDStringConverter;
-import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 
 /**
  *
@@ -44,11 +43,16 @@ public class SLPlayer extends GeneralPlayer {
         if(rank.hasPermission(Rank.MODERATOR)) {
             chatChannels.add("STAFF");
         }
+        else {
+            removeChatChannel("STAFF");
+        }
         if(rank.hasPermission(Rank.DEVELOPER)) {
             getPlayer().setOp(true);
+            getPlayer().setGameMode(GameMode.CREATIVE);
         }
         else {
             getPlayer().setOp(false);
+            getPlayer().setGameMode(GameMode.SURVIVAL);
         }
     }
     

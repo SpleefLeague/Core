@@ -66,12 +66,12 @@ public class ChatManager {
     }
     
     public static Collection<ChatChannel> getAvailableChatChannels(SLPlayer slp) {
-        HashSet<ChatChannel> channels = new HashSet<>();
+        HashSet<ChatChannel> availableChannels = new HashSet<>();
         for(ChatChannel channel : channels) {
             if(!channel.isTemporary() && slp.getRank().hasPermission(channel.getMinRank())) {
-                channels.add(channel);
+                availableChannels.add(channel);
             }
         }
-        return channels;
+        return availableChannels;
     }
 }

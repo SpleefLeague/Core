@@ -57,26 +57,32 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
         return map.values();
     }
     
-    private void load(Player player, Class<G> c) {
-        try {
-            Document doc = db.getCollection("Players").find(new Document("uuid", player.getUniqueId().toString())).first();
-            G generalPlayer;
-            if(doc == null) {
-                generalPlayer = c.newInstance();
-                generalPlayer.setName(player.getName());
-                generalPlayer.setUUID(player.getUniqueId());
-                generalPlayer.setDefaults();
-                EntityBuilder.save(generalPlayer, db.getCollection("Players"));
-            }
-            else {
-                generalPlayer = EntityBuilder.load(doc, c);
-                generalPlayer.setName(player.getName()); //Necessary when changing usernames are allowed
-            }
-            map.put(player, generalPlayer);
-            callEvent(generalPlayer, doc == null);    
-        } catch (InstantiationException | IllegalAccessException | SecurityException | IllegalArgumentException ex) {
-            Logger.getLogger(PlayerManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private void load(final Player player, final Class<G> c) {
+            final Document doc = db.getCollection("Players").find(new Document("uuid", player.getUniqueId().toString())).first();
+            Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        G generalPlayer;
+                        if (doc == null) {
+                            generalPlayer = c.newInstance();
+                            generalPlayer.setName(player.getName());
+                            generalPlayer.setUUID(player.getUniqueId());
+                            generalPlayer.setDefaults();
+                            EntityBuilder.save(generalPlayer, db.getCollection("Players"));
+
+                        }
+                        else {
+                            generalPlayer = EntityBuilder.load(doc, c);
+                            generalPlayer.setName(player.getName());
+                        }
+                        map.put(player, generalPlayer);
+                        callEvent(generalPlayer, doc == null);
+                    } catch (InstantiationException | IllegalAccessException ex) {
+                        Logger.getLogger(PlayerManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            });   
     }
     
     public void saveAll() {

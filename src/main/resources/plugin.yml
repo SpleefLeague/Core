@@ -123,3 +123,25 @@ commands:
         aliases: []
         usage: |
           /<command> <target>
+    points:
+        description: Displays a player's Spleef/Jump stats
+        aliases: [stats, rating]
+        usage: |
+          /<command>
+    endgame:
+        description: Requests the current battle to be cancelled
+        usage:
+            /<command>
+    staffchat:
+        description: Staff intern chat
+        aliases: [sc]
+        usage:
+            /<command> <message>
+    pauseall:
+        description: Pauses all queues
+        usage:
+            /<command>
+    unpauseall:
+        description: Unpauses all queues
+        usage:
+            /<command>

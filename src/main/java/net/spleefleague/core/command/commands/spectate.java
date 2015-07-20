@@ -29,6 +29,8 @@ public class spectate extends BasicCommand {
             if (GamePlugin.isSpectatingGlobal(p)) {
                 GamePlugin.unspectateGlobal(p);
                 success(p, "You are no longer spectating a match");
+                p.setAllowFlight(false);
+                p.setFlying(false);
             }
             else {
                 error(p, "You are currently not spectating anyone!");

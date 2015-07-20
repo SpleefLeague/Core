@@ -68,7 +68,6 @@ public class EnvironmentListener implements Listener{
         Player player = event.getPlayer();
         player.teleport(SpleefLeague.getInstance().getSpawnLocation());
 //        player.getInventory().setItem(0, MenuRepository.getSLMenuItem());
-        player.setGameMode(SpleefLeague.getInstance().getPlayerManager().get(player).getRank().hasPermission(Rank.DEVELOPER) ? GameMode.CREATIVE : GameMode.SURVIVAL);
         event.setJoinMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has joined the server");
         if(!player.hasPlayedBefore()) {
             ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix(), ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + event.getPlayer().getName() + ChatColor.BLUE + " to SpleefLeague!", "DEFAULT");
@@ -148,10 +147,13 @@ public class EnvironmentListener implements Listener{
             if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 ItemStack item = event.getItem();
                 Material clicked = event.getClickedBlock().getType();
-                if(Arrays.asList(Material.CHEST, Material.DROPPER, Material.FURNACE, Material.REDSTONE_COMPARATOR, Material.DIODE, Material.DISPENSER, Material.ANVIL, Material.TRAP_DOOR, Material.BED, Material.HOPPER, Material.HOPPER_MINECART).contains(clicked)) {
+                if(clicked == Material.CAULDRON) {
+                    event.getPlayer().setItemInHand(null);
+                }
+                else if(Arrays.asList(/*Material.CHEST, Material.FURNACE, */Material.DROPPER, Material.REDSTONE_COMPARATOR, Material.DIODE, Material.DISPENSER, Material.ANVIL, Material.TRAP_DOOR, Material.BED, Material.HOPPER, Material.HOPPER_MINECART).contains(clicked)) {
                     event.setCancelled(true);
                 }
-                if(item != null && Arrays.asList(Material.WATER_BUCKET, Material.LAVA_BUCKET, Material.BUCKET, Material.BOAT).contains(item.getType())) {
+                else if(item != null && Arrays.asList(Material.WATER_BUCKET, Material.LAVA_BUCKET, Material.BUCKET, Material.BOAT).contains(item.getType())) {
                     event.setCancelled(true);
                 }
             }
