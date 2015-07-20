@@ -25,9 +25,6 @@ public class spectate extends BasicCommand {
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        error(p, "This command is disabled");
-        return;
-
         if (args.length == 0) {
             if (GamePlugin.isSpectatingGlobal(p)) {
                 GamePlugin.unspectateGlobal(p);
