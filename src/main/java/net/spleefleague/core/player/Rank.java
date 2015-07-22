@@ -22,6 +22,7 @@ public enum Rank {
     PREMIUM(30, "Premium", ChatColor.GOLD),
     SPECIAL(10, "\"Special\"", ChatColor.LIGHT_PURPLE),
     BUILDER(0, "Builder", ChatColor.GREEN),
+    ORGANIZER(0, "Default", ChatColor.YELLOW),
     DEFAULT(0, "Default", ChatColor.YELLOW);
     
     private final int permission;
