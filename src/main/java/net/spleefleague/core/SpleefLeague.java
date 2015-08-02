@@ -6,6 +6,7 @@
 package net.spleefleague.core;
 
 import net.spleefleague.core.io.Config;
+import net.spleefleague.core.listeners.*;
 import net.spleefleague.core.plugin.CorePlugin;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
@@ -21,10 +22,6 @@ import net.spleefleague.core.chat.ChatManager;
 import net.spleefleague.core.command.BasicCommand;
 import net.spleefleague.core.command.CommandLoader;
 import net.spleefleague.core.io.Settings;
-import net.spleefleague.core.listeners.ChatListener;
-import net.spleefleague.core.listeners.EastereggListener;
-import net.spleefleague.core.listeners.EnvironmentListener;
-import net.spleefleague.core.listeners.InfractionListener;
 import net.spleefleague.core.player.PlayerManager;
 import net.spleefleague.core.player.Rank;
 import net.spleefleague.core.player.SLPlayer;
@@ -66,6 +63,7 @@ public class SpleefLeague extends CorePlugin {
         EnvironmentListener.init();
         InfractionListener.init();
         //ItemMenuListener.init();
+        VanishListener.init();
         EastereggListener.init();
     }
     
