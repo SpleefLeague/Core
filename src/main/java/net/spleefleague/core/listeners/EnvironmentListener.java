@@ -6,12 +6,19 @@
 package net.spleefleague.core.listeners;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import net.spleefleague.core.SpleefLeague;
 import net.spleefleague.core.chat.ChatManager;
 import net.spleefleague.core.command.commands.back;
+import net.spleefleague.core.io.DBEntity;
+import net.spleefleague.core.io.DBSave;
+import net.spleefleague.core.io.DBSaveable;
+import net.spleefleague.core.io.EntityBuilder;
 import net.spleefleague.core.io.Settings;
-import net.spleefleague.core.player.Rank;
+import net.spleefleague.core.io.TypeConverter;
+import net.spleefleague.core.io.TypeConverter.DateConverter;
 import net.spleefleague.core.plugin.GamePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,7 +29,6 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -72,6 +78,7 @@ public class EnvironmentListener implements Listener{
         if(!player.hasPlayedBefore()) {
             ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix(), ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + event.getPlayer().getName() + ChatColor.BLUE + " to SpleefLeague!", "DEFAULT");
         }
+        logIPAddress(event.getPlayer());
     }
     
     @EventHandler
@@ -186,6 +193,32 @@ public class EnvironmentListener implements Listener{
         e.setCancelled(true);
         if(e.getRemover() instanceof Player) {
             e.setCancelled(((Player)e.getRemover()).getGameMode() != GameMode.CREATIVE);
+        }
+    }
+    
+    private void logIPAddress(final Player player) {
+        final String ip = player.getAddress().getAddress().toString();
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                EntityBuilder.save(new Connection(player.getUniqueId(), ip), SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections"));
+            }
+        });
+    }
+    
+    public static class Connection extends DBEntity implements DBSaveable {
+        
+        @DBSave(fieldName = "uuid", typeConverter = TypeConverter.UUIDStringConverter.class)
+        private UUID uuid;
+        @DBSave(fieldName = "ip")
+        private String ip;
+        @DBSave(fieldName = "date", typeConverter = DateConverter.class)
+        private Date date;
+        
+        public Connection(UUID uuid, String ip) {
+            this.uuid = uuid;
+            this.ip = ip;
+            this.date = new Date();
         }
     }
 }

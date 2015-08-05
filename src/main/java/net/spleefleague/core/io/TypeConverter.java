@@ -6,6 +6,7 @@
 package net.spleefleague.core.io;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -37,6 +38,19 @@ public abstract class TypeConverter<T, V> {
         @Override
         public UUID convertLoad(String v) {
             return UUID.fromString(v);
+        }
+    }
+    
+    public static class DateConverter extends TypeConverter<Date, Date> {
+
+        @Override
+        public Date convertSave(Date t) {
+            return t;
+        }
+
+        @Override
+        public Date convertLoad(Date v) {
+            return v;
         }
     }
 
