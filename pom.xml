@@ -76,6 +76,10 @@
             <id>shadowvolt-repo</id>
             <url>http://ci.shadowvolt.com/plugin/repository/everything/</url>
         </repository>
+        <repository>
+            <id>kitteh-repo</id>
+            <url>http://repo.kitteh.org/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
 
     <dependencies>
