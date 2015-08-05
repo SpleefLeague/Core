@@ -17,7 +17,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.PermissionAttachment;
 import org.kitteh.vanish.VanishPerms;
-import org.kitteh.vanish.VanishUser;
 
 import java.util.*;
 
