@@ -22,7 +22,6 @@ public class SLPlayer extends GeneralPlayer {
     @DBLoad(fieldName = "easteregg", typeConverter = HashSetIntegerConverter.class)
     private HashSet<Integer> eastereggs;
     private String sendingChannel;
-    boolean hasCompletedTutorial;
     private PlayerState state = PlayerState.IDLE;
     
     public SLPlayer() {
@@ -101,16 +100,6 @@ public class SLPlayer extends GeneralPlayer {
         return sendingChannel;
     }
     
-    @DBLoad(fieldName = "tutorialCompleted")
-    public void setCompletedTutorial(boolean hasCompletedTutorial) {
-        this.hasCompletedTutorial = hasCompletedTutorial;
-    }
-    
-    @DBSave(fieldName = "tutorialCompleted")
-    public boolean hasCompletedTutorial() {
-        return this.hasCompletedTutorial;
-    }
-    
     public boolean isInChatChannel(String channel) {
         return chatChannels.contains(channel);
     }
@@ -140,6 +129,5 @@ public class SLPlayer extends GeneralPlayer {
         this.eastereggs.clear();
         this.chatChannels.add("DEFAULT");
         setSendingChannel("DEFAULT");
-        this.hasCompletedTutorial = false;
     }
 }
