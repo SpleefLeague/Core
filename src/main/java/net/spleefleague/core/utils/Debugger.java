@@ -13,13 +13,13 @@ import org.bukkit.command.CommandSender;
  */
 public interface Debugger {
 
-    public void debug();
+    void debug();
     
-    public static interface Stoppable {
-        public void stop();
+    interface Stoppable {
+        void stop();
     }
     
-    public static interface CommandExecutor {
-        public void onCommand(CommandSender cs, String[] cmdArgs);
+    interface CommandExecutor {
+        void onCommand(CommandSender cs, String[] cmdArgs);
     }
 }

@@ -34,7 +34,7 @@ public class TimeUtil {
     public static String durationToString(Duration d) {
         String s = "";
         boolean started = false;
-        if (started || d.toDays() >= 365) {
+        if (d.toDays() >= 365) {
             started = true;
             s += d.toDays() / 365 + " year" + ((d.toDays() / 365 != 1) ? "s" : "") + ", ";
             d = d.minus(Duration.ofDays(d.toDays() / 365 * 365));

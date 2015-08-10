@@ -26,12 +26,12 @@ public enum Theme {
     private final String prefix;
     private final ChatColor color;
     
-    private Theme(String prefix, ChatColor color) {
+    Theme(String prefix, ChatColor color) {
         this.prefix = prefix;
         this.color = color;
     }
     
-    private Theme(ChatColor color) {
+    Theme(ChatColor color) {
         this(SpleefLeague.getInstance().getChatPrefix(), color);
     }
     

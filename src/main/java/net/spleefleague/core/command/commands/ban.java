@@ -36,14 +36,14 @@ public class ban extends BasicCommand{
     
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        ban(p, cmd, args);
+        ban(p, args);
     }
     
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
-        ban(cs, cmd, args);
+        ban(cs, args);
     }
-    private void ban(CommandSender cs, Command cmd, String[] args) {
+    private void ban(CommandSender cs, String[] args) {
         if(args.length >= 2) {
             UUID id;
             if((id = DatabaseConnection.getUUID(args[0])) == null) {
