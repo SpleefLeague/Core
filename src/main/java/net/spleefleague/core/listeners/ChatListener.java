@@ -44,7 +44,7 @@ public class ChatListener implements Listener {
         SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer());
         String prefix = "";
         if(slp.getRank() != Rank.DEFAULT) {
-            prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getName() + ChatColor.DARK_GRAY + "] ";
+            prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getDisplayName() + ChatColor.DARK_GRAY + "] ";
         }
         if(!event.isCancelled()) ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, event.getMessage(), slp.getSendingChannel());
         event.setCancelled(true);

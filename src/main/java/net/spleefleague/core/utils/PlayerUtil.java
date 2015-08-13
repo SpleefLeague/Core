@@ -6,12 +6,15 @@
 package net.spleefleague.core.utils;
 
 
+import java.lang.reflect.Field;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle.EnumTitleAction;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -30,6 +33,18 @@ public class PlayerUtil {
         PacketPlayOutTitle subtitlePacket = new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, subtitleJSON);
         connection.sendPacket(titlePacket);
         connection.sendPacket(subtitlePacket);
+    }
+    
+    public static void clearPermissions(Player player) {
+        CraftPlayer cp = (CraftPlayer)player;
+        try {
+            Field field = CraftEntity.class.getDeclaredField("perm");
+            field.setAccessible(true);
+            Object o = field.get(cp);
+            o.getClass().getMethod("clearPermissions").invoke(o);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
     
     public static boolean isInWater(Player player) {

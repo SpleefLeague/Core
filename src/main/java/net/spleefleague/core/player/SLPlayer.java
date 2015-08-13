@@ -46,13 +46,12 @@ public class SLPlayer extends GeneralPlayer {
             removeChatChannel("STAFF");
         }
         if(rank.hasPermission(Rank.DEVELOPER)) {
-            getPlayer().setOp(true);
             getPlayer().setGameMode(GameMode.CREATIVE);
         }
         else {
-            getPlayer().setOp(false);
             getPlayer().setGameMode(GameMode.SURVIVAL);
         }
+        rank.managePermissions(getPlayer());
     }
     
     @DBLoad(fieldName = "coins")
