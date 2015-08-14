@@ -56,6 +56,7 @@ public class SpleefLeague extends CorePlugin {
         RuntimeCompiler.loadPermanentDebuggers();
         commandLoader = CommandLoader.loadCommands(this, "net.spleefleague.core.command.commands");
         DatabaseConnection.initialize();
+        Rank.init();
         playerManager = new PlayerManager<>(this, SLPlayer.class);
         ChatManager.registerChannel(new ChatChannel("DEFAULT", "Normal chat", Rank.DEFAULT, true));
         ChatManager.registerChannel(new ChatChannel("STAFF", "Staff chat", Rank.MODERATOR, true));

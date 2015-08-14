@@ -16,7 +16,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.PermissionAttachment;
-import org.kitteh.vanish.VanishPerms;
 
 import java.util.*;
 
@@ -44,9 +43,7 @@ public class VanishListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(final PlayerJoinEvent event){
-        if(vanishers.contains(event.getPlayer().getUniqueId())) giveVanishPerms(event.getPlayer());
         if(silentJoiners.contains(event.getPlayer().getUniqueId())) {
-            giveSilentJoinPerms(event.getPlayer());
             Bukkit.getScheduler().runTaskLater(SpleefLeague.getInstance(), new Runnable() {
                 @Override
                 public void run() {
@@ -79,26 +76,10 @@ public class VanishListener implements Listener {
             if(slPlayer.getRank().hasPermission(Rank.MODERATOR)){
                 vanishers.add(slPlayer.getUUID());
                 silentJoiners.add(slPlayer.getUUID());
-                giveVanishPerms(event.getPlayer());
-                giveSilentJoinPerms(event.getPlayer());
-                VanishPerms.userQuit(event.getPlayer()); //Make sure there are no cached perms lingering around at VanishNoPacket.
                 slPlayer.getPlayer().spigot().sendMessage(new ComponentBuilder("You didn't join silently as this is the first time you joined after the last restart or reload.").color(ChatColor.RED)
                         .append("\n").reset()
                         .append("The next time you join the server, it will be silent").color(ChatColor.YELLOW).create());
             }
         }
-    }
-
-    private void giveVanishPerms(Player player){
-        PermissionAttachment vanisherAttachment = player.addAttachment(SpleefLeague.getInstance());
-        vanisherAttachment.setPermission("vanish.standard", true);
-        vanisherAttachment.setPermission("vanish.nochat", true);
-        vanishersAttachmentMap.put(player.getUniqueId(), vanisherAttachment);
-    }
-
-    private void giveSilentJoinPerms(Player player){
-        PermissionAttachment silentJoinAttachment = player.addAttachment(SpleefLeague.getInstance());
-        silentJoinAttachment.setPermission("vanish.silentjoin", true);
-        silentJoinersAttachmentMap.put(player.getUniqueId(), silentJoinAttachment);
     }
 }

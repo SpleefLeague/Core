@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import net.spleefleague.core.SpleefLeague;
+import net.spleefleague.core.player.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -41,6 +42,19 @@ public abstract class TypeConverter<T, V> {
         }
     }
     
+    public static class RankStringConverter extends TypeConverter<String, Rank> {
+
+        @Override
+        public String convertSave(Rank t) {
+            return t.getName();
+        }
+
+        @Override
+        public Rank convertLoad(String v) {
+            return Rank.valueOf(v);
+        }
+    }
+
     public static class DateConverter extends TypeConverter<Date, Date> {
 
         @Override

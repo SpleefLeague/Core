@@ -6,6 +6,7 @@ import net.spleefleague.core.io.DBLoad;
 import net.spleefleague.core.io.DBSave;
 import net.spleefleague.core.io.TypeConverter.HashSetIntegerConverter;
 import net.spleefleague.core.io.TypeConverter.HashSetStringConverter;
+import net.spleefleague.core.io.TypeConverter.RankStringConverter;
 import net.spleefleague.core.io.TypeConverter.UUIDStringConverter;
 import org.bukkit.GameMode;
 
@@ -30,12 +31,12 @@ public class SLPlayer extends GeneralPlayer {
         eastereggs = new HashSet<>();
     }
     
-    @DBSave(fieldName = "rank")
+    @DBSave(fieldName = "rank", typeConverter = RankStringConverter.class)
     public Rank getRank() {
         return rank;
     }
     
-    @DBLoad(fieldName = "rank")
+    @DBLoad(fieldName = "rank", typeConverter = RankStringConverter.class)
     public void setRank(final Rank rank) {
         this.rank = rank;
         getPlayer().setPlayerListName(rank.getColor() + getName());

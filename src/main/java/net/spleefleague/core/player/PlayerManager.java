@@ -70,7 +70,6 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
                             generalPlayer.setUUID(player.getUniqueId());
                             generalPlayer.setDefaults();
                             EntityBuilder.save(generalPlayer, db.getCollection("Players"));
-
                         }
                         else {
                             generalPlayer = EntityBuilder.load(doc, c);
