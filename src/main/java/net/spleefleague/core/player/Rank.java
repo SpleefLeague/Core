@@ -128,27 +128,32 @@ public class Rank extends DBEntity implements DBLoadable {
         MongoCursor<Document> dbc = SpleefLeague.getInstance().getPluginDB().getCollection("Ranks").find().iterator();
         while(dbc.hasNext()) {
             Rank rank = EntityBuilder.load(dbc.next(), Rank.class);
-            setField(rank);
+            Rank staticRank = getField(rank.getName());
+            if(staticRank != null) {
+                staticRank.name = rank.name;
+                staticRank.displayName = rank.displayName;
+                staticRank.hasOp = rank.hasOp;
+                staticRank.ladder = rank.ladder;
+                staticRank.color = rank.color;
+                staticRank.permissions = rank.permissions;
+                staticRank.exclusivePermissions = rank.exclusivePermissions;
+                rank = staticRank;
+            }
             ranks.put(rank.getName(), rank);
         }
         SpleefLeague.getInstance().log("Loaded " + ranks.size() + " ranks!");
     }
     
-    private static void setField(Rank rank) {
+    private static Rank getField(String name) {
         try {
-            Field field = Rank.class.getField(rank.getName());
+            Field field = Rank.class.getField(name);
             Rank staticRank = (Rank) field.get(null);
-            staticRank.name = rank.name;
-            staticRank.displayName = rank.displayName;
-            staticRank.hasOp = rank.hasOp;
-            staticRank.ladder = rank.ladder;
-            staticRank.color = rank.color;
-            staticRank.permissions = rank.permissions;
-            staticRank.exclusivePermissions = rank.exclusivePermissions;
+            return staticRank;
         } catch (NoSuchFieldException e) {
         } catch (SecurityException | IllegalArgumentException | IllegalAccessException ex) {
             Logger.getLogger(Rank.class.getName()).log(Level.SEVERE, null, ex);
-        }     
+        }
+        return null;
     }
 
     public void managePermissions(Player player) {
