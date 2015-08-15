@@ -1,7 +1,7 @@
 author: SpleefLeague
 authors: [JoBa97]
 description: SpleefLeague Core Plugin
-main: net.spleefleague.core.SpleefLeague
+main: com.spleefleague.core.SpleefLeague
 name: SpleefLeagueCore
 url: http://www.spleefleague.net/
 version: 0.1

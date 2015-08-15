@@ -58,7 +58,7 @@ public class SpleefLeague extends CorePlugin {
         Settings.loadSettings();
         applySettings();
         RuntimeCompiler.loadPermanentDebuggers();
-        commandLoader = CommandLoader.loadCommands(this, "net.spleefleague.core.command.commands");
+        commandLoader = CommandLoader.loadCommands(this, "com.spleefleague.core.command.commands");
         DatabaseConnection.initialize();
         Rank.init();
         playerManager = new PlayerManager<>(this, SLPlayer.class);

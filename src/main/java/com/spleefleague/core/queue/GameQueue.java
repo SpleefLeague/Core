@@ -91,6 +91,11 @@ public class GameQueue<P extends GeneralPlayer, Q extends com.spleefleague.core.
                 }
                 return false;
             }
+
+            @Override
+            public boolean isInGeneral() {
+                return true;
+            }
         };
         return queue;
     }
@@ -127,7 +132,7 @@ public class GameQueue<P extends GeneralPlayer, Q extends com.spleefleague.core.
         }
         else {
             q.add(player);
-            if(general) all.add(player);
+            all.add(player);
         }
     }
     
@@ -192,24 +197,38 @@ public class GameQueue<P extends GeneralPlayer, Q extends com.spleefleague.core.
     public Collection<P> request(Q requestedQueue) {
         int amount = requestedQueue.getSize();
         Queue<P> r = getQueue(requestedQueue);
-        Queue<P> d = getQueue(null);
-        P[] array = (P[])all.toArray(new GeneralPlayer[0]);
-        Collection<P> result = new ArrayList<>();
-        for(int i = 0; i < array.length && amount > 0; i++) {
-            P q = array[i];
-            if(r.contains(q) || d.contains(q) && requestedQueue.isAvailable(q)) {
-                result.add(q);
-                amount--;
+        if(requestedQueue.isInGeneral()) {
+            Queue<P> d = getQueue(null);
+            P[] array = (P[])all.toArray(new GeneralPlayer[0]);
+            Collection<P> result = new ArrayList<>();
+            for(int i = 0; i < array.length && amount > 0; i++) {
+                P q = array[i];
+                if(r.contains(q) || d.contains(q) && requestedQueue.isAvailable(q)) {
+                    result.add(q);
+                    amount--;
+                }
             }
-        }
-        if(amount == 0) {
-            for(P q : result) {
-                dequeue(q);
+            if(amount == 0) {
+                for(P q : result) {
+                    dequeue(q);
+                }
+                return result;
             }
-            return result;
+            else {
+                return null;
+            }
         }
         else {
-            return null;
+            Collection<P> result = new ArrayList<>();
+            if(r.size() >= amount) {
+                while(result.size() < amount) {
+                    result.add(r.poll());
+                }
+                return result;
+            }
+            else {
+                return null;
+            }
         }
     }
     

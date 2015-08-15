@@ -20,4 +20,5 @@ public interface Queue {
     public int getQueuePosition(GeneralPlayer gp);
     public String getName();
     public String getCurrentState();
+    public boolean isInGeneral();
 }
