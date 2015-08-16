@@ -96,6 +96,11 @@ public class GameQueue<P extends GeneralPlayer, Q extends com.spleefleague.core.
             public boolean isInGeneral() {
                 return true;
             }
+
+            @Override
+            public boolean isPaused() {
+                return false;
+            }
         };
         return queue;
     }
@@ -183,7 +188,7 @@ public class GameQueue<P extends GeneralPlayer, Q extends com.spleefleague.core.
         HashMap<Q, Collection<P>> requested = new HashMap<>();
         for(Q q : queues.keySet()) {
             if(q != null) {
-                if(q.isOccupied()) continue;
+                if(q.isOccupied() || q.isPaused()) continue;
                 Collection<P> players = request(q);
                 if(players != null) {
                     requested.put(q, players);
@@ -195,6 +200,7 @@ public class GameQueue<P extends GeneralPlayer, Q extends com.spleefleague.core.
     
     //Will return players even when queue is occupied
     public Collection<P> request(Q requestedQueue) {
+        if(requestedQueue.isPaused()) return null;
         int amount = requestedQueue.getSize();
         Queue<P> r = getQueue(requestedQueue);
         if(requestedQueue.isInGeneral()) {

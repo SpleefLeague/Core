@@ -145,3 +145,7 @@ commands:
         description: Unpauses all queues
         usage:
             /<command>
+    reloaddata:
+        description: Reloads something
+        usage:
+            /<command> [ranks]

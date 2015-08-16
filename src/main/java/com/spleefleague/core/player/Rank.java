@@ -162,6 +162,7 @@ public class Rank extends DBEntity implements DBLoadable {
         for(String permission : getAllPermissions()) {
             at.setPermission(permission, true);
         }
+        player.recalculatePermissions();
         player.setOp(hasOp);
     }
 }

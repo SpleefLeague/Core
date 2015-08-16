@@ -21,4 +21,5 @@ public interface Queue {
     public String getName();
     public String getCurrentState();
     public boolean isInGeneral();
+    public boolean isPaused();
 }
