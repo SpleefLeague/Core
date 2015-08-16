@@ -31,6 +31,7 @@ import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.DatabaseConnection;
 import com.spleefleague.core.utils.RuntimeCompiler;
+import com.spleefleague.core.utils.SlackApi;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -65,6 +66,7 @@ public class SpleefLeague extends CorePlugin {
         ChatManager.registerChannel(new ChatChannel("DEFAULT", "Normal chat", Rank.DEFAULT, true));
         ChatManager.registerChannel(new ChatChannel("STAFF", "Staff chat", Rank.MODERATOR, true));
         ChatListener.init();
+        SlackApi.initSlackMessageListener();
         EnvironmentListener.init();
         InfractionListener.init();
         //ItemMenuListener.init();
@@ -74,6 +76,7 @@ public class SpleefLeague extends CorePlugin {
     
     @Override
     public void stop() {
+        SlackApi.killSlackMessageListener();
         playerManager.saveAll();
         mongo.close();
     }

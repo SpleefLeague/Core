@@ -17,6 +17,10 @@ import org.bukkit.Bukkit;
  */
 public class ChatManager {
     
+    public static void sendMessage(String p, String m, String c) {
+        sendMessage(p + " " + m, c);
+    }
+    
     public static void sendMessage(final String m, final String c) {
         Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), new Runnable() {
             @Override
@@ -24,19 +28,6 @@ public class ChatManager {
                 for (SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
                     if (slp.isInChatChannel(c)) {
                         slp.getPlayer().sendMessage(m);
-                    }
-                }
-            }
-        });
-    }
-
-    public static void sendMessage(final String p, final String m, final String c) {
-        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                for (SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-                    if (slp.isInChatChannel(c)) {
-                        slp.getPlayer().sendMessage(p + " " + m);
                     }
                 }
             }

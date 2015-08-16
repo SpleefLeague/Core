@@ -9,11 +9,13 @@ import com.spleefleague.core.utils.collections.FixedSizeList;
 import com.mongodb.client.MongoCollection;
 import java.util.UUID;
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
+import com.spleefleague.core.player.Rank;
+import com.spleefleague.core.player.SLPlayer;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
  *
@@ -21,19 +23,27 @@ import org.bukkit.event.player.PlayerJoinEvent;
  */
 public class DatabaseConnection {
 
-    private static final UUIDCache uuidCache = new UUIDCache(1000);
+    private static final UUIDCache uuidCache = new UUIDCache(100);
+    private static final RankCache rankCache = new RankCache(100);
     
     public static void initialize() {
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
-            public void onJoin(PlayerJoinEvent event) {
+            public void onJoin(GeneralPlayerLoadedEvent event) {
                 DatabaseConnection.updateCache(event.getPlayer().getUniqueId(), event.getPlayer().getName());
+                if(event.getGeneralPlayer() instanceof SLPlayer) {
+                    DatabaseConnection.updateCache(event.getPlayer().getUniqueId(), ((SLPlayer)event.getGeneralPlayer()).getRank());
+                }
             }
         },SpleefLeague.getInstance());
     }
     
     public static void updateCache(UUID uuid, String username) {
         uuidCache.insert(uuid, username);
+    }
+    
+    public static void updateCache(UUID uuid, Rank rank) {
+        rankCache.insert(uuid, rank);
     }
 
     public static UUID getUUID(String username) {
@@ -61,6 +71,21 @@ public class DatabaseConnection {
             username = (String) dbo.get("username");
             updateCache(uuid, username);
             return username;
+        } else {
+            return null;
+        }
+    }
+    
+    public static Rank getRank(UUID uuid) {
+        Rank rank = rankCache.getRank(uuid);
+        if (rank != null) {
+            return rank;
+        }
+        Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").find(new Document("uuid", uuid.toString())).first();
+        if (dbo != null) {
+            rank = Rank.valueOf((String) dbo.get("rank"));
+            updateCache(uuid, rank);
+            return rank;
         } else {
             return null;
         }
@@ -124,6 +149,58 @@ public class DatabaseConnection {
             public UUIDMapEntry(UUID uuid, String username) {
                 this.uuid = uuid;
                 this.username = username;
+            }
+        }
+    }
+    
+    private static class RankCache {
+
+        private final FixedSizeList<RankMapEntry> list;
+
+        public RankCache(int size) {
+            list = new FixedSizeList(size);
+        }
+
+        public void insert(UUID uuid, Rank rank) {
+            for (RankMapEntry e : list) {
+                if (e.rank == rank || e.uuid.equals(uuid)) {
+                    e.rank = rank;
+                    e.uuid = uuid;
+                    list.call(e);
+                    return;
+                }
+            }
+            list.add(new RankMapEntry(uuid, rank));
+        }
+
+        public UUID getUUID(Rank rank) {
+            for (RankMapEntry e : list) {
+                if (e.rank == rank) {
+                    list.call(e);
+                    return e.uuid;
+                }
+            }
+            return null;
+        }
+
+        public Rank getRank(UUID uuid) {
+            for (RankMapEntry e : list) {
+                if (e.uuid.equals(uuid)) {
+                    list.call(e);
+                    return e.rank;
+                }
+            }
+            return null;
+        }
+
+        private static class RankMapEntry {
+
+            private Rank rank;
+            private UUID uuid;
+
+            public RankMapEntry(UUID uuid, Rank rank) {
+                this.uuid = uuid;
+                this.rank = rank;
             }
         }
     }

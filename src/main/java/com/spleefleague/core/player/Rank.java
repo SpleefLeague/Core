@@ -111,7 +111,7 @@ public class Rank extends DBEntity implements DBLoadable {
             SENIOR_MODERATOR = new Rank(),
             MODERATOR = new Rank(),
             VIP = new Rank(), 
-            PERMIUM = new Rank(), 
+            PREMIUM = new Rank(), 
             BUILDER = new Rank(), 
             ORGANIZER = new Rank(), 
             DEFAULT = new Rank();
