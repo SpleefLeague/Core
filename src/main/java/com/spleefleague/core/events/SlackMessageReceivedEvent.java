@@ -15,21 +15,11 @@ import org.bukkit.event.HandlerList;
 public class SlackMessageReceivedEvent extends Event{
 
     private static final HandlerList handlers = new HandlerList();
-    private final String channel, user, userid, message;
+    private final String userid, message;
     
-    public SlackMessageReceivedEvent(String channel, String user, String userid, String message) {
-        this.channel = channel;
-        this.user = user;
+    public SlackMessageReceivedEvent(String userid, String message) {
         this.userid = userid;
         this.message = message;
-    }
-    
-    public String getChannel() {
-        return channel;
-    }
-    
-    public String getUser() {
-        return user;
     }
     
     public String getUserID() {

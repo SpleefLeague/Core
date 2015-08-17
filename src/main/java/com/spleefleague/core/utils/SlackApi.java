@@ -9,7 +9,9 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.events.SlackMessageReceivedEvent;
 import com.spleefleague.core.io.Settings;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,6 +24,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 
 /**
  *
@@ -90,90 +93,56 @@ public class SlackApi {
         }
     }
 
-    private static ServerSocket ss;
+    private static BukkitTask task;
 
     public static void killSlackMessageListener() {
-        try {
-            ss.close();
-        } catch (IOException ex) {
-            Logger.getLogger(SlackApi.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        task.cancel();
     }
 
     public static void initSlackMessageListener() {
-        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), new Runnable() {
+        task = Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), new Runnable() {
             @Override
             public void run() {
-
-                try {
-                    ss = new ServerSocket(29090);
-                    while (true) {
-                        try (Socket socket = ss.accept(); BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-                            // read request
-                            String line;
-                            line = in.readLine();
-                            boolean isPost = line.startsWith("POST");
-                            int contentLength = 0;
-                            while (!(line = in.readLine()).equals("")) {
-                                if (isPost) {
-                                    final String contentHeader = "Content-Length: ";
-                                    if (line.startsWith(contentHeader)) {
-                                        contentLength = Integer.parseInt(line.substring(contentHeader.length()));
-                                    }
+                while (true) {
+                    try {
+                        Socket receiving = new Socket("mongo.spleefleague.com", 29091);
+                        System.out.println("Connected to bridge");
+                        DataInputStream dIn = new DataInputStream(receiving.getInputStream());
+                        String token = "", userid = "", message = "";
+                        while (true) {
+                            switch (dIn.readByte()) {
+                                case 0: {
+                                    token = dIn.readUTF();
+                                    break;
                                 }
-                            }
-                            StringBuilder body = new StringBuilder();
-                            if (isPost) {
-                                int c;
-                                for (int i = 0; i < contentLength; i++) {
-                                    c = in.read();
-                                    body.append((char) c);
+                                case 1: {
+                                    userid = dIn.readUTF();
+                                    break;
                                 }
-                            }
-                            System.out.println(body.toString());
-                            String[] pairs = body.toString().split("&");
-                            boolean token = false;
-                            String channel = "", user = "", userid = "", message = "", trigger = "";
-                            for (String pair : pairs) {
-                                String[] split = pair.split("=");
-                                switch (split[0]) {
-                                    case "channel_name": {
-                                        channel = split[1];
-                                        break;
-                                    }
-                                    case "user_name": {
-                                        user = split[1];
-                                        break;
-                                    }
-                                    case "user_id": {
-                                        userid = split[1];
-                                        break;
-                                    }
-                                    case "text": {
-                                        message = split[1];
-                                        break;
-                                    }
-                                    case "trigger": {
-                                        message = split[1];
-                                        break;
-                                    }
-                                    case "token": {
-                                        if (split[1].equals(Settings.getString("slack_token"))) {
-                                            token = true;
-                                        }
-                                    }
+                                case 2: {
+                                    message = dIn.readUTF();
+                                    handleMessage(token, userid, message);
                                 }
-                            }
-                            if (token) {
-                                message = message.replaceFirst(trigger, "");
-                                Bukkit.getPluginManager().callEvent(new SlackMessageReceivedEvent(channel, user, userid, message));
                             }
                         }
+                    } catch (EOFException e) {
+                        System.out.println("Bridge has disconnected..");
+                    } catch (IOException | NumberFormatException | IllegalStateException ex) {
+                        try {
+                            Thread.sleep(10000);
+                            System.out.println("Reconnecting..");
+                        } catch (InterruptedException ex1) {
+                            Logger.getLogger(SlackApi.class.getName()).log(Level.SEVERE, null, ex1);
+                        }
                     }
-                } catch (IOException | NumberFormatException | IllegalStateException ex) {
-                    Logger.getLogger(SlackApi.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
+    }
+
+    private static void handleMessage(String token, String userid, String message) {
+        if (token.equals(Settings.getString("slack_token"))) {
+            Bukkit.getPluginManager().callEvent(new SlackMessageReceivedEvent(userid, message));                
+        }
     }
 }
