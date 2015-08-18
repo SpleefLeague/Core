@@ -5,29 +5,18 @@
  */
 package com.spleefleague.core.menus;
 
-import java.util.Collection;
-import com.spleefleague.core.chat.ChatChannel;
-import com.spleefleague.core.chat.ChatManager;
-import com.spleefleague.core.player.GeneralPlayer;
-import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.plugin.CorePlugin;
-import com.spleefleague.core.queue.GameQueue;
-import com.spleefleague.core.queue.Queue;
-import com.spleefleague.core.utils.menu.MenuClickListener;
-import com.spleefleague.core.utils.menu.MenuItem;
-import com.spleefleague.core.utils.menu.SubMenu;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  *
  * @author Jonas
  */
 public class MenuRepository {
+	
+	
+	
+	
+	
+	/*
 
     public static ItemStack getSLMenuItem() {
         ItemStack is = new ItemStack(Material.GHAST_TEAR);
@@ -173,5 +162,8 @@ public class MenuRepository {
             //Options - End
         }
         slmenu.show();
-    }
+        
+       }
+        */
+    
 }
