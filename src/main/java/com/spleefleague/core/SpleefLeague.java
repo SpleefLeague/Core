@@ -5,30 +5,38 @@
  */
 package com.spleefleague.core;
 
-import com.spleefleague.core.listeners.InfractionListener;
-import com.spleefleague.core.listeners.EnvironmentListener;
-import com.spleefleague.core.listeners.VanishListener;
-import com.spleefleague.core.listeners.EastereggListener;
-import com.spleefleague.core.listeners.ChatListener;
-import com.spleefleague.core.io.Config;
-import com.spleefleague.core.plugin.CorePlugin;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
-import com.mongodb.client.MongoDatabase;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+
+import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoDatabase;
 import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.command.CommandLoader;
+import com.spleefleague.core.io.Config;
 import com.spleefleague.core.io.Settings;
+import com.spleefleague.core.listeners.ChatListener;
+import com.spleefleague.core.listeners.DBListener;
+import com.spleefleague.core.listeners.EastereggListener;
+import com.spleefleague.core.listeners.EnvironmentListener;
+import com.spleefleague.core.listeners.InfractionListener;
+import com.spleefleague.core.listeners.InventoryMenuListener;
+import com.spleefleague.core.listeners.VanishListener;
+import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
 import com.spleefleague.core.player.PlayerManager;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.utils.DatabaseConnection;
 import com.spleefleague.core.utils.RuntimeCompiler;
 import com.spleefleague.core.utils.SlackApi;
@@ -69,9 +77,12 @@ public class SpleefLeague extends CorePlugin {
         SlackApi.initSlackMessageListener();
         EnvironmentListener.init();
         InfractionListener.init();
-        //ItemMenuListener.init();
+        InventoryMenuListener.init();
         VanishListener.init();
         EastereggListener.init();
+        DBListener.init();
+        
+        InventoryMenuTemplateRepository.initTemplates();
     }
     
     @Override
