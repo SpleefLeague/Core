@@ -11,9 +11,8 @@ import com.spleefleague.core.player.GeneralPlayer;
  *
  * @author Jonas
  */
-public interface Queue {
+public interface QueueableArena {
     public boolean isOccupied();
-    public boolean isQueued(GeneralPlayer gp);
     public boolean isAvailable(GeneralPlayer gp);
     public int getSize();
     public int getQueueLength();

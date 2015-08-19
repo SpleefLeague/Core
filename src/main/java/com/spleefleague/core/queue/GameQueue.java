@@ -13,9 +13,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import com.spleefleague.core.player.GeneralPlayer;
-import com.spleefleague.core.player.PlayerManager;
-import com.spleefleague.core.plugin.CorePlugin;
-import org.bukkit.entity.Player;
 
 /**
  *
@@ -23,24 +20,21 @@ import org.bukkit.entity.Player;
  * @param <P>
  * @param <Q>
  */
-public class GameQueue<P extends GeneralPlayer, Q extends com.spleefleague.core.queue.Queue> {
+public class GameQueue<P extends GeneralPlayer, Q extends QueueableArena> {
         
     private final Map<Q, Queue<P>> queues = new HashMap<>();
     private final Queue<P> all = new LinkedList<>();
-    private final PlayerManager<P> playerManager;
     
-    public GameQueue(CorePlugin corePlugin, PlayerManager<P> playerManager) {
-        queues.put(null, new LinkedList<P>());
-        queueMap.put(corePlugin, this);
-        this.playerManager = playerManager;
+    public GameQueue() {
+        queues.put(null, new LinkedList<>());
     }
     
     public Set<Q> getQueues() {
         return queues.keySet();
     }
     
-    public com.spleefleague.core.queue.Queue getGeneralQueue() {
-        com.spleefleague.core.queue.Queue queue = new com.spleefleague.core.queue.Queue() {
+    public QueueableArena getGeneralQueue() {
+        QueueableArena queue = new QueueableArena() {
 
             private Queue<P> q = getQueue(null);
             
@@ -83,14 +77,6 @@ public class GameQueue<P extends GeneralPlayer, Q extends com.spleefleague.core.
                 }
                 return i;
             }
-            
-            @Override
-            public boolean isQueued(GeneralPlayer gp) {
-                for(GeneralPlayer p : q) {
-                    if(p == gp) return true;
-                }
-                return false;
-            }
 
             @Override
             public boolean isInGeneral() {
@@ -109,7 +95,7 @@ public class GameQueue<P extends GeneralPlayer, Q extends com.spleefleague.core.
         if(getQueue(queue) != null) {
             throw new UnsupportedOperationException("Queue \"" + queue + "\" already exists!");
         }
-        queues.put(queue, new LinkedList<P>());
+        queues.put(queue, new LinkedList<>());
     }
     
     public void unregister(Q queue) {
@@ -117,6 +103,9 @@ public class GameQueue<P extends GeneralPlayer, Q extends com.spleefleague.core.
             throw new UnsupportedOperationException("Default queue can't be removed!");
         }
         Queue<P> q = queues.get(queue);
+        if(q == null) {
+            throw new UnsupportedOperationException("Queue \"" + queue + "\" doesn't exist!");
+        }
         queues.remove(queue);
         while(!q.isEmpty()) {
             dequeue(q.poll());
@@ -124,10 +113,6 @@ public class GameQueue<P extends GeneralPlayer, Q extends com.spleefleague.core.
     }
     
     public void queue(P player, Q queue) {
-        queue(player, queue, true);
-    }
-    
-    public void queue(P player, Q queue, boolean general) {
         Queue<P> q = getQueue(queue);
         if(isQueued(player)) {
             dequeue(player);
@@ -137,7 +122,9 @@ public class GameQueue<P extends GeneralPlayer, Q extends com.spleefleague.core.
         }
         else {
             q.add(player);
-            all.add(player);
+            if(queue == null || queue.isInGeneral()) {
+                all.add(player);
+            }
         }
     }
     
@@ -151,33 +138,6 @@ public class GameQueue<P extends GeneralPlayer, Q extends com.spleefleague.core.
             Queue<P> q = queues.get(queue);
             q.remove(player);
         }
-    }
-    
-    public void queue(Player player, com.spleefleague.core.queue.Queue queue) {
-        queue(player, queue, true);
-    }
-    
-    public void queue(Player player, com.spleefleague.core.queue.Queue queue, boolean general) {
-        Q q = null;
-        for(Q qu : queues.keySet()) {
-            if(qu.getName().equals(queue.getName())) {
-                q = qu;
-                break;
-            }
-        }
-        queue(getPlayerInstance(player), q, general);
-    }
-    
-    public void queue(Player player) {
-        queue(player, null);
-    }
-    
-    public void dequeue(Player player) {
-        dequeue(getPlayerInstance(player));
-    }
-    
-    public P getPlayerInstance(Player player) {
-        return playerManager.get(player);
     }
     
     public boolean isQueued(P player) {
@@ -253,11 +213,5 @@ public class GameQueue<P extends GeneralPlayer, Q extends com.spleefleague.core.
     
     private Queue<P> getQueue(Q name) {
         return queues.get(name);
-    }
-    
-    private static HashMap<CorePlugin, GameQueue> queueMap = new HashMap<>();
-    
-    public static GameQueue getQueueFromPlugin(CorePlugin cp) {
-        return queueMap.get(cp);
     }
 }

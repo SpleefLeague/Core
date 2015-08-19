@@ -277,8 +277,10 @@ public class RuntimeCompiler {
         for(File file : directoryPermanent.listFiles(ClassFilter.getInstance())) {
             try {
                 Class<? extends Debugger> debugClass = RuntimeCompiler.load(file);
-                debugFromClass(debugClass);
-                System.out.println(SpleefLeague.getInstance().getPrefix() + " Loaded permanent debugger: " + file.getName().replace(".class", ""));
+                if(Debugger.class.isAssignableFrom(debugClass)) {     
+                    debugFromClass(debugClass);
+                    System.out.println(SpleefLeague.getInstance().getPrefix() + " Loaded permanent debugger: " + file.getName().replace(".class", ""));
+                }
             } catch(Exception e) {
                 System.out.println(SpleefLeague.getInstance().getPrefix() + " Error loading permanent debugger: " + file.getName().replace(".class", ""));
             }
