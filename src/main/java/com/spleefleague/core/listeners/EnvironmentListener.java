@@ -9,17 +9,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import com.spleefleague.core.SpleefLeague;
-import com.spleefleague.core.chat.ChatManager;
-import com.spleefleague.core.command.commands.back;
-import com.spleefleague.core.io.DBEntity;
-import com.spleefleague.core.io.DBSave;
-import com.spleefleague.core.io.DBSaveable;
-import com.spleefleague.core.io.EntityBuilder;
-import com.spleefleague.core.io.Settings;
-import com.spleefleague.core.io.TypeConverter;
-import com.spleefleague.core.io.TypeConverter.DateConverter;
-import com.spleefleague.core.plugin.GamePlugin;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -29,6 +19,7 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -49,6 +40,18 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+
+import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.chat.ChatManager;
+import com.spleefleague.core.command.commands.back;
+import com.spleefleague.core.io.DBEntity;
+import com.spleefleague.core.io.DBSave;
+import com.spleefleague.core.io.DBSaveable;
+import com.spleefleague.core.io.EntityBuilder;
+import com.spleefleague.core.io.Settings;
+import com.spleefleague.core.io.TypeConverter;
+import com.spleefleague.core.io.TypeConverter.DateConverter;
+import com.spleefleague.core.plugin.GamePlugin;
 
 /**
  *
@@ -73,6 +76,8 @@ public class EnvironmentListener implements Listener{
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         player.teleport(SpleefLeague.getInstance().getSpawnLocation());
+        
+        
 //        player.getInventory().setItem(0, MenuRepository.getSLMenuItem());
         event.setJoinMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has joined the server");
         if(!player.hasPlayedBefore()) {
@@ -134,7 +139,7 @@ public class EnvironmentListener implements Listener{
         event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onDrop(PlayerDropItemEvent event) {
         event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
