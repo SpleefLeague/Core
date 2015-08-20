@@ -141,7 +141,7 @@ public class EnvironmentListener implements Listener{
     
     @EventHandler(priority = EventPriority.LOWEST)
     public void onDrop(PlayerDropItemEvent event) {
-        event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
+        event.setCancelled(event.getItemDrop().getItemStack().getType() != Material.RED_ROSE && event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
     
     @EventHandler

@@ -38,7 +38,7 @@ public class reloaddata extends BasicCommand{
         else if(args[0].equalsIgnoreCase("ranks")) {
             Rank.init();
             for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-                slp.setRank(slp.getRank());
+                slp.setRank(Rank.valueOf(slp.getRank().getName()));
             }
             success(cs, "Reloaded " + Rank.values().length + " ranks!");
         }

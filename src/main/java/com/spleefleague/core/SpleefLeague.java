@@ -11,9 +11,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
@@ -26,7 +23,6 @@ import com.spleefleague.core.command.CommandLoader;
 import com.spleefleague.core.io.Config;
 import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.listeners.ChatListener;
-import com.spleefleague.core.listeners.DBListener;
 import com.spleefleague.core.listeners.EastereggListener;
 import com.spleefleague.core.listeners.EnvironmentListener;
 import com.spleefleague.core.listeners.InfractionListener;
@@ -80,8 +76,6 @@ public class SpleefLeague extends CorePlugin {
         InventoryMenuListener.init();
         VanishListener.init();
         EastereggListener.init();
-        DBListener.init();
-        
         InventoryMenuTemplateRepository.initTemplates();
     }
     

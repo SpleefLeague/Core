@@ -40,12 +40,6 @@ public class SLPlayer extends GeneralPlayer {
     public void setRank(final Rank rank) {
         this.rank = rank;
         getPlayer().setPlayerListName(rank.getColor() + getName());
-        if(rank.hasPermission(Rank.MODERATOR)) {
-            chatChannels.add("STAFF");
-        }
-        else {
-            removeChatChannel("STAFF");
-        }
         if(rank.hasPermission(Rank.DEVELOPER)) {
             getPlayer().setGameMode(GameMode.CREATIVE);
         }

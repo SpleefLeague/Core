@@ -19,83 +19,99 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
+import com.spleefleague.core.player.GeneralPlayer;
+import com.spleefleague.core.player.Rank;
+import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenu;
 
-
 public class InventoryMenuListener implements Listener {
-    
+
     private static Listener instance;
-    
+
     public static void init() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new InventoryMenuListener();
             Bukkit.getPluginManager().registerEvents(instance, SpleefLeague.getInstance());
         }
     }
-    
+
     private InventoryMenuListener() {
-        
+
     }
     
     @EventHandler
-    public void onRightClick(PlayerInteractEvent event) {
-        if(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            ItemStack is = event.getItem();
-            if(is.equals(InventoryMenuTemplateRepository.devMenu.getDisplayItemStackFor(event.getPlayer()))) {
-            	InventoryMenuTemplateRepository.showDevMenu(event.getPlayer());
+    public void onGeneralPlayerLoaded(GeneralPlayerLoadedEvent event) {
+        GeneralPlayer gp = event.getGeneralPlayer();
+        if (gp instanceof SLPlayer) {
+            SLPlayer slp = (SLPlayer) gp;
+            if (slp.getRank().hasPermission(Rank.DEVELOPER)) {
+                // InventoryMenuTemplateRepository.showModMenu(slp.getPlayer());
+                ItemStack is = InventoryMenuTemplateRepository.devMenu.getDisplayItemStackFor(slp.getPlayer());
+                slp.getPlayer().getInventory().setItem(0, is);
             }
         }
     }
-    
+
+    @EventHandler
+    public void onRightClick(PlayerInteractEvent event) {
+        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            ItemStack is = event.getItem();
+            if (is != null && is.equals(InventoryMenuTemplateRepository.devMenu.getDisplayItemStackFor(event.getPlayer()))) {
+                InventoryMenuTemplateRepository.showDevMenu(event.getPlayer());
+            }
+        }
+    }
+
     @EventHandler
     public void onDrop(PlayerDropItemEvent event) {
-        if(event.getItemDrop().equals(InventoryMenuTemplateRepository.devMenu.getDisplayItemStackFor(event.getPlayer()))) {
+        if (event.getItemDrop().equals(InventoryMenuTemplateRepository.devMenu.getDisplayItemStackFor(event.getPlayer()))) {
             event.setCancelled(true);
         }
-        
-        
+
     }
-    	
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onInventoryClick(InventoryClickEvent event){
-		Inventory inventory = event.getInventory();
-		if (inventory.getHolder() instanceof InventoryMenu) {
-			InventoryMenu menu = (InventoryMenu) inventory.getHolder();
-			if (event.getWhoClicked() instanceof Player) {
-				Player player = (Player) event.getWhoClicked();
-				if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) {
-					
-					exitMenuIfClickOutSide(menu,player);
-					
-				} else {
-					int index = event.getRawSlot();
-					if (index < inventory.getSize()) {
-						menu.selectItem(player, index);
-					} else {
-						exitMenuIfClickOutSide(menu,player);
-					}
-				}
-			}
-			event.setCancelled(true);
-		}
-	}
-	
-	
-	@EventHandler
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInventoryClick(InventoryClickEvent event) {
+        Inventory inventory = event.getInventory();
+        if (inventory.getHolder() instanceof InventoryMenu) {
+            InventoryMenu menu = (InventoryMenu) inventory.getHolder();
+            if (event.getWhoClicked() instanceof Player) {
+                Player player = (Player) event.getWhoClicked();
+                if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) {
+
+                    exitMenuIfClickOutSide(menu, player);
+
+                }
+                else {
+                    int index = event.getRawSlot();
+                    if (index < inventory.getSize()) {
+                        menu.selectItem(player, index);
+                    }
+                    else {
+                        exitMenuIfClickOutSide(menu, player);
+                    }
+                }
+            }
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
     public void onInventoryAction(InventoryClickEvent event) {
-		if(event.getWhoClicked() instanceof Player){
-			Player p = (Player) event.getWhoClicked();
-			 if(event.getCurrentItem() != null && event.getCurrentItem().equals(InventoryMenuTemplateRepository.devMenu.getDisplayItemStackFor(p))) {
-		            event.setCancelled(true);
-	        }
-		}
-       
+        if (event.getWhoClicked() instanceof Player) {
+            Player p = (Player) event.getWhoClicked();
+            if (event.getCurrentItem() != null && event.getCurrentItem().equals(InventoryMenuTemplateRepository.devMenu.getDisplayItemStackFor(p))) {
+                event.setCancelled(true);
+            }
+        }
+
     }
-	
-	private void exitMenuIfClickOutSide(InventoryMenu menu,Player player){
-		if (menu.exitOnClickOutside()) {
-			menu.close(player);
-		}
-	}
+
+    private void exitMenuIfClickOutSide(InventoryMenu menu, Player player) {
+        if (menu.exitOnClickOutside()) {
+            menu.close(player);
+        }
+    }
 }

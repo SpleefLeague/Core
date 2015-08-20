@@ -92,9 +92,15 @@ public class SlackApi {
     }
 
     private static BukkitTask task;
-
+    private static Socket receiving;
+    
     public static void killSlackMessageListener() {
-        task.cancel();
+        try {
+            task.cancel();
+            receiving.close();
+        } catch (IOException ex) {
+            Logger.getLogger(SlackApi.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public static void initSlackMessageListener() {
@@ -103,7 +109,7 @@ public class SlackApi {
             public void run() {
                 while (true) {
                     try {
-                        Socket receiving = new Socket("mongo.spleefleague.com", 29091);
+                        receiving = new Socket("mongo.spleefleague.com", 29091);
                         System.out.println("Connected to bridge");
                         DataInputStream dIn = new DataInputStream(receiving.getInputStream());
                         String token = "", userid = "", message = "";
