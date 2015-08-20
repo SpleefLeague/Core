@@ -22,6 +22,7 @@ public class ChatManager {
     }
     
     public static void sendMessage(final String m, final String c) {
+        Bukkit.getConsoleSender().sendMessage(m);
         Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), new Runnable() {
             @Override
             public void run() {
