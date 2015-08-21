@@ -56,7 +56,7 @@ public class ChatListener implements Listener {
         }
         if(!event.isCancelled()) {
             ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, event.getMessage(), slp.getSendingChannel());
-            pushToSlack(slp.getName(), event.getMessage());
+//            pushToSlack(slp.getName(), event.getMessage());
         }
         event.setCancelled(true);
     }

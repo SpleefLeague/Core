@@ -70,7 +70,7 @@ public class SpleefLeague extends CorePlugin {
         ChatManager.registerChannel(new ChatChannel("DEFAULT", "Normal chat", Rank.DEFAULT, true));
         ChatManager.registerChannel(new ChatChannel("STAFF", "Staff chat", Rank.MODERATOR, true));
         ChatListener.init();
-        SlackApi.initSlackMessageListener();
+//        SlackApi.initSlackMessageListener();
         EnvironmentListener.init();
         InfractionListener.init();
         InventoryMenuListener.init();
@@ -81,7 +81,7 @@ public class SpleefLeague extends CorePlugin {
     
     @Override
     public void stop() {
-        SlackApi.killSlackMessageListener();
+//        SlackApi.killSlackMessageListener();
         playerManager.saveAll();
         mongo.close();
     }

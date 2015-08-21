@@ -21,7 +21,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 public class tp extends BasicCommand{
     
     public tp(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage, Rank.MODERATOR);
+        super(plugin, name, usage, Rank.MODERATOR, Rank.BUILDER);
     }
     
     @Override

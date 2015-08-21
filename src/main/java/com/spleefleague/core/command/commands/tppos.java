@@ -23,7 +23,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 public class tppos extends BasicCommand{
     
     public tppos(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage, Rank.MODERATOR);
+        super(plugin, name, usage, Rank.MODERATOR, Rank.BUILDER);
     }
     
     @Override
