@@ -51,6 +51,7 @@ import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.io.TypeConverter;
 import com.spleefleague.core.io.TypeConverter.DateConverter;
+import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
 import com.spleefleague.core.plugin.GamePlugin;
 
 /**
@@ -136,7 +137,12 @@ public class EnvironmentListener implements Listener{
     
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
-        event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
+    	if(event.getPlayer().getGameMode() != GameMode.CREATIVE)
+    		event.setCancelled(true);
+    	
+    	if(event.getItemInHand().equals(InventoryMenuTemplateRepository.devMenu.getDisplayItemStackFor(event.getPlayer())))
+    		event.setCancelled(true);
+    	
     }
     
     @EventHandler(priority = EventPriority.LOWEST)
