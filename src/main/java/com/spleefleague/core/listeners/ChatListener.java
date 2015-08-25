@@ -49,7 +49,7 @@ public class ChatListener implements Listener {
     
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
-        SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer());
+        SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer().getUniqueId());
         String prefix = "";
         if(slp.getRank() != Rank.DEFAULT) {
             prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getDisplayName() + ChatColor.DARK_GRAY + "] ";
@@ -68,7 +68,7 @@ public class ChatListener implements Listener {
             UUID uuid = UUID.fromString((String) result.get("mc_uuid"));
             Player player = Bukkit.getPlayer(uuid);
             if(player != null) {
-                SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(player);
+                SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(player.getUniqueId());
                 String prefix = "";
                 if(slp.getRank() != Rank.DEFAULT) {
                     prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getDisplayName() + ChatColor.DARK_GRAY + "] ";
@@ -114,7 +114,7 @@ public class ChatListener implements Listener {
     
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer());
+        SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer().getUniqueId());
         Iterator<String> i = ((HashSet<String>)slp.getReceivingChatChannels().clone()).iterator();
         while(i.hasNext()) {
             String name = i.next();

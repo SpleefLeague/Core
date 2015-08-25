@@ -5,7 +5,7 @@
  */
 package com.spleefleague.core.queue;
 
-import com.spleefleague.core.player.GeneralPlayer;
+import java.util.UUID;
 
 /**
  *
@@ -13,10 +13,10 @@ import com.spleefleague.core.player.GeneralPlayer;
  */
 public interface QueueableArena {
     public boolean isOccupied();
-    public boolean isAvailable(GeneralPlayer gp);
+    public boolean isAvailable(UUID gp);
     public int getSize();
     public int getQueueLength();
-    public int getQueuePosition(GeneralPlayer gp);
+    public int getQueuePosition(UUID gp);
     public String getName();
     public String getCurrentState();
     public boolean isInGeneral();

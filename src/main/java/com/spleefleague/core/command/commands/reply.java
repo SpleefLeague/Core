@@ -30,7 +30,7 @@ public class reply extends BasicCommand {
         if(args.length > 0) {
             UUID lastChatpartner = slp.getLastChatPartner();
             if(lastChatpartner != null) {
-                SLPlayer target = SpleefLeague.getInstance().getPlayerManager().get(Bukkit.getPlayer(lastChatpartner));
+                SLPlayer target = SpleefLeague.getInstance().getPlayerManager().get(lastChatpartner);
                 if(target != null) {
                     String prefix1 = ChatColor.GRAY + "[me -> " + target.getRank().getColor() + target.getName() + ChatColor.GRAY + "] " + ChatColor.RESET;
                     String prefix2 = ChatColor.GRAY + "[" + slp.getRank().getColor() + slp.getName() + ChatColor.GRAY + " -> me] " + ChatColor.RESET;

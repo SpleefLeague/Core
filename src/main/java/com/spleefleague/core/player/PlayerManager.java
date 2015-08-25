@@ -14,6 +14,7 @@ import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.io.EntityBuilder;
+import java.util.UUID;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -31,7 +32,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
  */
 public class PlayerManager<G extends GeneralPlayer> implements Listener {
     
-    private final ConcurrentHashMap<Player, G> map;
+    private final ConcurrentHashMap<UUID, G> map;
     private final MongoDatabase db;
     private final Class<G> playerClass;
     
@@ -39,9 +40,9 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
         this.map = new ConcurrentHashMap<>();
         this.db = plugin.getPluginDB();
         this.playerClass = playerClass;
-        for(Player player : Bukkit.getOnlinePlayers()) {
+        Bukkit.getOnlinePlayers().stream().forEach((player) -> {
             load(player, getPlayerClass());
-        }
+        });
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
     
@@ -49,8 +50,17 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
         return playerClass;
     }
     
+    public G get(String username) {
+        Player p = Bukkit.getPlayer(username);
+        return p != null ? get(p) : null;
+    }
+    
     public G get(Player player) {
-        return map.get(player);
+        return player != null ? get(player.getUniqueId()) : null;
+    }
+    
+    public G get(UUID uuid) {
+        return map.get(uuid);
     }
     
     public Collection<G> getAll() {
@@ -59,56 +69,47 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
     
     private void load(final Player player, final Class<G> c) {
             final Document doc = db.getCollection("Players").find(new Document("uuid", player.getUniqueId().toString())).first();
-            Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        G generalPlayer;
-                        if (doc == null) {
-                            generalPlayer = c.newInstance();
-                            generalPlayer.setName(player.getName());
-                            generalPlayer.setUUID(player.getUniqueId());
-                            generalPlayer.setDefaults();
-                            EntityBuilder.save(generalPlayer, db.getCollection("Players"));
-                        }
-                        else {
-                            generalPlayer = EntityBuilder.load(doc, c);
-                            generalPlayer.setName(player.getName());
-                        }
-                        map.put(player, generalPlayer);
-                        callEvent(generalPlayer, doc == null);
-                    } catch (InstantiationException | IllegalAccessException ex) {
-                        Logger.getLogger(PlayerManager.class.getName()).log(Level.SEVERE, null, ex);
+            Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
+                try {
+                    G generalPlayer;
+                    if (doc == null) {
+                        generalPlayer = c.newInstance();
+                        generalPlayer.setName(player.getName());
+                        generalPlayer.setUUID(player.getUniqueId());
+                        generalPlayer.setDefaults();
+                        EntityBuilder.save(generalPlayer, db.getCollection("Players"));
                     }
+                    else {
+                        generalPlayer = EntityBuilder.load(doc, c);
+                        generalPlayer.setName(player.getName());
+                    }
+                    map.put(player.getUniqueId(), generalPlayer);
+                    callEvent(generalPlayer, doc == null);
+                } catch (InstantiationException | IllegalAccessException ex) {
+                    Logger.getLogger(PlayerManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });   
     }
     
     public void saveAll() {
-        for (GeneralPlayer gp : getAll()) {
+        getAll().stream().forEach((gp) -> {
             EntityBuilder.save(gp, db.getCollection("Players"));
-        }
+        });
     }
     
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
-        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                load(event.getPlayer(), getPlayerClass());
-            }
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+            load(event.getPlayer(), getPlayerClass());
         });
     }
     
     @EventHandler(priority = EventPriority.MONITOR) //Misleading, has to be called last
     public void onQuit(PlayerQuitEvent event) {
         final G gp = get(event.getPlayer());
-        this.map.remove(event.getPlayer());
-        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                EntityBuilder.save(gp, db.getCollection("Players"));
-            }
+        this.map.remove(event.getPlayer().getUniqueId());
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+            EntityBuilder.save(gp, db.getCollection("Players"));
         });
     }
     

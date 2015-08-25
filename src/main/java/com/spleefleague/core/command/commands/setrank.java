@@ -37,7 +37,7 @@ public class setrank extends BasicCommand {
         if(args.length == 2) {
             Player player = Bukkit.getPlayerExact(args[0]);
             if(player != null) {
-                SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(player);
+                SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(player.getUniqueId());
                 if(slp != null) {
                     Rank rank;
                     try {

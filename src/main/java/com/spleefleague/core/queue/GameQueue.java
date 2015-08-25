@@ -13,17 +13,18 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import com.spleefleague.core.player.GeneralPlayer;
+import com.spleefleague.core.player.PlayerManager;
+import java.util.UUID;
 
 /**
  *
  * @author Jonas
- * @param <P>
  * @param <Q>
  */
-public class GameQueue<P extends GeneralPlayer, Q extends QueueableArena> {
+public class GameQueue<Q extends QueueableArena> {
         
-    private final Map<Q, Queue<P>> queues = new HashMap<>();
-    private final Queue<P> all = new LinkedList<>();
+    private final Map<Q, Queue<UUID>> queues = new HashMap<>();
+    private final Queue<UUID> all = new LinkedList<>();
     
     public GameQueue() {
         queues.put(null, new LinkedList<>());
@@ -36,7 +37,7 @@ public class GameQueue<P extends GeneralPlayer, Q extends QueueableArena> {
     public QueueableArena getGeneralQueue() {
         QueueableArena queue = new QueueableArena() {
 
-            private Queue<P> q = getQueue(null);
+            private Queue<UUID> q = getQueue(null);
             
             @Override
             public boolean isOccupied() {
@@ -44,7 +45,7 @@ public class GameQueue<P extends GeneralPlayer, Q extends QueueableArena> {
             }
             
             @Override
-            public boolean isAvailable(GeneralPlayer gp) {
+            public boolean isAvailable(UUID uuid) {
                 return true;
             }
 
@@ -69,10 +70,10 @@ public class GameQueue<P extends GeneralPlayer, Q extends QueueableArena> {
             }
 
             @Override
-            public int getQueuePosition(GeneralPlayer gp) {
+            public int getQueuePosition(UUID uuid) {
                 int i = 1;
-                for(GeneralPlayer p : q) {
-                    if(p == gp) break;
+                for(UUID u : q) {
+                    if(u == uuid) break;
                     i++;
                 }
                 return i;
@@ -102,7 +103,7 @@ public class GameQueue<P extends GeneralPlayer, Q extends QueueableArena> {
         if(queue == null) {
             throw new UnsupportedOperationException("Default queue can't be removed!");
         }
-        Queue<P> q = queues.get(queue);
+        Queue<UUID> q = queues.get(queue);
         if(q == null) {
             throw new UnsupportedOperationException("Queue \"" + queue + "\" doesn't exist!");
         }
@@ -112,8 +113,8 @@ public class GameQueue<P extends GeneralPlayer, Q extends QueueableArena> {
         }
     }
     
-    public void queue(P player, Q queue) {
-        Queue<P> q = getQueue(queue);
+    public void queue(UUID player, Q queue) {
+        Queue<UUID> q = getQueue(queue);
         if(isQueued(player)) {
             dequeue(player);
         }
@@ -128,56 +129,75 @@ public class GameQueue<P extends GeneralPlayer, Q extends QueueableArena> {
         }
     }
     
-    public void queue(P player) {
+    public void queue(UUID player) {
         queue(player, null);
     }
     
-    public void dequeue(P player) {
+    public void dequeue(UUID player) {
         all.remove(player);
-        for(Q queue : queues.keySet()) {
-            Queue<P> q = queues.get(queue);
+        queues.keySet().stream().map((queue) -> queues.get(queue)).forEach((q) -> {
             q.remove(player);
-        }
+        });
     }
     
-    public boolean isQueued(P player) {
+    public boolean isQueued(UUID player) {
         return all.contains(player);
     }
     
-    public HashMap<Q, Collection<P>> request() {
+    public <P extends GeneralPlayer> HashMap<Q, Collection<P>> request(PlayerManager<P> pm) {
         HashMap<Q, Collection<P>> requested = new HashMap<>();
-        for(Q q : queues.keySet()) {
-            if(q != null) {
-                if(q.isOccupied() || q.isPaused()) continue;
-                Collection<P> players = request(q);
-                if(players != null) {
-                    requested.put(q, players);
-                }
+        queues.keySet().stream().filter((q) -> (q != null)).filter((q) -> !(q.isOccupied() || q.isPaused())).forEach((q) -> {
+            Collection<P> players = request(q, pm);
+            if (players != null) {
+                requested.put(q, players);
             }
-        }
+        });
         return requested;
     }
     
+    public HashMap<Q, Collection<UUID>> request() {
+        HashMap<Q, Collection<UUID>> requested = new HashMap<>();
+        queues.keySet().stream().filter((q) -> (q != null)).filter((q) -> !(q.isOccupied() || q.isPaused())).forEach((q) -> {
+            Collection<UUID> players = request(q);
+            if (players != null) {
+                requested.put(q, players);
+            }
+        });
+        return requested;
+    }
+    
+    public <P extends GeneralPlayer> Collection<P> request(Q requestedQueue, PlayerManager<P> pm) {
+        Collection<UUID> uuids = request(requestedQueue);
+        if(uuids != null) {
+            Collection<P> result = new ArrayList<>();
+            uuids.stream().forEach((uuid) -> {
+                result.add(pm.get(uuid));
+            });
+            return result;
+        }
+        return null;
+    }
+    
     //Will return players even when queue is occupied
-    public Collection<P> request(Q requestedQueue) {
+    public Collection<UUID> request(Q requestedQueue) {
         if(requestedQueue.isPaused()) return null;
         int amount = requestedQueue.getSize();
-        Queue<P> r = getQueue(requestedQueue);
+        Queue<UUID> r = getQueue(requestedQueue);
         if(requestedQueue.isInGeneral()) {
-            Queue<P> d = getQueue(null);
-            P[] array = (P[])all.toArray(new GeneralPlayer[0]);
-            Collection<P> result = new ArrayList<>();
+            Queue<UUID> d = getQueue(null);
+            UUID[] array = (UUID[])all.toArray(new UUID[all.size()]);
+            Collection<UUID> result = new ArrayList<>();
             for(int i = 0; i < array.length && amount > 0; i++) {
-                P q = array[i];
+                UUID q = array[i];
                 if(r.contains(q) || d.contains(q) && requestedQueue.isAvailable(q)) {
                     result.add(q);
                     amount--;
                 }
             }
             if(amount == 0) {
-                for(P q : result) {
+                result.stream().forEach((q) -> {
                     dequeue(q);
-                }
+                });
                 return result;
             }
             else {
@@ -185,7 +205,7 @@ public class GameQueue<P extends GeneralPlayer, Q extends QueueableArena> {
             }
         }
         else {
-            Collection<P> result = new ArrayList<>();
+            Collection<UUID> result = new ArrayList<>();
             if(r.size() >= amount) {
                 while(result.size() < amount) {
                     result.add(r.poll());
@@ -202,16 +222,16 @@ public class GameQueue<P extends GeneralPlayer, Q extends QueueableArena> {
         return getQueue(name).size();
     }
     
-    public int getQueuePosition(Q name, P player) {
+    public int getQueuePosition(Q name, UUID player) {
         int i = 1;
-        for(P p : getQueue(name)) {
+        for(UUID p : getQueue(name)) {
             if(p == player) break;
             i++;
         }
         return i;
     }
     
-    private Queue<P> getQueue(Q name) {
+    private Queue<UUID> getQueue(Q name) {
         return queues.get(name);
     }
 }
