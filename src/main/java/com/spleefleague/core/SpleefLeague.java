@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
@@ -35,10 +38,7 @@ import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.utils.DatabaseConnection;
 import com.spleefleague.core.utils.RuntimeCompiler;
-import com.spleefleague.core.utils.SlackApi;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
+import com.spleefleague.core.utils.Warp;
 
 /**
  *
@@ -77,6 +77,8 @@ public class SpleefLeague extends CorePlugin {
         VanishListener.init();
         EastereggListener.init();
         InventoryMenuTemplateRepository.initTemplates();
+        Warp.initialize();
+        
     }
     
     @Override
