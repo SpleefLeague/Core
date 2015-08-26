@@ -32,9 +32,9 @@ public abstract class BasicCommand implements CommandExecutor {
     protected Rank[] additionalRanks;
     protected boolean hasCommandBlockExecutor = false;
     private String[] usages = null;
-    private static final String NO_COMMAND_PERMISSION_MESSAGE = Theme.ERROR.buildTheme(false) + "You don't have permission to use this command!";
-    private static final String PLAYERDATA_ERROR_MESSAGE = Theme.ERROR.buildTheme(false) + "Your player data hasn't yet been loaded. Please try again.";
-    private static final String NO_PLAYER_INSTANCE = Theme.WARNING.buildTheme(false) + "This command can only be run by an instance of a player.";
+    public static final String NO_COMMAND_PERMISSION_MESSAGE = "You don't have permission to use this command!";
+    public static final String PLAYERDATA_ERROR_MESSAGE = "Your player data hasn't yet been loaded. Please try again.";
+    public static final String NO_PLAYER_INSTANCE = Theme.WARNING.buildTheme(false) + "This command can only be run by an instance of a player.";
     
     public BasicCommand(CorePlugin plugin, String name, String usage) {
         this(plugin, name, usage, Rank.DEFAULT);
@@ -60,10 +60,10 @@ public abstract class BasicCommand implements CommandExecutor {
                     if (slp.getRank().hasPermission(requiredRank) || Arrays.asList(additionalRanks).contains(slp.getRank())) {
                         run(p, slp, cmd, args);
                     } else {
-                        sender.sendMessage(plugin.getChatPrefix() + " " + NO_COMMAND_PERMISSION_MESSAGE);
+                        error(sender, NO_COMMAND_PERMISSION_MESSAGE);
                     }
                 } else {
-                    sender.sendMessage(plugin.getChatPrefix() + " " + PLAYERDATA_ERROR_MESSAGE);
+                    error(sender, PLAYERDATA_ERROR_MESSAGE);
                 }
             } else if (sender instanceof ConsoleCommandSender) {
                 runConsole(sender, cmd, args);
