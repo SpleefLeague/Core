@@ -149,3 +149,8 @@ commands:
         description: Reloads something
         usage:
             /<command> [ranks]
+    warp: 
+        description: Warp command
+        usage:
+            /<command> 
+            /<command> <warpName>
