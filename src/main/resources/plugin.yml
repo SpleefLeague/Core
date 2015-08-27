@@ -154,3 +154,11 @@ commands:
         usage:
             /<command> 
             /<command> <warpName>
+    setwarp: 
+        description: Set a new Warp
+        usage:
+            /<command> <warpName>
+    deletewarp: 
+        description: Delete a Warp
+        usage:
+            /<command> <warpName>

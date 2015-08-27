@@ -25,8 +25,6 @@ public class warp extends BasicCommand{
 
 	@Override
 	protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-		
-		
 		if(args.length == 0){
 			sendWarpsList(p);
 		}else if(args.length == 1){
@@ -36,34 +34,29 @@ public class warp extends BasicCommand{
 		}	
 	}
 
-	
 	private void sendWarpsList(Player p){		
-		List<Warp> warps = Warp.getAll().stream().sorted((w1,w2) -> w1.getName().compareTo(w2.getName())).collect(Collectors.toList());
+		List<Warp> warps = Warp.getAll().stream()
+				.sorted((w1,w2) -> w1.getName().toLowerCase().compareTo(w2.getName().toLowerCase())).collect(Collectors.toList());
 		
 		ComponentBuilder cb = new ComponentBuilder("---------------Warps list---------------").color(ChatColor.RED);
 		cb.append("\n").reset();
-		
 		
 		boolean first = true;
 		
 		for(Warp warp : warps){
 			if(!first)
 				cb.append(" , ").reset();
-			
+						
 			cb.append("[" + warp.getName() + "]")
 				.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp " + warp.getName()))
 				.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to teleport to '" + warp.getName() +"'").create()));
-	
+				
 			first = false;
 		}
 		
-		
 		p.spigot().sendMessage(cb.create());
 	}
-	
-
-	
-	
+		
 	private void teleportToWarp(Player p, String warpName){
 		Warp warp = Warp.byName(warpName);
 		

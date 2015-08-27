@@ -7,6 +7,7 @@ import java.util.Map;
 import org.bson.Document;
 import org.bukkit.Location;
 
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.io.DBEntity;
@@ -63,4 +64,16 @@ public class Warp extends DBEntity implements DBLoadable, DBSaveable{
         }
         SpleefLeague.getInstance().log("Loaded " + warps.size() + " warps!");
     }
+	
+	public static void addWarp(Warp warp){
+		warps.put(warp.getName(), warp);
+		MongoCollection<Document> collection = SpleefLeague.getInstance().getPluginDB().getCollection("Warps");
+		EntityBuilder.save(warp, collection);
+	}
+	
+	public static void removeWarp(Warp warp){
+		warps.remove(warp.getName());
+		MongoCollection<Document> coll = SpleefLeague.getInstance().getPluginDB().getCollection("Warps");
+		EntityBuilder.delete(warp, coll);
+	}
 }
