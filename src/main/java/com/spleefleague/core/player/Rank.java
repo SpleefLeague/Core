@@ -19,11 +19,9 @@ import com.spleefleague.core.io.DBEntity;
 import com.spleefleague.core.io.DBLoad;
 import com.spleefleague.core.io.DBLoadable;
 import com.spleefleague.core.io.EntityBuilder;
-import com.spleefleague.core.utils.PlayerUtil;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionAttachment;
 
 /**
  *

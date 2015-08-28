@@ -5,7 +5,6 @@
  */
 package com.spleefleague.core.io;
 
-import com.mongodb.client.MongoCollection;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -13,11 +12,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+
+import com.mongodb.client.MongoCollection;
 import com.spleefleague.core.io.EntityBuilder.IOClass.Input;
 import com.spleefleague.core.io.EntityBuilder.IOClass.Output;
 import com.spleefleague.core.utils.collections.MapUtil;
-import org.bson.Document;
-import org.bson.types.ObjectId;
 
 /**
  *
@@ -62,6 +64,10 @@ public class EntityBuilder {
                 dbo.remove("$unset");
             }
         }
+    }
+    
+    public static void delete(DBEntity object, MongoCollection<Document> dbcoll) {
+        dbcoll.deleteOne(new Document("_id", object.getObjectId()));
     }
 
     public static Document serialize(DBSaveable object) {
