@@ -23,7 +23,7 @@ import org.bukkit.entity.Player;
 public class gamemode extends BasicCommand{
 
     public gamemode(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage, Rank.DEVELOPER, Rank.BUILDER);
+        super(plugin, name, usage, Rank.SENIOR_MODERATOR, Rank.BUILDER);
     }
 
     @Override

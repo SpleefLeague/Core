@@ -30,7 +30,7 @@ import org.bukkit.entity.Player;
  */
 public class unban extends BasicCommand{
     public unban(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage, Rank.MODERATOR);
+        super(plugin, name, usage, Rank.SENIOR_MODERATOR);
     }
     
     @Override

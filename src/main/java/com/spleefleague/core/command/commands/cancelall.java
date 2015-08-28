@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
 public class cancelall extends BasicCommand {
 
     public cancelall(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage, Rank.MODERATOR);
+        super(plugin, name, usage, Rank.SENIOR_MODERATOR);
     }
 
     @Override
