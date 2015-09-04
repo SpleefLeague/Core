@@ -140,7 +140,7 @@ public class EnvironmentListener implements Listener{
     	if(event.getPlayer().getGameMode() != GameMode.CREATIVE)
     		event.setCancelled(true);
     	
-    	if(event.getItemInHand().equals(InventoryMenuTemplateRepository.devMenu.getDisplayItemStackFor(event.getPlayer())))
+    	if(event.getItemInHand().equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStackFor(event.getPlayer())))
     		event.setCancelled(true);
     	
     }

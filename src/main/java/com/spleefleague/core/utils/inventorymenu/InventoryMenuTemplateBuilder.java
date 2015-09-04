@@ -2,6 +2,8 @@ package com.spleefleague.core.utils.inventorymenu;
 
 import java.util.function.Consumer;
 
+import com.spleefleague.core.player.Rank;
+
 public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplateBuilder<InventoryMenu, InventoryMenuTemplate, InventoryMenuTemplateBuilder> {
 
     private static final int ROWSIZE = 9;
@@ -68,6 +70,11 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
     public InventoryMenuTemplateBuilder menuControls(boolean menuControls) {
         buildingObj.setMenuControls(menuControls);
         return this;
+    }
+    
+    public InventoryMenuTemplateBuilder rank(Rank rank){
+    	buildingObj.setRank(rank);
+    	return this;
     }
 
     @Override

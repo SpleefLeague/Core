@@ -13,6 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.player.Rank;
+import com.spleefleague.core.player.SLPlayer;
 
 public class InventoryMenu extends InventoryMenuComponent implements InventoryHolder {
 
@@ -22,14 +24,18 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
     private final Map<Integer, InventoryMenuComponent> components;
     private final boolean exitOnClickOutside;
     private final boolean menuControls;
+    private final Rank requiredRank;
 
-    public InventoryMenu(ItemStack displayItem, String title, Map<Integer, InventoryMenuComponent> components, boolean exitOnClickOutside, boolean menuControls) {
+    InventoryMenu(ItemStack displayItem,
+    		String title,Map<Integer, InventoryMenuComponent> components,
+    		boolean exitOnClickOutside, boolean menuControls,Rank requiredRank) {
         super(displayItem);
         this.components = components;
         //System.out.println("creating inv " + title);
         this.inventory = Bukkit.createInventory(this, calcRows() * ROWSIZE, title);
         this.exitOnClickOutside = exitOnClickOutside;
         this.menuControls = menuControls;
+        this.requiredRank = requiredRank;
         setParents();
         populateInventory();
     }
@@ -91,6 +97,13 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
     }
 
     public void open(Player player) {
+    	SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(player);
+    	
+    	if(!slp.getRank().hasPermission(this.requiredRank)){
+    		player.sendMessage(ChatColor.RED + "You are not allowed to open this InventoryMenu");
+    		return;
+    	}
+    	
         Inventory current = player.getOpenInventory().getTopInventory();
 
         if (current == null) {

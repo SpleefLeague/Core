@@ -48,7 +48,7 @@ public class InventoryMenuListener implements Listener {
             SLPlayer slp = (SLPlayer) gp;
             if (slp.getRank().hasPermission(Rank.DEVELOPER)) {
                 // InventoryMenuTemplateRepository.showModMenu(slp.getPlayer());
-                ItemStack is = InventoryMenuTemplateRepository.devMenu.getDisplayItemStackFor(slp.getPlayer());
+                ItemStack is = InventoryMenuTemplateRepository.modMenu.getDisplayItemStackFor(slp.getPlayer());
                 slp.getPlayer().getInventory().setItem(0, is);
             }
         }
@@ -58,15 +58,15 @@ public class InventoryMenuListener implements Listener {
     public void onRightClick(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             ItemStack is = event.getItem();
-            if (is != null && is.equals(InventoryMenuTemplateRepository.devMenu.getDisplayItemStackFor(event.getPlayer()))) {
-                InventoryMenuTemplateRepository.showDevMenu(event.getPlayer());
+            if (is != null && is.equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStackFor(event.getPlayer()))) {
+                InventoryMenuTemplateRepository.showModMenu(event.getPlayer());
             }
         }
     }
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent event) {
-        if (event.getItemDrop().equals(InventoryMenuTemplateRepository.devMenu.getDisplayItemStackFor(event.getPlayer()))) {
+        if (event.getItemDrop().equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStackFor(event.getPlayer()))) {
             event.setCancelled(true);
         }
 
@@ -102,7 +102,7 @@ public class InventoryMenuListener implements Listener {
     public void onInventoryAction(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player) {
             Player p = (Player) event.getWhoClicked();
-            if (event.getCurrentItem() != null && event.getCurrentItem().equals(InventoryMenuTemplateRepository.devMenu.getDisplayItemStackFor(p))) {
+            if (event.getCurrentItem() != null && event.getCurrentItem().equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStackFor(p))) {
                 event.setCancelled(true);
             }
         }

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.utils.function.PlayerToValueMapper;
 
 public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<InventoryMenu> {
@@ -21,12 +22,15 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
     private boolean exitOnClickOutside;
 
     private boolean menuControls;
+    
+    private Rank requiredRank;
 
     InventoryMenuTemplate() {
         this.title = "";
         this.components = new HashMap<>();
         this.exitOnClickOutside = true;
         this.menuControls = false;
+        this.requiredRank = Rank.DEFAULT;
     }
 
     public void setTitle(String title) {
@@ -56,6 +60,10 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
     public String getTitleFor(Player p) {
         return titlePlayerSpecific != null ? titlePlayerSpecific.toValue(p) : title;
     }
+    
+    public void setRank(Rank rank){
+    	this.requiredRank = rank;
+    }
 
     @Override
     public InventoryMenu construct() {
@@ -81,7 +89,7 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
 
         }
 
-        InventoryMenu menu = new InventoryMenu(is, title, actualComponents, exitOnClickOutside, menuControls);
+        InventoryMenu menu = new InventoryMenu(is, title, actualComponents, exitOnClickOutside, menuControls,requiredRank);
 
         addMenuControls(actualComponents);
 
@@ -112,7 +120,7 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
 
         }
 
-        InventoryMenu menu = new InventoryMenu(is, getTitleFor(p), actualComponents, exitOnClickOutside, menuControls);
+        InventoryMenu menu = new InventoryMenu(is, getTitleFor(p), actualComponents, exitOnClickOutside, menuControls,requiredRank);
         addMenuControls(actualComponents);
 
         return menu;

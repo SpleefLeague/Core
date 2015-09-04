@@ -24,7 +24,7 @@ import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplate;
 
 public class InventoryMenuTemplateRepository {
 
-    public static InventoryMenuTemplate devMenu, slMenu;
+    public static InventoryMenuTemplate modMenu, slMenu;
 
     public static void initTemplates() {
 //        slMenu = menu()
@@ -46,14 +46,15 @@ public class InventoryMenuTemplateRepository {
 //                    })
 //                )
 //            ).build();
-        devMenu = menu()
-            .title("DevMenu")
+    	modMenu = menu()
+            .title("ModMenu")
             .displayIcon(Material.SIGN)
-            .displayName("DevMenu")
+            .displayName("ModMenu")
             .description("A selection of")
-            .description("more or less important")
-            .description("Dev \"tools\"")
-            //Testing purposes of course
+            .description("tools for")
+            .description("moderational purposes")
+            .rank(Rank.MODERATOR)
+            
             .component(0, 0, menu()
             	.title("Reload Menu")
                 .displayName("Reload Menu")
@@ -84,7 +85,9 @@ public class InventoryMenuTemplateRepository {
                     })
                 )
                 .menuControls(true)
-            ).component(1, 0, item()
+            )
+            
+            .component(1, 0, item()
                 .displayName("Cancel all")
                 .displayIcon(Material.DIAMOND_SPADE)
                 .description("Cancels all currently")
@@ -97,6 +100,56 @@ public class InventoryMenuTemplateRepository {
                     event.getPlayer().sendMessage(Theme.SUCCESS + "All games have been cancelled.");
                 })
             )
+            
+            
+            //TODO: Implement after new Queue Implementation
+            /*
+            .component(3,0, menu()
+            		.title("Queues - Spleef")
+            		.displayName("Queues  - Spleef")
+            		.displayIcon(Material.GOLD_SPADE))
+            		.description("Queue Status for Spleef")
+            		.menuControls(true)
+            		.dynamicComponents(dynamic ->{
+            			CorePlugin spleefPlugin = null;
+		                for(CorePlugin cp : CorePlugin.getAll()) {
+		                     if(cp.getName().equals("SuperSpleef"))
+		                        spleefPlugin = cp;
+		                }
+			            
+		               
+		                
+			               
+			              
+            			
+            			
+            		})
+            		
+             .component(4,0, menu()
+            		.title("Queues - SuperJump")
+            		.displayName("Queues  - SuperJump")
+            		.displayIcon(Material.GOLD_BOOTS))
+            		.description("Queue Status for SuperJump")
+            		.menuControls(true)
+            		.dynamicComponents(dynamic ->{
+            			CorePlugin jumpPlugin = null;
+            			for(CorePlugin cp : CorePlugin.getAll()) {
+            				if(cp.getName().equals("SuperJump")) {
+            					jumpPlugin = cp;
+            				}
+            			}
+
+			            
+		               
+		                
+			               
+			              
+            			
+            			
+            		})
+            		
+            		*/
+            		
             .component(8, 1, item()
                 .displayName("Firework")
                 .displayIcon(Material.FIREWORK)
@@ -146,8 +199,8 @@ public class InventoryMenuTemplateRepository {
             ).build();
     }
 
-    public static void showDevMenu(Player p) {
-        InventoryMenu menu = devMenu.constructFor(p);
+    public static void showModMenu(Player p) {
+        InventoryMenu menu = modMenu.constructFor(p);
         menu.open(p);
     }
     
