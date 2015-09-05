@@ -162,3 +162,7 @@ commands:
         description: Delete a Warp
         usage:
             /<command> <warpName>
+    playerinfo: 
+        description: Shows the playerdata if a player
+        usage:
+            /<command> [player]

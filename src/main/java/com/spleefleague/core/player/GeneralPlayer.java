@@ -44,6 +44,11 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
         return Bukkit.getPlayer(uuid);
     }
     
+    public boolean isOnline() {
+        Player p = getPlayer();
+        return p != null && p.isOnline();
+    }
+    
     protected void setName(String username) {
         this.username = username;
     }

@@ -20,8 +20,9 @@ public class TimeUtil {
     private final static int[] seconds = new int[]{1, 60,60 * 60,60 * 60 * 24, 60 * 60 * 24 * 30, 60 * 60 * 24 * 365};
     private final static String[] names = new String[]{"second", "minute", "hour", "day", "month", "year"};
     
-    public static String pastDateToString(Date date) {
+    public static String dateToString(Date date, boolean future) {
         long diff = Instant.now().getEpochSecond() - date.toInstant().getEpochSecond();
+        if(future) diff *= -1;
         for(int i = 1; i < seconds.length; i++) {
             if(diff < seconds[i]) {
                 long result = diff / seconds[i - 1];

@@ -86,7 +86,7 @@ public class infractions extends BasicCommand {
             MongoCursor<Document> mc = result.iterator();
             for(int i = 0; i < 10 && mc.hasNext(); i++) {
                 Infraction inf = EntityBuilder.load(mc.next(), Infraction.class);
-                cs.sendMessage(ChatColor.RED + String.valueOf(page * 10 - 9 + i) + ". " + ChatColor.DARK_GRAY + "| " + inf.getType().getColor() + inf.getType() + ChatColor.DARK_GRAY + " | " + ChatColor.RED + (inf.getPunisher().equals(UUID.fromString("00000000-0000-0000-0000-000000000000")) ? "CONSOLE" : DatabaseConnection.getUsername(inf.getPunisher())) + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + inf.getMessage() + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + TimeUtil.pastDateToString(new Date(inf.getTime())) + " ago");
+                cs.sendMessage(ChatColor.RED + String.valueOf(page * 10 - 9 + i) + ". " + ChatColor.DARK_GRAY + "| " + inf.getType().getColor() + inf.getType() + ChatColor.DARK_GRAY + " | " + ChatColor.RED + (inf.getPunisher().equals(UUID.fromString("00000000-0000-0000-0000-000000000000")) ? "CONSOLE" : DatabaseConnection.getUsername(inf.getPunisher())) + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + inf.getMessage() + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + TimeUtil.dateToString(new Date(inf.getTime()), false) + " ago");
             }
         }
         else {

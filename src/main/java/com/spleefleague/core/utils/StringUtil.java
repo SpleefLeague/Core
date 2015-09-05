@@ -27,4 +27,9 @@ public class StringUtil {
     public static String fromArgsArray(String[] args) {
         return fromArgsArray(args, 0);
     }
+    
+    public static String upperCaseFirst(String s) {
+        s = s.toLowerCase();
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
 }

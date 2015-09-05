@@ -39,14 +39,16 @@ public class SLPlayer extends GeneralPlayer {
     @DBLoad(fieldName = "rank", typeConverter = RankStringConverter.class)
     public void setRank(final Rank rank) {
         this.rank = rank;
-        getPlayer().setPlayerListName(rank.getColor() + getName());
-        if(rank.hasPermission(Rank.DEVELOPER)) {
-            getPlayer().setGameMode(GameMode.CREATIVE);
+        if(isOnline()) {
+            getPlayer().setPlayerListName(rank.getColor() + getName());
+            if(rank.hasPermission(Rank.DEVELOPER)) {
+                getPlayer().setGameMode(GameMode.CREATIVE);
+            }
+            else {
+                getPlayer().setGameMode(GameMode.SURVIVAL);
+            }
+            rank.managePermissions(getPlayer());
         }
-        else {
-            getPlayer().setGameMode(GameMode.SURVIVAL);
-        }
-        rank.managePermissions(getPlayer());
     }
     
     @DBLoad(fieldName = "coins")

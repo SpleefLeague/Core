@@ -41,7 +41,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
         this.db = plugin.getPluginDB();
         this.playerClass = playerClass;
         Bukkit.getOnlinePlayers().stream().forEach((player) -> {
-            load(player, getPlayerClass());
+            load(player);
         });
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
@@ -67,20 +67,39 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
         return map.values();
     }
     
-    private void load(final Player player, final Class<G> c) {
+    public G loadFake(String name) {
+        return load(new Document("username", name));
+    }
+    
+    public G loadFake(UUID uuid) {
+        return load(new Document("uuid", uuid.toString()));
+    }
+    
+    private G load(Document query) {
+        Document doc = db.getCollection("Players").find(query).first();
+        if(doc == null) {
+            return null;
+        }
+        else {
+            return EntityBuilder.load(doc, getPlayerClass());
+        }
+    }
+    
+    
+    private void load(final Player player) {
             final Document doc = db.getCollection("Players").find(new Document("uuid", player.getUniqueId().toString())).first();
             Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
                 try {
                     G generalPlayer;
                     if (doc == null) {
-                        generalPlayer = c.newInstance();
+                        generalPlayer = getPlayerClass().newInstance();
                         generalPlayer.setName(player.getName());
                         generalPlayer.setUUID(player.getUniqueId());
                         generalPlayer.setDefaults();
                         EntityBuilder.save(generalPlayer, db.getCollection("Players"));
                     }
                     else {
-                        generalPlayer = EntityBuilder.load(doc, c);
+                        generalPlayer = EntityBuilder.load(doc, getPlayerClass());
                         generalPlayer.setName(player.getName());
                     }
                     map.put(player.getUniqueId(), generalPlayer);
@@ -100,7 +119,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
         Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
-            load(event.getPlayer(), getPlayerClass());
+            load(event.getPlayer());
         });
     }
     
