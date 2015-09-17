@@ -126,7 +126,11 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
     @EventHandler(priority = EventPriority.MONITOR) //Misleading, has to be called last
     public void onQuit(PlayerQuitEvent event) {
         final G gp = get(event.getPlayer());
-        this.map.remove(event.getPlayer().getUniqueId());
+        try {
+            this.map.remove(event.getPlayer().getUniqueId());
+        } catch(Exception e) {
+            this.map.values().remove(gp);
+        }
         Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
             EntityBuilder.save(gp, db.getCollection("Players"));
         });

@@ -55,13 +55,16 @@ public class playerinfo extends BasicCommand {
                 }
             }
             PlayerData data = new PlayerData(target);
-            p.sendMessage(ChatColor.DARK_GRAY + "[========== " + ChatColor.GRAY + args[0] + "'s data" + ChatColor.DARK_GRAY + "==========]");
+            p.sendMessage(ChatColor.DARK_GRAY + "[========== " + ChatColor.GRAY + targetName + "'s data" + ChatColor.DARK_GRAY + "==========]");
             p.sendMessage(ChatColor.DARK_GRAY + "Name: " + ChatColor.GRAY + data.getName());
             p.sendMessage(ChatColor.DARK_GRAY + "UUID: " + ChatColor.GRAY + data.getUUID());
             p.sendMessage(ChatColor.DARK_GRAY + "Rank: " + ChatColor.GRAY + data.getRank());
             p.sendMessage(ChatColor.DARK_GRAY + "State: " + data.getState());
             if(target.isOnline()) {
                 p.sendMessage(ChatColor.DARK_GRAY + "IP: " + ChatColor.GRAY + data.getIP());
+            }
+            else {
+                p.sendMessage(ChatColor.DARK_GRAY + "Last seen: " + ChatColor.GRAY + data.getLastSeen());    
             }
             String sharedAccounts = data.getSharedAccounts();
             if(sharedAccounts != null) p.sendMessage(ChatColor.DARK_GRAY + "Shared accounts: " + ChatColor.GRAY + sharedAccounts);
@@ -74,7 +77,8 @@ public class playerinfo extends BasicCommand {
     private class PlayerData {
 
         private final SLPlayer slp;
-
+        private String lastSeen;
+        
         public PlayerData(SLPlayer slp) {
             this.slp = slp;
         }
@@ -93,6 +97,14 @@ public class playerinfo extends BasicCommand {
         
         public String getIP() {
             return slp.getPlayer().getAddress().getAddress().toString().substring(1);
+        }
+        
+        public String getLastSeen() {
+            //Should never happen
+            if(lastSeen == null) {
+                getSharedAccounts();
+            }
+            return lastSeen;
         }
 
         public String getState() {
@@ -121,12 +133,22 @@ public class playerinfo extends BasicCommand {
             Set<String> sharedUUIDs = new HashSet<>();
             Collection<String> ips = new HashSet<>();
             MongoCollection<Document> col = SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections");
+            Date lastOnline = null;
             for (Document doc : col.find(new Document("uuid", playerUUID))) {
                 ips.add(doc.get("ip", String.class));
+                if(lastOnline == null) {
+                    lastOnline = doc.get("date", Date.class);
+                }
+                else {
+                    Date d = doc.get("date", Date.class);
+                    if(lastOnline.before(d)) lastOnline = d;
+                }
             }
+            lastSeen = lastOnline != null ? TimeUtil.dateToString(lastOnline, false) + " ago" : "Unknown";
             List<Document> orQuerry = new ArrayList<>();
             for (String ip : ips) {
                 orQuerry.add(new Document("ip", ip));
+                Thread.currentThread().getStackTrace();
             }
             if (!orQuerry.isEmpty()) {
                 for (Document doc : col.find(new Document("$or", orQuerry))) {

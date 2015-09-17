@@ -239,9 +239,9 @@ public class RuntimeCompiler {
     
     public static String stopDebugger(String id) {
         Debugger d = RuntimeCompiler.debuggerList.remove(id.toLowerCase());
-        if (d != null && (d instanceof Stoppable || d instanceof Listener)) {
+        if (d != null && (d instanceof Stoppable || d instanceof Listener || d instanceof CommandExecutor)) {
             try {
-                stopDebugger(d);
+                cleanDebugger(d);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -265,6 +265,17 @@ public class RuntimeCompiler {
     }
     
     public static void stopDebugger(Debugger inst) {
+        String id = null;
+        for(String s : RuntimeCompiler.debuggerList.keySet()) {
+            if(RuntimeCompiler.debuggerList.get(s) == inst) {
+                id = s;
+                break;
+            }
+        }
+        if(id != null) stopDebugger(id);
+    }
+    
+    private static void cleanDebugger(Debugger inst) {
         if (inst instanceof Listener) {
             HandlerList.unregisterAll((Listener)inst);
         }
