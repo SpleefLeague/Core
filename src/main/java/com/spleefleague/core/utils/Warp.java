@@ -27,10 +27,6 @@ public class Warp extends DBEntity implements DBLoadable, DBSaveable{
 	@DBLoad(fieldName = "location", typeConverter = TypeConverter.LocationConverter.class)
 	@DBSave(fieldName = "location", typeConverter = TypeConverter.LocationConverter.class)
 	private Location location;
-
-	public Warp(){
-		
-	}
 	
 	public Warp(String name,Location location){
 		this.name = name;

@@ -69,7 +69,6 @@ public class InventoryMenuListener implements Listener {
         if (event.getItemDrop().equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStackFor(event.getPlayer()))) {
             event.setCancelled(true);
         }
-
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

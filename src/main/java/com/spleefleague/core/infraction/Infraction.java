@@ -33,10 +33,6 @@ public class Infraction extends DBEntity implements DBLoadable, DBSaveable {
         this.message = message;
     }
     
-    public Infraction() {
-    
-    }
-    
     @DBLoad(fieldName = "uuid", typeConverter = TypeConverter.UUIDStringConverter.class)
     public void setUUID(UUID uuid) {
         this.uuid = uuid;

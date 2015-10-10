@@ -44,7 +44,7 @@ public class Rank extends DBEntity implements DBLoadable {
     @DBLoad(fieldName = "exclusivePermissions")
     private String[] exclusivePermissions;
     
-    public Rank() {
+    private Rank() {
         
     }
     
@@ -100,7 +100,7 @@ public class Rank extends DBEntity implements DBLoadable {
         return permissions;
     }
     
-    private static Map<String, Rank> ranks = new HashMap<>();
+    private final static Map<String, Rank> ranks = new HashMap<>();
     
     public static final Rank 
             ADMIN = new Rank(), 
@@ -108,8 +108,7 @@ public class Rank extends DBEntity implements DBLoadable {
             DEVELOPER = new Rank(), 
             SENIOR_MODERATOR = new Rank(),
             MODERATOR = new Rank(),
-            VIP = new Rank(), 
-            PREMIUM = new Rank(), 
+            VIP = new Rank(),
             BUILDER = new Rank(), 
             ORGANIZER = new Rank(), 
             DEFAULT = new Rank();
