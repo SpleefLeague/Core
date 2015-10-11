@@ -22,6 +22,12 @@ import com.spleefleague.core.io.EntityBuilder.IOClass.Output;
 import com.spleefleague.core.utils.collections.MapUtil;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sun.reflect.ReflectionFactory;
 
 /**
@@ -103,7 +109,12 @@ public class EntityBuilder {
 
     public static <T> T deserialize(Document dbo, Class<T> c) {
         try {
-            T t = createInstance(c);
+            T t;
+            try {
+                t = c.newInstance();
+            } catch(InstantiationException | IllegalAccessException e) {
+                t = createInstance(c);
+            }
             Map<String, Input> inputs = getInputs(c);
             for (String name : inputs.keySet()) {
                 Object o = dbo.get(name);
@@ -401,7 +412,7 @@ public class EntityBuilder {
                     if (m.getParameterTypes()[0].isEnum() && value instanceof String) {
                         m.invoke(instance, Enum.valueOf((Class<Enum>) m.getParameterTypes()[0], (String) value));
                     }
-                    else if (m.getReturnType().isArray() && value instanceof List) {
+                    else if (m.getParameterTypes()[0].isArray() && value instanceof List) {
                         List list = (List) value;
                         Object[] array = new Object[list.size()];
                         for (int i = 0; i < list.size(); i++) {
@@ -411,13 +422,13 @@ public class EntityBuilder {
                                 o = tc.convertLoad(o);
                             }
                             else {
-                                if (o instanceof Document && DBLoadable.class.isAssignableFrom(m.getReturnType().getComponentType())) {
-                                    o = deserialize((Document) o, m.getReturnType().getComponentType());
+                                if (o instanceof Document && DBLoadable.class.isAssignableFrom(m.getParameterTypes()[0].getComponentType())) {
+                                    o = deserialize((Document) o, m.getParameterTypes()[0].getComponentType());
                                 }
                             }
                             array[i] = o;
                         }
-                        m.invoke(instance, createGenericArray(array, m.getReturnType().getComponentType()));
+                        m.invoke(instance, createGenericArray(array, m.getParameterTypes()[0].getComponentType()));
                     }
                     else if (!m.getAnnotation(DBLoad.class).typeConverter().equals(TypeConverter.class)) {
                         TypeConverter tc = m.getAnnotation(DBLoad.class).typeConverter().newInstance();
@@ -441,6 +452,25 @@ public class EntityBuilder {
                     array[i] = cast.cast(value);
                 }
                 return array;
+            }
+            
+            private static <C extends Collection> C createCollectionInstance(Class<? extends Collection> c) {
+                if(Modifier.isAbstract(c.getModifiers())) {
+                    if(c == List.class || c == Collection.class) {
+                        return (C)new ArrayList();
+                    }
+                    else if(c == Set.class) {
+                        return (C)new HashSet();
+                    }
+                }
+                else {
+                    try {
+                        return (C)c.newInstance();
+                    } catch (InstantiationException | IllegalAccessException ex) {
+                        Logger.getLogger(EntityBuilder.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                return null;
             }
         }
     }

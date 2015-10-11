@@ -48,7 +48,7 @@ public class InventoryMenuTemplateRepository {
 //            ).build();
     	modMenu = menu()
             .title("ModMenu")
-            .displayIcon(Material.SIGN)
+            .displayIcon(Material.GHAST_TEAR)
             .displayName("ModMenu")
             .description("A selection of")
             .description("tools for")

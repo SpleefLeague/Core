@@ -41,6 +41,7 @@ public class SLPlayer extends GeneralPlayer {
         this.rank = rank;
         if(isOnline()) {
             getPlayer().setPlayerListName(rank.getColor() + getName());
+            getPlayer().setDisplayName(rank.getColor() + getName());
             if(rank.hasPermission(Rank.DEVELOPER)) {
                 getPlayer().setGameMode(GameMode.CREATIVE);
             }

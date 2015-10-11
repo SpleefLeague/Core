@@ -30,7 +30,6 @@ import com.spleefleague.core.listeners.EastereggListener;
 import com.spleefleague.core.listeners.EnvironmentListener;
 import com.spleefleague.core.listeners.InfractionListener;
 import com.spleefleague.core.listeners.InventoryMenuListener;
-import com.spleefleague.core.listeners.VanishListener;
 import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
 import com.spleefleague.core.player.PlayerManager;
 import com.spleefleague.core.player.Rank;
@@ -74,7 +73,6 @@ public class SpleefLeague extends CorePlugin {
         EnvironmentListener.init();
         InfractionListener.init();
         InventoryMenuListener.init();
-        VanishListener.init();
         EastereggListener.init();
         InventoryMenuTemplateRepository.initTemplates();
         Warp.initialize();

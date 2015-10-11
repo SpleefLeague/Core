@@ -5,6 +5,7 @@
  */
 package com.spleefleague.core.queue;
 
+import static com.google.common.io.Files.map;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,6 +15,8 @@ import java.util.Queue;
 import java.util.Set;
 import com.spleefleague.core.player.GeneralPlayer;
 import com.spleefleague.core.player.PlayerManager;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -157,7 +160,9 @@ public class GameQueue<Q extends QueueableArena> {
     
     public HashMap<Q, Collection<UUID>> request() {
         HashMap<Q, Collection<UUID>> requested = new HashMap<>();
-        queues.keySet().stream().filter((q) -> (q != null)).filter((q) -> !(q.isOccupied() || q.isPaused())).forEach((q) -> {
+        List<Q> keys = new ArrayList(queues.keySet());
+        Collections.shuffle(keys);
+        keys.stream().filter((q) -> (q != null)).filter((q) -> !(q.isOccupied() || q.isPaused())).forEach((q) -> {
             Collection<UUID> players = request(q);
             if (players != null) {
                 requested.put(q, players);

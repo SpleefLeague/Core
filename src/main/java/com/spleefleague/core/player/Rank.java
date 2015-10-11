@@ -103,15 +103,16 @@ public class Rank extends DBEntity implements DBLoadable {
     private final static Map<String, Rank> ranks = new HashMap<>();
     
     public static final Rank 
-            ADMIN = new Rank(), 
-            COUNCIL = new Rank(), 
-            DEVELOPER = new Rank(), 
-            SENIOR_MODERATOR = new Rank(),
-            MODERATOR = new Rank(),
-            VIP = new Rank(),
-            BUILDER = new Rank(), 
-            ORGANIZER = new Rank(), 
-            DEFAULT = new Rank();
+            PLACEHOLDER = new Rank(),
+            ADMIN = PLACEHOLDER, 
+            COUNCIL = PLACEHOLDER, 
+            DEVELOPER = PLACEHOLDER, 
+            SENIOR_MODERATOR = PLACEHOLDER,
+            MODERATOR = PLACEHOLDER,
+            VIP = PLACEHOLDER,
+            BUILDER = PLACEHOLDER, 
+            ORGANIZER = PLACEHOLDER, 
+            DEFAULT = PLACEHOLDER;
 
     public static Rank valueOf(String name) {
         return ranks.get(name);
@@ -158,5 +159,13 @@ public class Rank extends DBEntity implements DBLoadable {
             player.addAttachment(SpleefLeague.getInstance(), permission, true);
         }
         player.setOp(hasOp);
+    }
+    
+    static {
+        PLACEHOLDER.color = ChatColor.BLACK;
+        PLACEHOLDER.displayName = "ERROR";
+        PLACEHOLDER.name = "PLACEHOLDER";
+        PLACEHOLDER.hasOp = false;
+        PLACEHOLDER.ladder = Integer.MIN_VALUE;
     }
 }

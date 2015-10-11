@@ -57,7 +57,7 @@ public abstract class BasicCommand implements CommandExecutor {
                 Player p = (Player) sender;
                 SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(p);
                 if (slp != null) {
-                    if (slp.getRank().hasPermission(requiredRank) || Arrays.asList(additionalRanks).contains(slp.getRank())) {
+                    if (slp.getRank() != null && slp.getRank() != Rank.PLACEHOLDER && slp.getRank().hasPermission(requiredRank) || Arrays.asList(additionalRanks).contains(slp.getRank())) {
                         run(p, slp, cmd, args);
                     } else {
                         error(sender, NO_COMMAND_PERMISSION_MESSAGE);
