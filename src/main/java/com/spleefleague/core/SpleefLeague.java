@@ -23,6 +23,8 @@ import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.command.CommandLoader;
+import com.spleefleague.core.halloween.Candy;
+import com.spleefleague.core.halloween.HalloweenListener;
 import com.spleefleague.core.io.Config;
 import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.listeners.ChatListener;
@@ -76,7 +78,8 @@ public class SpleefLeague extends CorePlugin {
         EastereggListener.init();
         InventoryMenuTemplateRepository.initTemplates();
         Warp.initialize();
-        
+        Candy.init();
+        HalloweenListener.init();
     }
     
     @Override

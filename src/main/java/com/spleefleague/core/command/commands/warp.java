@@ -16,6 +16,7 @@ import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.utils.Warp;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class warp extends BasicCommand {
 
@@ -64,9 +65,7 @@ public class warp extends BasicCommand {
         Warp warp = Warp.byName(warpName);
 
         if (warp != null) {
-
-            //TODO: check if ingame?
-            p.teleport(warp.getLocation());
+            p.teleport(warp.getLocation(), TeleportCause.COMMAND);
             success(p, "You have been teleported to '" + warp.getName() + "'");
         }
         else {

@@ -84,10 +84,15 @@ public class EnvironmentListener implements Listener{
         if(!player.hasPlayedBefore()) {
             ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix(), ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + event.getPlayer().getName() + ChatColor.BLUE + " to SpleefLeague!", "DEFAULT");
         }
-        for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-            slp.getPlayer().setPlayerListName(slp.getRank().getColor() + slp.getName());
-            slp.getPlayer().setDisplayName(slp.getRank().getColor() + slp.getName());
-        }
+        Bukkit.getScheduler().runTaskLater(SpleefLeague.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
+                    slp.getPlayer().setPlayerListName(slp.getRank().getColor() + slp.getName());
+                    slp.getPlayer().setDisplayName(slp.getRank().getColor() + slp.getName());
+                }
+            }
+        },20);
         logIPAddress(event.getPlayer());
     }
     

@@ -370,7 +370,11 @@ public class EntityBuilder {
             private void setField(Object instance, Object value) {
                 try {
                     Field f = super.field;
-                    if (f.getType().isEnum() && value instanceof String) {
+                    if (!f.getAnnotation(DBLoad.class).typeConverter().equals(TypeConverter.class)) {
+                        TypeConverter tc = f.getAnnotation(DBLoad.class).typeConverter().newInstance();
+                        f.set(instance, tc.convertLoad(value));
+                    }
+                    else if (f.getType().isEnum() && value instanceof String) {
                         f.set(instance, Enum.valueOf((Class<Enum>) f.getType(), (String) value));
                     }
                     else if (f.getType().isArray() && value instanceof List) {
@@ -391,10 +395,6 @@ public class EntityBuilder {
                         }
                         f.set(instance, createGenericArray(array, f.getType().getComponentType()));
                     }
-                    else if (!f.getAnnotation(DBLoad.class).typeConverter().equals(TypeConverter.class)) {
-                        TypeConverter tc = f.getAnnotation(DBLoad.class).typeConverter().newInstance();
-                        f.set(instance, tc.convertLoad(value));
-                    }
                     else if (value instanceof Document && DBLoadable.class.isAssignableFrom(f.getType())) {
                         f.set(instance, deserialize((Document) value, f.getType()));
                     }
@@ -409,7 +409,11 @@ public class EntityBuilder {
             private void setMethod(Object instance, Object value) {
                 try {
                     Method m = super.method;
-                    if (m.getParameterTypes()[0].isEnum() && value instanceof String) {
+                    if (!m.getAnnotation(DBLoad.class).typeConverter().equals(TypeConverter.class)) {
+                        TypeConverter tc = m.getAnnotation(DBLoad.class).typeConverter().newInstance();
+                        m.invoke(instance, tc.convertLoad(value));
+                    }
+                    else if (m.getParameterTypes()[0].isEnum() && value instanceof String) {
                         m.invoke(instance, Enum.valueOf((Class<Enum>) m.getParameterTypes()[0], (String) value));
                     }
                     else if (m.getParameterTypes()[0].isArray() && value instanceof List) {
@@ -429,10 +433,6 @@ public class EntityBuilder {
                             array[i] = o;
                         }
                         m.invoke(instance, createGenericArray(array, m.getParameterTypes()[0].getComponentType()));
-                    }
-                    else if (!m.getAnnotation(DBLoad.class).typeConverter().equals(TypeConverter.class)) {
-                        TypeConverter tc = m.getAnnotation(DBLoad.class).typeConverter().newInstance();
-                        m.invoke(instance, tc.convertLoad(value));
                     }
                     else if (value instanceof Document && DBLoadable.class.isAssignableFrom(m.getParameterTypes()[0])) {
                         m.invoke(instance, deserialize((Document) value, m.getParameterTypes()[0]));
