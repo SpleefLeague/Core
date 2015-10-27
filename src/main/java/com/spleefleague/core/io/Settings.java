@@ -38,27 +38,39 @@ public class Settings {
     }
 
     public static String getString(String key) {
+        Document doc = (Document)settings.get(key);
+        if(doc == null) return null;
         return (String)settings.get(key).get("value");
     }
 
     public static int getInteger(String key) {
+        Document doc = (Document)settings.get(key);
+        if(doc == null) return 0;
         return (int)settings.get(key).get("value");
     }
 
     public static boolean getBoolean(String key) {
+        Document doc = (Document)settings.get(key);
+        if(doc == null) return true;
         return (boolean)settings.get(key).get("value");
     }
     
     public static Location getLocation(String key) {
+        Document doc = (Document)settings.get(key);
+        if(doc == null) return null;
         return get(key, LocationWrapper.class).location;
     }
     
     public static List getList(String key) {
+        Document doc = (Document)settings.get(key);
+        if(doc == null) return null;
         return (List)settings.get(key).get("value");
     }
     
     public static <T extends DBEntity & DBLoadable> T get(String key, Class<? extends T> c) {
-        return EntityBuilder.load((Document)settings.get(key), c);
+        Document doc = (Document)settings.get(key);
+        if(doc == null) return null;
+        return EntityBuilder.load(doc, c);
     }
     
     public static class LocationWrapper extends DBEntity implements DBLoadable {

@@ -10,9 +10,12 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.io.DBEntity;
 import com.spleefleague.core.io.DBLoad;
 import com.spleefleague.core.io.DBLoadable;
+import com.spleefleague.core.io.DBSaveable;
 import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.io.TypeConverter;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.bukkit.Location;
@@ -21,7 +24,7 @@ import org.bukkit.Location;
  *
  * @author Jonas
  */
-public class Candy extends DBEntity implements DBLoadable{
+public class Candy extends DBEntity implements DBLoadable, DBSaveable {
     
     @DBLoad(fieldName = "location", typeConverter = TypeConverter.LocationConverter.class)
     private Location location;
@@ -34,7 +37,7 @@ public class Candy extends DBEntity implements DBLoadable{
     
     public static void init() {
         ArrayList<Candy> candies = new ArrayList<>();
-        MongoCursor<Document> dbc = SpleefLeague.getInstance().getMongo().getDatabase("Halloween").getCollection("Candy").find().iterator();
+        MongoCursor<Document> dbc = SpleefLeague.getInstance().getPluginDB().getCollection("Candy").find().iterator();
         while(dbc.hasNext()) {
             candies.add(EntityBuilder.load(dbc.next(), Candy.class));
         }
@@ -54,17 +57,24 @@ public class Candy extends DBEntity implements DBLoadable{
         return candies;
     }
     
-    public static class CandyObjectIdConverter extends TypeConverter<ObjectId, Candy> {
+    public static class CandyObjectIdConverter extends TypeConverter<List<ObjectId>, HashSet<Candy>> {
 
         @Override
-        public Candy convertLoad(ObjectId t) {
-            return Candy.getCandy(t);
+        public HashSet<Candy> convertLoad(List<ObjectId> t) {
+            HashSet<Candy> set = new HashSet<>();
+            for(ObjectId _id : t) {
+                set.add(Candy.getCandy(_id));
+            }
+            return set;
         }
 
         @Override
-        public ObjectId convertSave(Candy v) {
-            return v.getObjectId();
+        public List<ObjectId> convertSave(HashSet<Candy> v) {
+            List<ObjectId> list = new ArrayList<>();
+            for(Candy c : v) {
+                list.add(c.getObjectId());
+            }
+            return list;
         }
-        
     }
 }

@@ -103,16 +103,15 @@ public class Rank extends DBEntity implements DBLoadable {
     private final static Map<String, Rank> ranks = new HashMap<>();
     
     public static final Rank 
-            PLACEHOLDER = new Rank(),
-            ADMIN = PLACEHOLDER, 
-            COUNCIL = PLACEHOLDER, 
-            DEVELOPER = PLACEHOLDER, 
-            SENIOR_MODERATOR = PLACEHOLDER,
-            MODERATOR = PLACEHOLDER,
-            VIP = PLACEHOLDER,
-            BUILDER = PLACEHOLDER, 
-            ORGANIZER = PLACEHOLDER, 
-            DEFAULT = PLACEHOLDER;
+            ADMIN = getPlaceholderInstance(), 
+            COUNCIL = getPlaceholderInstance(), 
+            DEVELOPER = getPlaceholderInstance(), 
+            SENIOR_MODERATOR = getPlaceholderInstance(),
+            MODERATOR = getPlaceholderInstance(),
+            VIP = getPlaceholderInstance(),
+            BUILDER = getPlaceholderInstance(), 
+            ORGANIZER = getPlaceholderInstance(), 
+            DEFAULT = getPlaceholderInstance();
 
     public static Rank valueOf(String name) {
         return ranks.get(name);
@@ -120,6 +119,18 @@ public class Rank extends DBEntity implements DBLoadable {
     
     public static Rank[] values() {
         return ranks.values().toArray(new Rank[0]);
+    }
+    
+    private static Rank getPlaceholderInstance() {
+        Rank rank = new Rank();
+        rank.color = ChatColor.BLACK;
+        rank.displayName = "ERROR";
+        rank.name = "PLACEHOLDER";
+        rank.hasOp = false;
+        rank.ladder = Integer.MIN_VALUE;
+        rank.exclusivePermissions = new String[0];
+        rank.permissions = new String[0];
+        return rank;
     }
     
     public static void init() {
@@ -159,13 +170,5 @@ public class Rank extends DBEntity implements DBLoadable {
             player.addAttachment(SpleefLeague.getInstance(), permission, true);
         }
         player.setOp(hasOp);
-    }
-    
-    static {
-        PLACEHOLDER.color = ChatColor.BLACK;
-        PLACEHOLDER.displayName = "ERROR";
-        PLACEHOLDER.name = "PLACEHOLDER";
-        PLACEHOLDER.hasOp = false;
-        PLACEHOLDER.ladder = Integer.MIN_VALUE;
     }
 }

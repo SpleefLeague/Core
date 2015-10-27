@@ -166,3 +166,7 @@ commands:
         description: Shows the playerdata if a player
         usage:
             /<command> [player]
+    map: 
+        description: Gives the player an animated map
+        usage:
+            /<command> <create|destroy> <URL|ID>

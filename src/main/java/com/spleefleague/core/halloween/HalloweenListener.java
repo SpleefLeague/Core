@@ -11,6 +11,7 @@ import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.Area;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -48,7 +49,7 @@ public class HalloweenListener implements Listener{
     
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if(event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.SKULL) {
+        if(event.getPlayer().getName().equals("Joba") && (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.SKULL)) {
             for(Candy candy : Candy.getCandies()) {
                 if(candy.getLocation().equals(event.getClickedBlock().getLocation())) {
                     SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer());
@@ -61,6 +62,7 @@ public class HalloweenListener implements Listener{
                         else {
                             event.getPlayer().addPotionEffect(negative);
                         }
+                        event.getPlayer().getWorld().playEffect(candy.getLocation(), Effect.SPELL, 0);
                     }
                     break;
                 }
@@ -72,7 +74,7 @@ public class HalloweenListener implements Listener{
     public void onMove(PlayerMoveEvent event) {
         SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer());
         if(slp != null) {
-            if(slp.getCandy().size() >= Candy.getCandies().length) {
+            if(slp.getCandy().size() >= Candy.getCandies().length && portalArea.isInArea(event.getTo())) {
                 event.getPlayer().teleport(portalTarget);
             }
         }

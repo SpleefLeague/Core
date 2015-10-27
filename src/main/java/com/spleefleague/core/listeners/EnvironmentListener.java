@@ -121,7 +121,7 @@ public class EnvironmentListener implements Listener{
     
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
-        if((event.getEntity() instanceof Player)) {
+        if(event.getCause() != DamageCause.ENTITY_ATTACK && (event.getEntity() instanceof Player)) {
             if(event.getCause() == DamageCause.FALL || event.getCause() == DamageCause.LAVA || event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
                 event.setCancelled(true);
             }
@@ -184,10 +184,10 @@ public class EnvironmentListener implements Listener{
                 if(clicked == Material.CAULDRON) {
                     event.getPlayer().setItemInHand(null);
                 }
-                else if(Arrays.asList(/*Material.CHEST, Material.FURNACE, */Material.DROPPER, Material.REDSTONE_COMPARATOR, Material.DIODE, Material.DISPENSER, Material.ANVIL, Material.TRAP_DOOR, Material.BED, Material.HOPPER, Material.HOPPER_MINECART).contains(clicked)) {
+                else if(Arrays.asList(/*Material.CHEST, Material.FURNACE, */Material.DROPPER, Material.ITEM_FRAME, Material.REDSTONE_COMPARATOR, Material.DIODE, Material.DISPENSER, Material.ANVIL, Material.TRAP_DOOR, Material.BED, Material.HOPPER, Material.HOPPER_MINECART).contains(clicked)) {
                     event.setCancelled(true);
                 }
-                else if(item != null && Arrays.asList(Material.WATER_BUCKET, Material.LAVA_BUCKET, Material.BUCKET, Material.BOAT).contains(item.getType())) {
+                else if(item != null && Arrays.asList(Material.WATER_BUCKET, Material.LAVA_BUCKET, Material.BUCKET).contains(item.getType())) {
                     event.setCancelled(true);
                 }
             }
