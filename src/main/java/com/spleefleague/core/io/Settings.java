@@ -70,11 +70,20 @@ public class Settings {
     public static <T extends DBEntity & DBLoadable> T get(String key, Class<? extends T> c) {
         Document doc = (Document)settings.get(key);
         if(doc == null) return null;
-        return EntityBuilder.load(doc, c);
+        Object value = doc.get("value");
+        if(c.isAssignableFrom(value.getClass())) {
+            return (T) value;
+        }
+        else if(value instanceof Document) {
+            return EntityBuilder.load((Document)value, c);
+        }
+        else {
+            return null;
+        }
     }
     
     public static class LocationWrapper extends DBEntity implements DBLoadable {
-        @DBLoad(fieldName = "value", typeConverter = TypeConverter.LocationConverter.class)
+        @DBLoad(fieldName = "location", typeConverter = TypeConverter.LocationConverter.class)
         public Location location;
     }
 }

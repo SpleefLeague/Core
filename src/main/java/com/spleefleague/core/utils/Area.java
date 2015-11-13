@@ -59,4 +59,13 @@ public class Area extends DBEntity implements DBLoadable, DBSaveable {
         }
         return false;
     }
+    
+    public static boolean isInAny(Location loc, Area... areas) {
+        for(Area area : areas) {
+            if(area.isInArea(loc)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

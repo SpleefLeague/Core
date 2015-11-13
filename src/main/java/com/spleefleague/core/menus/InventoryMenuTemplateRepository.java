@@ -24,8 +24,8 @@ import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplate;
 
 public class InventoryMenuTemplateRepository {
 
-    public static InventoryMenuTemplate modMenu, slMenu;
-
+    public static InventoryMenuTemplate modMenu, slMenu, testMenu;
+    
     public static void initTemplates() {
 //        slMenu = menu()
 //            .title("SpleefLeague Menu")
@@ -200,12 +200,12 @@ public class InventoryMenuTemplateRepository {
     }
 
     public static void showModMenu(Player p) {
-        InventoryMenu menu = modMenu.constructFor(p);
-        menu.open(p);
+        InventoryMenu menu = modMenu.construct(SpleefLeague.getInstance().getPlayerManager().get(p));
+        menu.open();
     }
     
     public static void showSLMenu(Player p) {
-        InventoryMenu menu = slMenu.constructFor(p);
-        menu.open(p);
+        InventoryMenu menu = slMenu.construct(SpleefLeague.getInstance().getPlayerManager().get(p));
+        menu.open();
     }
 }

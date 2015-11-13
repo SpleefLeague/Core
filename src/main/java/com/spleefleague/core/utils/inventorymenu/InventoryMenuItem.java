@@ -1,21 +1,21 @@
 package com.spleefleague.core.utils.inventorymenu;
 
+import com.spleefleague.core.utils.function.Dynamic;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class InventoryMenuItem extends InventoryMenuComponent {
 
     private final InventoryMenuClickListener onClick;
 
-    public InventoryMenuItem(ItemStack displayItem, InventoryMenuClickListener onClick) {
-        super(displayItem);
+    public InventoryMenuItem(ItemStackWrapper displayItem, InventoryMenuClickListener onClick, Dynamic<Boolean> visibilityController) {
+        super(displayItem, visibilityController);
         this.onClick = onClick;
     }
 
     @Override
-    void selected(Player p) {
+    protected void selected() {
         if (onClick != null) {
-            onClick.onClick(new InventoryMenuClickEvent(this, p));
+            onClick.onClick(new InventoryMenuClickEvent(this, this.getParent().getOwner().getPlayer()));
         }
     }
 }

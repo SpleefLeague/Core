@@ -48,7 +48,7 @@ public class InventoryMenuListener implements Listener {
             SLPlayer slp = (SLPlayer) gp;
             if (slp.getRank().hasPermission(Rank.DEVELOPER)) {
                 // InventoryMenuTemplateRepository.showModMenu(slp.getPlayer());
-                ItemStack is = InventoryMenuTemplateRepository.modMenu.getDisplayItemStackFor(slp.getPlayer());
+                ItemStack is = InventoryMenuTemplateRepository.modMenu.getDisplayItemStack();
                 slp.getPlayer().getInventory().setItem(0, is);
             }
         }
@@ -58,15 +58,21 @@ public class InventoryMenuListener implements Listener {
     public void onRightClick(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             ItemStack is = event.getItem();
-            if (is != null && is.equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStackFor(event.getPlayer()))) {
-                InventoryMenuTemplateRepository.showModMenu(event.getPlayer());
+            if (is != null) {
+                if(is.equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStack(getSLPlayer(event.getPlayer())))) {
+                    InventoryMenuTemplateRepository.showModMenu(event.getPlayer());
+            
+                }
+                else if(InventoryMenuTemplateRepository.testMenu != null && is.equals(InventoryMenuTemplateRepository.testMenu.getDisplayItemStack(getSLPlayer(event.getPlayer())))) {
+                    InventoryMenuTemplateRepository.testMenu.construct(getSLPlayer(event.getPlayer())).open();
+                }
             }
         }
     }
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent event) {
-        if (event.getItemDrop().equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStackFor(event.getPlayer()))) {
+        if (event.getItemDrop().equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStack(getSLPlayer(event.getPlayer())))) {
             event.setCancelled(true);
         }
     }
@@ -86,7 +92,7 @@ public class InventoryMenuListener implements Listener {
                 else {
                     int index = event.getRawSlot();
                     if (index < inventory.getSize()) {
-                        menu.selectItem(player, index);
+                        menu.selectItem(index);
                     }
                     else {
                         exitMenuIfClickOutSide(menu, player);
@@ -101,7 +107,7 @@ public class InventoryMenuListener implements Listener {
     public void onInventoryAction(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player) {
             Player p = (Player) event.getWhoClicked();
-            if (event.getCurrentItem() != null && event.getCurrentItem().equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStackFor(p))) {
+            if (event.getCurrentItem() != null && event.getCurrentItem().equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStack(getSLPlayer(p)))) {
                 event.setCancelled(true);
             }
         }
@@ -112,5 +118,9 @@ public class InventoryMenuListener implements Listener {
         if (menu.exitOnClickOutside()) {
             menu.close(player);
         }
+    }
+    
+    private SLPlayer getSLPlayer(Player player) {
+        return SpleefLeague.getInstance().getPlayerManager().get(player);
     }
 }

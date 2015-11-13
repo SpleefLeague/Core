@@ -1,27 +1,45 @@
 package com.spleefleague.core.utils.inventorymenu;
 
-import org.bukkit.entity.Player;
+import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.utils.function.Dynamic;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class InventoryMenuComponent {
 
-    private final ItemStack displayItem;
-
+    private final ItemStackWrapper displayItem;
     private InventoryMenu parent;
-
-    public InventoryMenuComponent(ItemStack displayItem) {
+    private Dynamic<Boolean> visibilityController;
+    
+    public InventoryMenuComponent(ItemStackWrapper displayItem, Dynamic<Boolean> visibilityController) {
         this.displayItem = displayItem;
+        this.visibilityController = visibilityController;
     }
 
-    public ItemStack getDisplayItem() {
+    protected ItemStackWrapper getDisplayItemWrapper() {
         return displayItem;
+    }
+    
+    public ItemStack getDisplayItem(SLPlayer slp) {
+        return getDisplayItemWrapper().construct(slp);
+    }
+    
+    public ItemStack getDisplayItem() {
+        return getDisplayItem(null);
+    }
+    
+    public boolean isVisible(SLPlayer slp) {
+        return visibilityController.get(slp);
+    }
+    
+    public boolean isVisible() {
+        return true;
     }
 
     public InventoryMenu getParent() {
         return parent;
     }
 
-    void setParent(InventoryMenu parent) {
+    protected void setParent(InventoryMenu parent) {
         this.parent = parent;
     }
 
@@ -35,6 +53,5 @@ public abstract class InventoryMenuComponent {
 
     }
 
-    abstract void selected(Player player);
-
+    abstract void selected();
 }

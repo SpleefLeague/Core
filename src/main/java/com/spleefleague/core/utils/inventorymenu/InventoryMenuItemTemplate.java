@@ -1,13 +1,12 @@
 package com.spleefleague.core.utils.inventorymenu;
 
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import com.spleefleague.core.player.SLPlayer;
 
 public class InventoryMenuItemTemplate extends InventoryMenuComponentTemplate<InventoryMenuItem> {
 
     private InventoryMenuClickListener onClick;
 
-    InventoryMenuItemTemplate() {
+    protected InventoryMenuItemTemplate() {
 
     }
 
@@ -20,16 +19,8 @@ public class InventoryMenuItemTemplate extends InventoryMenuComponentTemplate<In
     }
 
     @Override
-    public InventoryMenuItem construct() {
-        ItemStack is = constructDisplayItem();
-
-        return new InventoryMenuItem(is, onClick);
-    }
-
-    @Override
-    public InventoryMenuItem constructFor(Player p) {
-        ItemStack is = constructDisplayItem();
-
-        return new InventoryMenuItem(is, onClick);
+    public InventoryMenuItem construct(SLPlayer slp) {
+        ItemStackWrapper isw = constructDisplayItem();
+        return new InventoryMenuItem(isw, onClick, getVisibilityController());
     }
 }

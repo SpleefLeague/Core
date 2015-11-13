@@ -6,7 +6,8 @@ import java.util.Map;
 public class InventoryMenuDynamicComponents {
 
     private static final int ROWSIZE = 9;
-
+    private int autoaligned = 0;
+    
     private Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> components;
 
     public InventoryMenuDynamicComponents() {
@@ -44,8 +45,16 @@ public class InventoryMenuDynamicComponents {
     public void component(int position, InventoryMenuTemplate menu) {
         components.put(position, menu);
     }
+    
+    public void component(InventoryMenuTemplate menu) {
+        components.put(--autoaligned, menu);
+    }
 
-    Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> getComponents() {
+    public void component(InventoryMenuTemplateBuilder menuBuilder) {
+        component(menuBuilder.build());
+    }
+
+    protected Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> getComponents() {
         return components;
     }
 

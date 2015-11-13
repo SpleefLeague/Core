@@ -3,6 +3,7 @@ package com.spleefleague.core.utils.inventorymenu;
 import java.util.function.Consumer;
 
 import com.spleefleague.core.player.Rank;
+import com.spleefleague.core.utils.function.Dynamic;
 
 public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplateBuilder<InventoryMenu, InventoryMenuTemplate, InventoryMenuTemplateBuilder> {
 
@@ -13,6 +14,11 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
     }
 
     public InventoryMenuTemplateBuilder title(String title) {
+        buildingObj.setTitle(title);
+        return this;
+    }
+    
+    public InventoryMenuTemplateBuilder title(Dynamic<String> title) {
         buildingObj.setTitle(title);
         return this;
     }
@@ -51,10 +57,10 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
         return this;
     }
 
-    public InventoryMenuTemplateBuilder dynamicComponents(Consumer<InventoryMenuDynamicComponents> dynamic) {
-        buildingObj.dynamicComponents(dynamic);
-        return this;
-    }
+//    public InventoryMenuTemplateBuilder dynamicComponents(Consumer<InventoryMenuDynamicComponents> dynamic) {
+//        buildingObj.dynamicComponents(dynamic);
+//        return this;
+//    }
 
     /*
      public InventoryMenuTemplateBuilder parent(InventoryMenuTemplate parent){
@@ -76,7 +82,12 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
     	buildingObj.setRank(rank);
     	return this;
     }
-
+    
+    public InventoryMenuTemplateBuilder accessController(Dynamic<Boolean> accessController){
+    	buildingObj.setAccessController(accessController);
+    	return this;
+    }
+    
     @Override
     protected InventoryMenuTemplateBuilder getThis() {
         return this;

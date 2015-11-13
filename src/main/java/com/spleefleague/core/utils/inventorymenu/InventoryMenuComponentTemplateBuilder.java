@@ -1,10 +1,12 @@
 package com.spleefleague.core.utils.inventorymenu;
 
+import com.spleefleague.core.player.SLPlayer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
-import com.spleefleague.core.utils.function.PlayerToValueMapper;
+import com.spleefleague.core.utils.function.Dynamic;
+import java.util.List;
 
 public abstract class InventoryMenuComponentTemplateBuilder<C, T extends InventoryMenuComponentTemplate<C>, B extends InventoryMenuComponentTemplateBuilder<C, T, B>> {
 
@@ -26,7 +28,7 @@ public abstract class InventoryMenuComponentTemplateBuilder<C, T extends Invento
         return actualBuilder;
     }
 
-    public B displayName(PlayerToValueMapper<String> displayName) {
+    public B displayName(Dynamic<String> displayName) {
         buildingObj.setDisplayName(displayName);
         return actualBuilder;
     }
@@ -40,27 +42,27 @@ public abstract class InventoryMenuComponentTemplateBuilder<C, T extends Invento
         return actualBuilder;
     }
 
-    public B displayIcon(PlayerToValueMapper<MaterialData> displayIcon) {
+    public B displayIcon(Dynamic<MaterialData> displayIcon) {
         buildingObj.setDisplayIcon(displayIcon);
         return actualBuilder;
     }
 
-    public B displayItem(ItemStack displayItem) {
+    /*public B displayItem(ItemStack displayItem) {
         buildingObj.setDisplayItem(displayItem);
         return actualBuilder;
     }
 
-    public B displayItem(PlayerToValueMapper<ItemStack> displayItem) {
+    public B displayItem(Dynamic<ItemStack> displayItem) {
         buildingObj.setDisplayItem(displayItem);
         return actualBuilder;
-    }
+    }*/
 
     public B displayNumber(int displayNumber) {
         buildingObj.setDisplayNumber(displayNumber);
         return actualBuilder;
     }
 
-    public B displayNumber(PlayerToValueMapper<Integer> displayNumber) {
+    public B displayNumber(Dynamic<Integer> displayNumber) {
         buildingObj.setDisplayNumber(displayNumber);
         return actualBuilder;
     }
@@ -70,9 +72,19 @@ public abstract class InventoryMenuComponentTemplateBuilder<C, T extends Invento
         return actualBuilder;
     }
 
-    public B description(PlayerToValueMapper<String> line) {
-        buildingObj.addDescriptionLine(line);
+    public B description(SLPlayer slp, String line) {
+        buildingObj.addDescriptionLine(slp, line);
         return actualBuilder;
+    }
+    
+    public B description(Dynamic<List<String>> description) {
+        buildingObj.setDescription(description);
+        return actualBuilder;
+    }
+
+    public B visibilityController(Dynamic<Boolean> visibilitsController) {
+    	buildingObj.setVisibilityController(visibilitsController);
+    	return actualBuilder;
     }
 
     public T build() {

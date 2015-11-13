@@ -1,208 +1,176 @@
 package com.spleefleague.core.utils.inventorymenu;
 
-import java.util.LinkedList;
+import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.utils.function.Dynamic;
+import com.spleefleague.core.utils.function.DynamicDefault;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
-
-import com.spleefleague.core.utils.function.PlayerToValueMapper;
 
 public abstract class InventoryMenuComponentTemplate<C> {
 
-	//private InventoryMenuTemplate parent;
-	//Optional -> if exists,components will be overwritten 
-    //			by following settings (displayName,displayIcon,displayNumber)
-    private ItemStack displayItem;
-    private PlayerToValueMapper<ItemStack> displayItemPlayerSpecific;
-
-    private String displayName;
-    private PlayerToValueMapper<String> displayNamePlayerSpecific;
-
-    private MaterialData displayIcon;
-    private PlayerToValueMapper<MaterialData> displayIconPlayerSpecific;
-
-    private Integer displayNumber;
-    private PlayerToValueMapper<Integer> displayNumberPlayerSpecific;
-
-    //Forgive me father for i have sinned
-    private List<Object> displayDescription;
-
-    InventoryMenuComponentTemplate() {
-        displayItem = new ItemStack(Material.STONE);
-
-        /*
-         this.displayName = "";
-         this.displayIcon = new MaterialData(Material.STONE);
-         this.displayNumber = 1;
-         */
-        this.displayDescription = new LinkedList<>();
-
+    //private InventoryMenuTemplate parent;
+    private Dynamic<ItemStack> displayItem;
+    private Dynamic<String> displayName;
+    private Dynamic<MaterialData> displayIcon;
+    private Dynamic<Integer> displayNumber;
+    private Dynamic<List<String>> displayDescription;
+    private Dynamic<Boolean> visibilityController;
+    
+    
+    protected InventoryMenuComponentTemplate() {
+        this.displayItem = Dynamic.getConstant(new ItemStack(Material.STONE));
+        this.displayName = Dynamic.getConstant("");
+        this.visibilityController = Dynamic.getConstant(true);
+        this.displayIcon = Dynamic.getConstant(new MaterialData(Material.STONE));
+        this.displayNumber = Dynamic.getConstant(1);
+        this.displayDescription = Dynamic.getConstant(new ArrayList<>()); //Always returns the same(!) object
     }
 
-    public abstract C construct();
-
-    public abstract C constructFor(Player p);
+    public abstract C construct(SLPlayer slp);
 
     public String getDisplayName() {
-        return displayName != null ? displayName : displayItem.getItemMeta().getDisplayName();
+        return displayName != null ? getDisplayName(null) : InventoryMenuComponentTemplate.this.getDisplayItem().getItemMeta().getDisplayName();
     }
 
-    public String getDisplayNameFor(Player p) {
-        return displayNamePlayerSpecific != null ? displayNamePlayerSpecific.toValue(p) : getDisplayName();
+    public String getDisplayName(SLPlayer slp) {
+        return displayName.get(slp);
     }
 
-    String getDisplayNameForWithNull(Player p) {
-        return displayNamePlayerSpecific != null ? displayNamePlayerSpecific.toValue(p) : displayName;
-    }
-
-    public ItemStack getDisplayItemStack() {
+    protected ItemStackWrapper getDisplayItemStackWrapper() {
         return constructDisplayItem();
     }
+    
+    public ItemStack getDisplayItemStack() {
+        return getDisplayItemStack(null);
+    }
 
-    public ItemStack getDisplayItemStackFor(Player p) {
-        return constructDisplayItemFor(p);
+    public ItemStack getDisplayItemStack(SLPlayer slp) {
+        return getDisplayItemStackWrapper().construct(slp);
     }
 
     protected ItemStack getDisplayItem() {
-        return displayItem;
+        return getDisplayItem(null);
     }
 
-    protected ItemStack getDisplayItemFor(Player p) {
-        return displayItemPlayerSpecific != null ? displayItemPlayerSpecific.toValue(p) : getDisplayItem();
+    protected ItemStack getDisplayItem(SLPlayer slp) {
+        return displayItem.get(slp);
     }
 
     public MaterialData getDisplayIcon() {
-        return displayIcon != null ? displayIcon : displayItem.getData();
+        return getDisplayIcon(null);
     }
 
-    public MaterialData getDisplayIconFor(Player p) {
-        return displayIconPlayerSpecific != null ? displayIconPlayerSpecific.toValue(p) : getDisplayIcon();
-    }
-
-    MaterialData getDisplayIconForWitNull(Player p) {
-        return displayIconPlayerSpecific != null ? displayIconPlayerSpecific.toValue(p) : displayIcon;
-
+    public MaterialData getDisplayIcon(SLPlayer slp) {
+        return displayIcon.get(slp);
     }
 
     public int getDisplayNumber() {
-        return displayNumber != null ? displayNumber : displayItem.getAmount();
+        return getDisplayNumber(null);
     }
 
-    public int getDisplayNumberFor(Player p) {
-        return displayNumberPlayerSpecific != null ? displayNumberPlayerSpecific.toValue(p) : getDisplayNumber();
-    }
-
-    Integer getDisplayNumberForWithNull(Player p) {
-        return displayNumberPlayerSpecific != null ? displayNumberPlayerSpecific.toValue(p) : displayNumber;
+    public int getDisplayNumber(SLPlayer slp) {
+        return displayNumber.get(slp);
     }
 
     public List<String> getDisplayDescription() {
-        List<String> description = displayDescription.stream()
-                .filter(obj -> obj instanceof String)
-                .map(obj -> (String) obj)
-                .collect(Collectors.toList());
-
-        return description;
+        return getDisplayDescription(null);
     }
 
-    public List<String> getDisplayDescriptionFor(Player p) {
-        List<String> description = displayDescription.stream()
-                .map(obj -> mapObjToString(obj, p))
-                .collect(Collectors.toList());
-        return description;
+    public List<String> getDisplayDescription(SLPlayer slp) {
+        return displayDescription.get(slp);
+    }
+    
+    public boolean isVisible() {
+        return isVisible(null);
     }
 
-    protected ItemStack constructDisplayItem() {
-        ItemStack is = constructDisplayItemFromValues(displayItem, displayIcon, displayName, displayNumber, getDisplayDescription());
-        return is;
+    public boolean isVisible(SLPlayer slp) {
+        return visibilityController.get(slp);
+    }
+    
+    protected Dynamic<Boolean> getVisibilityController() {
+        return visibilityController;
     }
 
-    protected ItemStack constructDisplayItemFor(Player p) {
-        ItemStack is = constructDisplayItemFromValues(getDisplayItemFor(p), getDisplayIconForWitNull(p),
-                getDisplayNameForWithNull(p), getDisplayNumberForWithNull(p),
-                getDisplayDescriptionFor(p));
-        return is;
+    protected ItemStackWrapper constructDisplayItem() {
+        ItemStackWrapper wrapper = new ItemStackWrapper(displayItem, displayIcon, displayName, displayNumber, displayDescription);
+        return wrapper;
     }
 
-    private String mapObjToString(Object o, Player p) {
-        if (o instanceof PlayerToValueMapper<?>) {
-            return (String) ((PlayerToValueMapper<?>) o).toValue(p);
-        }
-        else {
-            return (String) o;
-        }
+    protected void setDisplayItem(ItemStack displayItem) {
+        this.displayItem = Dynamic.getConstant(displayItem);
     }
 
-    @SuppressWarnings("deprecation")
-    private ItemStack constructDisplayItemFromValues(ItemStack baseStack, MaterialData icon, String name, Integer number, List<String> description) {
-        ItemStack is = baseStack.clone();
-
-        if (icon != null) {
-            is.setType(icon.getItemType());
-            //is.setData() is not working...
-            is.getData().setData(icon.getData());
-        }
-
-        if (number != null) {
-            is.setAmount(number);
-        }
-
-        ItemMeta im = is.getItemMeta();
-
-        if (name != null) {
-            im.setDisplayName(name);
-        }
-        if (!description.isEmpty()) {
-            im.setLore(description);
-        }
-
-        is.setItemMeta(im);
-
-        return is;
-    }
-
-    void setDisplayItem(ItemStack displayItem) {
+    protected void setDisplayItem(Dynamic<ItemStack> displayItem) {
         this.displayItem = displayItem;
     }
 
-    void setDisplayItem(PlayerToValueMapper<ItemStack> displayItemPlayerSpecific) {
-        this.displayItemPlayerSpecific = displayItemPlayerSpecific;
+    protected void setDisplayName(String displayName) {
+        this.displayName = Dynamic.getConstant(displayName);
     }
 
-    void setDisplayName(String displayName) {
+    protected void setDisplayName(Dynamic<String> displayName) {
         this.displayName = displayName;
     }
 
-    void setDisplayName(PlayerToValueMapper<String> displayNamePlayerSpecific) {
-        this.displayNamePlayerSpecific = displayNamePlayerSpecific;
+    protected void setDisplayIcon(MaterialData displayIcon) {
+        this.displayIcon = Dynamic.getConstant(displayIcon);
     }
 
-    void setDisplayIcon(MaterialData displayIcon) {
+    protected void setDisplayIcon(Dynamic<MaterialData> displayIcon) {
         this.displayIcon = displayIcon;
     }
 
-    void setDisplayIcon(PlayerToValueMapper<MaterialData> displayIconPlayerSpecific) {
-        this.displayIconPlayerSpecific = displayIconPlayerSpecific;
+    protected void setDisplayNumber(int displayNumber) {
+        this.displayNumber = Dynamic.getConstant(displayNumber);
     }
 
-    void setDisplayNumber(int displayNumber) {
+    protected void setDisplayNumber(Dynamic<Integer> displayNumber) {
         this.displayNumber = displayNumber;
     }
-
-    void setDisplayNumber(PlayerToValueMapper<Integer> displayNumberPlayerSpecific) {
-        this.displayNumberPlayerSpecific = displayNumberPlayerSpecific;
+    
+    protected void setVisibilityController(Dynamic<Boolean> visibilityController) {
+        this.visibilityController = visibilityController;
     }
 
-    void addDescriptionLine(String line) {
-        this.displayDescription.add((Object) line);
+    protected void addDescriptionLine(String line) {
+        this.getDisplayDescription().add(line);
     }
 
-    void addDescriptionLine(PlayerToValueMapper<String> line) {
-        this.displayDescription.add((Object) line);
+    protected void addDescriptionLine(SLPlayer slp, String line) {
+        if(displayDescription instanceof DynamicDefault) {
+            displayDescription = new Dynamic<List<String>>() {
+                private final Map<UUID, List<String>> map = new HashMap<>();
+                private final ArrayList<String> oldDefault = (ArrayList)displayDescription.get(null);
+                
+                @Override
+                public List<String> get(SLPlayer slp) {
+                    List<String> result;
+                    if(slp == null) {
+                        result = oldDefault;
+                    }
+                    else if(map.containsKey(slp.getUUID())) {
+                        result = map.get(slp.getUUID());
+                    }
+                    else {
+                        result = (List<String>) oldDefault.clone();
+                        map.put(slp.getUUID(), result);
+                    }
+                    return result;
+                }
+            };
+        }
+        this.getDisplayDescription(slp).add(line);
+    }
+    
+    protected void setDescription(Dynamic<List<String>> displayDescription) {
+        this.displayDescription = displayDescription;
     }
 }

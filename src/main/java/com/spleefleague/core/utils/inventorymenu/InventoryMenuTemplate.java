@@ -5,16 +5,14 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import com.spleefleague.core.player.Rank;
-import com.spleefleague.core.utils.function.PlayerToValueMapper;
+import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.utils.function.Dynamic;
 
 public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<InventoryMenu> {
 
-    private String title;
-    private PlayerToValueMapper<String> titlePlayerSpecific;
+    private Dynamic<String> title;
 
     private Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> components;
     private Consumer<InventoryMenuDynamicComponents> dynamicComponents;
@@ -23,27 +21,31 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
 
     private boolean menuControls;
     
-    private Rank requiredRank;
-
-    InventoryMenuTemplate() {
-        this.title = "";
+    private Dynamic<Boolean> accessController;
+    
+    protected InventoryMenuTemplate() {
+        this.title = Dynamic.getConstant("");
         this.components = new HashMap<>();
         this.exitOnClickOutside = true;
         this.menuControls = false;
-        this.requiredRank = Rank.DEFAULT;
+        this.accessController = (SLPlayer slp) -> slp.getRank().hasPermission(Rank.DEFAULT);
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title = Dynamic.getConstant(title);
+    }
+    
+    public void setTitle(Dynamic<String> title) {
+        this.title = Dynamic.getDynamicDefault(title, "Title", "Title");
     }
 
     public void addComponent(int position, InventoryMenuComponentTemplate<? extends InventoryMenuComponent> component) {
         components.put(position, component);
     }
 
-    public void dynamicComponents(Consumer<InventoryMenuDynamicComponents> dynamicComponents) {
-        this.dynamicComponents = dynamicComponents;
-    }
+//    public void dynamicComponents(Consumer<InventoryMenuDynamicComponents> dynamicComponents) {
+//        this.dynamicComponents = dynamicComponents;
+//    }
 
     public void setExitOnClickOutside(boolean exitOnClickOutside) {
         this.exitOnClickOutside = exitOnClickOutside;
@@ -54,26 +56,30 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
     }
 
     public String getTitle() {
-        return title;
+        return getTitle(null);
     }
 
-    public String getTitleFor(Player p) {
-        return titlePlayerSpecific != null ? titlePlayerSpecific.toValue(p) : title;
+    public String getTitle(SLPlayer slp) {
+        return title.get(slp);
     }
     
     public void setRank(Rank rank){
-    	this.requiredRank = rank;
+        this.accessController = (SLPlayer slp) -> slp.getRank().hasPermission(Rank.DEFAULT);
+    }
+    
+    public void setAccessController(Dynamic<Boolean> accessController) {
+        this.accessController = accessController;
     }
 
     @Override
-    public InventoryMenu construct() {
-        ItemStack is = constructDisplayItem();
+    public InventoryMenu construct(SLPlayer slp) {
+        ItemStackWrapper is = constructDisplayItem();
 
         //Construct components
         Map<Integer, InventoryMenuComponent> actualComponents = components.entrySet().stream()
                 .collect(Collectors.toMap(
                                 entry -> entry.getKey(),
-                                entry -> entry.getValue().construct()));
+                                entry -> entry.getValue().construct(slp)));
 
         if (dynamicComponents != null) {
             InventoryMenuDynamicComponents dynamic = new InventoryMenuDynamicComponents();
@@ -83,44 +89,14 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
             Map<Integer, InventoryMenuComponent> dynamicComponents = dynamic.getComponents().entrySet().stream()
                     .collect(Collectors.toMap(
                                     entry -> entry.getKey(),
-                                    entry -> entry.getValue().construct()));
+                                    entry -> entry.getValue().construct(slp)));
 
             actualComponents.putAll(dynamicComponents);
 
         }
 
-        InventoryMenu menu = new InventoryMenu(is, title, actualComponents, exitOnClickOutside, menuControls,requiredRank);
+        InventoryMenu menu = new InventoryMenu(is, getTitle(), actualComponents, exitOnClickOutside, menuControls, accessController, slp);
 
-        addMenuControls(actualComponents);
-
-        return menu;
-    }
-
-    @Override
-    public InventoryMenu constructFor(Player p) {
-        ItemStack is = constructDisplayItemFor(p);
-
-        //Construct components
-        Map<Integer, InventoryMenuComponent> actualComponents = components.entrySet().stream()
-                .collect(Collectors.toMap(
-                                entry -> entry.getKey(),
-                                entry -> entry.getValue().constructFor(p)));
-
-        if (dynamicComponents != null) {
-            InventoryMenuDynamicComponents dynamic = new InventoryMenuDynamicComponents();
-
-            dynamicComponents.accept(dynamic);
-
-            Map<Integer, InventoryMenuComponent> dynamicComponents = dynamic.getComponents().entrySet().stream()
-                    .collect(Collectors.toMap(
-                                    entry -> entry.getKey(),
-                                    entry -> entry.getValue().constructFor(p)));
-
-            actualComponents.putAll(dynamicComponents);
-
-        }
-
-        InventoryMenu menu = new InventoryMenu(is, getTitleFor(p), actualComponents, exitOnClickOutside, menuControls,requiredRank);
         addMenuControls(actualComponents);
 
         return menu;

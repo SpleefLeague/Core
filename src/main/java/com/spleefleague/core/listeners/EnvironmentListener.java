@@ -79,7 +79,6 @@ public class EnvironmentListener implements Listener{
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         player.teleport(SpleefLeague.getInstance().getSpawnLocation());
-//        player.getInventory().setItem(0, MenuRepository.getSLMenuItem());
         event.setJoinMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has joined the server");
         if(!player.hasPlayedBefore()) {
             ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix(), ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + event.getPlayer().getName() + ChatColor.BLUE + " to SpleefLeague!", "DEFAULT");
@@ -152,11 +151,12 @@ public class EnvironmentListener implements Listener{
     
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
-    	if(event.getPlayer().getGameMode() != GameMode.CREATIVE)
-    		event.setCancelled(true);
-    	
-    	if(event.getItemInHand().equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStackFor(event.getPlayer())))
-    		event.setCancelled(true);
+    	if(event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+            event.setCancelled(true);
+        }
+        else if(event.getItemInHand().equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStack(SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer())))) {
+            event.setCancelled(true);
+        }
     	
     }
     
