@@ -1,6 +1,5 @@
 package com.spleefleague.core.player;
 
-import com.spleefleague.core.halloween.Candy;
 import java.util.HashSet;
 import java.util.UUID;
 import com.spleefleague.core.io.DBLoad;
@@ -23,9 +22,6 @@ public class SLPlayer extends GeneralPlayer {
     private HashSet<String> chatChannels;
     @DBLoad(fieldName = "easteregg", typeConverter = HashSetIntegerConverter.class)
     private HashSet<Integer> eastereggs;
-    @DBLoad(fieldName = "candies", typeConverter = Candy.CandyObjectIdConverter.class)
-    @DBSave(fieldName = "candies", typeConverter = Candy.CandyObjectIdConverter.class)
-    private HashSet<Candy> candies;
     private String sendingChannel;
     private PlayerState state = PlayerState.IDLE;
     
@@ -33,7 +29,6 @@ public class SLPlayer extends GeneralPlayer {
         super();
         chatChannels = new HashSet<>();
         eastereggs = new HashSet<>();
-        candies = new HashSet<>();
     }
     
     @DBSave(fieldName = "rank", typeConverter = RankStringConverter.class)
@@ -65,10 +60,6 @@ public class SLPlayer extends GeneralPlayer {
     @DBSave(fieldName = "coins")
     public int getCoins() {
         return coins;
-    }
-    
-    public HashSet<Candy> getCandy() {
-        return candies;
     }
     
     @DBSave(fieldName = "easteregg", typeConverter = HashSetIntegerConverter.class)
