@@ -1,5 +1,6 @@
 package com.spleefleague.core.utils.inventorymenu;
 
+import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.function.Dynamic;
 import com.spleefleague.core.utils.function.DynamicDefault;
@@ -11,33 +12,29 @@ import java.util.UUID;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 
 public abstract class InventoryMenuComponentTemplate<C> {
 
     //private InventoryMenuTemplate parent;
     private Dynamic<ItemStack> displayItem;
     private Dynamic<String> displayName;
-    private Dynamic<MaterialData> displayIcon;
+    private Dynamic<Material> displayIcon;
     private Dynamic<Integer> displayNumber;
     private Dynamic<List<String>> displayDescription;
     private Dynamic<Boolean> visibilityController;
-    
+    private Dynamic<Boolean> accessController;
     
     protected InventoryMenuComponentTemplate() {
         this.displayItem = Dynamic.getConstant(new ItemStack(Material.STONE));
         this.displayName = Dynamic.getConstant("");
         this.visibilityController = Dynamic.getConstant(true);
-        this.displayIcon = Dynamic.getConstant(new MaterialData(Material.STONE));
+        this.accessController = (SLPlayer slp) -> slp.getRank().hasPermission(Rank.DEFAULT);
+        this.displayIcon = Dynamic.getConstant(Material.STONE);
         this.displayNumber = Dynamic.getConstant(1);
         this.displayDescription = Dynamic.getConstant(new ArrayList<>()); //Always returns the same(!) object
     }
 
     public abstract C construct(SLPlayer slp);
-
-    public String getDisplayName() {
-        return displayName != null ? getDisplayName(null) : InventoryMenuComponentTemplate.this.getDisplayItem().getItemMeta().getDisplayName();
-    }
 
     public String getDisplayName(SLPlayer slp) {
         return displayName.get(slp);
@@ -46,49 +43,29 @@ public abstract class InventoryMenuComponentTemplate<C> {
     protected ItemStackWrapper getDisplayItemStackWrapper() {
         return constructDisplayItem();
     }
-    
-    public ItemStack getDisplayItemStack() {
-        return getDisplayItemStack(null);
-    }
 
     public ItemStack getDisplayItemStack(SLPlayer slp) {
         return getDisplayItemStackWrapper().construct(slp);
-    }
-
-    protected ItemStack getDisplayItem() {
-        return getDisplayItem(null);
     }
 
     protected ItemStack getDisplayItem(SLPlayer slp) {
         return displayItem.get(slp);
     }
 
-    public MaterialData getDisplayIcon() {
-        return getDisplayIcon(null);
-    }
-
-    public MaterialData getDisplayIcon(SLPlayer slp) {
+    public Material getDisplayIcon(SLPlayer slp) {
         return displayIcon.get(slp);
-    }
-
-    public int getDisplayNumber() {
-        return getDisplayNumber(null);
     }
 
     public int getDisplayNumber(SLPlayer slp) {
         return displayNumber.get(slp);
     }
-
-    public List<String> getDisplayDescription() {
-        return getDisplayDescription(null);
-    }
-
+    
     public List<String> getDisplayDescription(SLPlayer slp) {
         return displayDescription.get(slp);
     }
     
-    public boolean isVisible() {
-        return isVisible(null);
+    public List<String> getDisplayDescription() {
+        return displayDescription.get(null);
     }
 
     public boolean isVisible(SLPlayer slp) {
@@ -97,6 +74,14 @@ public abstract class InventoryMenuComponentTemplate<C> {
     
     protected Dynamic<Boolean> getVisibilityController() {
         return visibilityController;
+    }
+
+    public boolean hasAccess(SLPlayer slp) {
+        return accessController.get(slp);
+    }
+    
+    protected Dynamic<Boolean> getAccessController() {
+        return accessController;
     }
 
     protected ItemStackWrapper constructDisplayItem() {
@@ -120,11 +105,11 @@ public abstract class InventoryMenuComponentTemplate<C> {
         this.displayName = displayName;
     }
 
-    protected void setDisplayIcon(MaterialData displayIcon) {
+    protected void setDisplayIcon(Material displayIcon) {
         this.displayIcon = Dynamic.getConstant(displayIcon);
     }
 
-    protected void setDisplayIcon(Dynamic<MaterialData> displayIcon) {
+    protected void setDisplayIcon(Dynamic<Material> displayIcon) {
         this.displayIcon = displayIcon;
     }
 
@@ -138,6 +123,10 @@ public abstract class InventoryMenuComponentTemplate<C> {
     
     protected void setVisibilityController(Dynamic<Boolean> visibilityController) {
         this.visibilityController = visibilityController;
+    }
+    
+    protected void setAccessController(Dynamic<Boolean> accessController) {
+        this.accessController = accessController;
     }
 
     protected void addDescriptionLine(String line) {

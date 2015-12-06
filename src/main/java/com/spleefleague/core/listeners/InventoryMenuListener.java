@@ -19,12 +19,17 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
-import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
+import static com.spleefleague.core.menus.InventoryMenuTemplateRepository.isMenuItem;
+import static com.spleefleague.core.menus.InventoryMenuTemplateRepository.openMenu;
+import static com.spleefleague.core.menus.InventoryMenuTemplateRepository.slMenu;
 import com.spleefleague.core.player.GeneralPlayer;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenu;
+import org.bukkit.Material;
+import org.bukkit.event.block.BlockPlaceEvent;
 
 public class InventoryMenuListener implements Listener {
 
@@ -45,11 +50,15 @@ public class InventoryMenuListener implements Listener {
     public void onGeneralPlayerLoaded(GeneralPlayerLoadedEvent event) {
         GeneralPlayer gp = event.getGeneralPlayer();
         if (gp instanceof SLPlayer) {
+            Player player = gp.getPlayer();
             SLPlayer slp = (SLPlayer) gp;
-            if (slp.getRank().hasPermission(Rank.DEVELOPER)) {
-                // InventoryMenuTemplateRepository.showModMenu(slp.getPlayer());
-                ItemStack is = InventoryMenuTemplateRepository.modMenu.getDisplayItemStack();
-                slp.getPlayer().getInventory().setItem(0, is);
+            if(player.getInventory().getItem(0) == null || player.getInventory().getItem(0).getType() == Material.AIR) {
+                player.getInventory().setItem(0, slMenu.getDisplayItemStack(slp));
+            }
+            else {
+                if(!isMenuItem(player.getInventory().getItem(0), slp)) {
+                    slp.sendMessage(Theme.ERROR + "You did not recieved the SLMenu because your inventory's first slot was occupied. Remove the item and reconnect to receive the menu.");
+                }
             }
         }
     }
@@ -59,20 +68,24 @@ public class InventoryMenuListener implements Listener {
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             ItemStack is = event.getItem();
             if (is != null) {
-                if(is.equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStack(getSLPlayer(event.getPlayer())))) {
-                    InventoryMenuTemplateRepository.showModMenu(event.getPlayer());
-            
-                }
-                else if(InventoryMenuTemplateRepository.testMenu != null && is.equals(InventoryMenuTemplateRepository.testMenu.getDisplayItemStack(getSLPlayer(event.getPlayer())))) {
-                    InventoryMenuTemplateRepository.testMenu.construct(getSLPlayer(event.getPlayer())).open();
+                SLPlayer slp = getSLPlayer(event.getPlayer());
+                if(isMenuItem(is, slp)) {
+                    openMenu(is, slp);
                 }
             }
+        }
+    }
+    
+    @EventHandler
+    public void onPlace(BlockPlaceEvent event) {
+        if(isMenuItem(event.getItemInHand(), getSLPlayer(event.getPlayer()))) {
+            event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent event) {
-        if (event.getItemDrop().equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStack(getSLPlayer(event.getPlayer())))) {
+        if (isMenuItem(event.getItemDrop().getItemStack(), getSLPlayer(event.getPlayer()))) {
             event.setCancelled(true);
         }
     }
@@ -107,7 +120,7 @@ public class InventoryMenuListener implements Listener {
     public void onInventoryAction(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player) {
             Player p = (Player) event.getWhoClicked();
-            if (event.getCurrentItem() != null && event.getCurrentItem().equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStack(getSLPlayer(p)))) {
+            if (event.getCurrentItem() != null && isMenuItem(event.getCurrentItem(),getSLPlayer(p))) {
                 event.setCancelled(true);
             }
         }

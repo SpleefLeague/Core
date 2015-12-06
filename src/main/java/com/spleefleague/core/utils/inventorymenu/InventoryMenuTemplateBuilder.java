@@ -8,8 +8,10 @@ import com.spleefleague.core.utils.function.Dynamic;
 public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplateBuilder<InventoryMenu, InventoryMenuTemplate, InventoryMenuTemplateBuilder> {
 
     private static final int ROWSIZE = 9;
-
-    InventoryMenuTemplateBuilder() {
+    private int dynamic = -1000;
+    
+    
+    protected InventoryMenuTemplateBuilder() {
 
     }
 
@@ -39,6 +41,14 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
         buildingObj.addComponent(position, itemTemplate);
         return this;
     }
+    
+    public InventoryMenuTemplateBuilder component(InventoryMenuItemTemplate menuItemTemplate) {
+        return component(--dynamic, menuItemTemplate);
+    }
+    
+    public InventoryMenuTemplateBuilder component(InventoryMenuItemTemplateBuilder menuItemTemplateBuilder) {
+        return component(--dynamic, menuItemTemplateBuilder.build());
+    }
 
     public InventoryMenuTemplateBuilder component(int x, int y, InventoryMenuTemplateBuilder menuTemplateBuilder) {
         return component(x, y, menuTemplateBuilder.build());
@@ -56,18 +66,15 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
         buildingObj.addComponent(position, menuTemplate);
         return this;
     }
-
-//    public InventoryMenuTemplateBuilder dynamicComponents(Consumer<InventoryMenuDynamicComponents> dynamic) {
-//        buildingObj.dynamicComponents(dynamic);
-//        return this;
-//    }
-
-    /*
-     public InventoryMenuTemplateBuilder parent(InventoryMenuTemplate parent){
-     buildingObj.setParent(parent);
-     return this;
-     }
-     */
+    
+    public InventoryMenuTemplateBuilder component(InventoryMenuTemplate menuTemplate) {
+        return component(++dynamic, menuTemplate);
+    }
+    
+    public InventoryMenuTemplateBuilder component(InventoryMenuTemplateBuilder menuTemplateBuilder) {
+        return component(++dynamic, menuTemplateBuilder.build());
+    }
+    
     public InventoryMenuTemplateBuilder exitOnClickOutside(boolean exitOnClickOutside) {
         buildingObj.setExitOnClickOutside(exitOnClickOutside);
         return this;
@@ -76,16 +83,6 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
     public InventoryMenuTemplateBuilder menuControls(boolean menuControls) {
         buildingObj.setMenuControls(menuControls);
         return this;
-    }
-    
-    public InventoryMenuTemplateBuilder rank(Rank rank){
-    	buildingObj.setRank(rank);
-    	return this;
-    }
-    
-    public InventoryMenuTemplateBuilder accessController(Dynamic<Boolean> accessController){
-    	buildingObj.setAccessController(accessController);
-    	return this;
     }
     
     @Override

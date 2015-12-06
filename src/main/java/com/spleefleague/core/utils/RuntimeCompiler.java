@@ -27,6 +27,7 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.utils.Debugger.CommandExecutor;
 import com.spleefleague.core.utils.Debugger.Stoppable;
+import java.util.Locale;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
@@ -322,7 +323,9 @@ public class RuntimeCompiler {
     
     //Can be necessary on some windows and java versions.
     static {
-//        System.setProperty("java.home", System.getProperty("java.home").replace("jre", "jdk"));
+        if(ToolProvider.getSystemJavaCompiler() == null || ToolProvider.getSystemJavaCompiler().getStandardFileManager(null, null, null) == null) {
+            System.setProperty("java.home", System.getProperty("java.home").replace("jre", "jdk"));
+        }
         directoryTemp = new File(getPluginDirectory().getAbsolutePath() + "/debug/temp");
         directoryPermanent = new File(getPluginDirectory().getAbsolutePath() + "/debug/permanent");
         if(!directoryTemp.exists()) {

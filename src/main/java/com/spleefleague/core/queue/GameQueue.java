@@ -18,6 +18,7 @@ import com.spleefleague.core.player.PlayerManager;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import org.bukkit.Bukkit;
 
 /**
  *
@@ -117,6 +118,9 @@ public class GameQueue<Q extends QueueableArena> {
     }
     
     public void queue(UUID player, Q queue) {
+//        for(StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+//            Bukkit.broadcastMessage(String.valueOf(ste));
+//        }
         Queue<UUID> q = getQueue(queue);
         if(isQueued(player)) {
             dequeue(player);

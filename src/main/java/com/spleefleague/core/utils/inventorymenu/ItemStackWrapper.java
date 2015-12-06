@@ -8,6 +8,7 @@ package com.spleefleague.core.utils.inventorymenu;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.function.Dynamic;
 import java.util.List;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
@@ -20,11 +21,11 @@ public class ItemStackWrapper {
     
     private final Dynamic<ItemStack> displayItem;
     private final Dynamic<String> displayName;
-    private final Dynamic<MaterialData> displayIcon;
+    private final Dynamic<Material> displayIcon;
     private final Dynamic<Integer> displayNumber;
     private final Dynamic<List<String>> displayDescription;
     
-    protected ItemStackWrapper(Dynamic<ItemStack> displayItem, Dynamic<MaterialData> displayIcon, Dynamic<String> displayName, Dynamic<Integer> displayNumber, Dynamic<List<String>> displayDescription) {
+    protected ItemStackWrapper(Dynamic<ItemStack> displayItem, Dynamic<Material> displayIcon, Dynamic<String> displayName, Dynamic<Integer> displayNumber, Dynamic<List<String>> displayDescription) {
         this.displayItem = displayItem;
         this.displayIcon = displayIcon;
         this.displayName = displayName;
@@ -36,13 +37,13 @@ public class ItemStackWrapper {
         return constructItemStackFromValues(displayItem.get(slp), displayIcon.get(slp), displayName.get(slp), displayNumber.get(slp), displayDescription.get(slp));
     }
     
-    private ItemStack constructItemStackFromValues(ItemStack baseStack, MaterialData icon, String name, Integer number, List<String> description) {
+    private ItemStack constructItemStackFromValues(ItemStack baseStack, Material icon, String name, Integer number, List<String> description) {
         ItemStack is = baseStack.clone();
 
         if (icon != null) {
-            is.setType(icon.getItemType());
+            is.setType(icon);
             //is.setData() is not working...
-            is.getData().setData(icon.getData());
+           //Later: is.getData().setData(icon.getData());
         }
 
         if (number != null) {

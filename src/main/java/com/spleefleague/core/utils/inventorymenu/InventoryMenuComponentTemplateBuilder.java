@@ -1,8 +1,8 @@
 package com.spleefleague.core.utils.inventorymenu;
 
+import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 import com.spleefleague.core.utils.function.Dynamic;
@@ -32,17 +32,13 @@ public abstract class InventoryMenuComponentTemplateBuilder<C, T extends Invento
         buildingObj.setDisplayName(displayName);
         return actualBuilder;
     }
-
+    
     public B displayIcon(Material displayIcon) {
-        return displayIcon(new MaterialData(displayIcon));
-    }
-
-    public B displayIcon(MaterialData displayIcon) {
-        buildingObj.setDisplayIcon(displayIcon);
+        buildingObj.setDisplayIcon(Dynamic.getConstant(displayIcon));
         return actualBuilder;
     }
-
-    public B displayIcon(Dynamic<MaterialData> displayIcon) {
+    
+    public B displayIcon(Dynamic<Material> displayIcon) {
         buildingObj.setDisplayIcon(displayIcon);
         return actualBuilder;
     }
@@ -84,6 +80,15 @@ public abstract class InventoryMenuComponentTemplateBuilder<C, T extends Invento
 
     public B visibilityController(Dynamic<Boolean> visibilitsController) {
     	buildingObj.setVisibilityController(visibilitsController);
+    	return actualBuilder;
+    }
+    
+    public B rank(Rank rank){
+    	return accessController((slp) -> slp.getRank().hasPermission(rank));
+    }
+    
+    public B accessController(Dynamic<Boolean> accessController){
+    	buildingObj.setAccessController(accessController);
     	return actualBuilder;
     }
 

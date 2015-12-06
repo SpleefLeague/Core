@@ -51,7 +51,6 @@ import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.io.TypeConverter;
 import com.spleefleague.core.io.TypeConverter.DateConverter;
-import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
 import com.spleefleague.core.player.PlayerState;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.GamePlugin;
@@ -79,17 +78,14 @@ public class EnvironmentListener implements Listener{
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         player.teleport(SpleefLeague.getInstance().getSpawnLocation());
-        event.setJoinMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has joined the server");
+        event.setJoinMessage(ChatColor.YELLOW + player.getName() + " has joined the server");
         if(!player.hasPlayedBefore()) {
-            ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix(), ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + event.getPlayer().getName() + ChatColor.BLUE + " to SpleefLeague!", "DEFAULT");
+            ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix(), ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + player.getName() + ChatColor.BLUE + " to SpleefLeague!", "DEFAULT");
         }
-        Bukkit.getScheduler().runTaskLater(SpleefLeague.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-                    slp.getPlayer().setPlayerListName(slp.getRank().getColor() + slp.getName());
-                    slp.getPlayer().setDisplayName(slp.getRank().getColor() + slp.getName());
-                }
+        Bukkit.getScheduler().runTaskLater(SpleefLeague.getInstance(), () -> {
+            for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
+                slp.getPlayer().setPlayerListName(slp.getRank().getColor() + slp.getName());
+                slp.getPlayer().setDisplayName(slp.getRank().getColor() + slp.getName());
             }
         },20);
         logIPAddress(event.getPlayer());
@@ -154,10 +150,6 @@ public class EnvironmentListener implements Listener{
     	if(event.getPlayer().getGameMode() != GameMode.CREATIVE) {
             event.setCancelled(true);
         }
-        else if(event.getItemInHand().equals(InventoryMenuTemplateRepository.modMenu.getDisplayItemStack(SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer())))) {
-            event.setCancelled(true);
-        }
-    	
     }
     
     @EventHandler(priority = EventPriority.LOWEST)

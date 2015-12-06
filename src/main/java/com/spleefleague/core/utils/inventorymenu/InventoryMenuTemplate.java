@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 
-import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.function.Dynamic;
 
@@ -15,20 +14,16 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
     private Dynamic<String> title;
 
     private Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> components;
-    private Consumer<InventoryMenuDynamicComponents> dynamicComponents;
 
     private boolean exitOnClickOutside;
 
     private boolean menuControls;
-    
-    private Dynamic<Boolean> accessController;
     
     protected InventoryMenuTemplate() {
         this.title = Dynamic.getConstant("");
         this.components = new HashMap<>();
         this.exitOnClickOutside = true;
         this.menuControls = false;
-        this.accessController = (SLPlayer slp) -> slp.getRank().hasPermission(Rank.DEFAULT);
     }
 
     public void setTitle(String title) {
@@ -54,21 +49,9 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
     public void setMenuControls(boolean menuControls) {
         this.menuControls = menuControls;
     }
-
-    public String getTitle() {
-        return getTitle(null);
-    }
-
+    
     public String getTitle(SLPlayer slp) {
         return title.get(slp);
-    }
-    
-    public void setRank(Rank rank){
-        this.accessController = (SLPlayer slp) -> slp.getRank().hasPermission(Rank.DEFAULT);
-    }
-    
-    public void setAccessController(Dynamic<Boolean> accessController) {
-        this.accessController = accessController;
     }
 
     @Override
@@ -80,25 +63,10 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
                 .collect(Collectors.toMap(
                                 entry -> entry.getKey(),
                                 entry -> entry.getValue().construct(slp)));
-
-        if (dynamicComponents != null) {
-            InventoryMenuDynamicComponents dynamic = new InventoryMenuDynamicComponents();
-
-            dynamicComponents.accept(dynamic);
-
-            Map<Integer, InventoryMenuComponent> dynamicComponents = dynamic.getComponents().entrySet().stream()
-                    .collect(Collectors.toMap(
-                                    entry -> entry.getKey(),
-                                    entry -> entry.getValue().construct(slp)));
-
-            actualComponents.putAll(dynamicComponents);
-
-        }
-
-        InventoryMenu menu = new InventoryMenu(is, getTitle(), actualComponents, exitOnClickOutside, menuControls, accessController, slp);
-
-        addMenuControls(actualComponents);
-
+        
+        InventoryMenu menu = new InventoryMenu(is, getTitle(slp), actualComponents, exitOnClickOutside, menuControls, super.getAccessController(), super.getVisibilityController(), slp);
+//        addMenuControls(actualComponents);
+//        menu.populateInventory();
         return menu;
     }
 

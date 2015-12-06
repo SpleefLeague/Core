@@ -15,7 +15,7 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.function.Dynamic;
 import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class InventoryMenu extends InventoryMenuComponent implements InventoryHolder {
 
@@ -25,20 +25,19 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
     private final Map<Integer, InventoryMenuComponent> allComponents;
     private final boolean exitOnClickOutside;
     private final boolean menuControls;
-    private final Dynamic<Boolean> accessController;
     private final SLPlayer slp;
     private final Map<Integer, InventoryMenuComponent> currentComponents;
     
-    protected InventoryMenu(ItemStackWrapper displayItem, String title, Map<Integer, InventoryMenuComponent> components, boolean exitOnClickOutside, boolean menuControls, Dynamic<Boolean> accessController, SLPlayer slp) {
-        super(displayItem, Dynamic.getConstant(true));
+    protected InventoryMenu(ItemStackWrapper displayItem, String title, Map<Integer, InventoryMenuComponent> components, boolean exitOnClickOutside, boolean menuControls, Dynamic<Boolean> accessController, Dynamic<Boolean> visibilityController, SLPlayer slp) {
+        super(displayItem, visibilityController, accessController);
         this.slp = slp;
         this.allComponents = components;
         this.inventory = Bukkit.createInventory(this, calcRows() * ROWSIZE, title);
         this.exitOnClickOutside = exitOnClickOutside;
         this.menuControls = menuControls;
-        this.accessController = accessController;
         this.currentComponents = new HashMap<>();
         setParents();
+        addMenuControls();
         populateInventory();
     }
     
@@ -60,20 +59,20 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
         allComponents.values().forEach(component -> component.setParent(this));
     }
 
-    private void populateInventory() {
+    protected void populateInventory() {
         inventory.clear();
         currentComponents.clear();
         allComponents.entrySet().stream().filter((entry) -> (entry.getKey() >= 0 && entry.getValue().isVisible(slp))).forEach((entry) -> {
+            System.out.println(entry.getValue().getDisplayItem(slp).getType());
             currentComponents.put(entry.getKey(), entry.getValue());
         });
         int current = 0;
-        for(Entry<Integer, InventoryMenuComponent> entry : allComponents.entrySet()) {
-            if(entry.getKey() < 0 && entry.getValue().isVisible(slp)) {
-                while(currentComponents.containsKey(current)) {
-                    current++;
-                }
-                currentComponents.put(current, entry.getValue());
+        for(int key : allComponents.keySet().stream().filter((key) -> key < 0 && allComponents.get(key).isVisible(slp)).sorted().collect(Collectors.toList())) {
+            InventoryMenuComponent value = allComponents.get(key);
+            while(currentComponents.containsKey(current)) {
+                current++;
             }
+            currentComponents.put(current, value);
         }
         currentComponents.forEach((key, value) -> inventory.setItem(key, value.getDisplayItemWrapper().construct(slp)));
     }
@@ -83,28 +82,34 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
             InventoryMenuComponent rootComp = getRoot();
 
             if (rootComp instanceof InventoryMenu) {
-                InventoryMenu rootMenu = (InventoryMenu) rootComp;
+//                InventoryMenu rootMenu = (InventoryMenu) rootComp;
 
                 if (getParent() != null) {
-                    InventoryMenuItem mainMenuItem = InventoryMenuAPI.item()
-                            .displayIcon(Material.MINECART)
-                            .displayName(ChatColor.GREEN + "Main Menu")
-                            .description("Click to back to the main menu")
-                            .onClick(event -> rootMenu.open())
-                            .build().construct(slp);
-
-                    allComponents.put(8, mainMenuItem);
-                    inventory.setItem(8, mainMenuItem.getDisplayItemWrapper().construct(slp));
+//                    InventoryMenuItem mainMenuItem = InventoryMenuAPI.item()
+//                            .displayIcon(Material.MINECART)
+//                            .displayName(ChatColor.GREEN + "Main Menu")
+//                            .description("Click to back to the main menu")
+//                            .onClick(event -> rootMenu.open())
+//                            .build().construct(slp);
+//
+//                    allComponents.put(1, mainMenuItem);
+//                    inventory.setItem(1, mainMenuItem.getDisplayItemWrapper().construct(slp));
 
                     InventoryMenuItem goBackItem = InventoryMenuAPI.item()
                             .displayIcon(Material.ANVIL)
                             .displayName(ChatColor.GREEN + "Go back")
                             .description("Click to go back one menu level")
-                            .onClick(event -> getParent().open())
+                            .onClick(event -> {
+                                if(getParent() != null) {
+                                    getParent().open();
+                                }
+                                else {
+                                    event.getPlayer().closeInventory();
+                                }
+                             })
                             .build().construct(slp);
                     allComponents.put(0, goBackItem);
-
-                    inventory.setItem(0, goBackItem.getDisplayItemWrapper().construct(slp));
+                    //inventory.setItem(0, goBackItem.getDisplayItemWrapper().construct(slp));
                 }
             }
         }
@@ -118,7 +123,7 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
 
     public void open() {
         Player player = slp.getPlayer();
-        if (!accessController.get(slp)) {
+        if (!this.hasAccess(slp)) {
             player.sendMessage(ChatColor.RED + "You are not allowed to open this InventoryMenu");
         }
         else {
@@ -158,7 +163,13 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
     public void selectItem(int index) {
         if (currentComponents.containsKey(index)) {
             InventoryMenuComponent component = currentComponents.get(index);
-            component.selected();
+            if(component.hasAccess(slp)) {
+                component.selected();
+            }
+            else {  
+                slp.getPlayer().closeInventory();
+                slp.sendMessage(ChatColor.RED + "You don't have access to this");
+            }
         }
     }
 
