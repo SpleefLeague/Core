@@ -27,7 +27,6 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.utils.Debugger.CommandExecutor;
 import com.spleefleague.core.utils.Debugger.Stoppable;
-import java.util.Locale;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
