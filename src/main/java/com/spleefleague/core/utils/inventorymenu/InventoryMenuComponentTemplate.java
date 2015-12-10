@@ -145,12 +145,12 @@ public abstract class InventoryMenuComponentTemplate<C> {
                     if(slp == null) {
                         result = oldDefault;
                     }
-                    else if(map.containsKey(slp.getUUID())) {
-                        result = map.get(slp.getUUID());
+                    else if(map.containsKey(slp.getUniqueId())) {
+                        result = map.get(slp.getUniqueId());
                     }
                     else {
                         result = (List<String>) oldDefault.clone();
-                        map.put(slp.getUUID(), result);
+                        map.put(slp.getUniqueId(), result);
                     }
                     return result;
                 }

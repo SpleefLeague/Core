@@ -29,11 +29,11 @@ public class back extends BasicCommand {
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(!lastLocations.containsKey(slp.getUUID())) {
+        if(!lastLocations.containsKey(slp.getUniqueId())) {
             error(p, "There is no place to go back to.");
         }
         else {
-            p.teleport(lastLocations.get(slp.getUUID()));
+            p.teleport(lastLocations.get(slp.getUniqueId()));
         }
     }
     

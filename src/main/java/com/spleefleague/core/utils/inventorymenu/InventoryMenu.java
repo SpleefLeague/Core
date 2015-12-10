@@ -167,7 +167,7 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
                 component.selected();
             }
             else {  
-                slp.getPlayer().closeInventory();
+                slp.closeInventory();
                 slp.sendMessage(ChatColor.RED + "You don't have access to this");
             }
         }

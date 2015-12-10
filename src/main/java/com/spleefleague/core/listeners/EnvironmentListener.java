@@ -44,6 +44,7 @@ import org.bukkit.inventory.ItemStack;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.command.commands.back;
+import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.io.DBEntity;
 import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.DBSaveable;
@@ -78,17 +79,26 @@ public class EnvironmentListener implements Listener{
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         player.teleport(SpleefLeague.getInstance().getSpawnLocation());
-        event.setJoinMessage(ChatColor.YELLOW + player.getName() + " has joined the server");
         if(!player.hasPlayedBefore()) {
-            ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix(), ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + player.getName() + ChatColor.BLUE + " to SpleefLeague!", "DEFAULT");
+            event.setJoinMessage(SpleefLeague.getInstance().getChatPrefix() + " " + ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + player.getName() + ChatColor.BLUE + " to SpleefLeague!");
+        }
+        else {
+            event.setJoinMessage(ChatColor.YELLOW + player.getName() + " has joined the server");
         }
         Bukkit.getScheduler().runTaskLater(SpleefLeague.getInstance(), () -> {
             for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-                slp.getPlayer().setPlayerListName(slp.getRank().getColor() + slp.getName());
-                slp.getPlayer().setDisplayName(slp.getRank().getColor() + slp.getName());
+                slp.setPlayerListName(slp.getRank().getColor() + slp.getName());
+                slp.setDisplayName(slp.getRank().getColor() + slp.getName());
             }
         },20);
         logIPAddress(event.getPlayer());
+    }
+    
+    @EventHandler
+    public void onLoad(GeneralPlayerLoadedEvent event) {
+        if(event.getGeneralPlayer() instanceof SLPlayer) {
+            ((SLPlayer)event.getGeneralPlayer()).resetVisibility();
+        }
     }
     
     @EventHandler

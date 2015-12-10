@@ -14,7 +14,7 @@ public class InventoryMenuItem extends InventoryMenuComponent {
     @Override
     protected void selected() {
         if (onClick != null) {
-            onClick.onClick(new InventoryMenuClickEvent(this, this.getParent().getOwner().getPlayer()));
+            onClick.onClick(new InventoryMenuClickEvent(this, this.getParent().getOwner()));
         }
     }
 }

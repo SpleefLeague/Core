@@ -72,14 +72,6 @@
             <name>project</name>
             <url>file://${project.basedir}/repo/</url>
         </repository>
-        <!--<repository>
-            <id>shadowvolt-repo</id>
-            <url>http://ci.shadowvolt.com/plugin/repository/everything/</url>
-        </repository>
-        <repository>
-            <id>kitteh-repo</id>
-            <url>http://repo.kitteh.org/content/repositories/snapshots/</url>
-        </repository>-->
         <repository>
             <id>dmulloy2-repo</id>
             <url>http://repo.dmulloy2.net/content/groups/public/</url>
@@ -106,6 +98,12 @@
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>3.6.4</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.comphenix.packetwrapper</groupId>
+            <artifactId>PacketWrapper</artifactId>
+            <version>1.8.7-R0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

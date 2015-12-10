@@ -1,5 +1,6 @@
 package com.spleefleague.core.player;
 
+import com.spleefleague.core.SpleefLeague;
 import java.util.HashSet;
 import java.util.UUID;
 import com.spleefleague.core.io.DBLoad;
@@ -8,7 +9,41 @@ import com.spleefleague.core.io.TypeConverter.HashSetIntegerConverter;
 import com.spleefleague.core.io.TypeConverter.HashSetStringConverter;
 import com.spleefleague.core.io.TypeConverter.RankStringConverter;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Server;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.conversations.Conversation;
+import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Egg;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Snowball;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 /**
  *
@@ -40,15 +75,15 @@ public class SLPlayer extends GeneralPlayer {
     public void setRank(final Rank rank) {
         this.rank = rank;
         if(isOnline()) {
-            getPlayer().setPlayerListName(rank.getColor() + getName());
-            getPlayer().setDisplayName(rank.getColor() + getName());
+            setPlayerListName(rank.getColor() + getName());
+            setDisplayName(rank.getColor() + getName());
             if(rank.hasPermission(Rank.DEVELOPER)) {
-                getPlayer().setGameMode(GameMode.CREATIVE);
+                setGameMode(GameMode.CREATIVE);
             }
             else {
-                getPlayer().setGameMode(GameMode.SURVIVAL);
+                setGameMode(GameMode.SURVIVAL);
             }
-            rank.managePermissions(getPlayer());
+            rank.managePermissions(this);
         }
     }
     
@@ -115,6 +150,21 @@ public class SLPlayer extends GeneralPlayer {
     
     public PlayerState getState() {
         return state;
+    }
+    
+    public void resetVisibility() {
+        for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
+            if(slp != this && this.getState() == PlayerState.IDLE) {
+                if(slp.getState() == PlayerState.IDLE) {
+                    this.showPlayer(slp);
+                    slp.showPlayer(this);
+                }
+                else {
+                    this.hidePlayer(slp);
+                    slp.hidePlayer(this);
+                }
+            }
+        }
     }
 
     @Override

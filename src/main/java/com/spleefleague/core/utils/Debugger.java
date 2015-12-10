@@ -20,6 +20,6 @@ public interface Debugger {
     }
     
     interface CommandExecutor {
-        void onCommand(CommandSender cs, String[] cmdArgs);
+        void onCommand(CommandSender cs, String[] args);
     }
 }

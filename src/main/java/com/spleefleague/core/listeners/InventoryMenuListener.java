@@ -50,14 +50,13 @@ public class InventoryMenuListener implements Listener {
     public void onGeneralPlayerLoaded(GeneralPlayerLoadedEvent event) {
         GeneralPlayer gp = event.getGeneralPlayer();
         if (gp instanceof SLPlayer) {
-            Player player = gp.getPlayer();
             SLPlayer slp = (SLPlayer) gp;
-            if(player.getInventory().getItem(0) == null || player.getInventory().getItem(0).getType() == Material.AIR) {
-                player.getInventory().setItem(0, slMenu.getDisplayItemStack(slp));
+            if(slp.getInventory().getItem(0) == null || slp.getInventory().getItem(0).getType() == Material.AIR) {
+                slp.getInventory().setItem(0, slMenu.getDisplayItemStack(slp));
             }
             else {
-                if(!isMenuItem(player.getInventory().getItem(0), slp)) {
-                    slp.sendMessage(Theme.ERROR + "You did not recieved the SLMenu because your inventory's first slot was occupied. Remove the item and reconnect to receive the menu.");
+                if(!isMenuItem(slp.getInventory().getItem(0), slp)) {
+                    slp.sendMessage(Theme.ERROR + "You did not recieve the SLMenu because your inventory's first slot was occupied. Remove the item and reconnect to receive the menu.");
                 }
             }
         }

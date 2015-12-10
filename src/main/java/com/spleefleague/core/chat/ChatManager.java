@@ -28,7 +28,7 @@ public class ChatManager {
                 Bukkit.getConsoleSender().sendMessage(m);
                 for (SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
                     if (slp.isInChatChannel(c)) {
-                        slp.getPlayer().sendMessage(m);
+                        slp.sendMessage(m);
                     }
                 }
             }

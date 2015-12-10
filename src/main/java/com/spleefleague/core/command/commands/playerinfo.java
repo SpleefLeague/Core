@@ -92,11 +92,11 @@ public class playerinfo extends BasicCommand {
         }
 
         public String getUUID() {
-            return slp.getUUID().toString();
+            return slp.getUniqueId().toString();
         }
         
         public String getIP() {
-            return slp.getPlayer().getAddress().getAddress().toString().substring(1);
+            return slp.getAddress().getAddress().toString().substring(1);
         }
         
         public String getLastSeen() {
@@ -108,8 +108,8 @@ public class playerinfo extends BasicCommand {
         }
 
         public String getState() {
-            if (slp.getPlayer() == null) {
-                Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").find(new Document("uuid", slp.getUUID().toString())).first();
+            if (slp.isOnline()) {
+                Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").find(new Document("uuid", slp.getUniqueId().toString())).first();
                 if (dbo != null) {
                     Infraction inf = EntityBuilder.load(dbo, Infraction.class);
                     if (inf.getType() == InfractionType.BAN) {
@@ -129,7 +129,7 @@ public class playerinfo extends BasicCommand {
         }
 
         public String getSharedAccounts() {
-            String playerUUID = slp.getUUID().toString();
+            String playerUUID = slp.getUniqueId().toString();
             Set<String> sharedUUIDs = new HashSet<>();
             Collection<String> ips = new HashSet<>();
             MongoCollection<Document> col = SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections");

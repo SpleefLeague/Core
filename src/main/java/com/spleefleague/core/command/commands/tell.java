@@ -33,9 +33,9 @@ public class tell extends BasicCommand {
                 String prefix2 = ChatColor.GRAY + "[" + slp.getRank().getColor() + slp.getName() + ChatColor.GRAY + " -> me] " + ChatColor.RESET;
                 String message = toMessage(args);
                 p.sendMessage(prefix1 + message);
-                target.getPlayer().sendMessage(prefix2 + message);
-                slp.setLastChatPartner(target.getUUID());
-                target.setLastChatPartner(slp.getUUID());
+                target.sendMessage(prefix2 + message);
+                slp.setLastChatPartner(target.getUniqueId());
+                target.setLastChatPartner(slp.getUniqueId());
             }
             else {
                 error(p, args[0] + " is not online!");
