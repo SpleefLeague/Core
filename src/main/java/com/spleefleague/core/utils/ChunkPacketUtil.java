@@ -1,0 +1,122 @@
+
+import com.comphenix.packetwrapper.WrapperPlayServerMapChunk;
+import com.comphenix.packetwrapper.WrapperPlayServerMapChunkBulk;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+import com.spleefleague.core.utils.FakeBlock;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
+import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk.ChunkMap;
+import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
+
+/**
+ *
+ * @author Jonas
+ */
+public class ChunkPacketUtil {
+
+    public static void setBlocksPacketMapChunk(PacketContainer packet, FakeBlock[] unverified) {
+        if (packet.getHandle() instanceof PacketPlayOutMapChunk) {
+            WrapperPlayServerMapChunk wpsmc = new WrapperPlayServerMapChunk(packet);
+            int x = wpsmc.getChunkX();
+            int z = wpsmc.getChunkZ();
+            Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x, z);
+            if (verified.size() > 0) {
+                ChunkMap map = (ChunkMap) wpsmc.getChunkMap();
+                modify(map, verified);
+            }
+        }
+        else if (packet.getHandle() instanceof PacketPlayOutMapChunkBulk) {
+            WrapperPlayServerMapChunkBulk wpsmc = new WrapperPlayServerMapChunkBulk(packet);
+            int[] x = wpsmc.getChunksX();
+            int[] z = wpsmc.getChunksZ();
+            for (int i = 0; i < x.length && i < z.length; i++) {
+                Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x[i], z[i]);
+                if (verified.size() > 0) {
+                    ChunkMap map = (ChunkMap) wpsmc.getChunks()[i];
+                    modify(map, verified);
+                }
+            }
+        }
+    }
+
+    private static Map<Integer, Collection<FakeBlock>> toVerifiedSectionMap(FakeBlock[] unverified, int x, int z) {
+        Map<Integer, Collection<FakeBlock>> verified = new HashMap<>();
+        for (FakeBlock fb : unverified) {
+            if (fb.getChunk().getX() == x && fb.getChunk().getZ() == z) {
+                int section = fb.getY() / 16;
+                Collection<FakeBlock> blocks;
+                if (!verified.containsKey(section)) {
+                    blocks = new ArrayList<>();
+                    verified.put(section, blocks);
+                }
+                else {
+                    blocks = verified.get(section);
+                }
+                blocks.add(fb);
+            }
+        }
+        return verified;
+    }
+
+    private static void modify(ChunkMap map, Map<Integer, Collection<FakeBlock>> verified) {
+        int changedSections = createBitmask(verified.keySet());
+        int newSections = changedSections & ~map.b;
+        int fullBitmask = map.b | changedSections;
+        boolean skylight = map.a.length > setBits(map.b) * 10240 + 256;
+        if (newSections != 0) {
+            byte[] newBytes = new byte[map.a.length + (10240 + (skylight ? 2048 : 0)) * setBits(newSections)];
+            System.arraycopy(map.a, 0, newBytes, 0, map.a.length);
+            Arrays.fill(newBytes, 8192 * setBits(fullBitmask), newBytes.length, (byte) 255); //Lightning data: full bright
+            int sectionStart = 0;
+            int lightStart = setBits(fullBitmask) * 8192;
+            int skylightStart = lightStart + setBits(fullBitmask) * 2048;
+            for (int section = 0; section < 16; section++) {
+                if ((fullBitmask & 1 << section) != 0) {
+                    if ((newSections & 1 << section) != 0) {
+                        System.arraycopy(newBytes, sectionStart, newBytes, sectionStart + 8192, newBytes.length - (sectionStart + 8192));
+                        System.arraycopy(newBytes, lightStart, newBytes, lightStart + 2048, newBytes.length - (lightStart + 2048));
+                        if (skylight) {
+                            System.arraycopy(newBytes, skylightStart, newBytes, skylightStart + 2048, newBytes.length - (skylightStart + 2048));
+                        }
+                    }
+                    sectionStart += 8192;
+                    lightStart += 2048;
+                    skylightStart += 2048;
+                }
+            }
+            map.a = newBytes;
+        }
+        int sstart = 0;
+        for (int s = 0; s < 16; s++) {
+            if ((fullBitmask & 1 << s) != 0) {
+                if ((changedSections & 1 << s) != 0) {
+                    for (FakeBlock fb : verified.get(s)) {
+                        char blockId = (char) (fb.getType().getId() << 4);
+                        int index = sstart + ((fb.getX() % 16) + 16 * ((fb.getZ() % 16) + 16 * (fb.getY() % 16))) * 2;
+                        map.a[index] = (byte) (blockId & 255);
+                        map.a[index + 1] = (byte) (blockId >> 8 & 255);
+                    }
+                }
+                sstart += 8192;
+            }
+        }
+        map.b = fullBitmask;
+    }
+
+    private static int setBits(int i) {
+        return Integer.bitCount(i);
+    }
+
+    private static int createBitmask(Collection<Integer> sections) {
+        int i = 0;
+        for (int section : sections) {
+            i |= 1 << section;
+        }
+        return i;
+    }
+}

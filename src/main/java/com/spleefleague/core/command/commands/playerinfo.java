@@ -108,7 +108,7 @@ public class playerinfo extends BasicCommand {
         }
 
         public String getState() {
-            if (slp.isOnline()) {
+            if (!slp.isOnline()) {
                 Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").find(new Document("uuid", slp.getUniqueId().toString())).first();
                 if (dbo != null) {
                     Infraction inf = EntityBuilder.load(dbo, Infraction.class);
