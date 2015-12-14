@@ -12,6 +12,7 @@ import com.spleefleague.core.io.DBLoadable;
 import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.DBSaveable;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 
 /**
  *
@@ -60,6 +61,10 @@ public class Area extends DBEntity implements DBLoadable, DBSaveable {
         return false;
     }
     
+    public Block[] getBlocks() {
+        return MultiBlockChangeUtil.getBlocksInArea(high, low).toArray(new Block[0]);
+    }
+    
     public static boolean isInAny(Location loc, Area... areas) {
         for(Area area : areas) {
             if(area.isInArea(loc)) {
@@ -68,4 +73,6 @@ public class Area extends DBEntity implements DBLoadable, DBSaveable {
         }
         return false;
     }
+    
+    
 }

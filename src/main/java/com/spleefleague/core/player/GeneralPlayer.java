@@ -14,6 +14,7 @@ import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.DBSaveable;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -120,6 +121,22 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Override
     public void sendMessage(String message) {
         getPlayer().sendMessage(message);
+    }
+    
+    public static Player[] toBukkitPlayer(GeneralPlayer... players) {
+        Player[] bplayers = new Player[players.length];
+        for(int i = 0; i < players.length; i++) {
+            bplayers[i] = players[i].getPlayer();
+        }
+        return bplayers;
+    }
+    
+    public static Collection<Player> toBukkitPlayer(Collection<GeneralPlayer> players) {
+        Collection<Player> list = new ArrayList<>();
+        for(GeneralPlayer gp : players) {
+            list.add(gp.getPlayer());
+        }
+        return list;
     }
     
     public void hidePlayer(GeneralPlayer gp) {

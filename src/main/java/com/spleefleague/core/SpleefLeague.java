@@ -28,6 +28,7 @@ import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.listeners.ChatListener;
 import com.spleefleague.core.listeners.EastereggListener;
 import com.spleefleague.core.listeners.EnvironmentListener;
+import com.spleefleague.core.listeners.FakeBlockHandler;
 import com.spleefleague.core.listeners.InfractionListener;
 import com.spleefleague.core.listeners.InventoryMenuListener;
 import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
@@ -36,6 +37,7 @@ import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.utils.DatabaseConnection;
+import com.spleefleague.core.utils.MultiBlockChangeUtil;
 import com.spleefleague.core.utils.RuntimeCompiler;
 import com.spleefleague.core.utils.Warp;
 
@@ -70,12 +72,14 @@ public class SpleefLeague extends CorePlugin {
         ChatManager.registerChannel(new ChatChannel("STAFF", "Staff chat", Rank.MODERATOR, true));
         ChatListener.init();
 //        SlackApi.initSlackMessageListener();
+        MultiBlockChangeUtil.init();
+        FakeBlockHandler.init();
         EnvironmentListener.init();
         InfractionListener.init();
         InventoryMenuListener.init();
         EastereggListener.init();
         InventoryMenuTemplateRepository.initTemplates();
-        Warp.initialize();
+        Warp.init();
     }
     
     @Override

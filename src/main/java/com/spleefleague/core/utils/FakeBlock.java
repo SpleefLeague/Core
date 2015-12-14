@@ -5,6 +5,8 @@
  */
 package com.spleefleague.core.utils;
 
+import java.util.Arrays;
+import java.util.Collection;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,7 +15,7 @@ import org.bukkit.Material;
  *
  * @author Jonas
  */
-public class FakeBlock {
+public class FakeBlock extends FakeArea {
     
     private final Location location;
     private Material material;
@@ -49,5 +51,10 @@ public class FakeBlock {
     
     public int getZ() {
         return location.getBlockZ();
+    }
+    
+    @Override
+    public Collection<FakeBlock> getBlocks() {
+        return Arrays.asList(this);
     }
 }

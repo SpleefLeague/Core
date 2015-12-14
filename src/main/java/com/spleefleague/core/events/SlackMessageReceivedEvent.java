@@ -12,6 +12,7 @@ import org.bukkit.event.HandlerList;
  *
  * @author Jonas
  */
+@Deprecated
 public class SlackMessageReceivedEvent extends Event{
 
     private static final HandlerList handlers = new HandlerList();

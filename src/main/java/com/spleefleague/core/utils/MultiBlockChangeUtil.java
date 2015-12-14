@@ -9,28 +9,34 @@ import com.comphenix.packetwrapper.WrapperPlayServerMultiBlockChange;
 import com.comphenix.protocol.wrappers.ChunkCoordIntPair;
 import com.comphenix.protocol.wrappers.MultiBlockChangeInfo;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
+import com.spleefleague.core.SpleefLeague;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
+import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftChunk;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  *
  * @author Jonas
  */
-public class MultiBlockChangeUtil {
+public class MultiBlockChangeUtil implements Listener {
 
     private static class MultiBlockChangeData {
         
@@ -71,16 +77,17 @@ public class MultiBlockChangeUtil {
     }
     
     private static void sendMultiBlockChange(MultiBlockChangeData mbcd, List<Player> affected) {
-        if(affected.isEmpty()) {
-            return;
-        }
-        World world = affected.get(0).getWorld();
-        net.minecraft.server.v1_8_R3.Chunk chunk = ((CraftChunk) world.getChunkAt(mbcd.getChunkX(), mbcd.getChunkZ())).getHandle();
-        WrapperPlayServerMultiBlockChange wrapper = new WrapperPlayServerMultiBlockChange();
-        wrapper.setChunk(new ChunkCoordIntPair(chunk.locX, chunk.locZ));
-        wrapper.setRecords(mbcd.getData());
-        for(Player player : affected) {
-            wrapper.sendPacket(player);
+        if(!affected.isEmpty()) {
+            World world = affected.get(0).getWorld();
+            net.minecraft.server.v1_8_R3.Chunk chunk = ((CraftChunk) world.getChunkAt(mbcd.getChunkX(), mbcd.getChunkZ())).getHandle();
+            WrapperPlayServerMultiBlockChange wrapper = new WrapperPlayServerMultiBlockChange();
+            wrapper.setChunk(new ChunkCoordIntPair(chunk.locX, chunk.locZ));
+            wrapper.setRecords(mbcd.getData());
+            for (Player player : affected) {
+                if(loadedChunks.get(player.getUniqueId()).contains(mbcd.getChunk())) {
+                    wrapper.sendPacket(player);
+                }
+            }
         }
     }
     
@@ -133,64 +140,7 @@ public class MultiBlockChangeUtil {
     }
     
     public static void changeBlocks(Location pos1, Location pos2, Material to, Player... affected) {
-        changeBlocks(pos1, pos2, to, affected);
-    }
-    
-    public static void preloadChunks(FakeBlock[] blocks, Player... affected) {
-        preloadChunks(blocks, Arrays.asList(affected));
-    }
-    
-    public static void preloadChunks(FakeBlock[] blocks, List<Player> affected) {
-        Set<Chunk> chunks = getChunks(blocks);
-        PacketPlayOutMapChunk[] packets = new PacketPlayOutMapChunk[chunks.size()];
-        int i = 0;
-        for(Chunk chunk : chunks) {
-            net.minecraft.server.v1_8_R3.Chunk nmsChunk = ((CraftChunk)chunk).getHandle();
-            packets[i++] = new PacketPlayOutMapChunk(nmsChunk, true, '\uffff');
-        }
-        for(PacketPlayOutMapChunk packet : packets) {
-            for(Player player : affected) {
-                ((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet); 
-            }
-        }
-    }
-    
-    public static void preloadChunks(Block[] blocks, Player... affected) {
-        preloadChunks(blocks, Arrays.asList(affected));
-    }
-    
-    public static void preloadChunks(Block[] blocks, List<Player> affected) {
-        Set<Chunk> chunks = getChunks(blocks);
-        PacketPlayOutMapChunk[] packets = new PacketPlayOutMapChunk[chunks.size()];
-        int i = 0;
-        for(Chunk chunk : chunks) {
-            net.minecraft.server.v1_8_R3.Chunk nmsChunk = ((CraftChunk)chunk).getHandle();
-            packets[i++] = new PacketPlayOutMapChunk(nmsChunk, true, '\uffff');
-        }
-        for(PacketPlayOutMapChunk packet : packets) {
-            for(Player player : affected) {
-                ((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet); 
-            }
-        }
-    }
-    
-    public static void preloadChunks(Location pos1, Location pos2, Player... affected) {
-        preloadChunks(pos1, pos2, Arrays.asList(affected));
-    }
-    
-    public static void preloadChunks(Location pos1, Location pos2, List<Player> affected) {
-        Set<Chunk> chunks = getChunks(pos1, pos2);
-        PacketPlayOutMapChunk[] packets = new PacketPlayOutMapChunk[chunks.size()];
-        int i = 0;
-        for(Chunk chunk : chunks) {
-            net.minecraft.server.v1_8_R3.Chunk nmsChunk = ((CraftChunk)chunk).getHandle();
-            packets[i++] = new PacketPlayOutMapChunk(nmsChunk, true, '\uffff');
-        }
-        for(PacketPlayOutMapChunk packet : packets) {
-            for(Player player : affected) {
-                ((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet); 
-            }
-        }
+        changeBlocks(pos1, pos2, to, Arrays.asList(affected));
     }
     
     public static Set<Chunk> getChunks(Block[] blocks) {
@@ -233,5 +183,37 @@ public class MultiBlockChangeUtil {
             }
         }
         return blocks;
+    }
+    
+    private static MultiBlockChangeUtil instance;
+    private static HashMap<UUID, Collection<Chunk>> loadedChunks;
+    
+    public static void init() {
+        if(instance == null) {
+            loadedChunks = new HashMap<>();
+            instance = new MultiBlockChangeUtil();
+            Bukkit.getPluginManager().registerEvents(instance, SpleefLeague.getInstance());
+            for(Player player : Bukkit.getOnlinePlayers()) {
+                loadedChunks.put(player.getUniqueId(), new ArrayList<>());
+            }
+        }
+    }
+    
+    @EventHandler
+    public void onJoin(PlayerLoginEvent event) {
+        loadedChunks.put(event.getPlayer().getUniqueId(), new ArrayList<>());
+    }
+    
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        loadedChunks.remove(event.getPlayer().getUniqueId());
+    }
+    
+    public static void addChunk(Player player, Chunk chunk) {
+        loadedChunks.get(player.getUniqueId()).add(chunk);
+    }
+    
+    public static void removeChunk(Player player, Chunk chunk) {
+        loadedChunks.get(player.getUniqueId()).remove(chunk);
     }
 }

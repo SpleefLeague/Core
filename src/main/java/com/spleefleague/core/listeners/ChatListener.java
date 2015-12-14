@@ -11,17 +11,11 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
-import com.spleefleague.core.events.SlackMessageReceivedEvent;
 import com.spleefleague.core.io.Settings;
-import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.utils.DatabaseConnection;
 import com.spleefleague.core.utils.SlackApi;
-import java.util.UUID;
-import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -34,7 +28,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class ChatListener implements Listener {
     
     private static Listener instance;
-    private final SlackApi livechatWebhook;
+    //private final SlackApi livechatWebhook;
     
     public static void init() {
         if(instance == null) {
@@ -44,14 +38,14 @@ public class ChatListener implements Listener {
     }
     
     private ChatListener() {
-        livechatWebhook = new SlackApi(Settings.getString("url_slack_serverchat"));
+//        livechatWebhook = new SlackApi(Settings.getString("url_slack_serverchat"));
     }
     
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer().getUniqueId());
         String prefix = "";
-        if(slp.getRank() != Rank.DEFAULT) {
+        if(!slp.getRank().getDisplayName().equals("Default")) {
             prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getDisplayName() + ChatColor.DARK_GRAY + "] ";
         }
         if(!event.isCancelled()) {
@@ -60,7 +54,7 @@ public class ChatListener implements Listener {
         }
         event.setCancelled(true);
     }
-    
+    /*
     @EventHandler
     public void onSlackMessage(SlackMessageReceivedEvent event) {
         Document result = SpleefLeague.getInstance().getPluginDB().getCollection("SlackUsers").find(new Document("slack_id", event.getUserID())).first();
@@ -70,7 +64,7 @@ public class ChatListener implements Listener {
             if(player != null) {
                 SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(player.getUniqueId());
                 String prefix = "";
-                if(slp.getRank() != Rank.DEFAULT) {
+                if(!slp.getRank().getDisplayName().equals("Default")) {
                     prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getDisplayName() + ChatColor.DARK_GRAY + "] ";
                 }
                 ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, event.getMessage(), slp.getSendingChannel());
@@ -79,7 +73,7 @@ public class ChatListener implements Listener {
                 String prefix = "";
                 Rank rank = DatabaseConnection.getRank(uuid);
                 String name = DatabaseConnection.getUsername(uuid);
-                if(rank != Rank.DEFAULT) {
+                if(!rank.getDisplayName().equals("Default")) {
                     prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + rank.getDisplayName() + ChatColor.DARK_GRAY + "] ";
                 }
                 ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix + rank.getColor() + name + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, event.getMessage(), "DEFAULT");
@@ -99,7 +93,7 @@ public class ChatListener implements Listener {
             }
         });
     }
-    
+    */
     @EventHandler
     public void onLoaded(GeneralPlayerLoadedEvent event) {
         if(event.getGeneralPlayer() instanceof SLPlayer) {

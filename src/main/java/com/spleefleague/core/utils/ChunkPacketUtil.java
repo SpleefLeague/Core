@@ -1,9 +1,8 @@
+package com.spleefleague.core.utils;
 
 import com.comphenix.packetwrapper.WrapperPlayServerMapChunk;
 import com.comphenix.packetwrapper.WrapperPlayServerMapChunkBulk;
-import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
-import com.spleefleague.core.utils.FakeBlock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,14 +18,39 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
  */
 public class ChunkPacketUtil {
 
-    public static void setBlocksPacketMapChunk(PacketContainer packet, FakeBlock[] unverified) {
+    public static void setBlocksPacketMapChunk(PacketContainer packet, FakeBlock... unverified) {
         if (packet.getHandle() instanceof PacketPlayOutMapChunk) {
             WrapperPlayServerMapChunk wpsmc = new WrapperPlayServerMapChunk(packet);
+            ChunkMap map = (ChunkMap) wpsmc.getChunkMap();
             int x = wpsmc.getChunkX();
             int z = wpsmc.getChunkZ();
             Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x, z);
             if (verified.size() > 0) {
-                ChunkMap map = (ChunkMap) wpsmc.getChunkMap();
+                modify(map, verified);
+            }
+        }
+        else if (packet.getHandle() instanceof PacketPlayOutMapChunkBulk) {
+            WrapperPlayServerMapChunkBulk wpsmc = new WrapperPlayServerMapChunkBulk(packet);
+            int[] x = wpsmc.getChunksX();
+            int[] z = wpsmc.getChunksZ();
+            for (int i = 0; i < x.length && i < z.length; i++) {
+                Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x[i], z[i]);
+                if (verified.size() > 0) {
+                    ChunkMap map = (ChunkMap) wpsmc.getChunks()[i];
+                    modify(map, verified);
+                }
+            }
+        }
+    }
+
+    public static void setBlocksPacketMapChunk(PacketContainer packet, Collection<FakeBlock> unverified) {
+        if (packet.getHandle() instanceof PacketPlayOutMapChunk) {
+            WrapperPlayServerMapChunk wpsmc = new WrapperPlayServerMapChunk(packet);
+            ChunkMap map = (ChunkMap) wpsmc.getChunkMap();
+            int x = wpsmc.getChunkX();
+            int z = wpsmc.getChunkZ();
+            Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x, z);
+            if (verified.size() > 0) {
                 modify(map, verified);
             }
         }
@@ -63,6 +87,25 @@ public class ChunkPacketUtil {
         return verified;
     }
 
+    private static Map<Integer, Collection<FakeBlock>> toVerifiedSectionMap(Collection<FakeBlock> unverified, int x, int z) {
+        Map<Integer, Collection<FakeBlock>> verified = new HashMap<>();
+        for (FakeBlock fb : unverified) {
+            if (fb.getChunk().getX() == x && fb.getChunk().getZ() == z) {
+                int section = fb.getY() / 16;
+                Collection<FakeBlock> blocks;
+                if (!verified.containsKey(section)) {
+                    blocks = new ArrayList<>();
+                    verified.put(section, blocks);
+                }
+                else {
+                    blocks = verified.get(section);
+                }
+                blocks.add(fb);
+            }
+        }
+        return verified;
+    }
+
     private static void modify(ChunkMap map, Map<Integer, Collection<FakeBlock>> verified) {
         int changedSections = createBitmask(verified.keySet());
         int newSections = changedSections & ~map.b;
@@ -71,7 +114,7 @@ public class ChunkPacketUtil {
         if (newSections != 0) {
             byte[] newBytes = new byte[map.a.length + (10240 + (skylight ? 2048 : 0)) * setBits(newSections)];
             System.arraycopy(map.a, 0, newBytes, 0, map.a.length);
-            Arrays.fill(newBytes, 8192 * setBits(fullBitmask), newBytes.length, (byte) 255); //Lightning data: full bright
+            Arrays.fill(newBytes, 8192 * setBits(fullBitmask), newBytes.length, (byte) 255);
             int sectionStart = 0;
             int lightStart = setBits(fullBitmask) * 8192;
             int skylightStart = lightStart + setBits(fullBitmask) * 2048;
@@ -97,7 +140,7 @@ public class ChunkPacketUtil {
                 if ((changedSections & 1 << s) != 0) {
                     for (FakeBlock fb : verified.get(s)) {
                         char blockId = (char) (fb.getType().getId() << 4);
-                        int index = sstart + ((fb.getX() % 16) + 16 * ((fb.getZ() % 16) + 16 * (fb.getY() % 16))) * 2;
+                        int index = sstart + ((fb.getX() & 15) + 16 * ((fb.getZ() & 15) + 16 * (fb.getY() & 15))) * 2;
                         map.a[index] = (byte) (blockId & 255);
                         map.a[index + 1] = (byte) (blockId >> 8 & 255);
                     }

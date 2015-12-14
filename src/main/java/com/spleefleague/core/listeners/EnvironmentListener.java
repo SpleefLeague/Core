@@ -42,8 +42,8 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.spleefleague.core.SpleefLeague;
-import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.command.commands.back;
+import com.spleefleague.core.events.FakeBlockBreakEvent;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.io.DBEntity;
 import com.spleefleague.core.io.DBSave;
@@ -149,10 +149,15 @@ public class EnvironmentListener implements Listener{
         event.setCancelled(true);
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onBreak(BlockBreakEvent event) {
         event.setExpToDrop(0);
-        if(!(event.isCancelled() || GamePlugin.isIngameGlobal(event.getPlayer()))) event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
+        event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
+    }
+    
+    @EventHandler(priority = EventPriority.LOW)
+    public void onFakeBreak(FakeBlockBreakEvent event) {
+        event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
     
     @EventHandler
