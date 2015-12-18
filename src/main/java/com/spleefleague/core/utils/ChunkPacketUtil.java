@@ -3,6 +3,7 @@ package com.spleefleague.core.utils;
 import com.comphenix.packetwrapper.WrapperPlayServerMapChunk;
 import com.comphenix.packetwrapper.WrapperPlayServerMapChunkBulk;
 import com.comphenix.protocol.events.PacketContainer;
+import com.spleefleague.core.listeners.FakeBlockHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,6 +19,9 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
  */
 public class ChunkPacketUtil {
 
+    public static byte[] before, after;
+    public static boolean bulk;
+    
     public static void setBlocksPacketMapChunk(PacketContainer packet, FakeBlock... unverified) {
         if (packet.getHandle() instanceof PacketPlayOutMapChunk) {
             WrapperPlayServerMapChunk wpsmc = new WrapperPlayServerMapChunk(packet);
@@ -51,7 +55,16 @@ public class ChunkPacketUtil {
             int z = wpsmc.getChunkZ();
             Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x, z);
             if (verified.size() > 0) {
+                if(x == -47 && z == -5) {
+                    if(before == null) {
+                        before = map.a;
+                        bulk = false;
+                    }
+                }
                 modify(map, verified);
+                if(x == -47 && z == -5) {
+                    if(after == null) after = map.a;
+                }
             }
         }
         else if (packet.getHandle() instanceof PacketPlayOutMapChunkBulk) {
@@ -62,7 +75,16 @@ public class ChunkPacketUtil {
                 Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x[i], z[i]);
                 if (verified.size() > 0) {
                     ChunkMap map = (ChunkMap) wpsmc.getChunks()[i];
+                    if(x[i] == -47 && z[i] == -5) {
+                        if(before == null) {
+                            before = map.a;
+                            bulk = true;
+                        }
+                    }
                     modify(map, verified);
+                    if(x[i] == -47 && z[i] == -5) {
+                        if(after == null) after = map.a;
+                    }
                 }
             }
         }
@@ -110,11 +132,13 @@ public class ChunkPacketUtil {
         int changedSections = createBitmask(verified.keySet());
         int newSections = changedSections & ~map.b;
         int fullBitmask = map.b | changedSections;
-        boolean skylight = map.a.length > setBits(map.b) * 10240 + 256;
+        boolean biome = map.a.length % 10240 != 0; //Is biome data sent?
+        boolean skylight = map.a.length > setBits(map.b) * 10240 + (biome ? 256 : 0); //Is skylight data sent?
+        //Adding new sections (if necessary)
         if (newSections != 0) {
             byte[] newBytes = new byte[map.a.length + (10240 + (skylight ? 2048 : 0)) * setBits(newSections)];
             System.arraycopy(map.a, 0, newBytes, 0, map.a.length);
-            Arrays.fill(newBytes, 8192 * setBits(fullBitmask), newBytes.length, (byte) 255);
+            Arrays.fill(newBytes, 8192 * setBits(fullBitmask), newBytes.length, (byte)255); //Filling light data with light value 16 in case I don't set it so it's not dark
             int sectionStart = 0;
             int lightStart = setBits(fullBitmask) * 8192;
             int skylightStart = lightStart + setBits(fullBitmask) * 2048;
@@ -122,9 +146,12 @@ public class ChunkPacketUtil {
                 if ((fullBitmask & 1 << section) != 0) {
                     if ((newSections & 1 << section) != 0) {
                         System.arraycopy(newBytes, sectionStart, newBytes, sectionStart + 8192, newBytes.length - (sectionStart + 8192));
+                        Arrays.fill(newBytes, sectionStart, sectionStart + 8192, (byte)0);
                         System.arraycopy(newBytes, lightStart, newBytes, lightStart + 2048, newBytes.length - (lightStart + 2048));
+                        Arrays.fill(newBytes, lightStart, lightStart + 2048, (byte)0);
                         if (skylight) {
                             System.arraycopy(newBytes, skylightStart, newBytes, skylightStart + 2048, newBytes.length - (skylightStart + 2048));
+                            Arrays.fill(newBytes, skylightStart, skylightStart + 2048, (byte)0);
                         }
                     }
                     sectionStart += 8192;
@@ -134,6 +161,7 @@ public class ChunkPacketUtil {
             }
             map.a = newBytes;
         }
+        //Writing blocks to section
         int sstart = 0;
         for (int s = 0; s < 16; s++) {
             if ((fullBitmask & 1 << s) != 0) {

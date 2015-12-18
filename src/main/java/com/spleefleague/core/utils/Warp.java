@@ -18,7 +18,7 @@ import com.spleefleague.core.io.DBSaveable;
 import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.io.TypeConverter;
 
-public class Warp extends DBEntity implements DBLoadable, DBSaveable {
+public class Warp extends DBEntity implements DBLoadable, DBSaveable, Comparable<Warp> {
 
     @DBLoad(fieldName = "name")
     @DBSave(fieldName = "name")
@@ -39,6 +39,11 @@ public class Warp extends DBEntity implements DBLoadable, DBSaveable {
 
     public Location getLocation() {
         return location;
+    }
+
+    @Override
+    public int compareTo(Warp w) {
+        return name.compareTo(w.name);
     }
 
     private static Map<String, Warp> warps;

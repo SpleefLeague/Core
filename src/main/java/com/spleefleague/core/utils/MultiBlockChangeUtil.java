@@ -84,7 +84,7 @@ public class MultiBlockChangeUtil implements Listener {
             wrapper.setChunk(new ChunkCoordIntPair(chunk.locX, chunk.locZ));
             wrapper.setRecords(mbcd.getData());
             for (Player player : affected) {
-                if(loadedChunks.get(player.getUniqueId()).contains(mbcd.getChunk())) {
+                if(player != null && loadedChunks.containsKey(player.getUniqueId()) && loadedChunks.get(player.getUniqueId()).contains(mbcd.getChunk())) {
                     wrapper.sendPacket(player);
                 }
             }
@@ -214,6 +214,8 @@ public class MultiBlockChangeUtil implements Listener {
     }
     
     public static void removeChunk(Player player, Chunk chunk) {
-        loadedChunks.get(player.getUniqueId()).remove(chunk);
+        if(loadedChunks.containsKey(player.getUniqueId())) {
+            loadedChunks.get(player.getUniqueId()).remove(chunk);
+        }
     }
 }

@@ -16,6 +16,7 @@ import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.utils.Warp;
+import java.util.Collections;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class warp extends BasicCommand {
@@ -40,7 +41,7 @@ public class warp extends BasicCommand {
 
     private void sendWarpsList(Player p) {
         List<Warp> warps = Warp.getAll().stream().sorted((w1, w2) -> w1.getName().compareTo(w2.getName())).collect(Collectors.toList());
-
+        Collections.sort(warps);
         ComponentBuilder cb = new ComponentBuilder("---------------Warps list---------------").color(ChatColor.RED);
         cb.append("\n").reset();
 

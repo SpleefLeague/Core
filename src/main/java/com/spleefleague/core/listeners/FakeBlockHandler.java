@@ -30,13 +30,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk.ChunkMap;
+import net.minecraft.server.v1_8_R3.PacketPlayOutWorldEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -50,7 +56,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class FakeBlockHandler implements Listener {
 
     private PacketAdapter chunk, chunkBulk, breakController, placeController;
-
+    
     private FakeBlockHandler() {
         initPacketListeners();
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -147,7 +153,7 @@ public class FakeBlockHandler implements Listener {
                             }
                         }
                         if (broken != null) {
-                            if ((wrapper.getStatus() == EnumWrappers.PlayerDigType.STOP_DESTROY_BLOCK || (broken.getType() == Material.SNOW_BLOCK && event.getPlayer().getItemInHand() != null && event.getPlayer().getItemInHand().getType() == Material.DIAMOND_SPADE) || event.getPlayer().getGameMode() == GameMode.CREATIVE)) {
+                            if (wrapper.getStatus() == EnumWrappers.PlayerDigType.STOP_DESTROY_BLOCK || (broken.getType() == Material.SNOW_BLOCK && event.getPlayer().getItemInHand() != null && event.getPlayer().getItemInHand().getType() == Material.DIAMOND_SPADE) || event.getPlayer().getGameMode() == GameMode.CREATIVE) {
                                 FakeBlockBreakEvent fbbe = new FakeBlockBreakEvent(broken, event.getPlayer());
                                 Bukkit.getPluginManager().callEvent(fbbe);
                                 if (fbbe.isCancelled()) {
@@ -155,8 +161,12 @@ public class FakeBlockHandler implements Listener {
                                 }
                                 else {
                                     broken.setType(Material.AIR);
-                                    for (Player player : Bukkit.getOnlinePlayers()) {
-                                        player.sendBlockChange(fbbe.getBlock().getLocation(), Material.AIR, (byte) 0);
+                                    for(Player subscriber : getSubscribers(broken)) {
+                                        if(subscriber != event.getPlayer()) {
+                                            subscriber.sendBlockChange(fbbe.getBlock().getLocation(), Material.AIR, (byte) 0);
+                                            sendBreakParticles(subscriber, broken);
+                                            sendBreakSound(subscriber, broken);
+                                        }
                                     }
                                 }
                             }
@@ -195,6 +205,15 @@ public class FakeBlockHandler implements Listener {
         manager.addPacketListener(breakController);
         manager.addPacketListener(placeController);
     }
+    
+    private void sendBreakParticles(Player p, FakeBlock block) {
+        PacketPlayOutWorldEvent packet = new PacketPlayOutWorldEvent(2001, new BlockPosition(block.getX(), block.getY(), block.getZ()), 80, false);
+        ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+    }
+
+    private void sendBreakSound(Player p, FakeBlock b) {
+        p.playSound(b.getLocation(), breakSounds.get(b.getType()), 1, 0.9f);
+    }
 
     private boolean blockEqual(Location loc1, Location loc2) {
         if ((loc1.getX() + 0.5) / 1 == (loc2.getX() + 0.5) / 1) {
@@ -217,7 +236,8 @@ public class FakeBlockHandler implements Listener {
     private static final ProtocolManager manager;
     private static final Map<UUID, Collection<FakeArea>> fakeAreas;
     private static FakeBlockHandler instance;
-
+    private static final HashMap<Material, Sound> breakSounds;
+    
     public static void addArea(FakeArea area, Player... players) {
         addArea(area, true, players);
     }
@@ -248,6 +268,19 @@ public class FakeBlockHandler implements Listener {
             }
             MultiBlockChangeUtil.changeBlocks(blocks, Material.AIR, players);
         }
+    }
+    
+    public static Player[] getSubscribers(FakeBlock block) {
+        Collection<Player> players = new ArrayList<>();
+        for(Entry<UUID, Collection<FakeArea>> entry : fakeAreas.entrySet()) {
+            for(FakeArea f : entry.getValue()) {
+                if(f.getBlocks().contains(block)) {
+                    players.add(Bukkit.getPlayer(entry.getKey()));
+                    break;
+                }
+            }
+        }
+        return players.toArray(new Player[players.size()]);
     }
 
     public static void addBlock(FakeBlock block, Player... players) {
@@ -308,9 +341,28 @@ public class FakeBlockHandler implements Listener {
             return blocks;
         }
     }
+    
+    private static void initBreakSounds() {
+        for(net.minecraft.server.v1_8_R3.Block block : net.minecraft.server.v1_8_R3.Block.REGISTRY) {
+            String breaksound = block.stepSound.getBreakSound();
+            CraftMagicNumbers.getMaterial(block);
+            breakSounds.put(CraftMagicNumbers.getMaterial(block), toSound(breaksound));
+        }
+    }
+    
+    private static Sound toSound(String mcname) {
+        for(Sound s : Sound.values()) {
+            if(CraftSound.getSound(s).equals(mcname)) {
+                return s;
+            }
+        }
+        return null;
+    }
 
     static {
         manager = ProtocolLibrary.getProtocolManager();
         fakeAreas = new HashMap<>();
+        breakSounds = new HashMap();
+        initBreakSounds();
     }
 }

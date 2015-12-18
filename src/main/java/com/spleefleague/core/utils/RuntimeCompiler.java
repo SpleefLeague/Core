@@ -326,6 +326,10 @@ public class RuntimeCompiler {
             System.setProperty("java.home", System.getProperty("java.home").replace("jre", "jdk"));
         }
         directoryTemp = new File(getPluginDirectory().getAbsolutePath() + "/debug/temp");
+        if(directoryTemp.exists()) {
+            directoryTemp.delete();
+            directoryTemp.mkdir();
+        }
         directoryPermanent = new File(getPluginDirectory().getAbsolutePath() + "/debug/permanent");
         if(!directoryTemp.exists()) {
             directoryTemp.mkdirs();
