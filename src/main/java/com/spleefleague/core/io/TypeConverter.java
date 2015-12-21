@@ -7,13 +7,10 @@ package com.spleefleague.core.io;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.player.Rank;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -121,48 +118,6 @@ public abstract class TypeConverter<T, V> {
             bdbl.add(v.getZ());
             if (v.getWorld() != SpleefLeague.DEFAULT_WORLD) {
                 bdbl.add(v.getWorld().getName());
-            }
-            return bdbl;
-        }
-    }
-    
-    public static class HashSetStringConverter extends TypeConverter<List, HashSet<String>> {
-
-        @Override
-        public HashSet<String> convertLoad(List t) {
-            HashSet<String> hs = new HashSet<>();
-            for (Object o : t) {
-                hs.add((String) o);
-            }
-            return hs;
-        }
-
-        @Override
-        public List convertSave(HashSet<String> v) {
-            List bdbl = new ArrayList();
-            for (String s : v) {
-                bdbl.add(s);
-            }
-            return bdbl;
-        }
-    }
-    
-    public static class HashSetIntegerConverter extends TypeConverter<List, HashSet<Integer>> {
-
-        @Override
-        public HashSet<Integer> convertLoad(List t) {
-            HashSet<Integer> hs = new HashSet<>();
-            for (Object o : t) {
-                hs.add((Integer) o);
-            }
-            return hs;
-        }
-
-        @Override
-        public List convertSave(HashSet<Integer> v) {
-            List bdbl = new ArrayList();
-            for (Integer s : v) {
-                bdbl.add(s);
             }
             return bdbl;
         }

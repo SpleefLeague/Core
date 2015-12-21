@@ -55,16 +55,7 @@ public class ChunkPacketUtil {
             int z = wpsmc.getChunkZ();
             Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x, z);
             if (verified.size() > 0) {
-                if(x == -47 && z == -5) {
-                    if(before == null) {
-                        before = map.a;
-                        bulk = false;
-                    }
-                }
                 modify(map, verified);
-                if(x == -47 && z == -5) {
-                    if(after == null) after = map.a;
-                }
             }
         }
         else if (packet.getHandle() instanceof PacketPlayOutMapChunkBulk) {
@@ -75,16 +66,7 @@ public class ChunkPacketUtil {
                 Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x[i], z[i]);
                 if (verified.size() > 0) {
                     ChunkMap map = (ChunkMap) wpsmc.getChunks()[i];
-                    if(x[i] == -47 && z[i] == -5) {
-                        if(before == null) {
-                            before = map.a;
-                            bulk = true;
-                        }
-                    }
                     modify(map, verified);
-                    if(x[i] == -47 && z[i] == -5) {
-                        if(after == null) after = map.a;
-                    }
                 }
             }
         }
@@ -148,10 +130,8 @@ public class ChunkPacketUtil {
                         System.arraycopy(newBytes, sectionStart, newBytes, sectionStart + 8192, newBytes.length - (sectionStart + 8192));
                         Arrays.fill(newBytes, sectionStart, sectionStart + 8192, (byte)0);
                         System.arraycopy(newBytes, lightStart, newBytes, lightStart + 2048, newBytes.length - (lightStart + 2048));
-                        Arrays.fill(newBytes, lightStart, lightStart + 2048, (byte)0);
                         if (skylight) {
                             System.arraycopy(newBytes, skylightStart, newBytes, skylightStart + 2048, newBytes.length - (skylightStart + 2048));
-                            Arrays.fill(newBytes, skylightStart, skylightStart + 2048, (byte)0);
                         }
                     }
                     sectionStart += 8192;

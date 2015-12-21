@@ -139,13 +139,13 @@ public class FakeBlockHandler implements Listener {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 WrapperPlayClientBlockDig wrapper = new WrapperPlayClientBlockDig(event.getPacket());
-                if (wrapper.getLocation().toVector().toLocation(event.getPlayer().getWorld()).getBlock().getType() == Material.AIR) {
+                if (event.getPlayer().getLocation().multiply(0).add(wrapper.getLocation().toVector()).getBlock().getType() == Material.AIR) {
                     if (wrapper.getStatus() == EnumWrappers.PlayerDigType.STOP_DESTROY_BLOCK || wrapper.getStatus() == EnumWrappers.PlayerDigType.START_DESTROY_BLOCK) {
                         Location loc = wrapper.getLocation().toVector().toLocation(event.getPlayer().getWorld());
                         FakeBlock broken = null;
-                        Collection<FakeBlock> blocks = getFakeBlocks(event.getPlayer());
+                        Set<FakeBlock> blocks = getFakeBlocks(event.getPlayer());
                         if (blocks != null) {
-                            for (FakeBlock block : getFakeBlocks(event.getPlayer())) {
+                            for (FakeBlock block : blocks) {
                                 if (blockEqual(loc, block.getLocation())) {
                                     broken = block;
                                     break;
@@ -187,10 +187,14 @@ public class FakeBlockHandler implements Listener {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 WrapperPlayClientBlockPlace wrapper = new WrapperPlayClientBlockPlace(event.getPacket());
-                for (FakeBlock fakeBlock : getFakeBlocks(event.getPlayer())) {
-                    if (blockEqual(fakeBlock.getLocation(), wrapper.getLocation().toVector().toLocation(event.getPlayer().getWorld()))) {
-                        event.setCancelled(true);
-                        break;
+                Location loc = wrapper.getLocation().toVector().toLocation(event.getPlayer().getWorld());
+                Set<FakeBlock> fakeBlocks = getFakeBlocks(event.getPlayer());
+                if(fakeBlocks != null) {
+                    for (FakeBlock fakeBlock : fakeBlocks) {
+                        if (blockEqual(fakeBlock.getLocation(), loc)) {
+                            event.setCancelled(true);
+                            break;
+                        }
                     }
                 }
             }
@@ -312,7 +316,9 @@ public class FakeBlockHandler implements Listener {
     public static void update(Player... players) {
         for (Player player : players) {
             Set<FakeBlock> fakeBlocks = getFakeBlocks(player);
-            MultiBlockChangeUtil.changeBlocks(fakeBlocks.toArray(new FakeBlock[fakeBlocks.size()]), player);
+            if(fakeBlocks != null) {
+                MultiBlockChangeUtil.changeBlocks(fakeBlocks.toArray(new FakeBlock[fakeBlocks.size()]), player);
+            }
         }
     }
 

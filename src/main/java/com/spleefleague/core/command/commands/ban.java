@@ -9,6 +9,7 @@ package com.spleefleague.core.command.commands;
 import java.util.UUID;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.command.BasicCommand;
@@ -54,9 +55,11 @@ public class ban extends BasicCommand{
             String banMessage = StringUtil.fromArgsArray(args, 1);
             Infraction ban = new Infraction(id, cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.BAN, System.currentTimeMillis(), -1, banMessage);
             SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").deleteOne(new Document("uuid", id.toString()));
-            EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), false);
-            EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), false);
-            ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix() + Theme.SUPER_SECRET.buildTheme(false) + " The player " + args[0] + " has been banned by " + cs.getName(), "STAFF");
+            Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () ->  {
+                EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), false);
+                EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), false);
+            });
+            ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix() + Theme.SUPER_SECRET.buildTheme(false) + " The player " + args[0] + " has been banned by " + cs.getName(), ChatChannel.STAFF_NOTIFICATIONS);
             if((pl = Bukkit.getPlayerExact(args[0])) != null) {
                 pl.kickPlayer("You have been banned for: " + banMessage);
             }

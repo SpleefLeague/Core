@@ -14,6 +14,7 @@ import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.io.EntityBuilder;
+import com.spleefleague.core.utils.DatabaseConnection;
 import java.util.UUID;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -87,7 +88,8 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
     
     
     private void load(final Player player) {
-            final Document doc = db.getCollection("Players").find(new Document("uuid", player.getUniqueId().toString())).first();
+        DatabaseConnection.find(db.getCollection("Players"), new Document("uuid", player.getUniqueId().toString()), (result) -> {
+            Document doc = result.first();
             Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
                 try {
                     G generalPlayer;
@@ -107,9 +109,9 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
                 } catch (InstantiationException | IllegalAccessException ex) {
                     Logger.getLogger(PlayerManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            });   
+            });
+        });
     }
-    
     public void saveAll() {
         getAll().stream().forEach((gp) -> {
             EntityBuilder.save(gp, db.getCollection("Players"));
@@ -118,9 +120,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
     
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
-        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
-            load(event.getPlayer());
-        });
+        load(event.getPlayer());
     }
     
     @EventHandler(priority = EventPriority.MONITOR) //Misleading, has to be called last

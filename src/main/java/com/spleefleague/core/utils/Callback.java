@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.spleefleague.core.io;
+package com.spleefleague.core.utils;
 
 /**
  *
  * @author Jonas
  */
-public interface DBLoadable {
-    default void done() {}
+public interface Callback<T> {
+    
+    public void call(T result);
 }

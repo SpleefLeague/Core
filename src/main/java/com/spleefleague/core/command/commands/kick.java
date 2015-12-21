@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.UUID;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.command.BasicCommand;
@@ -49,8 +50,8 @@ public class kick extends BasicCommand{
                 String kickMessage = StringUtil.fromArgsArray(args, 1);
                 pl.kickPlayer("You have been kicked: " + kickMessage);
                 Infraction kick = new Infraction(pl.getUniqueId(), cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.KICK, System.currentTimeMillis(), -1, kickMessage);
-                EntityBuilder.save(kick, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"));
-                ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix() + Theme.SUPER_SECRET.buildTheme(false) + " The player " + args[0] + " has been kicked by " + cs.getName(), "STAFF");
+                Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> EntityBuilder.save(kick, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions")));
+                ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix() + Theme.SUPER_SECRET.buildTheme(false) + " The player " + args[0] + " has been kicked by " + cs.getName(), ChatChannel.STAFF_NOTIFICATIONS);
                 success(cs, "The player has been kicked!");
             }
             else {

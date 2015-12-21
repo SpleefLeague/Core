@@ -23,11 +23,11 @@ import com.spleefleague.core.utils.collections.MapUtil;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import sun.reflect.ReflectionFactory;
 
 /**
@@ -109,10 +109,10 @@ public class EntityBuilder {
 
     public static <T> T deserialize(Document dbo, Class<T> c) {
         try {
-            T t;
+            T t = null;
             try {
                 t = c.newInstance();
-            } catch(InstantiationException | IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 t = createInstance(c);
             }
             Map<String, Input> inputs = getInputs(c);
@@ -123,6 +123,7 @@ public class EntityBuilder {
                     i.set(t, o);
                 }
             }
+            ((DBLoadable) t).done();
             return t;
         } catch (Exception e) {
             e.printStackTrace();
@@ -177,7 +178,11 @@ public class EntityBuilder {
     }
 
     public static <T> T createInstance(Class<T> clazz) {
-        return create(clazz, Object.class);
+        try {
+            return clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            return create(clazz, Object.class);
+        }
     }
 
     private static <T> T create(Class<T> c, Class<? super T> parent) {
@@ -187,9 +192,8 @@ public class EntityBuilder {
             Constructor intConstr = rf.newConstructorForSerialization(c, objDef);
             return c.cast(intConstr.newInstance());
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     public static abstract class IOClass implements Comparable<IOClass> {
@@ -290,6 +294,25 @@ public class EntityBuilder {
                         }
                         o = list;
                     }
+                    else if (Collection.class.isAssignableFrom(f.getType())) {
+                        List list = new ArrayList<>();
+                        Collection col = (Collection) o;
+                        if (!f.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
+                            TypeConverter tc = f.getAnnotation(DBSave.class).typeConverter().newInstance();
+                            for (Object value : col) {
+                                list.add(tc.convertSave(value));
+                            }
+                        }
+                        else {
+                            for (Object value : col) {
+                                if (DBSaveable.class.isAssignableFrom(f.getType().getComponentType())) {
+                                    value = serialize((DBSaveable) value).get("$set");
+                                }
+                                list.add(value);
+                            }
+                        }
+                        o = list;
+                    }
                     else if (!f.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
                         TypeConverter tc = f.getAnnotation(DBSave.class).typeConverter().newInstance();
                         o = tc.convertSave(o);
@@ -326,6 +349,29 @@ public class EntityBuilder {
                         else {
                             for (Object value : array) {
                                 if (DBSaveable.class.isAssignableFrom(m.getReturnType().getComponentType())) {
+                                    value = serialize((DBSaveable) value).get("$set");
+                                }
+                                list.add(value);
+                            }
+                        }
+                        o = list;
+                    }
+                    else if (Collection.class.isAssignableFrom(m.getReturnType())) {
+                        List list = new ArrayList<>();
+                        Collection col = (Collection) o;
+                        Class generic = Object.class;
+                        if (m.getReturnType().getGenericInterfaces().length > 0) {
+                            generic = m.getReturnType().getGenericInterfaces()[0].getClass();
+                        }
+                        if (!m.getAnnotation(DBSave.class).typeConverter().equals(TypeConverter.class)) {
+                            TypeConverter tc = m.getAnnotation(DBSave.class).typeConverter().newInstance();
+                            for (Object value : col) {
+                                list.add(tc.convertSave(value));
+                            }
+                        }
+                        else {
+                            for (Object value : col) {
+                                if (DBSaveable.class.isAssignableFrom(generic)) {
                                     value = serialize((DBSaveable) value).get("$set");
                                 }
                                 list.add(value);
@@ -375,21 +421,13 @@ public class EntityBuilder {
                     }
                     else if (f.getType().isArray() && value instanceof List) {
                         List list = (List) value;
-                        Object[] array = new Object[list.size()];
-                        for (int i = 0; i < list.size(); i++) {
-                            Object o = list.get(i);
-                            if (!f.getAnnotation(DBLoad.class).typeConverter().equals(TypeConverter.class)) {
-                                TypeConverter tc = f.getAnnotation(DBLoad.class).typeConverter().newInstance();
-                                o = tc.convertLoad(o);
-                            }
-                            else {
-                                if (o instanceof Document && DBLoadable.class.isAssignableFrom(f.getType().getComponentType())) {
-                                    o = deserialize((Document) o, f.getType().getComponentType());
-                                }
-                            }
-                            array[i] = o;
-                        }
-                        f.set(instance, createGenericArray(array, f.getType().getComponentType()));
+                        f.set(instance, loadArray(list, f.getType().getComponentType(), f.getAnnotation(DBLoad.class).typeConverter()));
+                    }
+                    else if (Collection.class.isAssignableFrom(f.getType()) && value instanceof List) {
+                        Class c = f.getType();
+                        List list = (List) value;
+                        Collection col = loadCollection(list, c, (ParameterizedType) f.getGenericType(), f.getAnnotation(DBLoad.class).typeConverter());
+                        f.set(instance, col);
                     }
                     else if (!f.getAnnotation(DBLoad.class).typeConverter().equals(TypeConverter.class)) {
                         TypeConverter tc = f.getAnnotation(DBLoad.class).typeConverter().newInstance();
@@ -414,21 +452,13 @@ public class EntityBuilder {
                     }
                     else if (m.getParameterTypes()[0].isArray() && value instanceof List) {
                         List list = (List) value;
-                        Object[] array = new Object[list.size()];
-                        for (int i = 0; i < list.size(); i++) {
-                            Object o = list.get(i);
-                            if (!m.getAnnotation(DBLoad.class).typeConverter().equals(TypeConverter.class)) {
-                                TypeConverter tc = m.getAnnotation(DBLoad.class).typeConverter().newInstance();
-                                o = tc.convertLoad(o);
-                            }
-                            else {
-                                if (o instanceof Document && DBLoadable.class.isAssignableFrom(m.getParameterTypes()[0].getComponentType())) {
-                                    o = deserialize((Document) o, m.getParameterTypes()[0].getComponentType());
-                                }
-                            }
-                            array[i] = o;
-                        }
-                        m.invoke(instance, createGenericArray(array, m.getParameterTypes()[0].getComponentType()));
+                        m.invoke(instance, loadArray(list, m.getParameterTypes()[0].getComponentType(), m.getAnnotation(DBLoad.class).typeConverter()));
+                    }
+                    else if (Collection.class.isAssignableFrom(m.getParameterTypes()[0]) && value instanceof List) {
+                        Class c = m.getParameterTypes()[0];
+                        List list = (List) value;
+                        Collection col = loadCollection(list, c, (ParameterizedType) m.getGenericParameterTypes()[0], m.getAnnotation(DBLoad.class).typeConverter());
+                        m.invoke(instance, col);
                     }
                     else if (!m.getAnnotation(DBLoad.class).typeConverter().equals(TypeConverter.class)) {
                         TypeConverter tc = m.getAnnotation(DBLoad.class).typeConverter().newInstance();
@@ -445,6 +475,43 @@ public class EntityBuilder {
                 }
             }
 
+            private static <T> Object[] loadArray(List data, Class<? extends T> type, Class<? extends TypeConverter> tcc) throws InstantiationException, IllegalAccessException {
+                Object[] array = new Object[data.size()];
+                for (int i = 0; i < data.size(); i++) {
+                    Object o = data.get(i);
+                    if (!tcc.equals(TypeConverter.class)) {
+                        TypeConverter tc = tcc.newInstance();
+                        o = tc.convertLoad(o);
+                    }
+                    else {
+                        if (o instanceof Document && DBLoadable.class.isAssignableFrom(type)) {
+                            o = deserialize((Document) o, type);
+                        }
+                    }
+                    array[i] = o;
+                }
+                return createGenericArray(array, type);
+            }
+
+            private static <T extends Collection> T loadCollection(Collection list, Class<? extends T> type, ParameterizedType ptype, Class<? extends TypeConverter> tcc) throws InstantiationException, IllegalAccessException {
+                Collection col = createCollectionInstance(type);
+                for (Object o : list) {
+                    System.out.println(o);
+                    if (Collection.class.isAssignableFrom(o.getClass())) {
+                        o = loadCollection((Collection) o, (Class<? extends T>) ptype.getRawType(), (ParameterizedType) ptype.getActualTypeArguments()[0], tcc);
+                    }
+                    else if (!tcc.equals(TypeConverter.class)) {
+                        TypeConverter tc = tcc.newInstance();
+                        o = tc.convertLoad(o);
+                    }
+                    else if (o instanceof Document && DBLoadable.class.isAssignableFrom((Class) ptype.getRawType())) {//DBLoadable check is not possible because the generic type of the collection is unknown
+                        o = deserialize((Document) o, (Class<? extends DBLoadable>) ptype.getRawType());
+                    }
+                    col.add(o);
+                }
+                return (T) col;
+            }
+
             private static <T> T[] createGenericArray(T[] values, Class<? extends T> cast) {
                 T[] array = (T[]) Array.newInstance(cast, values.length);
                 for (int i = 0; i < values.length; i++) {
@@ -453,24 +520,19 @@ public class EntityBuilder {
                 }
                 return array;
             }
-            
-            private static <C extends Collection> C createCollectionInstance(Class<? extends Collection> c) {
-                if(Modifier.isAbstract(c.getModifiers())) {
-                    if(c == List.class || c == Collection.class) {
-                        return (C)new ArrayList();
+
+            private static Collection createCollectionInstance(Class<? extends Collection> c) {
+                if (Modifier.isInterface(c.getModifiers()) || Modifier.isAbstract(c.getModifiers())) {
+                    if (Set.class.isAssignableFrom(c)) {
+                        return new HashSet();
                     }
-                    else if(c == Set.class) {
-                        return (C)new HashSet();
+                    else {
+                        return new ArrayList<>();
                     }
                 }
                 else {
-                    try {
-                        return (C)c.newInstance();
-                    } catch (InstantiationException | IllegalAccessException ex) {
-                        Logger.getLogger(EntityBuilder.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    return createInstance(c);
                 }
-                return null;
             }
         }
     }

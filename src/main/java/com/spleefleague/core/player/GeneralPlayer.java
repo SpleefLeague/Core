@@ -13,6 +13,7 @@ import com.spleefleague.core.io.DBLoadable;
 import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.DBSaveable;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
+import com.spleefleague.core.listeners.VisibilityHandler;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -139,18 +140,20 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
         return list;
     }
     
-    public void hidePlayer(GeneralPlayer gp) {
-        Player from = this.getPlayer(), hiding = gp.getPlayer();
-        from.hidePlayer(hiding);
-        Bukkit.getScheduler().runTaskLater(SpleefLeague.getInstance(), () -> {
-            EntityPlayer nmsFrom = ((CraftPlayer) from).getHandle();
-            EntityPlayer nmsHiding = ((CraftPlayer) hiding).getHandle();
-            nmsFrom.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, nmsHiding));
-        },20);
+    public void hidePlayerEntity(Player p) {
+        if(canSeeEntity(p)) {
+            VisibilityHandler.hide(p, this);
+        }
     }
     
-    public void showPlayer(GeneralPlayer gp) {
-        this.getPlayer().showPlayer(gp.getPlayer());
+    public void showPlayerEntity(Player p) {
+        if(canSeeEntity(p)) {
+            VisibilityHandler.show(p, this);
+        }
+    }
+    
+    public boolean canSeeEntity(Player p) {
+        return VisibilityHandler.canSee(this, p);
     }
     
     public boolean canSee(GeneralPlayer gp) {

@@ -1,12 +1,11 @@
 package com.spleefleague.core.player;
 
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.chat.ChatChannel;
 import java.util.HashSet;
 import java.util.UUID;
 import com.spleefleague.core.io.DBLoad;
 import com.spleefleague.core.io.DBSave;
-import com.spleefleague.core.io.TypeConverter.HashSetIntegerConverter;
-import com.spleefleague.core.io.TypeConverter.HashSetStringConverter;
 import com.spleefleague.core.io.TypeConverter.RankStringConverter;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
 import org.bukkit.GameMode;
@@ -20,16 +19,15 @@ public class SLPlayer extends GeneralPlayer {
     private Rank rank;
     private UUID lastChatPartner;
     private int coins;
-    private HashSet<String> chatChannels;
-    @DBLoad(fieldName = "easteregg", typeConverter = HashSetIntegerConverter.class)
-    private HashSet<Integer> eastereggs;
-    private String sendingChannel;
+    private HashSet<ChatChannel> chatChannels;
+    private ChatChannel sendingChannel;
     private PlayerState state = PlayerState.IDLE;
+    private PlayerOptions options;
     
     public SLPlayer() {
         super();
-        chatChannels = new HashSet<>();
-        eastereggs = new HashSet<>();
+        this.chatChannels = new HashSet<>();
+        this.sendingChannel = ChatChannel.GLOBAL;
     }
     
     @DBSave(fieldName = "rank", typeConverter = RankStringConverter.class)
@@ -63,11 +61,6 @@ public class SLPlayer extends GeneralPlayer {
         return coins;
     }
     
-    @DBSave(fieldName = "easteregg", typeConverter = HashSetIntegerConverter.class)
-    public HashSet<Integer> getEastereggs() {
-        return eastereggs;
-    }
-    
     @DBSave(fieldName = "lastChatPartner", typeConverter = UUIDStringConverter.class)
     public UUID getLastChatPartner() {
         return lastChatPartner;
@@ -78,35 +71,38 @@ public class SLPlayer extends GeneralPlayer {
         this.lastChatPartner = lastChatPartner;
     }
     
-    @DBLoad(fieldName = "chatChannels", typeConverter = HashSetStringConverter.class)
-    public void setReceivingChatChannels(HashSet<String> chatChannels) {
+    @DBSave(fieldName = "options")
+    public PlayerOptions getOptions() {
+        return options;
+    }
+    
+    @DBLoad(fieldName = "options", priority = -100)
+    private void setOptions(PlayerOptions options) {
+        this.options = options;
+        options.apply(this);
+    }
+    
+    protected void setReceivingChatChannels(HashSet<ChatChannel> chatChannels) {
         this.chatChannels = chatChannels;
     }
     
-    @DBSave(fieldName = "chatChannels", typeConverter = HashSetStringConverter.class)
-    public HashSet<String> getReceivingChatChannels() {
-        return chatChannels;
-    }
-    
-    @DBLoad(fieldName = "sendingChannel")
-    public void setSendingChannel(String channel) {
+    public void setSendingChannel(ChatChannel channel) {
         this.sendingChannel = channel;
     }
     
-    @DBSave(fieldName = "sendingChannel")
-    public String getSendingChannel() {
+    public ChatChannel getSendingChannel() {
         return sendingChannel;
     }
     
-    public boolean isInChatChannel(String channel) {
+    public boolean isInChatChannel(ChatChannel channel) {
         return chatChannels.contains(channel);
     }
     
-    public void addChatChannel(String channel) {
+    public void addChatChannel(ChatChannel channel) {
         this.chatChannels.add(channel);
     }
     
-    public void removeChatChannel(String channel) {
+    public void removeChatChannel(ChatChannel channel) {
         this.chatChannels.remove(channel);
     }
     
@@ -122,14 +118,22 @@ public class SLPlayer extends GeneralPlayer {
         for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
             if(slp != this && this.getState() == PlayerState.IDLE) {
                 if(slp.getState() == PlayerState.IDLE) {
-                    this.showPlayer(slp);
-                    slp.showPlayer(this);
+                    this.showPlayerEntity(slp);
+                    slp.showPlayerEntity(this);
                 }
                 else {
-                    this.hidePlayer(slp);
-                    slp.hidePlayer(this);
+                    this.showPlayerEntity(slp);
+                    slp.showPlayerEntity(this);
                 }
             }
+        }
+    }
+    
+    @Override
+    public void done() {
+        if(this.options == null) {
+            this.options = PlayerOptions.getDefault();
+            this.options.apply(this);
         }
     }
 
@@ -139,8 +143,7 @@ public class SLPlayer extends GeneralPlayer {
         setRank(Rank.DEFAULT);
         setCoins(0);
         this.chatChannels.clear();
-        this.eastereggs.clear();
-        this.chatChannels.add("DEFAULT");
-        setSendingChannel("DEFAULT");
+        this.chatChannels.add(ChatChannel.GLOBAL);
+        setSendingChannel(ChatChannel.GLOBAL);
     }
 }

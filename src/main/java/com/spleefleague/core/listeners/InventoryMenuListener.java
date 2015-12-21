@@ -23,9 +23,8 @@ import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import static com.spleefleague.core.menus.InventoryMenuTemplateRepository.isMenuItem;
 import static com.spleefleague.core.menus.InventoryMenuTemplateRepository.openMenu;
-import static com.spleefleague.core.menus.InventoryMenuTemplateRepository.slMenu;
+import com.spleefleague.core.menus.SLMenu;
 import com.spleefleague.core.player.GeneralPlayer;
-import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenu;
 import org.bukkit.Material;
@@ -34,7 +33,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 public class InventoryMenuListener implements Listener {
 
     private static Listener instance;
-
+    
     public static void init() {
         if (instance == null) {
             instance = new InventoryMenuListener();
@@ -52,7 +51,7 @@ public class InventoryMenuListener implements Listener {
         if (gp instanceof SLPlayer) {
             SLPlayer slp = (SLPlayer) gp;
             if(slp.getInventory().getItem(0) == null || slp.getInventory().getItem(0).getType() == Material.AIR) {
-                slp.getInventory().setItem(0, slMenu.getDisplayItemStack(slp));
+                slp.getInventory().setItem(0, SLMenu.getInstance().getDisplayItemStack(slp));
             }
             else {
                 if(!isMenuItem(slp.getInventory().getItem(0), slp)) {
@@ -68,7 +67,7 @@ public class InventoryMenuListener implements Listener {
             ItemStack is = event.getItem();
             if (is != null) {
                 SLPlayer slp = getSLPlayer(event.getPlayer());
-                if(isMenuItem(is, slp)) {
+                if (isMenuItem(is, slp)) {
                     openMenu(is, slp);
                 }
             }

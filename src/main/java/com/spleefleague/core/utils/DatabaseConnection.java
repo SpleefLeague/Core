@@ -5,6 +5,7 @@
  */
 package com.spleefleague.core.utils;
 
+import com.mongodb.client.FindIterable;
 import com.spleefleague.core.utils.collections.FixedSizeList;
 import com.mongodb.client.MongoCollection;
 import java.util.UUID;
@@ -92,11 +93,14 @@ public class DatabaseConnection {
     }
 
     public static void updateFields(final MongoCollection<Document> dbcoll, final Document index, final Document update) {
-        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                dbcoll.updateOne(index, new Document("$set", update));
-            }
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+            dbcoll.updateOne(index, new Document("$set", update));
+        });
+    }
+    
+    public static void find(final MongoCollection<Document> dbcoll, final Document query, Callback<FindIterable<Document>> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+            callback.call(dbcoll.find(query));
         });
     }
 

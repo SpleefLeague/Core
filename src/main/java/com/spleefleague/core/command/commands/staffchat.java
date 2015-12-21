@@ -5,6 +5,7 @@
  */
 package com.spleefleague.core.command.commands;
 
+import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.player.Rank;
@@ -29,7 +30,7 @@ public class staffchat extends BasicCommand {
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
         if(args.length > 0) {
             String message = StringUtil.fromArgsArray(args, 0);
-            ChatManager.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Staff" + ChatColor.GRAY + "]", ChatColor.GRAY + p.getName() + ": " + ChatColor.GREEN + message, "STAFF");
+            ChatManager.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Staff" + ChatColor.GRAY + "]", ChatColor.GRAY + p.getName() + ": " + ChatColor.GREEN + message, ChatChannel.STAFF);
         }
         else {
             sendUsage(p);

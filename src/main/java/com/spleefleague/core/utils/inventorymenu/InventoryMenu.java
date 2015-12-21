@@ -12,6 +12,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.listeners.InventoryMenuListener;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.function.Dynamic;
 import java.util.HashMap;
@@ -63,7 +64,6 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
         inventory.clear();
         currentComponents.clear();
         allComponents.entrySet().stream().filter((entry) -> (entry.getKey() >= 0 && entry.getValue().isVisible(slp))).forEach((entry) -> {
-            System.out.println(entry.getValue().getDisplayItem(slp).getType());
             currentComponents.put(entry.getKey(), entry.getValue());
         });
         int current = 0;
@@ -135,14 +135,7 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
             }
             else {
                 player.closeInventory();
-
-                //wait 1 Tick
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        player.openInventory(inventory);
-                    }
-                }.runTask(SpleefLeague.getInstance());
+                player.openInventory(inventory);
             }
         }
     }
@@ -150,13 +143,7 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
     public void close(Player player) {
         if (inventory.getViewers().contains(player)) {
             player.closeInventory();
-            //TODO: Needed?
-
-            inventory.getViewers().forEach(p -> System.out.println(p.getName()));
-
             inventory.getViewers().remove(player);
-
-            inventory.getViewers().forEach(p -> System.out.println(p.getName()));
         }
     }
 

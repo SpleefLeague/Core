@@ -17,6 +17,7 @@ import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.DBSaveable;
 import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.io.TypeConverter;
+import org.bukkit.Bukkit;
 
 public class Warp extends DBEntity implements DBLoadable, DBSaveable, Comparable<Warp> {
 
@@ -67,14 +68,18 @@ public class Warp extends DBEntity implements DBLoadable, DBSaveable, Comparable
     }
 
     public static void addWarp(Warp warp) {
-        warps.put(warp.getName(), warp);
-        MongoCollection<Document> collection = SpleefLeague.getInstance().getPluginDB().getCollection("Warps");
-        EntityBuilder.save(warp, collection);
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+            warps.put(warp.getName(), warp);
+            MongoCollection<Document> collection = SpleefLeague.getInstance().getPluginDB().getCollection("Warps");
+            EntityBuilder.save(warp, collection);
+        });
     }
 
     public static void removeWarp(Warp warp) {
-        warps.remove(warp.getName());
-        MongoCollection<Document> coll = SpleefLeague.getInstance().getPluginDB().getCollection("Warps");
-        EntityBuilder.delete(warp, coll);
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+            warps.remove(warp.getName());
+            MongoCollection<Document> coll = SpleefLeague.getInstance().getPluginDB().getCollection("Warps");
+            EntityBuilder.delete(warp, coll);
+        });
     }
 }

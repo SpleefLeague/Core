@@ -1,5 +1,6 @@
 package com.spleefleague.core.utils.inventorymenu;
 
+import com.spleefleague.core.listeners.InventoryMenuListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;

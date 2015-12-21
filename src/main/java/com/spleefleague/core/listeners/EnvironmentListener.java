@@ -231,12 +231,7 @@ public class EnvironmentListener implements Listener{
     
     private void logIPAddress(final Player player) {
         final String ip = player.getAddress().getAddress().toString();
-        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                EntityBuilder.save(new Connection(player.getUniqueId(), ip), SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections"));
-            }
-        });
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> EntityBuilder.save(new Connection(player.getUniqueId(), ip), SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections")));
     }
     
     public static class Connection extends DBEntity implements DBSaveable {

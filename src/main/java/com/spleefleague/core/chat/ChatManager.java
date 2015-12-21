@@ -8,7 +8,11 @@ package com.spleefleague.core.chat;
 import java.util.Collection;
 import java.util.HashSet;
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.listeners.ChatListener;
 import com.spleefleague.core.player.SLPlayer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.bukkit.Bukkit;
 
 /**
@@ -17,53 +21,63 @@ import org.bukkit.Bukkit;
  */
 public class ChatManager {
     
-    public static void sendMessage(String p, String m, String c) {
-        sendMessage(p + " " + m, c);
+    public static void sendMessage(String p, String m, ChatChannel c) {
+        sendMessage(p.concat(" ").concat(m), c);
     }
     
-    public static void sendMessage(final String m, final String c) {
-        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                Bukkit.getConsoleSender().sendMessage(m);
-                for (SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-                    if (slp.isInChatChannel(c)) {
-                        slp.sendMessage(m);
-                    }
-                }
-            }
+    public static void sendMessage(final String m, final ChatChannel c) {
+        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
+            Bukkit.getConsoleSender().sendMessage(m);
+            SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(c))).forEach((slp) -> {
+                slp.sendMessage(m);
+            });
         });
     }
     
-    private static HashSet<ChatChannel> channels = new HashSet<>();
+    private static final HashSet<ChatChannel> channels = new HashSet<>();
     
     public static void registerChannel(ChatChannel channel) {
+        registerChannel(channel, false);
+    }
+    
+    public static void registerChannel(ChatChannel channel, boolean silent) {
         channels.add(channel);
-        if(channel.isDefault()) {
-            for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-                if(!slp.isInChatChannel(channel.getName())) {
-                    slp.addChatChannel(channel.getName());
-                }
-            }
+        if(!silent && channel.isDefault()) {
+            SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (!slp.isInChatChannel(channel) && slp.getOptions().isChatChannelEnabled(channel))).forEach((slp) -> {
+                slp.addChatChannel(channel);
+            });
         }
     }
     
     public static void unregisterChannel(ChatChannel channel) {
         channels.remove(channel);
-        for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-            if(!slp.isInChatChannel(channel.getName())) {
-                slp.removeChatChannel(channel.getName());
-            }
-        }
+        SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(channel))).forEach((slp) -> {
+            slp.removeChatChannel(channel);
+        });
     }
     
     public static Collection<ChatChannel> getAvailableChatChannels(SLPlayer slp) {
         HashSet<ChatChannel> availableChannels = new HashSet<>();
-        for(ChatChannel channel : channels) {
-            if(!channel.isTemporary() && slp.getRank().hasPermission(channel.getMinRank())) {
-                availableChannels.add(channel);
-            }
-        }
+        channels.stream().filter((channel) -> (channel.isVisible() && slp.getRank().hasPermission(channel.getMinRank()))).forEach((channel) -> {
+            availableChannels.add(channel);
+        });
         return availableChannels;
+    }
+    
+    public static Collection<ChatChannel> getAllChatChannels() {
+        return channels;
+    }
+    
+    public static Collection<ChatChannel> getVisibleChatChannels() {
+        List<ChatChannel> availableChannels = new ArrayList<>();
+        channels.stream().sorted().filter((channel) -> (channel.isVisible())).forEach((channel) -> {
+            availableChannels.add(channel);
+        });
+        return availableChannels;
+    }
+
+    public static void init() {
+        ChatListener.init();
+        ChatChannel.init();
     }
 }

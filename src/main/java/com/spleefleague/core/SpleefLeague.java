@@ -19,18 +19,16 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
-import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.command.CommandLoader;
 import com.spleefleague.core.io.Config;
 import com.spleefleague.core.io.Settings;
-import com.spleefleague.core.listeners.ChatListener;
-import com.spleefleague.core.listeners.EastereggListener;
 import com.spleefleague.core.listeners.EnvironmentListener;
 import com.spleefleague.core.listeners.FakeBlockHandler;
 import com.spleefleague.core.listeners.InfractionListener;
 import com.spleefleague.core.listeners.InventoryMenuListener;
+import com.spleefleague.core.listeners.VisibilityHandler;
 import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
 import com.spleefleague.core.player.PlayerManager;
 import com.spleefleague.core.player.Rank;
@@ -58,6 +56,7 @@ public class SpleefLeague extends CorePlugin {
     
     @Override
     public void start() {
+        //The order is important
         instance = this;
         Config.loadConfig();
         initMongo();
@@ -67,24 +66,20 @@ public class SpleefLeague extends CorePlugin {
         DatabaseConnection.initialize();
         Rank.init();
         commandLoader = CommandLoader.loadCommands(this, "com.spleefleague.core.command.commands");
-        playerManager = new PlayerManager<>(this, SLPlayer.class);
-        ChatManager.registerChannel(new ChatChannel("DEFAULT", "Normal chat", Rank.DEFAULT, true));
-        ChatManager.registerChannel(new ChatChannel("STAFF", "Staff chat", Rank.MODERATOR, true));
-        ChatListener.init();
-//        SlackApi.initSlackMessageListener();
+        ChatManager.init();
         MultiBlockChangeUtil.init();
         FakeBlockHandler.init();
+        VisibilityHandler.init();
         EnvironmentListener.init();
         InfractionListener.init();
         InventoryMenuListener.init();
-        EastereggListener.init();
         InventoryMenuTemplateRepository.initTemplates();
         Warp.init();
+        playerManager = new PlayerManager<>(this, SLPlayer.class);
     }
     
     @Override
     public void stop() {
-//        SlackApi.killSlackMessageListener();
         playerManager.saveAll();
         mongo.close();
     }

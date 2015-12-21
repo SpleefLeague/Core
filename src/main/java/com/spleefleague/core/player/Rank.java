@@ -19,6 +19,7 @@ import com.spleefleague.core.io.DBEntity;
 import com.spleefleague.core.io.DBLoad;
 import com.spleefleague.core.io.DBLoadable;
 import com.spleefleague.core.io.EntityBuilder;
+import com.spleefleague.core.io.TypeConverter;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -170,5 +171,20 @@ public class Rank extends DBEntity implements DBLoadable {
             player.addAttachment(SpleefLeague.getInstance(), permission, true);
         }
         player.setOp(hasOp);
+    }
+
+    public static class FromStringConverter extends TypeConverter<String, Rank> {
+
+        public FromStringConverter() {}
+
+        @Override
+        public Rank convertLoad(String name) {
+            return Rank.valueOf(name);
+        }
+
+        @Override
+        public String convertSave(Rank rank) {
+            return rank.getName();
+        }
     }
 }
