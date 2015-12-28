@@ -139,7 +139,7 @@ public class FakeBlockHandler implements Listener {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 WrapperPlayClientBlockDig wrapper = new WrapperPlayClientBlockDig(event.getPacket());
-                if (event.getPlayer().getLocation().multiply(0).add(wrapper.getLocation().toVector()).getBlock().getType() == Material.AIR) {
+                if (event.getPlayer().getLocation().multiply(0).add(wrapper.getLocation().toVector()).getBlock().getType() == Material.AIR) {//Avoiding async world access
                     if (wrapper.getStatus() == EnumWrappers.PlayerDigType.STOP_DESTROY_BLOCK || wrapper.getStatus() == EnumWrappers.PlayerDigType.START_DESTROY_BLOCK) {
                         Location loc = wrapper.getLocation().toVector().toLocation(event.getPlayer().getWorld());
                         FakeBlock broken = null;

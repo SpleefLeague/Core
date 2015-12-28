@@ -496,7 +496,6 @@ public class EntityBuilder {
             private static <T extends Collection> T loadCollection(Collection list, Class<? extends T> type, ParameterizedType ptype, Class<? extends TypeConverter> tcc) throws InstantiationException, IllegalAccessException {
                 Collection col = createCollectionInstance(type);
                 for (Object o : list) {
-                    System.out.println(o);
                     if (Collection.class.isAssignableFrom(o.getClass())) {
                         o = loadCollection((Collection) o, (Class<? extends T>) ptype.getRawType(), (ParameterizedType) ptype.getActualTypeArguments()[0], tcc);
                     }
@@ -504,8 +503,10 @@ public class EntityBuilder {
                         TypeConverter tc = tcc.newInstance();
                         o = tc.convertLoad(o);
                     }
-                    else if (o instanceof Document && DBLoadable.class.isAssignableFrom((Class) ptype.getRawType())) {//DBLoadable check is not possible because the generic type of the collection is unknown
-                        o = deserialize((Document) o, (Class<? extends DBLoadable>) ptype.getRawType());
+                    else if (o instanceof Document) {
+                        if(DBLoadable.class.isAssignableFrom((Class)ptype.getActualTypeArguments()[0])) {
+                            o = deserialize((Document) o, (Class<? extends DBLoadable>) ptype.getActualTypeArguments()[0]);
+                        }
                     }
                     col.add(o);
                 }

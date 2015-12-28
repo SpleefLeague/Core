@@ -142,13 +142,13 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     
     public void hidePlayerEntity(Player p) {
         if(canSeeEntity(p)) {
-            VisibilityHandler.hide(p, this);
+            VisibilityHandler.hide(p.getPlayer(), this.getPlayer());
         }
     }
     
     public void showPlayerEntity(Player p) {
         if(canSeeEntity(p)) {
-            VisibilityHandler.show(p, this);
+            VisibilityHandler.show(p.getPlayer(), this.getPlayer());
         }
     }
     
