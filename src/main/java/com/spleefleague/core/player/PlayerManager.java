@@ -91,24 +91,27 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
         DatabaseConnection.find(db.getCollection("Players"), new Document("uuid", player.getUniqueId().toString()), (result) -> {
             Document doc = result.first();
             Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
-                try {
-                    G generalPlayer;
-                    if (doc == null) {
-                        generalPlayer = getPlayerClass().newInstance();
-                        generalPlayer.setName(player.getName());
-                        generalPlayer.setUUID(player.getUniqueId());
-                        generalPlayer.setDefaults();
-                        EntityBuilder.save(generalPlayer, db.getCollection("Players"));
+                    try {
+                        G generalPlayer;
+                        if (doc == null) {
+                            generalPlayer = getPlayerClass().newInstance();
+                            generalPlayer.setName(player.getName());
+                            generalPlayer.setUUID(player.getUniqueId());
+                            generalPlayer.setDefaults();
+                            Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+                                EntityBuilder.save(generalPlayer, db.getCollection("Players"));
+                            });
+                        }
+                        else {
+                            generalPlayer = EntityBuilder.load(doc, getPlayerClass());
+                            generalPlayer.setName(player.getName());
+                        }
+                        map.put(player.getUniqueId(), generalPlayer);
+                        callEvent(generalPlayer, doc == null);
+
+                    } catch (InstantiationException | IllegalAccessException ex) {
+                        Logger.getLogger(PlayerManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    else {
-                        generalPlayer = EntityBuilder.load(doc, getPlayerClass());
-                        generalPlayer.setName(player.getName());
-                    }
-                    map.put(player.getUniqueId(), generalPlayer);
-                    callEvent(generalPlayer, doc == null);
-                } catch (InstantiationException | IllegalAccessException ex) {
-                    Logger.getLogger(PlayerManager.class.getName()).log(Level.SEVERE, null, ex);
-                }
             });
         });
     }

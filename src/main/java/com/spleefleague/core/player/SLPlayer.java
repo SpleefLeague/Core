@@ -23,6 +23,7 @@ public class SLPlayer extends GeneralPlayer {
     private ChatChannel sendingChannel;
     private PlayerState state = PlayerState.IDLE;
     private PlayerOptions options;
+    private boolean hasForumAccount = false;
     
     public SLPlayer() {
         super();
@@ -112,18 +113,30 @@ public class SLPlayer extends GeneralPlayer {
     
     public PlayerState getState() {
         return state;
+    }    
+    
+    @DBLoad(fieldName = "hasForumAccount")
+    public void setForumAccount(boolean forumAccount) {
+        this.hasForumAccount = forumAccount;
+    }
+
+    @DBSave(fieldName = "hasForumAccount")
+    public boolean hasForumAccount() {
+        return hasForumAccount;
     }
     
     public void resetVisibility() {
-        for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-            if(slp != this && this.getState() == PlayerState.IDLE) {
-                if(slp.getState() == PlayerState.IDLE) {
-                    this.showPlayerEntity(slp);
-                    slp.showPlayerEntity(this);
-                }
-                else {
-                    this.showPlayerEntity(slp);
-                    slp.showPlayerEntity(this);
+        if(this.getPlayer() != null && this.getPlayer().isOnline()) {
+            for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
+                if(slp != this && this.getState() == PlayerState.IDLE) {
+                    if(slp.getState() == PlayerState.IDLE) {
+                        this.showPlayer(slp);
+                        slp.showPlayer(this);
+                    }
+                    else {
+                        this.showPlayer(slp);
+                        slp.showPlayer(this);
+                    }
                 }
             }
         }

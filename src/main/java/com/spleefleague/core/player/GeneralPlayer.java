@@ -5,7 +5,6 @@
  */
 package com.spleefleague.core.player;
 
-import com.spleefleague.core.SpleefLeague;
 import java.util.UUID;
 import com.spleefleague.core.io.DBEntity;
 import com.spleefleague.core.io.DBLoad;
@@ -13,7 +12,6 @@ import com.spleefleague.core.io.DBLoadable;
 import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.DBSaveable;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
-import com.spleefleague.core.listeners.VisibilityHandler;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,9 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
 import org.bukkit.Achievement;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -41,7 +36,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;
@@ -138,26 +132,6 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
             list.add(gp.getPlayer());
         }
         return list;
-    }
-    
-    public void hidePlayerEntity(Player p) {
-        if(canSeeEntity(p)) {
-            VisibilityHandler.hide(p.getPlayer(), this.getPlayer());
-        }
-    }
-    
-    public void showPlayerEntity(Player p) {
-        if(canSeeEntity(p)) {
-            VisibilityHandler.show(p.getPlayer(), this.getPlayer());
-        }
-    }
-    
-    public boolean canSeeEntity(Player p) {
-        return VisibilityHandler.canSee(this, p);
-    }
-    
-    public boolean canSee(GeneralPlayer gp) {
-        return this.getPlayer().canSee(gp.getPlayer());
     }
     
     public void setDefaults() {
@@ -578,7 +552,19 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     public boolean canSee(Player player) {
         return getPlayer().canSee(player);
     }
+    
+    public void hidePlayer(GeneralPlayer player) {
+        getPlayer().hidePlayer(player.getPlayer());
+    }
 
+    public void showPlayer(GeneralPlayer player) {
+        getPlayer().showPlayer(player.getPlayer());
+    }
+
+    public boolean canSee(GeneralPlayer player) {
+        return getPlayer().canSee(player.getPlayer());
+    }
+    
     @Override
     @Deprecated
     public boolean isOnGround() {

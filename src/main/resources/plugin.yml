@@ -170,3 +170,7 @@ commands:
         description: Gives the player an animated map
         usage:
             /<command> <create|destroy> <URL|ID>
+    register: 
+        description: Create a new forum account
+        usage:
+            /<command> <email>

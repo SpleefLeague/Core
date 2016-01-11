@@ -5,6 +5,7 @@
  */
 package com.spleefleague.core.command.commands;
 
+import com.spleefleague.core.SpleefLeague;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,6 +14,7 @@ import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.RuntimeCompiler;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -45,28 +47,30 @@ public class debug extends BasicCommand {
             sendUsage(cs);
         } else {
             if (args.length == 1) {
-                String[] clzl = RuntimeCompiler.debugFromHastebin(args[0]);
-                if (clzl == null) {
-                    error(cs, "Failed starting debugger!");
-                    return;
-                }
-                String name = clzl[0];
-                if(clzl.length == 1) {
-                    success(cs, ChatColor.GRAY + "Running debugger class: " + ChatColor.GREEN + name);
-                }
-                else if (clzl.length == 2) {
-                    success(cs, ChatColor.GRAY + "Started debugger class with id: " + ChatColor.GREEN + name);
-                    success(cs, ChatColor.GRAY + "run cmd: " + ChatColor.BLUE + "/rd command/cmd " + ChatColor.GREEN + name + ChatColor.BLUE + " <command>");
-                    success(cs, ChatColor.GRAY + "stop: " + ChatColor.BLUE + "/rd stop " + ChatColor.GREEN + name);
-                } 
-                else if(clzl.length == 3) {
-                    success(cs, ChatColor.GRAY + "Started debugger class with id: " + ChatColor.GREEN + name);
-                    success(cs, ChatColor.GRAY + "stop: " + ChatColor.BLUE + "/rd stop " + ChatColor.GREEN + name);
-                }
-                else if(clzl.length == 4) {
-                    success(cs, ChatColor.GRAY + "Started debugger class with id: " + ChatColor.GREEN + name);
-                    success(cs, ChatColor.GRAY + "run cmd: " + ChatColor.BLUE + "/rd command/cmd " + ChatColor.GREEN + name + ChatColor.BLUE + " <command>");
-                }
+                Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+                    String[] clzl = RuntimeCompiler.debugFromHastebin(args[0]);
+                    if (clzl == null) {
+                        error(cs, "Failed starting debugger!");
+                        return;
+                    }
+                    String name = clzl[0];
+                    if(clzl.length == 1) {
+                        success(cs, ChatColor.GRAY + "Running debugger class: " + ChatColor.GREEN + name);
+                    }
+                    else if (clzl.length == 2) {
+                        success(cs, ChatColor.GRAY + "Started debugger class with id: " + ChatColor.GREEN + name);
+                        success(cs, ChatColor.GRAY + "run cmd: " + ChatColor.BLUE + "/rd command/cmd " + ChatColor.GREEN + name + ChatColor.BLUE + " <command>");
+                        success(cs, ChatColor.GRAY + "stop: " + ChatColor.BLUE + "/rd stop " + ChatColor.GREEN + name);
+                    } 
+                    else if(clzl.length == 3) {
+                        success(cs, ChatColor.GRAY + "Started debugger class with id: " + ChatColor.GREEN + name);
+                        success(cs, ChatColor.GRAY + "stop: " + ChatColor.BLUE + "/rd stop " + ChatColor.GREEN + name);
+                    }
+                    else if(clzl.length == 4) {
+                        success(cs, ChatColor.GRAY + "Started debugger class with id: " + ChatColor.GREEN + name);
+                        success(cs, ChatColor.GRAY + "run cmd: " + ChatColor.BLUE + "/rd command/cmd " + ChatColor.GREEN + name + ChatColor.BLUE + " <command>");
+                    }
+                });
             } else if (args.length == 2) {
                 if (args[0].equalsIgnoreCase("stop")) {
                     String n = RuntimeCompiler.stopDebugger(args[1]);

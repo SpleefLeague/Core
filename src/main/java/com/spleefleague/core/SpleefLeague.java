@@ -28,7 +28,6 @@ import com.spleefleague.core.listeners.EnvironmentListener;
 import com.spleefleague.core.listeners.FakeBlockHandler;
 import com.spleefleague.core.listeners.InfractionListener;
 import com.spleefleague.core.listeners.InventoryMenuListener;
-import com.spleefleague.core.listeners.VisibilityHandler;
 import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
 import com.spleefleague.core.player.PlayerManager;
 import com.spleefleague.core.player.Rank;
@@ -38,8 +37,6 @@ import com.spleefleague.core.utils.DatabaseConnection;
 import com.spleefleague.core.utils.MultiBlockChangeUtil;
 import com.spleefleague.core.utils.RuntimeCompiler;
 import com.spleefleague.core.utils.Warp;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -71,7 +68,6 @@ public class SpleefLeague extends CorePlugin {
         ChatManager.init();
         MultiBlockChangeUtil.init();
         FakeBlockHandler.init();
-        VisibilityHandler.init();
         EnvironmentListener.init();
         InfractionListener.init();
         InventoryMenuListener.init();

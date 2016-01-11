@@ -20,7 +20,8 @@ import java.util.List;
  */
 public class Config {
 
-    public static String DB_HOST = "mongo.spleefleague.net";
+    //Assumed default values
+    public static String DB_HOST = "mongo.spleefleague.com";
     public static int DB_PORT = 27017;
     private static HashMap<String, String> ADDITIONAL_CONFIG;
 
