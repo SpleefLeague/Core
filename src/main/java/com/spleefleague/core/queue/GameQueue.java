@@ -5,200 +5,242 @@
  */
 package com.spleefleague.core.queue;
 
-import com.spleefleague.core.SpleefLeague;
+import static com.google.common.io.Files.map;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
+import java.util.Queue;
 import java.util.Set;
-import java.util.stream.Collectors;
+import com.spleefleague.core.player.GeneralPlayer;
+import com.spleefleague.core.player.PlayerManager;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 /**
  *
  * @author Jonas
  * @param <Q>
- * @param <P>
  */
-public class GameQueue<Q extends QueueableArena, P extends RatedPlayer> {
+public class GameQueue<Q extends QueueableArena> {
+        
+    private final Map<Q, Queue<UUID>> queues = new HashMap<>();
+    private final Queue<UUID> all = new LinkedList<>();
     
-    private final BattleManager<Q, P, ? extends Battle> battleManager;
-    private final List<Q> queuedArenas;
-    private final Map<Q, Set<P>> queues;
-    private final int tickDuration;
-    
-    public GameQueue(BattleManager<Q, P, ? extends Battle> battleHandler, int tickDuration) {
-        this.battleManager = battleHandler;
-        this.queuedArenas = new ArrayList<>();
-        this.queues = new HashMap<>();
-        this.queues.put(null, new HashSet<>());
-        this.tickDuration = tickDuration;
-        gameQueues.add(this);
-        if(tickTask == null) {
-            gcdTickDuration = tickDuration;
-            tickTask = tickRunnable.runTaskTimer(SpleefLeague.getInstance(), 0, gcdTickDuration);
-        }
-        else if(tickDuration % gcdTickDuration != 0) {
-            gcdTickDuration = gcd(tickDuration, gcdTickDuration);
-            tickTask.cancel();
-            tickTask = tickRunnable.runTaskTimer(SpleefLeague.getInstance(), 0, gcdTickDuration);
-        }
+    public GameQueue() {
+        queues.put(null, new LinkedList<>());
     }
     
-    public void registerArena(Q arena) {
-        if(arena.isQueued()) {  
-            this.queuedArenas.add(arena);
-        }
-        this.queues.put(arena, new HashSet<>());
-    }    
-    
-    public void unregisterArena(Q arena) {
-        this.queuedArenas.remove(arena);
-        this.queues.remove(arena);
+    public Set<Q> getQueues() {
+        return queues.keySet();
     }
     
-    public void queuePlayer(P player) {
-        queuePlayer(player, null);
-    }
-    
-    public void queuePlayer(P player, Q queue) {
-        dequeuePlayer(player);
-        this.queues.get(queue).add(player);
-    }
-    
-    public void dequeuePlayer(P player) {
-        for(Set<P> queue : queues.values()) {
-            queue.remove(player);
-        }
-    }
-    
-    public boolean isQueued(P player) {
-        for(Set<P> queue : queues.values()) {
-            if(queue.contains(player)) {
+    public QueueableArena getGeneralQueue() {
+        QueueableArena queue = new QueueableArena() {
+
+            private Queue<UUID> q = getQueue(null);
+            
+            @Override
+            public boolean isOccupied() {
+                return false;
+            }
+            
+            @Override
+            public boolean isAvailable(UUID uuid) {
                 return true;
             }
-        }
-        return false;
-    }
-    
-    private int getTickDuration() {
-        return tickDuration;
-    }
-    
-    private void doTick() {
-        Match match;
-        while((match = nextMatch()) != null) {
-            for(P player : match.getPlayers()) {
-                dequeuePlayer(player);
-            }
-            battleManager.startBattle(match.getQueue(), match.getPlayers());
-        }
-    }
-    
-    private Match nextMatch() {
-        for(Entry<Q, Set<P>> entry : queues.entrySet()) {
-            if(entry.getKey() == null || !entry.getKey().isPaused()) {
-                for(P p1 : entry.getValue()) {
-                    if(entry.getKey() != null) {
-                        List<P> allowedPlayers = getAllowed(p1, entry.getKey());
-                        if(allowedPlayers.size() >= entry.getKey().getSize() - 1) {
-                            Collections.shuffle(allowedPlayers);
-                            allowedPlayers = allowedPlayers.subList(0, entry.getKey().getSize() - 1);
-                            allowedPlayers.add(p1);
-                            return new Match(entry.getKey(), allowedPlayers);
-                        }
-                    }
-                    else {
-                        List<Q> availableQueues = queuedArenas.stream().filter((q) -> !q.isOccupied() && !q.isPaused() && q.isAvailable(p1)).collect(Collectors.toList());
-                        Collections.shuffle(availableQueues);
-                        for(Q queue : availableQueues) {
-                            List<P> allowedPlayers = getAllowed(p1, queue);
-                            if(allowedPlayers.size() >= queue.getSize() - 1) {
-                                Collections.shuffle(allowedPlayers);
-                                allowedPlayers = allowedPlayers.subList(0, queue.getSize() - 1);
-                                allowedPlayers.add(p1);
-                                return new Match(queue, allowedPlayers);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-    
-    private List<P> getAllowed(P player, Q queue) {
-        List<P> allowedPlayers = new ArrayList<>();
-        allowedPlayers.addAll(queues.get(queue));
-        if(queue != null) {
-            allowedPlayers.addAll(queues.get(null));
-        }
-        allowedPlayers.remove(player);
-        allowedPlayers = allowedPlayers.stream().filter((p) -> queue == null || queue.isAvailable(p)).sorted((p1, p2) -> Double.compare(Math.abs(p1.getRating() - player.getRating()), Math.abs(p2.getRating() - player.getRating()))).collect(Collectors.toList());
-        allowedPlayers.subList(0, (int)Math.min(allowedPlayers.size(), Math.max(Math.round(allowedPlayers.size() * MATCHMAKING_ACCURICY), MIN_AVAILABLE_PLAYERS)));
-        return allowedPlayers;
-    }
-    
-    private Q getQueue(P p) {
-        for(Entry<Q, Set<P>> entry : queues.entrySet()) {
-            if(entry.getValue().contains(p)) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-    
-    private static final HashSet<GameQueue> gameQueues;
-    private static int gcdTickDuration = -1;
-    private static final BukkitRunnable tickRunnable;
-    private static BukkitTask tickTask;
-    private static final double MATCHMAKING_ACCURICY = 0.2;
-    private static final int MIN_AVAILABLE_PLAYERS = 5;
-    
-    private static int gcd(int a, int b) {
-        if (b == 0) {
-            return a;
-        }
-        return gcd(b, a % b);
-    }
-    
-    static {
-        gameQueues = new HashSet<>();
-        tickRunnable = new TickRunnable() {
+
             @Override
-            public void run() {
-                super.run();
-                gameQueues.stream().forEach((queue) -> {
-                    if(queue.getTickDuration() % this.getTick() == 0) {
-                        queue.doTick();
-                    }
-                });
+            public int getSize() {
+                return -1;
+            }
+
+            @Override
+            public int getQueueLength() {
+                return q.size();
+            }
+
+            @Override
+            public String getName() {
+                return "General queue";
+            }
+
+            @Override
+            public String getCurrentState() {
+                return null;
+            }
+
+            @Override
+            public int getQueuePosition(UUID uuid) {
+                int i = 1;
+                for(UUID u : q) {
+                    if(u == uuid) break;
+                    i++;
+                }
+                return i;
+            }
+
+            @Override
+            public boolean isInGeneral() {
+                return true;
+            }
+
+            @Override
+            public boolean isPaused() {
+                return false;
             }
         };
+        return queue;
     }
-    private class Match {
-        
-        private final List<P> players;
-        private final Q queue;
-        
-        public Match(Q queue, List<P> players) {
-            this.players = players;
-            this.queue = queue;
+    
+    public void register(Q queue) {
+        if(getQueue(queue) != null) {
+            throw new UnsupportedOperationException("Queue \"" + queue + "\" already exists!");
         }
-        
-        public List<P> getPlayers() {
-            return players;
+        queues.put(queue, new LinkedList<>());
+    }
+    
+    public void unregister(Q queue) {
+        if(queue == null) {
+            throw new UnsupportedOperationException("Default queue can't be removed!");
         }
-        
-        public Q getQueue() {
-            return queue;
+        Queue<UUID> q = queues.get(queue);
+        if(q == null) {
+            throw new UnsupportedOperationException("Queue \"" + queue + "\" doesn't exist!");
         }
+        queues.remove(queue);
+        while(!q.isEmpty()) {
+            dequeue(q.poll());
+        }
+    }
+    
+    public void queue(UUID player, Q queue) {
+//        for(StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+//            Bukkit.broadcastMessage(String.valueOf(ste));
+//        }
+        Queue<UUID> q = getQueue(queue);
+        if(isQueued(player)) {
+            dequeue(player);
+        }
+        if(q == null) {
+            throw new UnsupportedOperationException("Queue \"" + queue + "\" does not exists!");
+        }
+        else {
+            q.add(player);
+            if(queue == null || queue.isInGeneral()) {
+                all.add(player);
+            }
+        }
+    }
+    
+    public void queue(UUID player) {
+        queue(player, null);
+    }
+    
+    public void dequeue(UUID player) {
+        all.remove(player);
+        queues.keySet().stream().map((queue) -> queues.get(queue)).forEach((q) -> {
+            q.remove(player);
+        });
+    }
+    
+    public boolean isQueued(UUID player) {
+        return all.contains(player);
+    }
+    
+    public <P extends GeneralPlayer> HashMap<Q, Collection<P>> request(PlayerManager<P> pm) {
+        HashMap<Q, Collection<P>> requested = new HashMap<>();
+        queues.keySet().stream().filter((q) -> (q != null)).filter((q) -> !(q.isOccupied() || q.isPaused())).forEach((q) -> {
+            Collection<P> players = request(q, pm);
+            if (players != null) {
+                requested.put(q, players);
+            }
+        });
+        return requested;
+    }
+    
+    public HashMap<Q, Collection<UUID>> request() {
+        HashMap<Q, Collection<UUID>> requested = new HashMap<>();
+        List<Q> keys = new ArrayList(queues.keySet());
+        Collections.shuffle(keys);
+        keys.stream().filter((q) -> (q != null)).filter((q) -> !(q.isOccupied() || q.isPaused())).forEach((q) -> {
+            Collection<UUID> players = request(q);
+            if (players != null) {
+                requested.put(q, players);
+            }
+        });
+        return requested;
+    }
+    
+    public <P extends GeneralPlayer> Collection<P> request(Q requestedQueue, PlayerManager<P> pm) {
+        Collection<UUID> uuids = request(requestedQueue);
+        if(uuids != null) {
+            Collection<P> result = new ArrayList<>();
+            uuids.stream().forEach((uuid) -> {
+                result.add(pm.get(uuid));
+            });
+            return result;
+        }
+        return null;
+    }
+    
+    //Will return players even when queue is occupied
+    public Collection<UUID> request(Q requestedQueue) {
+        if(requestedQueue.isPaused()) return null;
+        int amount = requestedQueue.getSize();
+        Queue<UUID> r = getQueue(requestedQueue);
+        if(requestedQueue.isInGeneral()) {
+            Queue<UUID> d = getQueue(null);
+            UUID[] array = (UUID[])all.toArray(new UUID[all.size()]);
+            Collection<UUID> result = new ArrayList<>();
+            for(int i = 0; i < array.length && amount > 0; i++) {
+                UUID q = array[i];
+                if(r.contains(q) || d.contains(q) && requestedQueue.isAvailable(q)) {
+                    result.add(q);
+                    amount--;
+                }
+            }
+            if(amount == 0) {
+                result.stream().forEach((q) -> {
+                    dequeue(q);
+                });
+                return result;
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            Collection<UUID> result = new ArrayList<>();
+            if(r.size() >= amount) {
+                while(result.size() < amount) {
+                    result.add(r.poll());
+                }
+                return result;
+            }
+            else {
+                return null;
+            }
+        }
+    }
+    
+    public int getQueueLength(Q name) {
+        return getQueue(name).size();
+    }
+    
+    public int getQueuePosition(Q name, UUID player) {
+        int i = 1;
+        for(UUID p : getQueue(name)) {
+            if(p == player) break;
+            i++;
+        }
+        return i;
+    }
+    
+    private Queue<UUID> getQueue(Q name) {
+        return queues.get(name);
     }
 }
