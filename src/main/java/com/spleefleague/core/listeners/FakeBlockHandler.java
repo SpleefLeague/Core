@@ -307,9 +307,7 @@ public class FakeBlockHandler implements Listener {
     public static void removeBlock(FakeBlock block, boolean update, Player... players) {
         for (Player player : players) {
             fakeAreas.get(player.getUniqueId()).remove(block);
-            if (update) {
-                player.sendBlockChange(block.getLocation(), Material.AIR, (byte) 0);
-            }
+            player.sendBlockChange(block.getLocation(), Material.AIR, (byte) 0);
         }
     }
 
