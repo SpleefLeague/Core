@@ -10,15 +10,14 @@ import java.util.UUID;
 /**
  *
  * @author Jonas
+ * @param <P>
  */
-public interface QueueableArena {
+public interface QueueableArena<P extends RatedPlayer> {
+    
     public boolean isOccupied();
-    public boolean isAvailable(UUID gp);
+    public boolean isAvailable(P p);
     public int getSize();
-    public int getQueueLength();
-    public int getQueuePosition(UUID gp);
     public String getName();
-    public String getCurrentState();
-    public boolean isInGeneral();
+    public boolean isQueued();
     public boolean isPaused();
 }
