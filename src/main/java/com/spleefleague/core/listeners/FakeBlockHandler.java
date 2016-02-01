@@ -232,9 +232,12 @@ public class FakeBlockHandler implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if (!fakeAreas.containsKey(event.getPlayer().getUniqueId())) {
-            fakeAreas.put(event.getPlayer().getUniqueId(), new ArrayList<>());
-        }
+        fakeAreas.put(event.getPlayer().getUniqueId(), new ArrayList<>());
+    }
+    
+    @EventHandler
+    public void onQuit(PlayerJoinEvent event) {
+        fakeAreas.remove(event.getPlayer().getUniqueId());
     }
 
     private static final ProtocolManager manager;
