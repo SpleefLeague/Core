@@ -24,7 +24,7 @@ public abstract class BattleManager<Q extends QueueableArena, P extends RatedPla
     
     public BattleManager() {
         this.activeBattles = new HashSet<>();
-        this.gameQueue = new GameQueue<>(this, 30 * 20);
+        this.gameQueue = new GameQueue<>(this);
     }
     
     public GameQueue<Q, P> getGameQueue() {

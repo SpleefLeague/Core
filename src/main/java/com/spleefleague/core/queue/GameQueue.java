@@ -32,23 +32,16 @@ public class GameQueue<Q extends QueueableArena, P extends RatedPlayer> {
     private final BattleManager<Q, P, ? extends Battle> battleManager;
     private final List<Q> queuedArenas;
     private final Map<Q, Set<P>> queues;
-    private final int tickDuration;
+    public static final int TICK_DURATION = 30 * 20;
     
-    public GameQueue(BattleManager<Q, P, ? extends Battle> battleHandler, int tickDuration) {
+    public GameQueue(BattleManager<Q, P, ? extends Battle> battleHandler) {
         this.battleManager = battleHandler;
         this.queuedArenas = new ArrayList<>();
         this.queues = new HashMap<>();
         this.queues.put(null, new HashSet<>());
-        this.tickDuration = tickDuration;
         gameQueues.add(this);
         if(tickTask == null) {
-            gcdTickDuration = tickDuration;
-            tickTask = tickRunnable.runTaskTimer(SpleefLeague.getInstance(), 0, gcdTickDuration);
-        }
-        else if(tickDuration % gcdTickDuration != 0) {
-            gcdTickDuration = gcd(tickDuration, gcdTickDuration);
-            tickTask.cancel();
-            tickTask = tickRunnable.runTaskTimer(SpleefLeague.getInstance(), 0, gcdTickDuration);
+            tickTask = tickRunnable.runTaskTimer(SpleefLeague.getInstance(), 0, TICK_DURATION);
         }
     }
     
@@ -86,10 +79,6 @@ public class GameQueue<Q extends QueueableArena, P extends RatedPlayer> {
             }
         }
         return false;
-    }
-    
-    private int getTickDuration() {
-        return tickDuration;
     }
     
     private void doTick() {
@@ -156,18 +145,10 @@ public class GameQueue<Q extends QueueableArena, P extends RatedPlayer> {
     }
     
     private static final HashSet<GameQueue> gameQueues;
-    private static int gcdTickDuration = -1;
     private static final BukkitRunnable tickRunnable;
     private static BukkitTask tickTask;
     private static final double MATCHMAKING_ACCURICY = 0.2;
     private static final int MIN_AVAILABLE_PLAYERS = 5;
-    
-    private static int gcd(int a, int b) {
-        if (b == 0) {
-            return a;
-        }
-        return gcd(b, a % b);
-    }
     
     static {
         gameQueues = new HashSet<>();
@@ -176,9 +157,7 @@ public class GameQueue<Q extends QueueableArena, P extends RatedPlayer> {
             public void run() {
                 super.run();
                 gameQueues.stream().forEach((queue) -> {
-                    if(queue.getTickDuration() % this.getTick() == 0) {
-                        queue.doTick();
-                    }
+                    queue.doTick();
                 });
             }
         };
