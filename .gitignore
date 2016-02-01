@@ -5,3 +5,5 @@ bin/
 .project
 .settings/
 /src/main/java/com/spleefleague/core/debuggers/
+SpleefLeagueCore.iml
+.idea/

@@ -6,7 +6,10 @@
 package com.spleefleague.core.player;
 
 import com.mongodb.client.MongoDatabase;
+
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +44,26 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
         this.map = new ConcurrentHashMap<>();
         this.db = plugin.getPluginDB();
         this.playerClass = playerClass;
+
+        Bukkit.getScheduler().runTaskTimer(SpleefLeague.getInstance(), () -> {
+            List<G> ghostPlayers = new ArrayList<>();
+            map.values().stream().filter((G g) -> Bukkit.getPlayer(g.getUniqueId()) == null).forEach(ghostPlayers::add);
+            if(ghostPlayers.isEmpty()) {
+                return;
+            }
+            SpleefLeague.getInstance().getLogger().severe("[!!] Ghost instances found!");
+            SpleefLeague.getInstance().getLogger().severe("[!!] Names:");
+            ghostPlayers.forEach((G g) -> SpleefLeague.getInstance().getLogger().severe("[!!] " + g.getName() + " (created at MS: " + g.getCreated() + ")."));
+            SpleefLeague.getInstance().getLogger().severe("[!!] Removing them now.");
+            ghostPlayers.forEach((G g) -> {
+                try {
+                    this.map.remove(g.getUniqueId());
+                } catch (Exception e) {
+                    this.map.values().remove(g);
+                }
+            });
+        }, 1200, 1200);
+
         Bukkit.getOnlinePlayers().stream().forEach((player) -> {
             load(player);
         });

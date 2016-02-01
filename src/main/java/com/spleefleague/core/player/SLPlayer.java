@@ -15,7 +15,7 @@ import org.bukkit.GameMode;
  * @author Jonas
  */
 public class SLPlayer extends GeneralPlayer {
-    
+
     private Rank rank;
     private UUID lastChatPartner;
     private int coins;
@@ -82,7 +82,7 @@ public class SLPlayer extends GeneralPlayer {
         this.options = options;
         options.apply(this);
     }
-    
+
     protected void setReceivingChatChannels(HashSet<ChatChannel> chatChannels) {
         this.chatChannels = chatChannels;
     }

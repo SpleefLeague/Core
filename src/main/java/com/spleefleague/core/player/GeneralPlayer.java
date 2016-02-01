@@ -72,9 +72,10 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class, priority = Integer.MAX_VALUE)
     private UUID uuid;
     private Player cached;
+    private final long created;
     
     public GeneralPlayer() {
-        
+        this.created = System.currentTimeMillis();
     }
     
     @DBSave(fieldName = "uuid", typeConverter = UUIDStringConverter.class)
@@ -103,6 +104,16 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     public boolean isOnline() {
         Player p = getPlayer();
         return p != null && p.isOnline();
+    }
+
+    /**
+     * Get the time that this player instance was created.
+     * Mainly for debug purposes (e.g. for the ghost player issue).
+     *
+     * @return time in MS since epoch when this instance was created.
+     */
+    public long getCreated() {
+        return created;
     }
     
     protected void setName(String username) {
