@@ -16,11 +16,13 @@ public class SpawnManager {
 
     public static final Integer RADIUS = 20;
 
+    private final Integer maxPerSpawn;
     private final List<SpawnLocation> spawnLocations;
     private long lastCached;
 
-    public SpawnManager(List<SpawnLocation> spawnLocations) {
+    public SpawnManager(List<SpawnLocation> spawnLocations, int maxPerSpawn) {
         this.spawnLocations = spawnLocations;
+        this.maxPerSpawn = maxPerSpawn;
         Bukkit.getScheduler().runTaskTimer(SpleefLeague.getInstance(), () -> {
             this.spawnLocations.forEach(SpawnLocation::calculatePlayerRadius);
             this.lastCached = System.currentTimeMillis();
@@ -33,7 +35,10 @@ public class SpawnManager {
      * @return SpawnLocation instance - null if none defined.
      */
     public SpawnLocation getNext() {
-        List<SpawnLocation> spawnLocations = this.spawnLocations.stream().sorted((e1, e2) -> Integer.compare(e1.getPlayersInRadius(), e2.getPlayersInRadius())).collect(Collectors.toList());
+        List<SpawnLocation> spawnLocations = this.spawnLocations.stream().filter((SpawnLocation spawnLocation) -> spawnLocation.getPlayersInRadius() < maxPerSpawn).collect(Collectors.toList());
+        if(spawnLocations == null) {
+            spawnLocations = this.spawnLocations.stream().sorted((e1, e2) -> Integer.compare(e1.getPlayersInRadius(), e2.getPlayersInRadius())).collect(Collectors.toList());
+        }
         return spawnLocations.get(0);
     }
 

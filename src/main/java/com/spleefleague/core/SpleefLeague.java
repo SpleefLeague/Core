@@ -95,10 +95,10 @@ public class SpleefLeague extends CorePlugin {
             String defaultWorld = Settings.getString("default_world");
             CorePlugin.DEFAULT_WORLD = Bukkit.getWorld(defaultWorld);
         }
-        if(Settings.hasKey("spawn_new")) {
+        if(Settings.hasKey("spawn_new") && Settings.hasKey("spawn_max_players")) {
             List<SpawnManager.SpawnLocation> spawns = new ArrayList<>();
             ((List<List>) Settings.getList("spawn_new")).forEach((List list) -> spawns.add(new SpawnManager.SpawnLocation(Settings.getLocation(list))));
-            spawnManager = new SpawnManager(spawns);
+            spawnManager = new SpawnManager(spawns, Settings.getInteger("spawn_max_players"));
         } else if(Settings.hasKey("spawn")) {
             spawn = Settings.getLocation("spawn");
             if(spawn != null) {
