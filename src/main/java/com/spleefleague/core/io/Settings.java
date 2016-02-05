@@ -60,6 +60,10 @@ public class Settings {
         if(doc == null) return null;
         return get(key, LocationWrapper.class).location;
     }
+
+    public static Location getLocation(List list) {
+        return new TypeConverter.LocationConverter().convertLoad(list);
+    }
     
     public static List getList(String key) {
         Document doc = (Document)settings.get(key);

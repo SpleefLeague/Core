@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import com.spleefleague.core.spawn.SpawnManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -78,7 +79,11 @@ public class EnvironmentListener implements Listener{
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        player.teleport(SpleefLeague.getInstance().getSpawnLocation());
+        SpawnManager.SpawnLocation spawnLocation = SpleefLeague.getInstance().getSpawnManager().getNext();
+        if(spawnLocation != null) {
+            spawnLocation.incrementPlayersInRadius();
+        }
+        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> player.teleport(spawnLocation != null ? spawnLocation.getLocation() : SpleefLeague.getInstance().getSpawnLocation()));
         if(!player.hasPlayedBefore()) {
             event.setJoinMessage(SpleefLeague.getInstance().getChatPrefix() + " " + ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + player.getName() + ChatColor.BLUE + " to SpleefLeague!");
         }

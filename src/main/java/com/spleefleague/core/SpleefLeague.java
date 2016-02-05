@@ -7,10 +7,13 @@ package com.spleefleague.core;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.spleefleague.core.io.TypeConverter;
+import com.spleefleague.core.spawn.SpawnManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -48,6 +51,7 @@ public class SpleefLeague extends CorePlugin {
     private PlayerManager<SLPlayer> playerManager;
     private Location spawn;
     private CommandLoader commandLoader;
+    private SpawnManager spawnManager;
     
     public SpleefLeague() {
         super("[SpleefLeague]", ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
@@ -91,7 +95,11 @@ public class SpleefLeague extends CorePlugin {
             String defaultWorld = Settings.getString("default_world");
             CorePlugin.DEFAULT_WORLD = Bukkit.getWorld(defaultWorld);
         }
-        if(Settings.hasKey("spawn")) {
+        if(Settings.hasKey("spawn_new")) {
+            List<SpawnManager.SpawnLocation> spawns = new ArrayList<>();
+            ((List<List>) Settings.getList("spawn_new")).forEach((List list) -> spawns.add(new SpawnManager.SpawnLocation(Settings.getLocation(list))));
+            spawnManager = new SpawnManager(spawns);
+        } else if(Settings.hasKey("spawn")) {
             spawn = Settings.getLocation("spawn");
             if(spawn != null) {
                 CorePlugin.DEFAULT_WORLD.setSpawnLocation(spawn.getBlockX(), spawn.getBlockY(), spawn.getBlockZ());
@@ -128,7 +136,11 @@ public class SpleefLeague extends CorePlugin {
     public MongoClient getMongo() {
         return mongo;
     }
-    
+
+    public SpawnManager getSpawnManager() {
+        return spawnManager;
+    }
+
     public PlayerManager<SLPlayer> getPlayerManager() {
         return playerManager;
     }

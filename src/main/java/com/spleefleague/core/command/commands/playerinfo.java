@@ -59,7 +59,7 @@ public class playerinfo extends BasicCommand {
                         }
                     }
                     PlayerData data = new PlayerData(target);
-                    p.sendMessage(ChatColor.DARK_GRAY + "[========== " + ChatColor.GRAY + targetName + "'s data" + ChatColor.DARK_GRAY + "==========]");
+                    p.sendMessage(ChatColor.DARK_GRAY + "[========== " + ChatColor.GRAY + targetName + "'s data " + ChatColor.DARK_GRAY + "==========]");
                     p.sendMessage(ChatColor.DARK_GRAY + "Name: " + ChatColor.GRAY + data.getName());
                     p.sendMessage(ChatColor.DARK_GRAY + "UUID: " + ChatColor.GRAY + data.getUUID());
                     p.sendMessage(ChatColor.DARK_GRAY + "Rank: " + ChatColor.GRAY + data.getRank());

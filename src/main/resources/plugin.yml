@@ -174,3 +174,7 @@ commands:
         description: Create a new forum account
         usage:
             /<command> <email>
+    spawns:
+        description: List all SL spawns.
+        usage:
+            /<command>
