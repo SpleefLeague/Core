@@ -59,11 +59,9 @@ public class FakeBlockHandler implements Listener {
     
     private FakeBlockHandler() {
         initPacketListeners();
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (!fakeAreas.containsKey(player.getUniqueId())) {
-                fakeAreas.put(player.getUniqueId(), new ArrayList<>());
-            }
-        }
+        Bukkit.getOnlinePlayers().stream().filter((player) -> (!fakeAreas.containsKey(player.getUniqueId()))).forEach((player) -> {
+            fakeAreas.put(player.getUniqueId(), new HashSet<>());
+        });
     }
 
     public static void stop() {
@@ -233,12 +231,12 @@ public class FakeBlockHandler implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         if(!fakeAreas.containsKey(event.getPlayer().getUniqueId())) {
-            fakeAreas.put(event.getPlayer().getUniqueId(), new ArrayList<>());
+            fakeAreas.put(event.getPlayer().getUniqueId(), new HashSet<>());
         }
     }
 
     private static final ProtocolManager manager;
-    private static final Map<UUID, Collection<FakeArea>> fakeAreas;
+    private static final Map<UUID, Set<FakeArea>> fakeAreas;
     private static FakeBlockHandler instance;
     private static final HashMap<Material, Sound> breakSounds;
     
@@ -276,7 +274,7 @@ public class FakeBlockHandler implements Listener {
     
     public static Player[] getSubscribers(FakeBlock block) {
         Collection<Player> players = new ArrayList<>();
-        for(Entry<UUID, Collection<FakeArea>> entry : fakeAreas.entrySet()) {
+        for(Entry<UUID, Set<FakeArea>> entry : fakeAreas.entrySet()) {
             for(FakeArea f : entry.getValue()) {
                 if(f.getBlocks().contains(block)) {
                     players.add(Bukkit.getPlayer(entry.getKey()));
@@ -322,7 +320,7 @@ public class FakeBlockHandler implements Listener {
 
     public static void update(FakeArea area) {
         Collection<Player> players = new ArrayList<>();
-        for (Entry<UUID, Collection<FakeArea>> entry : fakeAreas.entrySet()) {
+        for (Entry<UUID, Set<FakeArea>> entry : fakeAreas.entrySet()) {
             if (entry.getValue().contains(area)) {
                 Player player = Bukkit.getPlayer(entry.getKey());
                 if (player != null) {
