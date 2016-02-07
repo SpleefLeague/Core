@@ -22,7 +22,7 @@ import java.util.Date;
 public class spawns extends BasicCommand {
 
     public spawns(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage, Rank.DEVELOPER);
+        super(plugin, name, usage);
     }
 
     @Override
