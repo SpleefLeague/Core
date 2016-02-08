@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.spleefleague.core.io.TypeConverter;
+import com.spleefleague.core.listeners.*;
 import com.spleefleague.core.spawn.SpawnManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,11 +28,6 @@ import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.command.CommandLoader;
 import com.spleefleague.core.io.Config;
 import com.spleefleague.core.io.Settings;
-import com.spleefleague.core.listeners.AfkListener;
-import com.spleefleague.core.listeners.EnvironmentListener;
-import com.spleefleague.core.listeners.FakeBlockHandler;
-import com.spleefleague.core.listeners.InfractionListener;
-import com.spleefleague.core.listeners.InventoryMenuListener;
 import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
 import com.spleefleague.core.player.PlayerManager;
 import com.spleefleague.core.player.Rank;
@@ -73,6 +69,7 @@ public class SpleefLeague extends CorePlugin {
         ChatManager.init();
         MultiBlockChangeUtil.init();
         FakeBlockHandler.init();
+        VisibilityListener.init();
         EnvironmentListener.init();
         InfractionListener.init();
         InventoryMenuListener.init();
