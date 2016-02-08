@@ -56,6 +56,8 @@ import com.spleefleague.core.io.TypeConverter.DateConverter;
 import com.spleefleague.core.player.PlayerState;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.GamePlugin;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
 /**
  *
@@ -90,12 +92,6 @@ public class EnvironmentListener implements Listener{
         else {
             event.setJoinMessage(ChatColor.YELLOW + player.getName() + " has joined the server");
         }
-        Bukkit.getScheduler().runTaskLater(SpleefLeague.getInstance(), () -> {
-            for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-                slp.setPlayerListName(slp.getRank().getColor() + slp.getName());
-                slp.setDisplayName(slp.getRank().getColor() + slp.getName());
-            }
-        },20);
         logIPAddress(event.getPlayer());
     }
     
@@ -224,6 +220,11 @@ public class EnvironmentListener implements Listener{
         if (event.getBlock().getType() == Material.SOIL && event.getEntity() instanceof Creature) {
             event.setCancelled(true);
         }
+    }
+    
+    @EventHandler
+    public void onCreatureSpawn(CreatureSpawnEvent event) {
+        event.setCancelled(event.getSpawnReason() != SpawnReason.SPAWNER_EGG);
     }
     
     @EventHandler

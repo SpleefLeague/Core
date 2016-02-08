@@ -27,6 +27,7 @@ import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.command.CommandLoader;
 import com.spleefleague.core.io.Config;
 import com.spleefleague.core.io.Settings;
+import com.spleefleague.core.listeners.AfkListener;
 import com.spleefleague.core.listeners.EnvironmentListener;
 import com.spleefleague.core.listeners.FakeBlockHandler;
 import com.spleefleague.core.listeners.InfractionListener;
@@ -75,6 +76,7 @@ public class SpleefLeague extends CorePlugin {
         EnvironmentListener.init();
         InfractionListener.init();
         InventoryMenuListener.init();
+        AfkListener.init();
         InventoryMenuTemplateRepository.initTemplates();
         Warp.init();
         playerManager = new PlayerManager<>(this, SLPlayer.class);
@@ -106,15 +108,7 @@ public class SpleefLeague extends CorePlugin {
             }
         }
         if (Settings.hasKey("max_players")) {
-            try {
-                String bukkitversion = Bukkit.getServer().getClass().getPackage().getName().substring(23);
-                Object playerlist = Class.forName("org.bukkit.craftbukkit." + bukkitversion + ".CraftServer").getDeclaredMethod("getHandle", null).invoke(Bukkit.getServer(), null);
-                Field maxplayers = playerlist.getClass().getSuperclass().getDeclaredField("maxPlayers");
-                maxplayers.setAccessible(true);
-                maxplayers.set(playerlist, Settings.getInteger("max_players"));
-            } catch (IllegalArgumentException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | SecurityException | NoSuchFieldException | InvocationTargetException ex) {
-                Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            setSlotSize(Settings.getInteger("max_players"));
         }
     }
     
@@ -131,6 +125,18 @@ public class SpleefLeague extends CorePlugin {
     @Override
     public MongoDatabase getPluginDB() {
         return mongo.getDatabase("SpleefLeague");
+    }
+    
+    public void setSlotSize(int size) {
+        try {
+                String bukkitversion = Bukkit.getServer().getClass().getPackage().getName().substring(23);
+                Object playerlist = Class.forName("org.bukkit.craftbukkit." + bukkitversion + ".CraftServer").getDeclaredMethod("getHandle", null).invoke(Bukkit.getServer(), null);
+                Field maxplayers = playerlist.getClass().getSuperclass().getDeclaredField("maxPlayers");
+                maxplayers.setAccessible(true);
+                maxplayers.set(playerlist, size);
+            } catch (IllegalArgumentException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | SecurityException | NoSuchFieldException | InvocationTargetException ex) {
+                Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
+            }
     }
     
     public MongoClient getMongo() {

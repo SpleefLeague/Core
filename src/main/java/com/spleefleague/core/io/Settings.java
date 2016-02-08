@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import com.spleefleague.core.SpleefLeague;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 /**
@@ -40,19 +41,19 @@ public class Settings {
     public static String getString(String key) {
         Document doc = (Document)settings.get(key);
         if(doc == null) return null;
-        return (String)settings.get(key).get("value");
+        return doc.get("value", String.class);
     }
 
     public static int getInteger(String key) {
         Document doc = (Document)settings.get(key);
         if(doc == null) return 0;
-        return (int)settings.get(key).get("value");
+        return doc.get("value", int.class);
     }
 
     public static boolean getBoolean(String key) {
         Document doc = (Document)settings.get(key);
         if(doc == null) return true;
-        return (boolean)settings.get(key).get("value");
+        return doc.get("value", boolean.class);
     }
     
     public static Location getLocation(String key) {
@@ -68,7 +69,7 @@ public class Settings {
     public static List getList(String key) {
         Document doc = (Document)settings.get(key);
         if(doc == null) return null;
-        return (List)settings.get(key).get("value");
+        return doc.get("value", List.class);
     }
     
     public static <T extends DBEntity & DBLoadable> T get(String key, Class<? extends T> c) {
@@ -86,7 +87,50 @@ public class Settings {
         }
     }
     
-    public static class LocationWrapper extends DBEntity implements DBLoadable {
+    public static <T extends DBEntity & DBLoadable & DBSaveable> void set(String key, String value) {
+        Document doc = new Document();
+        doc.put("key", key);
+        doc.put("value", value);
+        save(key, doc);
+    }
+    
+    public static <T extends DBEntity & DBLoadable & DBSaveable> void set(String key, boolean value) {
+        Document doc = new Document();
+        doc.put("key", key);
+        doc.put("value", value);
+        save(key, doc);
+    }
+    
+    public static <T extends DBEntity & DBLoadable & DBSaveable> void set(String key, int value) {
+        Document doc = new Document();
+        doc.put("key", key);
+        doc.put("value", value);
+        save(key, doc);
+    }
+    
+    public static <T extends DBEntity & DBLoadable & DBSaveable> void set(String key, T object) {
+        Document value = EntityBuilder.serialize(object);
+        Document doc = new Document();
+        doc.put("key", key);
+        doc.put("value", value);
+        save(key, doc);
+    }
+    
+    private static void save(String key, Document doc) {
+        settings.put(key, doc);
+        if(!settings.containsKey(key)) {
+            Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+                SpleefLeague.getInstance().getPluginDB().getCollection("Settings").insertOne(doc);
+            });
+        }
+        else {
+            Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+                SpleefLeague.getInstance().getPluginDB().getCollection("Settings").replaceOne(new Document("key", key), doc);
+            });
+        }
+    }
+    
+    public static class LocationWrapper extends DBEntity implements DBLoadable, DBSaveable {
         @DBLoad(fieldName = "location", typeConverter = TypeConverter.LocationConverter.class)
         public Location location;
     }

@@ -178,3 +178,7 @@ commands:
         description: List all SL spawns.
         usage:
             /<command>
+    setmax:
+        description: Sets the current server slot size
+        usage:
+            /<command> <size>

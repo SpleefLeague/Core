@@ -5,19 +5,14 @@
  */
 package com.spleefleague.core.listeners;
 
-import java.util.HashSet;
-import java.util.Iterator;
 import com.spleefleague.core.SpleefLeague;
-import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
-import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.player.SLPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  *
