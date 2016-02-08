@@ -178,6 +178,10 @@ commands:
         description: List all SL spawns.
         usage:
             /<command>
+    fspeed:
+        description: Change flyspeed.
+        usage:
+            /<command> <speed>
     setmax:
         description: Sets the current server slot size
         usage:
