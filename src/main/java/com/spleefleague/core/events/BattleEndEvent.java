@@ -5,32 +5,25 @@
  */
 package com.spleefleague.core.events;
 
-import com.spleefleague.core.player.GeneralPlayer;
+import com.spleefleague.core.queue.Battle;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
 
 /**
  *
  * @author Jonas
  */
-public class GeneralPlayerLoadedEvent extends PlayerEvent {
+public class BattleEndEvent extends BattleEvent {
 
     private static final HandlerList handlers = new HandlerList();
-    private final GeneralPlayer gp;
-    private final boolean firstJoin;
+    private final EndReason reason;
     
-    public GeneralPlayerLoadedEvent(GeneralPlayer gp, boolean firstJoin) {
-        super(gp.getPlayer());
-        this.gp = gp;
-        this.firstJoin = firstJoin;
+    public BattleEndEvent(Battle battle, EndReason reason) {
+        super(battle);
+        this.reason = reason;
     }
     
-    public GeneralPlayer getGeneralPlayer() {
-        return gp;
-    }
-    
-    public boolean isFirstJoin() {
-        return firstJoin;
+    public EndReason getReason() {
+        return reason;
     }
     
     @Override
@@ -40,5 +33,13 @@ public class GeneralPlayerLoadedEvent extends PlayerEvent {
 
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+    
+    public static enum EndReason {
+        NORMAL,
+        CANCEL,
+        ENDGAME,
+        SURRENDER,
+        QUIT;
     }
 }
