@@ -5,10 +5,14 @@
  */
 package com.spleefleague.core.queue;
 
+import com.spleefleague.core.player.GeneralPlayer;
+
 /**
  *
  * @author Jonas
  */
-public interface RatedPlayer {
-    public int getRating();
+public abstract class RatedPlayer extends GeneralPlayer {
+
+    public abstract int getRating();
+
 }
