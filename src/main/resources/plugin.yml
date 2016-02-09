@@ -184,5 +184,11 @@ commands:
             /<command> <speed>
     setmax:
         description: Sets the current server slot size
+    ticket:
+        description: Opens a new ticket.
         usage:
-            /<command> <size>
+            /<command> <message>
+    ticketreply:
+        description: Replies to a ticket
+        usage:
+            /<command> <player> <message>
