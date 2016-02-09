@@ -9,9 +9,11 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.events.BattleStartEvent;
 import com.spleefleague.core.player.GeneralPlayer;
 import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.queue.RatedPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
@@ -35,14 +37,29 @@ public class VisibilityListener implements Listener {
 
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onStart(BattleStartEvent e) {
-        List<PlayerInfoData> list = new ArrayList<>();
-        SpleefLeague.getInstance().getPlayerManager().getAll().forEach((SLPlayer slPlayer) -> list.add(new PlayerInfoData(WrappedGameProfile.fromPlayer(slPlayer.getPlayer()), ((CraftPlayer) slPlayer.getPlayer()).getHandle().ping, EnumWrappers.NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(slPlayer.getRank().getColor() + slPlayer.getName()))));
-        WrapperPlayServerPlayerInfo packet = new WrapperPlayServerPlayerInfo();
-        packet.setAction(EnumWrappers.PlayerInfoAction.ADD_PLAYER);
-        packet.setData(list);
-        e.getBattle().getActivePlayers().forEach((Object ratedPlayer) -> packet.sendPacket(((GeneralPlayer) ratedPlayer).getPlayer()));
+        if(e.isCancelled()) {
+            return;
+        }
+        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
+            //Handle people in battle seeing others.
+            List<PlayerInfoData> list = new ArrayList<>();
+            SpleefLeague.getInstance().getPlayerManager().getAll().forEach((SLPlayer slPlayer) -> list.add(new PlayerInfoData(WrappedGameProfile.fromPlayer(slPlayer.getPlayer()), ((CraftPlayer) slPlayer.getPlayer()).getHandle().ping, EnumWrappers.NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(slPlayer.getRank().getColor() + slPlayer.getName()))));
+            WrapperPlayServerPlayerInfo packet = new WrapperPlayServerPlayerInfo();
+            packet.setAction(EnumWrappers.PlayerInfoAction.ADD_PLAYER);
+            packet.setData(list);
+            e.getBattle().getActivePlayers().forEach((Object ratedPlayer) -> packet.sendPacket(((GeneralPlayer) ratedPlayer).getPlayer()));
+
+            //Handle others seeing people in battle.
+            list.clear();
+            e.getBattle().getActivePlayers().forEach((Object ratedPlayer) -> {
+                SLPlayer generalPlayer = SpleefLeague.getInstance().getPlayerManager().get(((GeneralPlayer) ratedPlayer).getPlayer());
+                list.add(new PlayerInfoData(WrappedGameProfile.fromPlayer(generalPlayer.getPlayer()), ((CraftPlayer) generalPlayer.getPlayer()).getHandle().ping, EnumWrappers.NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(generalPlayer.getRank().getColor() + generalPlayer.getName())));
+            });
+            packet.setData(list);
+            SpleefLeague.getInstance().getPlayerManager().getAll().forEach((SLPlayer slPlayer) -> packet.sendPacket(slPlayer.getPlayer()));
+        });
     }
 
 }
