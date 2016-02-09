@@ -42,7 +42,7 @@ public class AfkListener implements Listener {
             task = Bukkit.getScheduler().runTaskTimer(SpleefLeague.getInstance(), () -> {
                 long time = System.currentTimeMillis();
                 for(SLPlayer player : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-                    if(time - lastAction.get(player.getUniqueId()) > AFK_TIME && player.getState() != PlayerState.INGAME && player.getRank().hasPermission(Rank.MODERATOR)) {
+                    if(time - lastAction.get(player.getUniqueId()) > AFK_TIME && player.getState() != PlayerState.INGAME && !player.getRank().hasPermission(Rank.MODERATOR)) {
                         player.kickPlayer(ChatColor.RED + "You have been afk for too long!");
                     }
                 }
