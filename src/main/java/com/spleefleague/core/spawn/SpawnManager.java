@@ -36,7 +36,7 @@ public class SpawnManager {
      */
     public SpawnLocation getNext() {
         List<SpawnLocation> spawnLocations = this.spawnLocations.stream().filter((SpawnLocation spawnLocation) -> spawnLocation.getPlayersInRadius() < maxPerSpawn).collect(Collectors.toList());
-        if(spawnLocations == null) {
+        if(spawnLocations == null || spawnLocations.isEmpty()) {
             spawnLocations = this.spawnLocations.stream().sorted((e1, e2) -> Integer.compare(e1.getPlayersInRadius(), e2.getPlayersInRadius())).collect(Collectors.toList());
         }
         return spawnLocations.get(0);
