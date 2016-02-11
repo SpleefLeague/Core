@@ -35,24 +35,30 @@ public class cancel extends BasicCommand {
 
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
-        Player tp = Bukkit.getPlayerExact(args[0]);
-        if (tp != null) {
-            GeneralPlayer gp = SpleefLeague.getInstance().getPlayerManager().get(tp);
-            if (gp != null) {
-                if (GamePlugin.isIngameGlobal(tp)) {
-                    GamePlugin.cancelGlobal(tp);
-                    success(cs, "The battle will be cancelled.");
-                } 
-                else {
-                    error(cs, "The player " + ChatColor.WHITE + tp.getName() + ChatColor.RED + " is not playing!");
+        if (args.length == 1) {
+            Player tp = Bukkit.getPlayerExact(args[0]);
+            if (tp != null) {
+                GeneralPlayer gp = SpleefLeague.getInstance().getPlayerManager().get(tp);
+                if (gp != null) {
+                    if (GamePlugin.isIngameGlobal(tp)) {
+                        GamePlugin.cancelGlobal(tp);
+                        success(cs, "The battle will be cancelled.");
+                    }
+                    else {
+                        error(cs, "The player " + ChatColor.WHITE + tp.getName() + ChatColor.RED + " is not playing!");
+                    }
                 }
-            } 
-            else {
-                error(cs, "The player " + ChatColor.WHITE + args[0] + ChatColor.RED + " is not initialized yet!");
+                else {
+                    error(cs, "The player " + ChatColor.WHITE + args[0] + ChatColor.RED + " is not initialized yet!");
+                }
             }
-        } 
+            else {
+                error(cs, "The player " + ChatColor.WHITE + args[0] + ChatColor.RED + " is not online!");
+            }
+
+        }
         else {
-            error(cs, "The player " + ChatColor.WHITE + args[0] + ChatColor.RED + " is not online!");
+            sendUsage(cs);
         }
     }
 }

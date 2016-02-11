@@ -28,9 +28,9 @@ public class ticketreply extends BasicCommand {
         if (args.length > 1) {
             Player player = Bukkit.getPlayer(args[0]);
             if (player.isOnline()) {
-                String message = StringUtil.fromArgsArray(args);
+                String message = StringUtil.fromArgsArray(args, 1);
                 ChatManager.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Ticket|" + player.getName() + ChatColor.GRAY + "]", ChatColor.GRAY + p.getName() + ": " + ChatColor.YELLOW + message, ChatChannel.STAFF);
-                player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Ticket|" + player.getName() + ChatColor.GRAY + "]" + ChatColor.GRAY + p.getName() + ": " + ChatColor.YELLOW + message);
+                player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Ticket|" + player.getName() + ChatColor.GRAY + "] " + ChatColor.GRAY + p.getName() + ": " + ChatColor.YELLOW + message);
             }
             else {
                 error(p, player.getName() + " is not currently online.");

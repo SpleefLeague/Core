@@ -25,8 +25,8 @@ public class ticket extends BasicCommand {
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args){
         if (args.length > 0) {
-            String message = StringUtil.fromArgsArray(args, 0);
-            slp.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Ticket" + ChatColor.GRAY + "]" + ChatColor.GRAY + p.getName() + ": " + ChatColor.YELLOW + message);
+            String message = StringUtil.fromArgsArray(args);
+            slp.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Ticket" + ChatColor.GRAY + "] " + ChatColor.GRAY + p.getName() + ": " + ChatColor.YELLOW + message);
             ChatManager.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Ticket" + ChatColor.GRAY + "]", ChatColor.GRAY + p.getName() + ": " + ChatColor.YELLOW + message, ChatChannel.STAFF);
         } else {
             sendUsage(p);
