@@ -24,22 +24,21 @@ public class ticketreply extends BasicCommand {
     }
 
     @Override
-    protected void run(Player p, SLPlayer slp, Command cmd, String[] args){
-        if (args.length == 0 || args.length == 1) {
-            slp.sendMessage(ChatColor.RED + "Correct Usage:");
-            slp.sendMessage(ChatColor.RED + "/ticketreply <player> <message>");
-            return;
+    protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
+        if (args.length > 1) {
+            Player player = Bukkit.getPlayer(args[0]);
+            if (player.isOnline()) {
+                String message = StringUtil.fromArgsArray(args, 1);
+                ChatManager.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Ticket|" + player.getName() + ChatColor.GRAY + "]", ChatColor.GRAY + p.getName() + ": " + ChatColor.YELLOW + message, ChatChannel.STAFF);
+                player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Ticket|" + player.getName() + ChatColor.GRAY + "] " + ChatColor.GRAY + p.getName() + ": " + ChatColor.YELLOW + message);
+            }
+            else {
+                error(p, player.getName() + " is not currently online.");
+            }
+            
         }
-
-        Player player = Bukkit.getPlayer(args[0]);
-        if (!player.isOnline()) {
-            slp.sendMessage(ChatColor.RED + player.getName() + " is not currently online.");
-            return;
+        else {
+            sendUsage(p);
         }
-
-        String message = StringUtil.fromArgsArray(args);
-        ChatManager.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Ticket|" + player.getName() + ChatColor.GRAY + "]", ChatColor.GRAY + p.getName() + ": " + ChatColor.YELLOW + message,
-                ChatChannel.STAFF);
-        player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Ticket|" + player.getName() + ChatColor.GRAY + "]" + ChatColor.GRAY + p.getName() + ": " + ChatColor.YELLOW + message);
     }
 }

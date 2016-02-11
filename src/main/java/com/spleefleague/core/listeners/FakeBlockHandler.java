@@ -277,7 +277,10 @@ public class FakeBlockHandler implements Listener {
         for(Entry<UUID, Set<FakeArea>> entry : fakeAreas.entrySet()) {
             for(FakeArea f : entry.getValue()) {
                 if(f.getBlocks().contains(block)) {
-                    players.add(Bukkit.getPlayer(entry.getKey()));
+                    Player player = Bukkit.getPlayer(entry.getKey());
+                    if(player != null && player.isOnline()) {
+                        players.add(player);
+                    }
                     break;
                 }
             }
@@ -347,7 +350,6 @@ public class FakeBlockHandler implements Listener {
     private static void initBreakSounds() {
         for(net.minecraft.server.v1_8_R3.Block block : net.minecraft.server.v1_8_R3.Block.REGISTRY) {
             String breaksound = block.stepSound.getBreakSound();
-            CraftMagicNumbers.getMaterial(block);
             breakSounds.put(CraftMagicNumbers.getMaterial(block), toSound(breaksound));
         }
     }

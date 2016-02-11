@@ -9,7 +9,6 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.events.BattleStartEvent;
 import com.spleefleague.core.player.GeneralPlayer;
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.queue.RatedPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;

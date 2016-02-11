@@ -26,11 +26,13 @@ public class ChunkPacketUtil {
         if (packet.getHandle() instanceof PacketPlayOutMapChunk) {
             WrapperPlayServerMapChunk wpsmc = new WrapperPlayServerMapChunk(packet);
             ChunkMap map = (ChunkMap) wpsmc.getChunkMap();
-            int x = wpsmc.getChunkX();
-            int z = wpsmc.getChunkZ();
-            Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x, z);
-            if (verified.size() > 0) {
-                modify(map, verified);
+            if(!(wpsmc.getGroundUpContinuous() && map.b == 0)) {
+                int x = wpsmc.getChunkX();
+                int z = wpsmc.getChunkZ();
+                Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x, z);
+                if (verified.size() > 0) {
+                    modify(map, verified);
+                }
             }
         }
         else if (packet.getHandle() instanceof PacketPlayOutMapChunkBulk) {
@@ -51,11 +53,13 @@ public class ChunkPacketUtil {
         if (packet.getHandle() instanceof PacketPlayOutMapChunk) {
             WrapperPlayServerMapChunk wpsmc = new WrapperPlayServerMapChunk(packet);
             ChunkMap map = (ChunkMap) wpsmc.getChunkMap();
-            int x = wpsmc.getChunkX();
-            int z = wpsmc.getChunkZ();
-            Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x, z);
-            if (verified.size() > 0) {
-                modify(map, verified);
+            if(!(wpsmc.getGroundUpContinuous() && map.b == 0)) {
+                int x = wpsmc.getChunkX();
+                int z = wpsmc.getChunkZ();
+                Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x, z);
+                if (verified.size() > 0) {
+                    modify(map, verified);
+                }
             }
         }
         else if (packet.getHandle() instanceof PacketPlayOutMapChunkBulk) {
