@@ -35,7 +35,7 @@ public class FakeArea {
     }
     
     public void remove(FakeArea area) {
-        fakeAreas.add(area);
+        fakeAreas.remove(area);
         outdated = true;
     }
     

@@ -32,7 +32,7 @@ public class AfkListener implements Listener {
     private static Listener instance;
     private static Map<UUID, Long> lastAction;
     private static BukkitTask task;
-    private static final long AFK_TIME = 1000 * 60 * 5;
+    private static final long AFK_TIME = 1000 * 60 * 10;
     
     public static void init() {
         if(instance == null) {

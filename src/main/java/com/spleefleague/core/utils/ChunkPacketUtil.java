@@ -79,7 +79,7 @@ public class ChunkPacketUtil {
     private static Map<Integer, Collection<FakeBlock>> toVerifiedSectionMap(FakeBlock[] unverified, int x, int z) {
         Map<Integer, Collection<FakeBlock>> verified = new HashMap<>();
         for (FakeBlock fb : unverified) {
-            if (fb.getChunk().getX() == x && fb.getChunk().getZ() == z) {
+            if (fb.getChunkX() == x && fb.getChunkZ() == z) {
                 int section = fb.getY() / 16;
                 Collection<FakeBlock> blocks;
                 if (!verified.containsKey(section)) {
@@ -98,7 +98,7 @@ public class ChunkPacketUtil {
     private static Map<Integer, Collection<FakeBlock>> toVerifiedSectionMap(Collection<FakeBlock> unverified, int x, int z) {
         Map<Integer, Collection<FakeBlock>> verified = new HashMap<>();
         for (FakeBlock fb : unverified) {
-            if (fb.getChunk().getX() == x && fb.getChunk().getZ() == z) {
+            if (fb.getChunkX() == x && fb.getChunkZ() == z) {
                 int section = fb.getY() / 16;
                 Collection<FakeBlock> blocks;
                 if (!verified.containsKey(section)) {

@@ -22,6 +22,7 @@ import com.spleefleague.core.utils.ChunkPacketUtil;
 import com.spleefleague.core.utils.FakeArea;
 import com.spleefleague.core.utils.FakeBlock;
 import com.spleefleague.core.utils.MultiBlockChangeUtil;
+import com.spleefleague.core.utils.fakeblock.FakeBlockCache;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -61,6 +62,7 @@ public class FakeBlockHandler implements Listener {
         initPacketListeners();
         Bukkit.getOnlinePlayers().stream().filter((player) -> (!fakeAreas.containsKey(player.getUniqueId()))).forEach((player) -> {
             fakeAreas.put(player.getUniqueId(), new HashSet<>());
+            fakeBlockCache.put(player.getUniqueId(), new FakeBlockCache());
         });
     }
 
@@ -91,8 +93,8 @@ public class FakeBlockHandler implements Listener {
 
             @Override
             public void onPacketSending(PacketEvent event) {
+                WrapperPlayServerMapChunk wpsmc = new WrapperPlayServerMapChunk(event.getPacket());
                 Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
-                    WrapperPlayServerMapChunk wpsmc = new WrapperPlayServerMapChunk(event.getPacket());
                     Chunk chunk = event.getPlayer().getWorld().getChunkAt(wpsmc.getChunkX(), wpsmc.getChunkZ());
                     if (((ChunkMap) wpsmc.getChunkMap()).b == 0 && wpsmc.getGroundUpContinuous()) {
                         MultiBlockChangeUtil.removeChunk(event.getPlayer(), chunk);
@@ -101,7 +103,7 @@ public class FakeBlockHandler implements Listener {
                         MultiBlockChangeUtil.addChunk(event.getPlayer(), chunk);
                     }
                 });
-                Set<FakeBlock> blocks = getFakeBlocks(event.getPlayer());
+                Set<FakeBlock> blocks = getFakeBlocksForChunk(event.getPlayer(), wpsmc.getChunkX(), wpsmc.getChunkZ());
                 if (blocks != null) {
                     ChunkPacketUtil.setBlocksPacketMapChunk(event.getPacket(), blocks);
                 }
@@ -115,11 +117,11 @@ public class FakeBlockHandler implements Listener {
 
             @Override
             public void onPacketSending(PacketEvent event) {
+                WrapperPlayServerMapChunkBulk wpsmcb = new WrapperPlayServerMapChunkBulk(event.getPacket());
                 Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
-                    WrapperPlayServerMapChunkBulk wpsmc = new WrapperPlayServerMapChunkBulk(event.getPacket());
-                    for (int i = 0; i < wpsmc.getChunksX().length; i++) {
-                        Chunk chunk = event.getPlayer().getWorld().getChunkAt(wpsmc.getChunksX()[i], wpsmc.getChunksZ()[i]);
-                        if (((ChunkMap) wpsmc.getChunks()[i]).b == 0) {
+                    for (int i = 0; i < wpsmcb.getChunksX().length; i++) {
+                        Chunk chunk = event.getPlayer().getWorld().getChunkAt(wpsmcb.getChunksX()[i], wpsmcb.getChunksZ()[i]);
+                        if (((ChunkMap) wpsmcb.getChunks()[i]).b == 0) {
                             MultiBlockChangeUtil.removeChunk(event.getPlayer(), chunk);
                         }
                         else {
@@ -127,7 +129,7 @@ public class FakeBlockHandler implements Listener {
                         }
                     }
                 });
-                Set<FakeBlock> blocks = getFakeBlocks(event.getPlayer());
+                Set<FakeBlock> blocks = getFakeBlocksForChunks(event.getPlayer(), wpsmcb.getChunksX(), wpsmcb.getChunksZ());
                 if (blocks != null) {
                     ChunkPacketUtil.setBlocksPacketMapChunk(event.getPacket(), blocks);
                 }
@@ -141,9 +143,10 @@ public class FakeBlockHandler implements Listener {
                     if (wrapper.getStatus() == EnumWrappers.PlayerDigType.STOP_DESTROY_BLOCK || wrapper.getStatus() == EnumWrappers.PlayerDigType.START_DESTROY_BLOCK) {
                         Location loc = wrapper.getLocation().toVector().toLocation(event.getPlayer().getWorld());
                         FakeBlock broken = null;
-                        Set<FakeBlock> blocks = getFakeBlocks(event.getPlayer());
-                        if (blocks != null) {
-                            for (FakeBlock block : blocks) {
+                        Chunk chunk = loc.getChunk();
+                        Set<FakeBlock> fakeBlocks = getFakeBlocksForChunk(event.getPlayer(), chunk.getX(), chunk.getZ());
+                        if (fakeBlocks != null) {
+                            for (FakeBlock block : fakeBlocks) {
                                 if (blockEqual(loc, block.getLocation())) {
                                     broken = block;
                                     break;
@@ -186,7 +189,8 @@ public class FakeBlockHandler implements Listener {
             public void onPacketReceiving(PacketEvent event) {
                 WrapperPlayClientBlockPlace wrapper = new WrapperPlayClientBlockPlace(event.getPacket());
                 Location loc = wrapper.getLocation().toVector().toLocation(event.getPlayer().getWorld());
-                Set<FakeBlock> fakeBlocks = getFakeBlocks(event.getPlayer());
+                Chunk chunk = loc.getChunk();
+                Set<FakeBlock> fakeBlocks = getFakeBlocksForChunk(event.getPlayer(), chunk.getX(), chunk.getZ());
                 if(fakeBlocks != null) {
                     for (FakeBlock fakeBlock : fakeBlocks) {
                         if (blockEqual(fakeBlock.getLocation(), loc)) {
@@ -232,11 +236,13 @@ public class FakeBlockHandler implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         if(!fakeAreas.containsKey(event.getPlayer().getUniqueId())) {
             fakeAreas.put(event.getPlayer().getUniqueId(), new HashSet<>());
+            fakeBlockCache.put(event.getPlayer().getUniqueId(), new FakeBlockCache());
         }
     }
 
     private static final ProtocolManager manager;
     private static final Map<UUID, Set<FakeArea>> fakeAreas;
+    private static final Map<UUID, FakeBlockCache> fakeBlockCache;
     private static FakeBlockHandler instance;
     private static final HashMap<Material, Sound> breakSounds;
     
@@ -247,6 +253,7 @@ public class FakeBlockHandler implements Listener {
     public static void addArea(FakeArea area, boolean update, Player... players) {
         for (Player player : players) {
             fakeAreas.get(player.getUniqueId()).add(area);
+            fakeBlockCache.get(player.getUniqueId()).addArea(area);
         }
         if (update) {
             MultiBlockChangeUtil.changeBlocks(area.getBlocks().toArray(new FakeBlock[0]), players);
@@ -260,6 +267,7 @@ public class FakeBlockHandler implements Listener {
     public static void removeArea(FakeArea area, boolean update, Player... players) {
         for (Player player : players) {
             fakeAreas.get(player.getUniqueId()).remove(area);
+            fakeBlockCache.get(player.getUniqueId()).removeBlocks(area.getBlocks());
         }
         if (update) {
             Collection<FakeBlock> fblocks = area.getBlocks();
@@ -295,6 +303,7 @@ public class FakeBlockHandler implements Listener {
     public static void addBlock(FakeBlock block, boolean update, Player... players) {
         for (Player player : players) {
             fakeAreas.get(player.getUniqueId()).add(block);
+            fakeBlockCache.get(player.getUniqueId()).addBlocks(block);
             if (update) {
                 player.sendBlockChange(block.getLocation(), block.getType(), (byte) 0);
             }
@@ -308,18 +317,21 @@ public class FakeBlockHandler implements Listener {
     public static void removeBlock(FakeBlock block, boolean update, Player... players) {
         for (Player player : players) {
             fakeAreas.get(player.getUniqueId()).remove(block);
-            player.sendBlockChange(block.getLocation(), Material.AIR, (byte) 0);
-        }
-    }
-
-    public static void update(Player... players) {
-        for (Player player : players) {
-            Set<FakeBlock> fakeBlocks = getFakeBlocks(player);
-            if(fakeBlocks != null) {
-                MultiBlockChangeUtil.changeBlocks(fakeBlocks.toArray(new FakeBlock[fakeBlocks.size()]), player);
+            fakeBlockCache.get(player.getUniqueId()).removeBlocks(block);
+            if(update) {
+                player.sendBlockChange(block.getLocation(), Material.AIR, (byte) 0);
             }
         }
     }
+
+//    public static void update(Player... players) {
+//        for (Player player : players) {
+//            Set<FakeBlock> fakeBlocks = getFakeBlocks(player);
+//            if(fakeBlocks != null) {
+//                MultiBlockChangeUtil.changeBlocks(fakeBlocks.toArray(new FakeBlock[fakeBlocks.size()]), player);
+//            }
+//        }
+//    }
 
     public static void update(FakeArea area) {
         Collection<Player> players = new ArrayList<>();
@@ -334,17 +346,13 @@ public class FakeBlockHandler implements Listener {
         MultiBlockChangeUtil.changeBlocks(area.getBlocks().toArray(new FakeBlock[0]), players.toArray(new Player[players.size()]));
     }
 
-    public static Set<FakeBlock> getFakeBlocks(Player player) {
-        if (fakeAreas.get(player.getUniqueId()).isEmpty()) {
-            return null;
-        }
-        else {
-            Set<FakeBlock> blocks = new HashSet<>();
-            for (FakeArea area : fakeAreas.get(player.getUniqueId())) {
-                blocks.addAll(area.getBlocks());
-            }
-            return blocks;
-        }
+    //Cache this with and make a getFakeBlocks(chunkx, chunkz, player)
+    public static Set<FakeBlock> getFakeBlocksForChunk(Player player, int x, int z) {
+        return fakeBlockCache.get(player.getUniqueId()).getBlocks(x, z);
+    }
+    
+    public static Set<FakeBlock> getFakeBlocksForChunks(Player player, int[] x, int[] z) {
+        return fakeBlockCache.get(player.getUniqueId()).getBlocks(x, z);
     }
     
     private static void initBreakSounds() {
@@ -366,6 +374,7 @@ public class FakeBlockHandler implements Listener {
     static {
         manager = ProtocolLibrary.getProtocolManager();
         fakeAreas = new HashMap<>();
+        fakeBlockCache = new HashMap<>();
         breakSounds = new HashMap();
         initBreakSounds();
     }

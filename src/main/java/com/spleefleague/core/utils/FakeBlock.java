@@ -19,10 +19,14 @@ public class FakeBlock extends FakeArea {
     
     private final Location location;
     private Material material;
+    private final int chunkx, chunkz;
     
     public FakeBlock(Location location, Material material) {
         this.location = location;
         this.material = material;
+        Chunk chunk = location.getChunk();
+        chunkx = chunk.getX();
+        chunkz = chunk.getZ();
     }
     
     public Location getLocation() {
@@ -31,6 +35,14 @@ public class FakeBlock extends FakeArea {
     
     public Chunk getChunk() {
         return location.getChunk();
+    }
+    
+    public int getChunkX() {
+        return chunkx;
+    }
+    
+    public int getChunkZ() {
+        return chunkz;
     }
     
     public Material getType() {
