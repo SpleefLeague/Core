@@ -13,6 +13,9 @@ import com.spleefleague.core.player.SLPlayer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 
 /**
@@ -33,7 +36,19 @@ public class ChatManager {
             });
         });
     }
-    
+
+    public static void sendMessage(final BaseComponent[] m, final ChatChannel c) {
+        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
+            SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(c))).forEach((slp) -> {
+                slp.spigot().sendMessage(m);
+            });
+        });
+    }
+
+    public static void sendMessage(ChatChannel c, BaseComponent... baseComponents) {
+        sendMessage(c, baseComponents);
+    }
+
     private static final HashSet<ChatChannel> channels = new HashSet<>();
     
     public static void registerChannel(ChatChannel channel) {

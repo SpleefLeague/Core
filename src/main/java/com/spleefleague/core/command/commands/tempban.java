@@ -22,6 +22,9 @@ import com.spleefleague.core.utils.StringUtil;
 import com.spleefleague.core.utils.TimeUtil;
 import com.spleefleague.core.infraction.Infraction;
 import com.spleefleague.core.infraction.InfractionType;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -62,7 +65,8 @@ public class tempban extends BasicCommand{
             SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").deleteOne(new Document("uuid", id.toString()));
             EntityBuilder.save(tempban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), false);
             EntityBuilder.save(tempban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), false);
-            ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix() + Theme.SUPER_SECRET.buildTheme(false) + " The player " + args[0] + " has been tempbanned by " + cs.getName(), ChatChannel.STAFF_NOTIFICATIONS);
+            ChatManager.sendMessage(new ComponentBuilder(SpleefLeague.getInstance().getChatPrefix() + " ").append(args[0] + " has been banned by " + cs.getName() + "!").color(ChatColor.GRAY)
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Reason: " + tempbanMessage + "\n").color(ChatColor.GRAY).append("Expires: " + TimeUtil.durationToString(duration)).color(ChatColor.GRAY).create())).create(), ChatChannel.STAFF_NOTIFICATIONS);
             if((pl = Bukkit.getPlayerExact(args[0])) != null)
                 pl.kickPlayer("You have been tempbanned for " + TimeUtil.durationToString(duration) + ". " + tempbanMessage);
             success(cs, "The player has been tempbanned!");

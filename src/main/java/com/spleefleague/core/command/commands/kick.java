@@ -20,6 +20,9 @@ import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.infraction.Infraction;
 import com.spleefleague.core.infraction.InfractionType;
 import com.spleefleague.core.utils.StringUtil;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -51,7 +54,8 @@ public class kick extends BasicCommand{
                 pl.kickPlayer("You have been kicked: " + kickMessage);
                 Infraction kick = new Infraction(pl.getUniqueId(), cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.KICK, System.currentTimeMillis(), -1, kickMessage);
                 Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> EntityBuilder.save(kick, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions")));
-                ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix() + Theme.SUPER_SECRET.buildTheme(false) + " The player " + args[0] + " has been kicked by " + cs.getName(), ChatChannel.STAFF_NOTIFICATIONS);
+                ChatManager.sendMessage(new ComponentBuilder(SpleefLeague.getInstance().getChatPrefix() + " ").append(pl.getName() + " has been banned by " + cs.getName() + "!").color(ChatColor.GRAY)
+                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Reason: " + kickMessage).color(ChatColor.GRAY).create())).create(), ChatChannel.STAFF_NOTIFICATIONS);
                 success(cs, "The player has been kicked!");
             }
             else {

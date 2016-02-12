@@ -52,7 +52,7 @@ commands:
         description: tempban a player
         aliases: []
         usage: |
-          /<command> <duration> <player> <message>
+          /<command> <player> <duration> <message>
     ban:
         description: ban a player
         aliases: []
