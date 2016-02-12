@@ -28,17 +28,17 @@ public class SLMenu {
     public static void init() {
         slMenuBuilder = menu()
                 .title("SLMenu")
-                .displayIcon(Material.GHAST_TEAR)
+                .displayIcon(Material.COMPASS)
                 .displayName("SL Menu")
                 .description("A menu for doing")
                 .description("various things")
                 //Gamemode submenus added by game plugins
                 .component(createOptionsMenu())
                 .component(createStaffMenu());
-        Bukkit.getScheduler().runTaskLater(SpleefLeague.getInstance(), () -> {
+        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
             slMenu = slMenuBuilder.build();
             InventoryMenuTemplateRepository.addMenu(slMenu);
-        }, 0); //Gets called after all plugins were loaded
+        }); //Gets called after all plugins were loaded
     }
 
     private static InventoryMenuTemplateBuilder createOptionsMenu() {
