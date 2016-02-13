@@ -20,6 +20,9 @@ import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.utils.StringUtil;
 import com.spleefleague.core.infraction.Infraction;
 import com.spleefleague.core.infraction.InfractionType;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -59,7 +62,8 @@ public class ban extends BasicCommand{
                 EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), false);
                 EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), false);
             });
-            ChatManager.sendMessage(SpleefLeague.getInstance().getChatPrefix() + Theme.SUPER_SECRET.buildTheme(false) + " The player " + args[0] + " has been banned by " + cs.getName(), ChatChannel.STAFF_NOTIFICATIONS);
+            ChatManager.sendMessage(new ComponentBuilder(SpleefLeague.getInstance().getChatPrefix() + " ").append(args[0] + " has been banned by " + cs.getName() + "!").color(ChatColor.GRAY)
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Reason: " + banMessage).color(ChatColor.GRAY).create())).create(), ChatChannel.STAFF_NOTIFICATIONS);
             if((pl = Bukkit.getPlayerExact(args[0])) != null) {
                 pl.kickPlayer("You have been banned for: " + banMessage);
             }
