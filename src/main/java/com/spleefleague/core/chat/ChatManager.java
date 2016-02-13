@@ -46,7 +46,7 @@ public class ChatManager {
     }
 
     public static void sendMessage(ChatChannel c, BaseComponent... baseComponents) {
-        sendMessage(c, baseComponents);
+        sendMessage(baseComponents, c);
     }
 
     private static final HashSet<ChatChannel> channels = new HashSet<>();
