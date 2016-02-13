@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.bukkit.Bukkit;
 
 public class FakeBlockCache {
     
@@ -20,6 +19,10 @@ public class FakeBlockCache {
     
     public FakeBlockCache() {
         
+    }
+    
+    public void clear() {
+        map.clear();
     }
     
     public Set<FakeBlock> getBlocks(int[] x, int[] z) {
@@ -103,6 +106,6 @@ public class FakeBlockCache {
     }
     
     private static int getKey(int x, int z) {
-        return x + z << 16;
+        return x + (z << 16);
     }
 }

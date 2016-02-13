@@ -267,7 +267,7 @@ public class FakeBlockHandler implements Listener {
     public static void removeArea(FakeArea area, boolean update, Player... players) {
         for (Player player : players) {
             fakeAreas.get(player.getUniqueId()).remove(area);
-            fakeBlockCache.get(player.getUniqueId()).removeBlocks(area.getBlocks());
+            recalculateCache(player);
         }
         if (update) {
             Collection<FakeBlock> fblocks = area.getBlocks();
@@ -317,7 +317,8 @@ public class FakeBlockHandler implements Listener {
     public static void removeBlock(FakeBlock block, boolean update, Player... players) {
         for (Player player : players) {
             fakeAreas.get(player.getUniqueId()).remove(block);
-            fakeBlockCache.get(player.getUniqueId()).removeBlocks(block);
+            recalculateCache(player);
+//            fakeBlockCache.get(player.getUniqueId()).removeBlocks(block);
             if(update) {
                 player.sendBlockChange(block.getLocation(), Material.AIR, (byte) 0);
             }
@@ -344,6 +345,21 @@ public class FakeBlockHandler implements Listener {
             }
         }
         MultiBlockChangeUtil.changeBlocks(area.getBlocks().toArray(new FakeBlock[0]), players.toArray(new Player[players.size()]));
+    }
+    
+    private static void recalculateCache(Player... players) {
+        for(Player player : players) {
+            FakeBlockCache cache = fakeBlockCache.get(player.getUniqueId());
+            cache.clear();
+            for(FakeArea area : fakeAreas.get(player.getUniqueId())) {
+                if(area instanceof FakeBlock) {
+                    cache.addBlocks((FakeBlock)area);
+                }
+                else {
+                    cache.addArea(area);
+                }
+            }
+        }
     }
 
     //Cache this with and make a getFakeBlocks(chunkx, chunkz, player)
