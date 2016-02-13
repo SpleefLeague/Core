@@ -54,7 +54,7 @@ public class kick extends BasicCommand{
                 pl.kickPlayer("You have been kicked: " + kickMessage);
                 Infraction kick = new Infraction(pl.getUniqueId(), cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.KICK, System.currentTimeMillis(), -1, kickMessage);
                 Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> EntityBuilder.save(kick, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions")));
-                ChatManager.sendMessage(new ComponentBuilder(SpleefLeague.getInstance().getChatPrefix() + " ").append(pl.getName() + " has been banned by " + cs.getName() + "!").color(ChatColor.GRAY)
+                ChatManager.sendMessage(new ComponentBuilder(SpleefLeague.getInstance().getChatPrefix() + " ").append(pl.getName() + " has been kicked by " + cs.getName() + "!").color(ChatColor.GRAY)
                         .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Reason: " + kickMessage).color(ChatColor.GRAY).create())).create(), ChatChannel.STAFF_NOTIFICATIONS);
                 success(cs, "The player has been kicked!");
             }
