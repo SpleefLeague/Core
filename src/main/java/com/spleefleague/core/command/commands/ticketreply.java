@@ -7,6 +7,9 @@ import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.utils.StringUtil;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -29,8 +32,11 @@ public class ticketreply extends BasicCommand {
             Player player = Bukkit.getPlayer(args[0]);
             if (player.isOnline()) {
                 String message = StringUtil.fromArgsArray(args, 1);
-                ChatManager.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Ticket|" + player.getName() + ChatColor.GRAY + "]", ChatColor.GRAY + p.getName() + ": " + ChatColor.YELLOW + message, ChatChannel.STAFF);
-                player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Ticket|" + player.getName() + ChatColor.GRAY + "] " + ChatColor.GRAY + p.getName() + ": " + ChatColor.YELLOW + message);
+                player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "Ticket" + ChatColor.DARK_GREEN + "|" + ChatColor.GREEN + player.getName() + ChatColor.DARK_GREEN + "] " + slp.getRank().getColor() + slp.getName() + ChatColor.GRAY + ": " + ChatColor.YELLOW + message);
+                ChatManager.sendMessage(ChatChannel.STAFF, new ComponentBuilder("[").color(ChatColor.DARK_GREEN.asBungee()).append("Ticket").color(ChatColor.GREEN.asBungee()).append("|").color(ChatColor.DARK_GREEN.asBungee()).append(player.getName()).color(ChatColor.GREEN.asBungee()).append("] ").color(ChatColor.DARK_GREEN.asBungee())
+                        .append(slp.getName()).color(slp.getRank().getColor().asBungee()).append(": ").color(ChatColor.GRAY.asBungee()).append(message).color(ChatColor.YELLOW.asBungee())
+                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to respond!").color(ChatColor.GRAY.asBungee()).create()))
+                        .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/treply " + player.getName() + " ")).create());
             }
             else {
                 error(p, player.getName() + " is not currently online.");

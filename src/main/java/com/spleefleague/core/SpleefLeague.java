@@ -89,7 +89,7 @@ public class SpleefLeague extends CorePlugin {
         return commandLoader.getCommand(name).getExecutor();
     }
     
-    private void applySettings() {
+    public void applySettings() {
         if(Settings.hasKey("default_world")) {
             String defaultWorld = Settings.getString("default_world");
             CorePlugin.DEFAULT_WORLD = Bukkit.getWorld(defaultWorld);

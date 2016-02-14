@@ -17,10 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitTask;
 
 /**
@@ -83,4 +80,10 @@ public class AfkListener implements Listener {
     public void onChat(PlayerCommandPreprocessEvent event) {
         lastAction.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
     }
+
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent e) {
+        lastAction.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
+    }
+
 }

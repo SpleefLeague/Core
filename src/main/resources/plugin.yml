@@ -192,5 +192,6 @@ commands:
             /<command> <message>
     ticketreply:
         description: Replies to a ticket
+        aliases: [treply]
         usage:
             /<command> <player> <message>
