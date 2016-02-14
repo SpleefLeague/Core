@@ -41,7 +41,7 @@ public class VisibilityListener implements Listener {
         if(e.isCancelled()) {
             return;
         }
-        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLater(SpleefLeague.getInstance(), () -> {
             //Handle people in battle seeing others.
             List<PlayerInfoData> list = new ArrayList<>();
             SpleefLeague.getInstance().getPlayerManager().getAll().forEach((SLPlayer slPlayer) -> list.add(new PlayerInfoData(WrappedGameProfile.fromPlayer(slPlayer.getPlayer()), ((CraftPlayer) slPlayer.getPlayer()).getHandle().ping, EnumWrappers.NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(slPlayer.getRank().getColor() + slPlayer.getName()))));
@@ -58,7 +58,7 @@ public class VisibilityListener implements Listener {
             });
             packet.setData(list);
             SpleefLeague.getInstance().getPlayerManager().getAll().forEach((SLPlayer slPlayer) -> packet.sendPacket(slPlayer.getPlayer()));
-        });
+        }, 10);
     }
 
 }

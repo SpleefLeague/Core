@@ -96,13 +96,6 @@ public class EnvironmentListener implements Listener{
     }
     
     @EventHandler
-    public void onLoad(GeneralPlayerLoadedEvent event) {
-        if(event.getGeneralPlayer() instanceof SLPlayer) {
-            ((SLPlayer)event.getGeneralPlayer()).resetVisibility();
-        }
-    }
-    
-    @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         event.setQuitMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has left the server");
         GamePlugin.unspectateGlobal(event.getPlayer());
