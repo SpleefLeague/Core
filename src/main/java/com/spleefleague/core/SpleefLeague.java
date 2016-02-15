@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import com.spleefleague.core.io.TypeConverter;
 import com.spleefleague.core.listeners.*;
+import com.spleefleague.core.portals.PortalManager;
 import com.spleefleague.core.spawn.SpawnManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -49,6 +50,7 @@ public class SpleefLeague extends CorePlugin {
     private Location spawn;
     private CommandLoader commandLoader;
     private SpawnManager spawnManager;
+    private PortalManager portalManager;
     
     public SpleefLeague() {
         super("[SpleefLeague]", ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
@@ -77,6 +79,7 @@ public class SpleefLeague extends CorePlugin {
         InventoryMenuTemplateRepository.initTemplates();
         Warp.init();
         playerManager = new PlayerManager<>(this, SLPlayer.class);
+        portalManager = new PortalManager();
     }
     
     @Override
@@ -142,6 +145,10 @@ public class SpleefLeague extends CorePlugin {
 
     public SpawnManager getSpawnManager() {
         return spawnManager;
+    }
+
+    public PortalManager getPortalManager() {
+        return portalManager;
     }
 
     public PlayerManager<SLPlayer> getPlayerManager() {

@@ -45,7 +45,6 @@ import org.bukkit.inventory.ItemStack;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.command.commands.back;
 import com.spleefleague.core.events.FakeBlockBreakEvent;
-import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.io.DBEntity;
 import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.DBSaveable;
