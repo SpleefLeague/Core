@@ -133,15 +133,11 @@ public class SLPlayer extends GeneralPlayer {
                         this.showPlayer(slp);
                         slp.showPlayer(this);
                     }
-                    else {
-                        this.showPlayer(slp);
-                        slp.showPlayer(this);
-                    }
                 }
             }
         }
     }
-    
+
     @Override
     public void done() {
         if(this.options == null) {
