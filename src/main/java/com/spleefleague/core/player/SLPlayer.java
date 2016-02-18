@@ -8,6 +8,9 @@ import com.spleefleague.core.io.DBLoad;
 import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.TypeConverter.RankStringConverter;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
+import com.spleefleague.core.queue.Challenge;
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.GameMode;
 
 /**
@@ -24,10 +27,12 @@ public class SLPlayer extends GeneralPlayer {
     private PlayerState state = PlayerState.IDLE;
     private PlayerOptions options;
     private boolean hasForumAccount = false;
+    private Map<UUID, Challenge> activeChallenges;
     
     public SLPlayer() {
         super();
         this.chatChannels = new HashSet<>();
+        this.activeChallenges = new HashMap<>();
         this.sendingChannel = ChatChannel.GLOBAL;
     }
     
@@ -136,6 +141,18 @@ public class SLPlayer extends GeneralPlayer {
                 }
             }
         }
+    }
+    
+    public void addChallenge(Challenge challenge) {
+        activeChallenges.put(challenge.getChallengingPlayer().getUniqueId(), challenge);
+    }
+    
+    public void removeChallenge(Challenge challenge) {
+        activeChallenges.remove(challenge.getChallengingPlayer().getUniqueId());
+    }
+    
+    public Challenge getChallenge(SLPlayer challenger) {
+        return activeChallenges.get(challenger.getUniqueId());
     }
 
     @Override

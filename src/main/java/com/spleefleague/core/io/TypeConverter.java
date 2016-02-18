@@ -11,6 +11,11 @@ import java.util.List;
 import java.util.UUID;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.player.Rank;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -40,7 +45,7 @@ public abstract class TypeConverter<T, V> {
             return UUID.fromString(v);
         }
     }
-    
+
     public static class RankStringConverter extends TypeConverter<String, Rank> {
 
         @Override
@@ -67,6 +72,32 @@ public abstract class TypeConverter<T, V> {
         }
     }
 
+    public static class MapConverter extends TypeConverter<List, Map<String, Object>> {
+
+        @Override
+        public Map<String, Object> convertLoad(List t) {
+            try {
+                Map<String, Object> map = new HashMap<>();
+                for (Document doc : (List<Document>) t) {
+                    String key = doc.get("value", String.class);
+                    Class c = Class.forName(doc.get("class", String.class));
+                    map.put(key, EntityBuilder.load(doc, c));
+                }
+                return map;
+            } catch (ClassNotFoundException ex) {
+                //Error handling
+                Logger.getLogger(TypeConverter.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return null;
+        }
+
+        @Override
+        public List convertSave(Map<String, Object> v) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+    }
+
     public static class LocationConverter extends TypeConverter<List, Location> {
 
         @Override
@@ -74,36 +105,36 @@ public abstract class TypeConverter<T, V> {
             double x, y, z;
             float pitch = 0, yaw = 0;
             World world;
-            if(t.get(0) instanceof Integer) {
-                x = (Integer)t.get(0);
+            if (t.get(0) instanceof Integer) {
+                x = (Integer) t.get(0);
             }
             else {
-                x = (double)t.get(0);
+                x = (double) t.get(0);
             }
-            if(t.get(1) instanceof Integer) {
-                y = (Integer)t.get(1);
-            }
-            else {
-                y = (double)t.get(1);
-            }
-            if(t.get(2) instanceof Integer) {
-                z = (Integer)t.get(2);
+            if (t.get(1) instanceof Integer) {
+                y = (Integer) t.get(1);
             }
             else {
-                z = (double)t.get(2);
+                y = (double) t.get(1);
             }
-            if(t.size() >= 5) {
-                if(t.get(3) instanceof Integer) {
-                    pitch = ((Integer)t.get(3)).floatValue();
+            if (t.get(2) instanceof Integer) {
+                z = (Integer) t.get(2);
+            }
+            else {
+                z = (double) t.get(2);
+            }
+            if (t.size() >= 5) {
+                if (t.get(3) instanceof Integer) {
+                    pitch = ((Integer) t.get(3)).floatValue();
                 }
                 else {
-                    pitch = ((Double)t.get(3)).floatValue();
+                    pitch = ((Double) t.get(3)).floatValue();
                 }
-                if(t.get(4) instanceof Integer) {
-                    yaw = ((Integer)t.get(4)).floatValue();
+                if (t.get(4) instanceof Integer) {
+                    yaw = ((Integer) t.get(4)).floatValue();
                 }
                 else {
-                    yaw = ((Double)t.get(4)).floatValue();
+                    yaw = ((Double) t.get(4)).floatValue();
                 }
             }
             world = (t.size() % 2 == 0) ? Bukkit.getWorld((String) t.get(t.size() - 1)) : SpleefLeague.DEFAULT_WORLD;

@@ -5,6 +5,7 @@
  */
 package com.spleefleague.core.io;
 
+import com.google.common.collect.Iterables;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -24,7 +25,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -305,7 +305,11 @@ public class EntityBuilder {
                         }
                         else {
                             for (Object value : col) {
-                                if (DBSaveable.class.isAssignableFrom(f.getType().getComponentType())) {
+                                Class c = f.getType().getComponentType();
+                                if(c == null) {
+                                    c = Iterables.getFirst((Collection)o, null).getClass(); //Dangerous, but if this doesn't work, nothing does.
+                                }
+                                if (DBSaveable.class.isAssignableFrom(c)) {
                                     value = serialize((DBSaveable) value).get("$set");
                                 }
                                 list.add(value);

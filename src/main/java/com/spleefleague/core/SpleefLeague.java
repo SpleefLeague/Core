@@ -33,6 +33,7 @@ import com.spleefleague.core.player.PlayerManager;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
+import com.spleefleague.core.queue.Challenge;
 import com.spleefleague.core.utils.DatabaseConnection;
 import com.spleefleague.core.utils.MultiBlockChangeUtil;
 import com.spleefleague.core.utils.RuntimeCompiler;
@@ -76,6 +77,7 @@ public class SpleefLeague extends CorePlugin {
         AfkListener.init();
         InventoryMenuTemplateRepository.initTemplates();
         Warp.init();
+        Challenge.init();
         playerManager = new PlayerManager<>(this, SLPlayer.class);
     }
     

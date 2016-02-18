@@ -75,15 +75,9 @@ public class AfkListener implements Listener {
     public void onMove(PlayerMoveEvent event) {
         lastAction.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
     }
-    
-    @EventHandler
-    public void onChat(PlayerCommandPreprocessEvent event) {
-        lastAction.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
-    }
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
         lastAction.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
     }
-
 }

@@ -195,3 +195,11 @@ commands:
         aliases: [treply]
         usage:
             /<command> <player> <message>
+    challenge:
+        description: Accept/Decline a challenge
+        usage:
+            /<command> <accept|decline> <player>
+    fly:
+        description: Toggles flymode
+        usage:
+            /<command>
