@@ -7,6 +7,7 @@ package com.spleefleague.core.command.commands;
 
 import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
+import com.spleefleague.core.chat.Communicator;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
@@ -15,6 +16,8 @@ import com.spleefleague.core.utils.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
+
+import java.io.IOException;
 
 /**
  *
@@ -30,7 +33,13 @@ public class staffchat extends BasicCommand {
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
         if(args.length > 0) {
             String message = StringUtil.fromArgsArray(args, 0);
-            ChatManager.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Staff" + ChatColor.GRAY + "]", ChatColor.GRAY + p.getName() + ": " + ChatColor.GREEN + message, ChatChannel.STAFF);
+            //ChatManager.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Staff" + ChatColor.GRAY + "]", ChatColor.GRAY + p.getName() + ": " + ChatColor.GREEN + message, ChatChannel.STAFF);
+            try{
+                Communicator.sendMessage(ChatChannel.STAFF, ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Staff" + ChatColor.GRAY + "]" + ChatColor.GRAY + p.getName() + ": "
+                        + ChatColor.GREEN + message, p);
+            } catch(IOException e){
+                e.printStackTrace();
+            }
         }
         else {
             sendUsage(p);
