@@ -5,7 +5,10 @@
  */
 package com.spleefleague.core.utils;
 
-
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.plugin.CorePlugin;
 import java.lang.reflect.Field;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
@@ -13,6 +16,7 @@ import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle.EnumTitleAction;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -22,7 +26,7 @@ import org.bukkit.entity.Player;
  * @author Jonas
  */
 public class PlayerUtil {
-    
+
     public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
         CraftPlayer craftplayer = (CraftPlayer) player;
         PlayerConnection connection = craftplayer.getHandle().playerConnection;
@@ -33,26 +37,36 @@ public class PlayerUtil {
         connection.sendPacket(titlePacket);
         connection.sendPacket(subtitlePacket);
     }
-    
+
     public static void clearPermissions(Player player) {
-        CraftPlayer cp = (CraftPlayer)player;
+        CraftPlayer cp = (CraftPlayer) player;
         try {
             Field field = CraftEntity.class.getDeclaredField("perm");
             field.setAccessible(true);
             Object o = field.get(cp);
             o.getClass().getMethod("clearPermissions").invoke(o);
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     public static boolean isInWater(Player player) {
-        Entity e = ((CraftPlayer)player).getHandle();
+        Entity e = ((CraftPlayer) player).getHandle();
         return e.V();
     }
-    
+
     public static boolean isInLava(Player player) {
-        Entity e = ((CraftPlayer)player).getHandle();
+        Entity e = ((CraftPlayer) player).getHandle();
         return e.ab();
+    }
+
+    public static void sendToServer(Player player, String server) {
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+            CorePlugin.syncSaveAll(player);
+            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+            out.writeUTF("Connect");
+            out.writeUTF(server);
+            player.sendPluginMessage(SpleefLeague.getInstance(), "BungeeCord", out.toByteArray());
+        });
     }
 }

@@ -203,3 +203,7 @@ commands:
         description: Toggles flymode
         usage:
             /<command>
+    join:
+        description: Joins a server
+        usage:
+            /<command> <server>

@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -58,6 +59,14 @@ public abstract class CorePlugin extends JavaPlugin {
     
     public void log(String message) {
         System.out.println(prefix + " " + message);
+    }
+    
+    public abstract void syncSave(Player p);
+    
+    public static void syncSaveAll(Player p) {
+        for(CorePlugin gp : plugins) {
+            gp.syncSave(p);
+        }
     }
     
     public static Collection<CorePlugin> getAll() {

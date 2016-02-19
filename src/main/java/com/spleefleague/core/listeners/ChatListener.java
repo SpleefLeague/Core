@@ -8,6 +8,9 @@ package com.spleefleague.core.listeners;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.player.SLPlayer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -33,16 +36,21 @@ public class ChatListener implements Listener {
 
     }
     
+    private Map<UUID, Long> lastMessage = new HashMap<>();
+    
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer().getUniqueId());
-        String prefix = "";
-        if(!slp.getRank().getDisplayName().equals("Default")) {
-            prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getDisplayName() + ChatColor.DARK_GRAY + "] ";
+        if(!lastMessage.containsKey(slp.getUniqueId()) || System.currentTimeMillis() - lastMessage.get(slp.getUniqueId()) > 3000) {
+            String prefix = "";
+            if(!slp.getRank().getDisplayName().equals("Default")) {
+                prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getDisplayName() + ChatColor.DARK_GRAY + "] ";
+            }
+            if(!event.isCancelled()) {
+                ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, event.getMessage(), slp.getSendingChannel());
+            }
         }
-        if(!event.isCancelled()) {
-            ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, event.getMessage(), slp.getSendingChannel());
-        }
-        event.setCancelled(true);
+        lastMessage.put(slp.getUniqueId(), System.currentTimeMillis());
+        event.setCancelled(true);    
     }
 }

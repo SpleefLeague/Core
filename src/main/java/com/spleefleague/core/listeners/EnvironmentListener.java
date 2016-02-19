@@ -85,18 +85,20 @@ public class EnvironmentListener implements Listener{
             spawnLocation.incrementPlayersInRadius();
         }
         Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> player.teleport(spawnLocation != null ? spawnLocation.getLocation() : SpleefLeague.getInstance().getSpawnLocation()));
-        if(!player.hasPlayedBefore()) {
-            event.setJoinMessage(SpleefLeague.getInstance().getChatPrefix() + " " + ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + player.getName() + ChatColor.BLUE + " to SpleefLeague!");
-        }
-        else {
-            event.setJoinMessage(ChatColor.YELLOW + player.getName() + " has joined the server");
-        }
+//        if(!player.hasPlayedBefore()) {
+//            event.setJoinMessage(SpleefLeague.getInstance().getChatPrefix() + " " + ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + player.getName() + ChatColor.BLUE + " to SpleefLeague!");
+//        }
+//        else {
+//            event.setJoinMessage(ChatColor.YELLOW + player.getName() + " has joined the server");
+//        }
+        event.setJoinMessage(null);//During SWC
         logIPAddress(event.getPlayer());
     }
     
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        event.setQuitMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has left the server");
+        //event.setQuitMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has left the server");
+        event.setQuitMessage(null);
         GamePlugin.unspectateGlobal(event.getPlayer());
     }
     

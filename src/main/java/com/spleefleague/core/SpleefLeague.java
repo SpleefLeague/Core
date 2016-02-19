@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.spleefleague.core.io.TypeConverter;
 import com.spleefleague.core.listeners.*;
 import com.spleefleague.core.portals.PortalManager;
 import com.spleefleague.core.spawn.SpawnManager;
@@ -28,6 +27,7 @@ import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.command.CommandLoader;
 import com.spleefleague.core.io.Config;
+import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
 import com.spleefleague.core.player.PlayerManager;
@@ -39,6 +39,7 @@ import com.spleefleague.core.utils.DatabaseConnection;
 import com.spleefleague.core.utils.MultiBlockChangeUtil;
 import com.spleefleague.core.utils.RuntimeCompiler;
 import com.spleefleague.core.utils.Warp;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -159,6 +160,14 @@ public class SpleefLeague extends CorePlugin {
     
     public Location getSpawnLocation() {
         return spawn;
+    }
+
+    @Override
+    public void syncSave(Player p) {
+        SLPlayer slp = playerManager.get(p);
+        if(slp != null) {
+            EntityBuilder.save(slp, getPluginDB().getCollection("Players"));
+        }
     }
     
     private static SpleefLeague instance;
