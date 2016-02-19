@@ -34,8 +34,8 @@ public class staffchat extends BasicCommand {
         if(args.length > 0) {
             String message = StringUtil.fromArgsArray(args, 0);
             //ChatManager.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Staff" + ChatColor.GRAY + "]", ChatColor.GRAY + p.getName() + ": " + ChatColor.GREEN + message, ChatChannel.STAFF);
-            try{
-                Communicator.sendMessage(ChatChannel.STAFF, ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Staff" + ChatColor.GRAY + "]" + ChatColor.GRAY + p.getName() + ": "
+            try {
+                Communicator.sendMessage(ChatChannel.STAFF, ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Staff" + ChatColor.GRAY + "] " + ChatColor.GRAY + p.getName() + ": "
                         + ChatColor.GREEN + message, p);
             } catch(IOException e){
                 e.printStackTrace();

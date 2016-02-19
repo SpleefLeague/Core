@@ -24,6 +24,9 @@ public class fly extends BasicCommand {
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        p.setFlying(!p.isFlying());
+        p.setAllowFlight(!p.getAllowFlight());
+        p.setFlying(p.getAllowFlight());
+        success(p, "You are now " + (p.getAllowFlight() ? "able" : "unable") + " to fly!");
     }
+
 }
