@@ -25,7 +25,7 @@ import org.bson.Document;
  * @author Jonas
  */
 public class ChatChannel extends DBEntity implements DBLoadable, Comparable<ChatChannel> {
-    
+
     @DBLoad(fieldName = "minRank", typeConverter = Rank.FromStringConverter.class)
     private Rank minRank;
     @DBLoad(fieldName = "name")

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.spleefleague.core.io.connections.ConnectionClient;
 import com.spleefleague.core.listeners.*;
 import com.spleefleague.core.portals.PortalManager;
 import com.spleefleague.core.spawn.SpawnManager;
@@ -50,6 +51,7 @@ public class SpleefLeague extends CorePlugin {
     private MongoClient mongo;
     private PlayerManager<SLPlayer> playerManager;
     private Location spawn;
+    private ConnectionClient connectionClient;
     private CommandLoader commandLoader;
     private SpawnManager spawnManager;
     private PortalManager portalManager;
@@ -77,17 +79,20 @@ public class SpleefLeague extends CorePlugin {
         EnvironmentListener.init();
         InfractionListener.init();
         InventoryMenuListener.init();
+        ConnectionListener.init();
         AfkListener.init();
         InventoryMenuTemplateRepository.initTemplates();
         Warp.init();
         Challenge.init();
         playerManager = new PlayerManager<>(this, SLPlayer.class);
         portalManager = new PortalManager();
+        connectionClient = new ConnectionClient();
     }
     
     @Override
     public void stop() {
         playerManager.saveAll();
+        connectionClient.stop();
         mongo.close();
     }
     
@@ -157,7 +162,11 @@ public class SpleefLeague extends CorePlugin {
     public PlayerManager<SLPlayer> getPlayerManager() {
         return playerManager;
     }
-    
+
+    public ConnectionClient getConnectionClient() {
+        return connectionClient;
+    }
+
     public Location getSpawnLocation() {
         return spawn;
     }

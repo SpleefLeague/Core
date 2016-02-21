@@ -32,6 +32,10 @@
                             <artifactSet>
                                 <includes>
                                     <include>org.mongodb</include>
+                                    <include>org.json:*</include>
+                                    <include>io.socket:*</include>
+                                    <include>com.squareup.okhttp:*</include>
+                                    <include>com.squareup.okio:*</include>
                                 </includes>
                             </artifactSet>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
@@ -98,7 +102,11 @@
             <artifactId>ProtocolLib</artifactId>
             <version>3.6.4</version>
         </dependency>
-        
+        <dependency>
+            <groupId>io.socket</groupId>
+            <artifactId>socket.io-client</artifactId>
+            <version>0.6.2</version>
+        </dependency>
         <dependency>
             <groupId>com.comphenix.packetwrapper</groupId>
             <artifactId>PacketWrapper</artifactId>

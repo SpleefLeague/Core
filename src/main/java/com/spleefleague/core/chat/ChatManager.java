@@ -11,12 +11,11 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.listeners.ChatListener;
 import com.spleefleague.core.player.SLPlayer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -29,12 +28,18 @@ public class ChatManager {
     }
     
     public static void sendMessage(final String m, final ChatChannel c) {
-        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
-            Bukkit.getConsoleSender().sendMessage(m);
-            SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(c))).forEach((slp) -> {
-                slp.sendMessage(m);
+        if(c == ChatChannel.STAFF) {
+            JSONObject send = new JSONObject();
+            send.put("message", m);
+            SpleefLeague.getInstance().getConnectionClient().send("staff", send);
+        } else {
+            Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
+                Bukkit.getConsoleSender().sendMessage(m);
+                SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(c))).forEach((slp) -> {
+                    slp.sendMessage(m);
+                });
             });
-        });
+        }
     }
 
     public static void sendMessage(final BaseComponent[] m, final ChatChannel c) {
