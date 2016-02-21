@@ -282,13 +282,10 @@ public class FakeBlockHandler implements Listener {
     
     public static Player[] getSubscribers(FakeBlock block) {
         Collection<Player> players = new ArrayList<>();
-        for(Entry<UUID, Set<FakeArea>> entry : fakeAreas.entrySet()) {
-            for(FakeArea f : entry.getValue()) {
-                if(f.getBlocks().contains(block)) {
-                    Player player = Bukkit.getPlayer(entry.getKey());
-                    if(player != null && player.isOnline()) {
-                        players.add(player);
-                    }
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            for(FakeArea area : fakeAreas.get(player.getUniqueId())) {
+                if(area.getBlocks().contains(block)) {
+                    players.add(player);
                     break;
                 }
             }

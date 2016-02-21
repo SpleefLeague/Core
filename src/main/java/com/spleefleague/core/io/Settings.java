@@ -72,6 +72,10 @@ public class Settings {
         return doc.get("value", List.class);
     }
     
+    public static Object get(String key) {
+        return settings.get(key).get("value");
+    }
+    
     public static <T extends DBEntity & DBLoadable> T get(String key, Class<? extends T> c) {
         Document doc = (Document)settings.get(key);
         if(doc == null) return null;

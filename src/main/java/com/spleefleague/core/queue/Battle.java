@@ -5,6 +5,7 @@
  */
 package com.spleefleague.core.queue;
 
+import com.spleefleague.core.player.GeneralPlayer;
 import java.util.Collection;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Collection;
  * @param <Q>
  * @param <P>
  */
-public interface Battle<Q extends QueueableArena, P extends RatedPlayer> {
+public interface Battle<Q extends QueueableArena, P extends GeneralPlayer> {
     public Collection<P> getActivePlayers();
     public Q getArena();
 }

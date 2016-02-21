@@ -5,6 +5,7 @@
  */
 package com.spleefleague.core.queue;
 
+import com.spleefleague.core.player.GeneralPlayer;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -17,14 +18,18 @@ import java.util.List;
  * @param <P>
  * @param <B>
  */
-public abstract class BattleManager<Q extends QueueableArena, P extends RatedPlayer, B extends Battle<Q, P>> {
+public abstract class BattleManager<Q extends QueueableArena, P extends GeneralPlayer, B extends Battle<Q, P>> {
     
     private final HashSet<B> activeBattles;
-    private final GameQueue<Q, P> gameQueue;
+    private GameQueue<Q, P> gameQueue;
     
-    public BattleManager() {
+    public BattleManager(GameQueue<Q, P> gameQueue) {
         this.activeBattles = new HashSet<>();
-        this.gameQueue = new GameQueue<>(this);
+        this.gameQueue = gameQueue;
+    }
+    
+    protected void setGameQueue(GameQueue<Q, P> gameQueue) {
+        this.gameQueue = gameQueue;
     }
     
     public GameQueue<Q, P> getGameQueue() {

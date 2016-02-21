@@ -5,14 +5,14 @@
  */
 package com.spleefleague.core.queue;
 
-import java.util.UUID;
+import com.spleefleague.core.player.GeneralPlayer;
 
 /**
  *
  * @author Jonas
  * @param <P>
  */
-public interface QueueableArena<P extends RatedPlayer> {
+public interface QueueableArena<P extends GeneralPlayer> {
     
     public boolean isOccupied();
     public boolean isAvailable(P p);

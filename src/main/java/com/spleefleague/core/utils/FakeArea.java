@@ -7,6 +7,7 @@ package com.spleefleague.core.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.bukkit.Bukkit;
 
 /**
  *
@@ -53,6 +54,7 @@ public class FakeArea {
     }
     
     private void recalcCache() {
+        Bukkit.broadcastMessage("Cache recalculation");
         cache.clear();
         for(FakeArea fa : fakeAreas) {
             cache.addAll(fa.getBlocks());
