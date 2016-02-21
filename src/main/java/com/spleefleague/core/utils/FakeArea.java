@@ -5,9 +5,8 @@
  */
 package com.spleefleague.core.utils;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import org.bukkit.Bukkit;
+import java.util.HashSet;
 
 /**
  *
@@ -20,8 +19,8 @@ public class FakeArea {
     private boolean outdated;
     
     public FakeArea() {
-        fakeAreas = new ArrayList<>();
-        cache = new ArrayList<>();
+        fakeAreas = new HashSet<>();
+        cache = new HashSet<>();
         outdated = false;
     }
     
@@ -54,7 +53,6 @@ public class FakeArea {
     }
     
     private void recalcCache() {
-        Bukkit.broadcastMessage("Cache recalculation");
         cache.clear();
         for(FakeArea fa : fakeAreas) {
             cache.addAll(fa.getBlocks());

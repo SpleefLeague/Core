@@ -280,8 +280,8 @@ public class FakeBlockHandler implements Listener {
         }
     }
     
-    public static Player[] getSubscribers(FakeBlock block) {
-        Collection<Player> players = new ArrayList<>();
+    public static Collection<Player> getSubscribers(FakeBlock block) {
+        Collection<Player> players = new HashSet<>();
         for(Player player : Bukkit.getOnlinePlayers()) {
             for(FakeArea area : fakeAreas.get(player.getUniqueId())) {
                 if(area.getBlocks().contains(block)) {
@@ -290,7 +290,7 @@ public class FakeBlockHandler implements Listener {
                 }
             }
         }
-        return players.toArray(new Player[players.size()]);
+        return players;
     }
 
     public static void addBlock(FakeBlock block, Player... players) {
