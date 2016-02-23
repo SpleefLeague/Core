@@ -138,7 +138,7 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     }
     
     public static Collection<Player> toBukkitPlayer(Collection<GeneralPlayer> players) {
-        Collection<Player> list = new ArrayList<>();
+        Collection<Player> list = new HashSet<>();
         for(GeneralPlayer gp : players) {
             list.add(gp.getPlayer());
         }

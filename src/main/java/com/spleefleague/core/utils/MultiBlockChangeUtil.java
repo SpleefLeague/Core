@@ -40,7 +40,7 @@ public class MultiBlockChangeUtil implements Listener {
 
     private static class MultiBlockChangeData {
         
-        private ArrayList<MultiBlockChangeInfo> data = new ArrayList<>();
+        private Collection<MultiBlockChangeInfo> data = new HashSet<>();
         private final Chunk chunk;
 
         public MultiBlockChangeData(Chunk chunk) {
@@ -194,14 +194,14 @@ public class MultiBlockChangeUtil implements Listener {
             instance = new MultiBlockChangeUtil();
             Bukkit.getPluginManager().registerEvents(instance, SpleefLeague.getInstance());
             for(Player player : Bukkit.getOnlinePlayers()) {
-                loadedChunks.put(player.getUniqueId(), new ArrayList<>());
+                loadedChunks.put(player.getUniqueId(), new HashSet<>());
             }
         }
     }
     
     @EventHandler
     public void onJoin(PlayerLoginEvent event) {
-        loadedChunks.put(event.getPlayer().getUniqueId(), new ArrayList<>());
+        loadedChunks.put(event.getPlayer().getUniqueId(), new HashSet<>());
     }
     
     @EventHandler

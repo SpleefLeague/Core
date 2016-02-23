@@ -3,11 +3,11 @@ package com.spleefleague.core.utils;
 import com.comphenix.packetwrapper.WrapperPlayServerMapChunk;
 import com.comphenix.packetwrapper.WrapperPlayServerMapChunkBulk;
 import com.comphenix.protocol.events.PacketContainer;
-import com.spleefleague.core.listeners.FakeBlockHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk.ChunkMap;
@@ -83,7 +83,7 @@ public class ChunkPacketUtil {
                 int section = fb.getY() / 16;
                 Collection<FakeBlock> blocks;
                 if (!verified.containsKey(section)) {
-                    blocks = new ArrayList<>();
+                    blocks = new HashSet<>();
                     verified.put(section, blocks);
                 }
                 else {
@@ -102,7 +102,7 @@ public class ChunkPacketUtil {
                 int section = fb.getY() / 16;
                 Collection<FakeBlock> blocks;
                 if (!verified.containsKey(section)) {
-                    blocks = new ArrayList<>();
+                    blocks = new HashSet<>();
                     verified.put(section, blocks);
                 }
                 else {

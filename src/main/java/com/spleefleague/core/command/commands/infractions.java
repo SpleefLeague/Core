@@ -5,11 +5,8 @@
  */
 package com.spleefleague.core.command.commands;
 
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.command.BasicCommand;
@@ -20,6 +17,8 @@ import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.utils.DatabaseConnection;
 import com.spleefleague.core.utils.TimeUtil;
+import java.util.HashSet;
+import java.util.Set;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -55,7 +54,7 @@ public class infractions extends BasicCommand {
             }
             DatabaseConnection.find(SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), new Document("uuid", id.toString()), (result) -> {
                 result.sort(new Document("time", -1));
-                List<Document> dbc = new ArrayList<>();
+                Set<Document> dbc = new HashSet<>();
                 for(Document d : result) {
                     dbc.add(d);
                 }

@@ -10,8 +10,7 @@ import java.util.HashSet;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.listeners.ChatListener;
 import com.spleefleague.core.player.SLPlayer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
@@ -89,7 +88,7 @@ public class ChatManager {
     }
     
     public static Collection<ChatChannel> getVisibleChatChannels() {
-        List<ChatChannel> availableChannels = new ArrayList<>();
+        Set<ChatChannel> availableChannels = new HashSet<>();
         channels.stream().sorted().filter((channel) -> (channel.isVisible())).forEach((channel) -> {
             availableChannels.add(channel);
         });

@@ -6,7 +6,7 @@
 package com.spleefleague.core.queue;
 
 import com.spleefleague.core.player.GeneralPlayer;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,11 +21,11 @@ import java.util.Set;
  */
 public abstract class GameQueue<Q extends QueueableArena, P extends GeneralPlayer>{
     
-    private final List<Q> queuedArenas;
+    private final Collection<Q> queuedArenas;
     private final Map<Q, Set<P>> queues;
     
     public GameQueue() {
-        this.queuedArenas = new ArrayList<>();
+        this.queuedArenas = new HashSet<>();
         this.queues = new HashMap<>();
     }
     
@@ -65,7 +65,7 @@ public abstract class GameQueue<Q extends QueueableArena, P extends GeneralPlaye
         return false;
     }
     
-    public List<Q> getRegisteredArenas() {
+    public Collection<Q> getRegisteredArenas() {
         return queuedArenas;
     }
     

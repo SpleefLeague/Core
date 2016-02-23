@@ -16,11 +16,9 @@ import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.utils.StringUtil;
 import com.spleefleague.core.utils.TimeUtil;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -153,7 +151,7 @@ public class playerinfo extends BasicCommand {
                 }
             }
             lastSeen = lastOnline != null ? TimeUtil.dateToString(lastOnline, false) + " ago" : "Unknown";
-            List<Document> orQuerry = new ArrayList<>();
+            Set<Document> orQuerry = new HashSet<>();
             for (String ip : ips) {
                 orQuerry.add(new Document("ip", ip));
                 Thread.currentThread().getStackTrace();

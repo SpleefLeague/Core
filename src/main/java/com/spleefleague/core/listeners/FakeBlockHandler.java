@@ -332,7 +332,7 @@ public class FakeBlockHandler implements Listener {
 //    }
 
     public static void update(FakeArea area) {
-        Collection<Player> players = new ArrayList<>();
+        Collection<Player> players = new HashSet<>();
         for (Entry<UUID, Set<FakeArea>> entry : fakeAreas.entrySet()) {
             if (entry.getValue().contains(area)) {
                 Player player = Bukkit.getPlayer(entry.getKey());
