@@ -25,5 +25,5 @@ public class points extends BasicCommand {
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
         GamePlugin.printAllStats(p);
-    }   
+    }
 }
