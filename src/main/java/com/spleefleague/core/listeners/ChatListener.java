@@ -7,6 +7,7 @@ package com.spleefleague.core.listeners;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatManager;
+import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class ChatListener implements Listener {
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer().getUniqueId());
-        if(!lastMessage.containsKey(slp.getUniqueId()) || System.currentTimeMillis() - lastMessage.get(slp.getUniqueId()) > 3000) {
+        if(!slp.getRank().hasPermission(Rank.MODERATOR) && !lastMessage.containsKey(slp.getUniqueId()) || System.currentTimeMillis() - lastMessage.get(slp.getUniqueId()) > 3000) {
             String prefix = "";
             if(!slp.getRank().getDisplayName().equals("Default")) {
                 prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getDisplayName() + ChatColor.DARK_GRAY + "] ";
