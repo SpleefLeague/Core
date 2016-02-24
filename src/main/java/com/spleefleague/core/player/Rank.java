@@ -110,6 +110,7 @@ public class Rank extends DBEntity implements DBLoadable {
             SENIOR_MODERATOR = getPlaceholderInstance(),
             CCMOD = getPlaceholderInstance(),
             MODERATOR = getPlaceholderInstance(),
+            REFEREE = getPlaceholderInstance(),
             VIP = getPlaceholderInstance(),
             BUILDER = getPlaceholderInstance(), 
             ORGANIZER = getPlaceholderInstance(), 

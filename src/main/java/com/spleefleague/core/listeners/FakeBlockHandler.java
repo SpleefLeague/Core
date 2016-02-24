@@ -315,21 +315,11 @@ public class FakeBlockHandler implements Listener {
         for (Player player : players) {
             fakeAreas.get(player.getUniqueId()).remove(block);
             recalculateCache(player);
-//            fakeBlockCache.get(player.getUniqueId()).removeBlocks(block);
             if(update) {
                 player.sendBlockChange(block.getLocation(), Material.AIR, (byte) 0);
             }
         }
     }
-
-//    public static void update(Player... players) {
-//        for (Player player : players) {
-//            Set<FakeBlock> fakeBlocks = getFakeBlocks(player);
-//            if(fakeBlocks != null) {
-//                MultiBlockChangeUtil.changeBlocks(fakeBlocks.toArray(new FakeBlock[fakeBlocks.size()]), player);
-//            }
-//        }
-//    }
 
     public static void update(FakeArea area) {
         Collection<Player> players = new HashSet<>();

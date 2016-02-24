@@ -56,7 +56,9 @@ public class ConnectionClient {
      * Handle shutdown.
      */
     public void stop() {
-        this.socket.close();
+        if(socket != null) {
+            this.socket.close();
+        }
     }
 
     /**
