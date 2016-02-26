@@ -42,7 +42,7 @@ public class ChatListener implements Listener {
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer().getUniqueId());
-        if(!slp.getRank().hasPermission(Rank.MODERATOR) && !lastMessage.containsKey(slp.getUniqueId()) || System.currentTimeMillis() - lastMessage.get(slp.getUniqueId()) > 3000) {
+        if(!lastMessage.containsKey(slp.getUniqueId()) || System.currentTimeMillis() - lastMessage.get(slp.getUniqueId()) > 3000) {
             String prefix = "";
             if(!slp.getRank().getDisplayName().equals("Default")) {
                 prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getDisplayName() + ChatColor.DARK_GRAY + "] ";
