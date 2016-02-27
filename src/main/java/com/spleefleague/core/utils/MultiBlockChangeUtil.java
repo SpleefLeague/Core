@@ -10,7 +10,6 @@ import com.comphenix.protocol.wrappers.ChunkCoordIntPair;
 import com.comphenix.protocol.wrappers.MultiBlockChangeInfo;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.spleefleague.core.SpleefLeague;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,7 +26,6 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftChunk;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -97,20 +95,24 @@ public class MultiBlockChangeUtil implements Listener {
     
     public static void changeBlocks(FakeBlock[] blocks, List<Player> affected) {
         HashMap<Chunk, MultiBlockChangeData> changes = new HashMap<>();
-        for (FakeBlock block : blocks) {
-            MultiBlockChangeData data;
-            if (!changes.containsKey(block.getChunk())) {
-                data = new MultiBlockChangeData(block.getChunk());
-                changes.put(block.getChunk(), data);
+        if (blocks != null) {
+            for (FakeBlock block : blocks) {
+                if (block != null) {
+                    MultiBlockChangeData data;
+                    if (!changes.containsKey(block.getChunk())) {
+                        data = new MultiBlockChangeData(block.getChunk());
+                        changes.put(block.getChunk(), data);
+                    }
+                    else {
+                        data = changes.get(block.getChunk());
+                    }
+                    data.addBlock(block.getX(), block.getY(), block.getZ(), block.getType());
+                }
             }
-            else {
-                data = changes.get(block.getChunk());
-            }
-            data.addBlock(block.getX(), block.getY(), block.getZ(), block.getType());
+            changes.values().stream().forEach((mbcd) -> {
+                sendMultiBlockChange(mbcd, affected);
+            });
         }
-        changes.values().stream().forEach((mbcd) -> {
-            sendMultiBlockChange(mbcd, affected);
-        });
     }
     
     public static void changeBlocks(Block[] blocks, Material to, Player... affected) {
@@ -119,20 +121,24 @@ public class MultiBlockChangeUtil implements Listener {
     
     public static void changeBlocks(Block[] blocks, Material to, List<Player> affected) {
         HashMap<Chunk, MultiBlockChangeData> changes = new HashMap<>();
-        for (Block block : blocks) {
-            MultiBlockChangeData data;
-            if (!changes.containsKey(block.getChunk())) {
-                data = new MultiBlockChangeData(block.getChunk());
-                changes.put(block.getChunk(), data);
+        if(blocks != null) {
+            for (Block block : blocks) {
+                if(block != null) {
+                    MultiBlockChangeData data;
+                    if (!changes.containsKey(block.getChunk())) {
+                        data = new MultiBlockChangeData(block.getChunk());
+                        changes.put(block.getChunk(), data);
+                    }
+                    else {
+                        data = changes.get(block.getChunk());
+                    }
+                    data.addBlock(block.getX(), block.getY(), block.getZ(), to);
+                }
             }
-            else {
-                data = changes.get(block.getChunk());
-            }
-            data.addBlock(block.getX(), block.getY(), block.getZ(), to);
+            changes.values().stream().forEach((mbcd) -> {
+                sendMultiBlockChange(mbcd, affected);
+            });
         }
-        changes.values().stream().forEach((mbcd) -> {
-            sendMultiBlockChange(mbcd, affected);
-        });
     }
     
     public static void changeBlocks(Location pos1, Location pos2, Material to, List<Player> affected) {
