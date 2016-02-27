@@ -5,10 +5,12 @@
  */
 package com.spleefleague.core.command.commands;
 
+import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
+import com.spleefleague.core.plugin.GamePlugin;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
@@ -24,6 +26,10 @@ public class fly extends BasicCommand {
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
+        if(GamePlugin.isIngameGlobal(p) && !p.getAllowFlight()) {
+            error(p, "You cannot fly during matches!");
+            return;
+        }
         p.setAllowFlight(!p.getAllowFlight());
         p.setFlying(p.getAllowFlight());
         success(p, "You are now " + (p.getAllowFlight() ? "able" : "unable") + " to fly!");

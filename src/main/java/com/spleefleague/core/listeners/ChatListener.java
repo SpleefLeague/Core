@@ -7,8 +7,11 @@ package com.spleefleague.core.listeners;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatManager;
+import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -51,7 +54,9 @@ public class ChatListener implements Listener {
                 ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, event.getMessage(), slp.getSendingChannel());
             }
         }
-        lastMessage.put(slp.getUniqueId(), System.currentTimeMillis());
+        if (slp.getRank() != null && !(slp.getRank().hasPermission(Rank.MODERATOR) || Arrays.asList(Rank.MODERATOR).contains(slp.getRank()))) {
+            lastMessage.put(slp.getUniqueId(), System.currentTimeMillis());
+        }
         event.setCancelled(true);    
     }
 }
