@@ -30,7 +30,7 @@ public class ping extends BasicCommand{
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
         Player j = p;
-        if (args.length > 0 && slp.getRank().hasPermission(Rank.MODERATOR)) {
+        if (args.length > 0) {
             j = Bukkit.getPlayer(args[0]);
             if (j == null) {
                 error(p, "Player not found!");
