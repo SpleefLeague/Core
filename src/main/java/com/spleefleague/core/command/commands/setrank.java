@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
 public class setrank extends BasicCommand {
 
     public setrank(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage, Rank.ADMIN, Rank.COUNCIL);
+        super(plugin, name, usage, Rank.DEVELOPER);
     }
 
     @Override
