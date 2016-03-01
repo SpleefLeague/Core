@@ -9,6 +9,7 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.player.SLPlayer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -31,18 +32,20 @@ public abstract class Challenge {
     
     public Challenge(SLPlayer challenger, int required) {
         this.challenger = challenger;
-        this.accepted = new ArrayList<>();
+        this.accepted = new HashSet<>();
         this.accepted.add(challenger);
         this.required = required;
         challenges.add(this);
     }
     
     public void accept(SLPlayer player) {
-        this.accepted.add(player);
-        challenger.sendMessage(SpleefLeague.getInstance().getChatPrefix() + " " + ChatColor.RED + player.getName() + ChatColor.GREEN + " has accepted your challenge.");
-        if(accepted.size() == required) {
-            active = false;
-            start(accepted);
+        if(!accepted.contains(player)) {
+            this.accepted.add(player);
+            challenger.sendMessage(SpleefLeague.getInstance().getChatPrefix() + " " + ChatColor.RED + player.getName() + ChatColor.GREEN + " has accepted your challenge.");
+            if(accepted.size() == required) {
+                active = false;
+                start(accepted);
+            }
         }
     }
     

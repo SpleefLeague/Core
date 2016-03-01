@@ -7,6 +7,7 @@ package com.spleefleague.core.utils;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.UUID;
 
 /**
  *
@@ -17,11 +18,17 @@ public class FakeArea {
     private final Collection<FakeArea> fakeAreas;
     private final Collection<FakeBlock> cache;
     private boolean outdated;
+    private UUID uuid;
     
     public FakeArea() {
         fakeAreas = new HashSet<>();
         cache = new HashSet<>();
         outdated = false;
+        uuid = UUID.randomUUID();
+    }
+    
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
     }
     
     public void add(FakeArea area) {
@@ -63,5 +70,17 @@ public class FakeArea {
         cache.clear();
         fakeAreas.clear();
         outdated = false;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final FakeArea other = (FakeArea) obj;
+        return uuid.equals(other.uuid);
     }
 }

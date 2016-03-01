@@ -479,7 +479,7 @@ public class EntityBuilder {
                 }
             }
 
-            private static <T> Object[] loadArray(List data, Class<? extends T> type, Class<? extends TypeConverter> tcc) throws InstantiationException, IllegalAccessException {
+            private static <T> Object loadArray(List data, Class<? extends T> type, Class<? extends TypeConverter> tcc) throws InstantiationException, IllegalAccessException {
                 Object[] array = new Object[data.size()];
                 for (int i = 0; i < data.size(); i++) {
                     Object o = data.get(i);
@@ -516,12 +516,61 @@ public class EntityBuilder {
                 }
                 return (T) col;
             }
-
-            private static <T> T[] createGenericArray(T[] values, Class<? extends T> cast) {
-                T[] array = (T[]) Array.newInstance(cast, values.length);
-                for (int i = 0; i < values.length; i++) {
-                    T value = values[i];
-                    array[i] = cast.cast(value);
+            
+            private static Object createGenericArray(Object[] values, Class<?> cast) {
+                Object array = Array.newInstance(cast, values.length);
+                if(!cast.isPrimitive()) {
+                    for (int i = 0; i < values.length; i++) {
+                        Object value = values[i];
+                        ((Object[])array)[i] = cast.cast(value);
+                    }
+                }
+                else {
+                    if(cast == int.class) {
+                        array = new int[values.length];
+                        for (int i = 0; i < values.length; i++) {
+                            int value = (int)values[i];
+                            ((int[])array)[i] = value;
+                        }
+                    }
+                    else if(cast == long.class) {
+                        array = new int[values.length];
+                        for (int i = 0; i < values.length; i++) {
+                            long value = (long)values[i];
+                            ((long[])array)[i] = value;
+                        }
+                    }
+                    else if(cast == short.class) {
+                        array = new int[values.length];
+                        for (int i = 0; i < values.length; i++) {
+                            short value = (short)values[i];
+                            ((short[])array)[i] = value;
+                        }
+                    }
+                    else if(cast == byte.class) {
+                        array = new int[values.length];
+                        for (int i = 0; i < values.length; i++) {
+                            byte value = (byte)values[i];
+                            ((byte[])array)[i] = value;
+                        }
+                    }
+                    else if(cast == char.class) {
+                        array = new int[values.length];
+                        for (int i = 0; i < values.length; i++) {
+                            char value = (char)values[i];
+                            ((char[])array)[i] = value;
+                        }
+                    }
+                    else if(cast == boolean.class) {
+                        array = new int[values.length];
+                        for (int i = 0; i < values.length; i++) {
+                            boolean value = (boolean)values[i];
+                            ((boolean[])array)[i] = value;
+                        }
+                    }
+                    else {
+                        throw new RuntimeException("Unknown primitive: " + cast);
+                    }
                 }
                 return array;
             }
