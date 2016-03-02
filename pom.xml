@@ -79,6 +79,10 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>lib_id</id>
+            <url>file://${project.basedir}/repo</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -96,8 +100,6 @@
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/repo/CraftBukkit.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
