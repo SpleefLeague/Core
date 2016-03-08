@@ -44,24 +44,32 @@ public class ping extends BasicCommand{
         boolean same = (to == whose);
         int ping = getPlayerPing(whose);
         ChatColor c = ChatColor.DARK_RED;
-        if (ping < 10*1000) {
-            c = ChatColor.RED;
-        }
-        if (ping < 1000) {
-            c = ChatColor.GOLD;
-        }
-        if (ping < 200) {
-            c = ChatColor.YELLOW;
-        }
-        if (ping < 100) {
-            c = ChatColor.GREEN;
-        }
-        if (ping < 25) {
+        if(ping < 30) {
             c = ChatColor.DARK_GREEN;
         }
-		String pingStr = Integer.toString(ping) + " ms";
+        else if(ping < 60) {
+            c = ChatColor.GREEN;
+        }
+        else if(ping < 120) {
+            c = ChatColor.YELLOW;
+        }
+        else if(ping < 250) {
+            c = ChatColor.GOLD;
+        }
+        else if(ping < 500) {
+            c = ChatColor.RED;
+        }
+        else {
+            c = ChatColor.DARK_RED;
+        }
+        String pingStr = Integer.toString(ping) + " ms";
         if (same) {
-            success(to, ChatColor.GRAY + "Your ping is: " + c + pingStr);
+            if(ping != 1337) {
+                success(to, ChatColor.GRAY + "Your ping is: " + c + pingStr);
+            }
+            else {
+                success(to, ChatColor.GRAY + "Your ping is: " + ChatColor.GREEN + 1 + ChatColor.RED + 3 + ChatColor.YELLOW + 3 + ChatColor.BLUE + 7);
+            }
         } else {
             success(to, ChatColor.GRAY + "Showing ping for " + ChatColor.RED + whose.getName() + ChatColor.GRAY + ": " + c + pingStr);
         }
