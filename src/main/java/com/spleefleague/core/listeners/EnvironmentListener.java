@@ -62,29 +62,31 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
  *
  * @author Jonas
  */
-public class EnvironmentListener implements Listener{
-    
+public class EnvironmentListener implements Listener {
+
     private static Listener instance;
-    
+
     public static void init() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new EnvironmentListener();
             Bukkit.getPluginManager().registerEvents(instance, SpleefLeague.getInstance());
         }
     }
-    
+
     private EnvironmentListener() {
-        
+
     }
-    
+
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        SpawnManager.SpawnLocation spawnLocation = SpleefLeague.getInstance().getSpawnManager().getNext();
-        if(spawnLocation != null) {
-            spawnLocation.incrementPlayersInRadius();
+        if (SpleefLeague.getInstance().getSpawnManager() != null) {
+            SpawnManager.SpawnLocation spawnLocation = SpleefLeague.getInstance().getSpawnManager().getNext();
+            if (spawnLocation != null) {
+                spawnLocation.incrementPlayersInRadius();
+            }
+            Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> player.teleport(spawnLocation != null ? spawnLocation.getLocation() : SpleefLeague.getInstance().getSpawnLocation()));
         }
-        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> player.teleport(spawnLocation != null ? spawnLocation.getLocation() : SpleefLeague.getInstance().getSpawnLocation()));
 //        if(!player.hasPlayedBefore()) {
 //            event.setJoinMessage(SpleefLeague.getInstance().getChatPrefix() + " " + ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + player.getName() + ChatColor.BLUE + " to SpleefLeague!");
 //        }
@@ -94,79 +96,77 @@ public class EnvironmentListener implements Listener{
         event.setJoinMessage(null);//During SWC
         logIPAddress(event.getPlayer());
     }
-    
+
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         //event.setQuitMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has left the server");
         event.setQuitMessage(null);
         GamePlugin.unspectateGlobal(event.getPlayer());
     }
-    
+
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {
-        if(event.getDamager() instanceof Player && ((Player)event.getDamager()).getGameMode() == GameMode.CREATIVE) {
+        if (event.getDamager() instanceof Player && ((Player) event.getDamager()).getGameMode() == GameMode.CREATIVE) {
             event.setCancelled(false);
-        }
-        else {
+        } else {
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event) {
-        if(event.getCause() == TeleportCause.COMMAND) {      
-            ((back)SpleefLeague.getInstance().getBasicCommand("back")).setLastTeleport(event.getPlayer(), event.getFrom());
+        if (event.getCause() == TeleportCause.COMMAND) {
+            ((back) SpleefLeague.getInstance().getBasicCommand("back")).setLastTeleport(event.getPlayer(), event.getFrom());
         }
     }
-    
+
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
-        if(event.getCause() != DamageCause.ENTITY_ATTACK && (event.getEntity() instanceof Player)) {
-            if(event.getCause() == DamageCause.FALL || event.getCause() == DamageCause.LAVA || event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
+        if (event.getCause() != DamageCause.ENTITY_ATTACK && (event.getEntity() instanceof Player)) {
+            if (event.getCause() == DamageCause.FALL || event.getCause() == DamageCause.LAVA || event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
                 event.setCancelled(true);
-            }
-            else {
-                SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get((Player)event.getEntity());
-                if(slp != null) {
+            } else {
+                SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get((Player) event.getEntity());
+                if (slp != null) {
                     event.setCancelled(slp.getState() != PlayerState.IDLE);
                 }
             }
-        } 
+        }
     }
-    
+
     @EventHandler
     public void onFood(FoodLevelChangeEvent event) {
         event.setCancelled(true);
     }
-    
+
     @EventHandler
     public void onWeather(WeatherChangeEvent event) {
         event.setCancelled(true);
     }
-    
+
     @EventHandler(priority = EventPriority.LOW)
     public void onBreak(BlockBreakEvent event) {
         event.setExpToDrop(0);
         event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
-    
+
     @EventHandler(priority = EventPriority.LOW)
     public void onFakeBreak(FakeBlockBreakEvent event) {
         event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
-    
+
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
-    	if(event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+        if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onDrop(PlayerDropItemEvent event) {
         event.setCancelled(event.getItemDrop().getItemStack().getType() != Material.RED_ROSE && event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
-    
+
     @EventHandler
     public void onDispense(BlockDispenseEvent event) {
         Block block = event.getBlock();
@@ -176,31 +176,28 @@ public class EnvironmentListener implements Listener{
             disp.update();
         }
     }
-    
+
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if(event.getPlayer().getGameMode() != GameMode.CREATIVE) {
-            if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+        if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+            if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 ItemStack item = event.getItem();
                 Material clicked = event.getClickedBlock().getType();
-                if(clicked == Material.CAULDRON) {
+                if (clicked == Material.CAULDRON) {
                     event.getPlayer().setItemInHand(null);
-                }
-                else if(Arrays.asList(/*Material.CHEST, Material.FURNACE, */Material.DROPPER, Material.ITEM_FRAME, Material.REDSTONE_COMPARATOR, Material.DIODE, Material.DISPENSER, Material.ANVIL, Material.TRAP_DOOR, Material.BED, Material.HOPPER, Material.HOPPER_MINECART).contains(clicked)) {
+                } else if (Arrays.asList(/*Material.CHEST, Material.FURNACE, */Material.DROPPER, Material.ITEM_FRAME, Material.REDSTONE_COMPARATOR, Material.DIODE, Material.DISPENSER, Material.ANVIL, Material.TRAP_DOOR, Material.BED, Material.HOPPER, Material.HOPPER_MINECART).contains(clicked)) {
+                    event.setCancelled(true);
+                } else if (item != null && Arrays.asList(Material.WATER_BUCKET, Material.LAVA_BUCKET, Material.BUCKET).contains(item.getType())) {
                     event.setCancelled(true);
                 }
-                else if(item != null && Arrays.asList(Material.WATER_BUCKET, Material.LAVA_BUCKET, Material.BUCKET).contains(item.getType())) {
-                    event.setCancelled(true);
-                }
-            }
-            else if(event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                if(event.getClickedBlock().getType() == Material.FIRE) {
+            } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                if (event.getClickedBlock().getType() == Material.FIRE) {
                     event.setCancelled(true);
                 }
             }
         }
     }
-    
+
     @EventHandler
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
         String cmd = event.getMessage().split(" ")[0].toLowerCase();
@@ -218,34 +215,34 @@ public class EnvironmentListener implements Listener{
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         event.setCancelled(event.getSpawnReason() != SpawnReason.SPAWNER_EGG);
     }
-    
+
     @EventHandler
     public void onFrameBrake(HangingBreakByEntityEvent e) {
         e.setCancelled(true);
-        if(e.getRemover() instanceof Player) {
-            e.setCancelled(((Player)e.getRemover()).getGameMode() != GameMode.CREATIVE);
+        if (e.getRemover() instanceof Player) {
+            e.setCancelled(((Player) e.getRemover()).getGameMode() != GameMode.CREATIVE);
         }
     }
-    
+
     private void logIPAddress(final Player player) {
         final String ip = player.getAddress().getAddress().toString();
         Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> EntityBuilder.save(new Connection(player.getUniqueId(), ip), SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections")));
     }
-    
+
     public static class Connection extends DBEntity implements DBSaveable {
-        
+
         @DBSave(fieldName = "uuid", typeConverter = TypeConverter.UUIDStringConverter.class)
         private UUID uuid;
         @DBSave(fieldName = "ip")
         private String ip;
         @DBSave(fieldName = "date", typeConverter = DateConverter.class)
         private Date date;
-        
+
         public Connection(UUID uuid, String ip) {
             this.uuid = uuid;
             this.ip = ip;
