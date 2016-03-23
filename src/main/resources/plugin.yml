@@ -207,3 +207,7 @@ commands:
         description: Joins a server
         usage:
             /<command> <server>
+    rules:
+        description: Shows you the server rules
+        usage:
+            /<command> [page]
