@@ -1,14 +1,22 @@
 package com.spleefleague.core.utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.io.Settings;
+import com.spleefleague.core.utils.Debugger.CommandExecutor;
+import com.spleefleague.core.utils.Debugger.Stoppable;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -38,7 +46,16 @@ public class RuntimeCompiler {
                 is = url.openStream();
             } catch (Exception e) {
                 e.printStackTrace();
-                return null;
+                try {
+                    if (Settings.hasKey("debugger_paste_raw_backup")) {
+                        URL url = new URL(Settings.getString("debugger_paste_raw_backup").replace("{id}", id));
+                        is = url.openStream();
+                    } else {
+                        return null;
+                    }
+                } catch (Exception e2) {
+                    return null;
+                }
             }
             File javaFile = new File(directoryTemp.getPath() + "/" + id + ".java");
             javaFile.createNewFile();
