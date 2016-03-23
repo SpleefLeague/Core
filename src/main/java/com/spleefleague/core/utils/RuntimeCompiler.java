@@ -19,20 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
-import com.spleefleague.core.SpleefLeague;
-import com.spleefleague.core.io.Settings;
-import com.spleefleague.core.utils.Debugger.CommandExecutor;
-import com.spleefleague.core.utils.Debugger.Stoppable;
-import java.lang.reflect.Method;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 
 /**
  *
