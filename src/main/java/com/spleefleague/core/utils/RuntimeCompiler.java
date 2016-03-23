@@ -27,7 +27,9 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.utils.Debugger.CommandExecutor;
 import com.spleefleague.core.utils.Debugger.Stoppable;
+import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -167,7 +169,7 @@ public class RuntimeCompiler {
                 throw new Exception("Runtime script isn't extending the Debugger class");   
             }
             Debugger debugger = (Debugger)o;
-            startDebugger(debugger);
+            startDebugger(debugger, null);
             if (RuntimeCompiler.debuggerList == null) {
                 RuntimeCompiler.debuggerList = new HashMap<>();
             }
@@ -186,14 +188,14 @@ public class RuntimeCompiler {
         }
     } 
     
-    public static String[] debugFromHastebin(String id) {
+    public static String[] debugFromHastebin(String id, CommandSender cs) {
         Object o = RuntimeCompiler.loadHastebin(id);
         try {
             if (!(o instanceof Debugger)) {
                 throw new Exception("Runtime script isn't extending the Debugger class");   
             }
             Debugger debugger = (Debugger)o;
-            startDebugger(debugger);
+            startDebugger(debugger, cs);
             if (RuntimeCompiler.debuggerList == null) {
                 RuntimeCompiler.debuggerList = new HashMap<>();
             }
@@ -255,13 +257,40 @@ public class RuntimeCompiler {
         return new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - file.getName().length()));
     }
     
+    private static void runDebugger(Debugger d, CommandSender cs)  {
+        Method o = tryGetMethod(d.getClass(), "debug");
+        Method n = tryGetMethod(d.getClass(), "debug", CommandSender.class, SpleefLeague.class);
+        if (n != null) {
+            d.debug(cs, SpleefLeague.getInstance());
+        } else if (o != null) {
+            d.debug();
+        } else {
+            cs.sendMessage(ChatColor.RED + "Failed starting debugger, no valid debug methods found");
+        }
+    }
     
-    public static void startDebugger(Debugger inst) {
+    /**
+     * Just returns null rather than throwing an exception
+     * @param c
+     * @param name
+     * @param args
+     * @return 
+     */
+    private static Method tryGetMethod(Class c, String name, Class... args) {
+        try {
+            Method m = c.getDeclaredMethod(name, args);
+            return m;
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+    
+    public static void startDebugger(Debugger inst, CommandSender cs) {
         if (inst instanceof Listener) {
             Listener l = (Listener) inst;
             Bukkit.getPluginManager().registerEvents(l, SpleefLeague.getInstance());
         }
-        inst.debug();
+        runDebugger(inst, cs);
     }
     
     public static void stopDebugger(Debugger inst) {

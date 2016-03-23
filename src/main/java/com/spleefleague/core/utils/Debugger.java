@@ -5,6 +5,7 @@
  */
 package com.spleefleague.core.utils;
 
+import com.spleefleague.core.SpleefLeague;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -13,7 +14,13 @@ import org.bukkit.command.CommandSender;
  */
 public interface Debugger {
 
-    void debug();
+    default void debug() {
+        
+    }
+    
+    default void debug(CommandSender cs, SpleefLeague plugin) {
+        debug();
+    }
     
     interface Stoppable {
         void stop();

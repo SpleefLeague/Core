@@ -48,7 +48,7 @@ public class debug extends BasicCommand {
         } else {
             if (args.length == 1) {
                 Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
-                    String[] clzl = RuntimeCompiler.debugFromHastebin(args[0]);
+                    String[] clzl = RuntimeCompiler.debugFromHastebin(args[0], cs);
                     if (clzl == null) {
                         error(cs, "Failed starting debugger!");
                         return;
