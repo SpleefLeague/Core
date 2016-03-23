@@ -202,7 +202,7 @@ public class FakeBlockHandler implements Listener {
 
             }
         };
-        manager.addPacketListener(chunk);
+        //1.9 patch manager.addPacketListener(chunk);
         manager.addPacketListener(chunkBulk);
         manager.addPacketListener(breakController);
         manager.addPacketListener(placeController);
