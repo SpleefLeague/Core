@@ -204,7 +204,10 @@ public class EnvironmentListener implements Listener{
     @EventHandler
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
         String cmd = event.getMessage().split(" ")[0].toLowerCase();
-        if(((List<String>)Settings.getList("blocked_commands")).contains(cmd)) {
+        if (!Settings.hasKey("blocked_commands")) {
+            return;
+        }
+        if (((List<String>) Settings.getList("blocked_commands")).contains(cmd)) {
             event.setCancelled(true);
         }
     }
