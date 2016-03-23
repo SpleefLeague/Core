@@ -12,14 +12,15 @@ import org.bson.types.ObjectId;
  * @author Jonas
  */
 public abstract class DBEntity {
+
     @DBLoad(fieldName = "_id")
     private ObjectId _id;
-    
+
     public ObjectId getObjectId() {
         return _id;
     }
-    
+
     public void onDone() {
-        
+
     }
 }

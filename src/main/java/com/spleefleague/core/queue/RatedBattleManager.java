@@ -5,7 +5,6 @@
  */
 package com.spleefleague.core.queue;
 
-
 /**
  *
  * @author Jonas
@@ -14,12 +13,12 @@ package com.spleefleague.core.queue;
  * @param <B>
  */
 public abstract class RatedBattleManager<Q extends QueueableArena, P extends RatedPlayer, B extends Battle<Q, P>> extends BattleManager<Q, P, B> {
-    
+
     public RatedBattleManager() {
         super(null);
         this.setGameQueue(new RatedGameQueue<>(this));
     }
-    
+
     public RatedBattleManager(RatedGameQueue<Q, P> gameQueue) {
         super(gameQueue);
     }

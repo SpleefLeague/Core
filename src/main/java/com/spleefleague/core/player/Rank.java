@@ -29,7 +29,7 @@ import org.bukkit.entity.Player;
  * @author Jonas
  */
 public class Rank extends DBEntity implements DBLoadable {
-    
+
     @DBLoad(fieldName = "name")
     private String name;
     @DBLoad(fieldName = "displayName")
@@ -44,45 +44,45 @@ public class Rank extends DBEntity implements DBLoadable {
     private String[] permissions;
     @DBLoad(fieldName = "exclusivePermissions")
     private String[] exclusivePermissions;
-    
+
     private Rank() {
-        
+
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public String getDisplayName() {
         return displayName;
     }
-    
+
     public int getLadder() {
         return ladder;
     }
-    
+
     public boolean hasOp() {
         return hasOp;
     }
-    
+
     public ChatColor getColor() {
         return color;
     }
-    
+
     public boolean hasPermission(Rank rank) {
         return this == rank || this.getLadder() > rank.getLadder();
     }
-    
+
     public boolean hasPermission(String permission) {
-        for(String perm : exclusivePermissions) {
-            if(perm.equals(permission)) {
+        for (String perm : exclusivePermissions) {
+            if (perm.equals(permission)) {
                 return true;
             }
         }
-        for(Rank rank : Rank.values()) {
-            if(rank.getLadder() < this.getLadder()) {
-                for(String perm : rank.permissions) {
-                    if(perm.equals(permission)) {
+        for (Rank rank : Rank.values()) {
+            if (rank.getLadder() < this.getLadder()) {
+                for (String perm : rank.permissions) {
+                    if (perm.equals(permission)) {
                         return true;
                     }
                 }
@@ -90,40 +90,39 @@ public class Rank extends DBEntity implements DBLoadable {
         }
         return false;
     }
-    
+
     public List<String> getAllPermissions() {
         List<String> permissions = new ArrayList<>(Arrays.asList(exclusivePermissions));
-        for(Rank rank : Rank.values()) {
-            if(rank.getLadder() < this.getLadder()) {
+        for (Rank rank : Rank.values()) {
+            if (rank.getLadder() < this.getLadder()) {
                 permissions.addAll(Arrays.asList(rank.permissions));
             }
         }
         return permissions;
     }
-    
+
     private final static Map<String, Rank> ranks = new HashMap<>();
-    
-    public static final Rank 
-            ADMIN = getPlaceholderInstance(), 
-            COUNCIL = getPlaceholderInstance(), 
-            DEVELOPER = getPlaceholderInstance(), 
+
+    public static final Rank ADMIN = getPlaceholderInstance(),
+            COUNCIL = getPlaceholderInstance(),
+            DEVELOPER = getPlaceholderInstance(),
             SENIOR_MODERATOR = getPlaceholderInstance(),
             CCMOD = getPlaceholderInstance(),
             MODERATOR = getPlaceholderInstance(),
             REFEREE = getPlaceholderInstance(),
             VIP = getPlaceholderInstance(),
-            BUILDER = getPlaceholderInstance(), 
-            ORGANIZER = getPlaceholderInstance(), 
+            BUILDER = getPlaceholderInstance(),
+            ORGANIZER = getPlaceholderInstance(),
             DEFAULT = getPlaceholderInstance();
 
     public static Rank valueOf(String name) {
         return ranks.get(name);
     }
-    
+
     public static Rank[] values() {
         return ranks.values().toArray(new Rank[0]);
     }
-    
+
     private static Rank getPlaceholderInstance() {
         Rank rank = new Rank();
         rank.color = ChatColor.BLACK;
@@ -135,13 +134,13 @@ public class Rank extends DBEntity implements DBLoadable {
         rank.permissions = new String[0];
         return rank;
     }
-    
+
     public static void init() {
         MongoCursor<Document> dbc = SpleefLeague.getInstance().getPluginDB().getCollection("Ranks").find().iterator();
-        while(dbc.hasNext()) {
+        while (dbc.hasNext()) {
             Rank rank = EntityBuilder.load(dbc.next(), Rank.class);
             Rank staticRank = getField(rank.getName());
-            if(staticRank != null) {
+            if (staticRank != null) {
                 staticRank.name = rank.name;
                 staticRank.displayName = rank.displayName;
                 staticRank.hasOp = rank.hasOp;
@@ -155,7 +154,7 @@ public class Rank extends DBEntity implements DBLoadable {
         }
         SpleefLeague.getInstance().log("Loaded " + ranks.size() + " ranks!");
     }
-    
+
     private static Rank getField(String name) {
         try {
             Field field = Rank.class.getField(name);
@@ -169,7 +168,7 @@ public class Rank extends DBEntity implements DBLoadable {
     }
 
     public void managePermissions(Player player) {
-        for(String permission : getAllPermissions()) {
+        for (String permission : getAllPermissions()) {
             player.addAttachment(SpleefLeague.getInstance(), permission, true);
         }
         player.setOp(hasOp);
@@ -177,7 +176,8 @@ public class Rank extends DBEntity implements DBLoadable {
 
     public static class FromStringConverter extends TypeConverter<String, Rank> {
 
-        public FromStringConverter() {}
+        public FromStringConverter() {
+        }
 
         @Override
         public Rank convertLoad(String name) {

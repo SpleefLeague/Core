@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.function.Dynamic;
 
@@ -19,7 +18,7 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
     private boolean exitOnClickOutside;
 
     private boolean menuControls;
-    
+
     protected InventoryMenuTemplate() {
         this.title = Dynamic.getConstant("");
         this.components = new HashMap<>();
@@ -30,7 +29,7 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
     public void setTitle(String title) {
         this.title = Dynamic.getConstant(title);
     }
-    
+
     public void setTitle(Dynamic<String> title) {
         this.title = Dynamic.getDynamicDefault(title, "Title", "Title");
     }
@@ -42,7 +41,6 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
 //    public void dynamicComponents(Consumer<InventoryMenuDynamicComponents> dynamicComponents) {
 //        this.dynamicComponents = dynamicComponents;
 //    }
-
     public void setExitOnClickOutside(boolean exitOnClickOutside) {
         this.exitOnClickOutside = exitOnClickOutside;
     }
@@ -50,7 +48,7 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
     public void setMenuControls(boolean menuControls) {
         this.menuControls = menuControls;
     }
-    
+
     public String getTitle(SLPlayer slp) {
         return title.get(slp);
     }
@@ -62,9 +60,9 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
         //Construct components
         Map<Integer, InventoryMenuComponent> actualComponents = components.entrySet().stream()
                 .collect(Collectors.toMap(
-                                entry -> entry.getKey(),
-                                entry -> entry.getValue().construct(slp)));
-        
+                        entry -> entry.getKey(),
+                        entry -> entry.getValue().construct(slp)));
+
         InventoryMenu menu = new InventoryMenu(is, getTitle(slp), actualComponents, exitOnClickOutside, menuControls, super.getAccessController(), super.getVisibilityController(), slp);
 //        addMenuControls(actualComponents);
 //        menu.populateInventory();

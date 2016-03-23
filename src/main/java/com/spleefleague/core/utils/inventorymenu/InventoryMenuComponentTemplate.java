@@ -23,7 +23,7 @@ public abstract class InventoryMenuComponentTemplate<C> {
     private Dynamic<List<String>> displayDescription;
     private Dynamic<Boolean> visibilityController;
     private Dynamic<Boolean> accessController;
-    
+
     protected InventoryMenuComponentTemplate() {
         this.displayItem = Dynamic.getConstant(new ItemStack(Material.STONE));
         this.displayName = Dynamic.getConstant("");
@@ -59,11 +59,11 @@ public abstract class InventoryMenuComponentTemplate<C> {
     public int getDisplayNumber(SLPlayer slp) {
         return displayNumber.get(slp);
     }
-    
+
     public List<String> getDisplayDescription(SLPlayer slp) {
         return displayDescription.get(slp);
     }
-    
+
     public List<String> getDisplayDescription() {
         return displayDescription.get(null);
     }
@@ -71,7 +71,7 @@ public abstract class InventoryMenuComponentTemplate<C> {
     public boolean isVisible(SLPlayer slp) {
         return visibilityController.get(slp);
     }
-    
+
     protected Dynamic<Boolean> getVisibilityController() {
         return visibilityController;
     }
@@ -79,7 +79,7 @@ public abstract class InventoryMenuComponentTemplate<C> {
     public boolean hasAccess(SLPlayer slp) {
         return accessController.get(slp);
     }
-    
+
     protected Dynamic<Boolean> getAccessController() {
         return accessController;
     }
@@ -120,11 +120,11 @@ public abstract class InventoryMenuComponentTemplate<C> {
     protected void setDisplayNumber(Dynamic<Integer> displayNumber) {
         this.displayNumber = displayNumber;
     }
-    
+
     protected void setVisibilityController(Dynamic<Boolean> visibilityController) {
         this.visibilityController = visibilityController;
     }
-    
+
     protected void setAccessController(Dynamic<Boolean> accessController) {
         this.accessController = accessController;
     }
@@ -134,21 +134,19 @@ public abstract class InventoryMenuComponentTemplate<C> {
     }
 
     protected void addDescriptionLine(SLPlayer slp, String line) {
-        if(displayDescription instanceof DynamicDefault) {
+        if (displayDescription instanceof DynamicDefault) {
             displayDescription = new Dynamic<List<String>>() {
                 private final Map<UUID, List<String>> map = new HashMap<>();
-                private final ArrayList<String> oldDefault = (ArrayList)displayDescription.get(null);
-                
+                private final ArrayList<String> oldDefault = (ArrayList) displayDescription.get(null);
+
                 @Override
                 public List<String> get(SLPlayer slp) {
                     List<String> result;
-                    if(slp == null) {
+                    if (slp == null) {
                         result = oldDefault;
-                    }
-                    else if(map.containsKey(slp.getUniqueId())) {
+                    } else if (map.containsKey(slp.getUniqueId())) {
                         result = map.get(slp.getUniqueId());
-                    }
-                    else {
+                    } else {
                         result = (List<String>) oldDefault.clone();
                         map.put(slp.getUniqueId(), result);
                     }
@@ -158,7 +156,7 @@ public abstract class InventoryMenuComponentTemplate<C> {
         }
         this.getDisplayDescription(slp).add(line);
     }
-    
+
     protected void setDescription(Dynamic<List<String>> displayDescription) {
         this.displayDescription = displayDescription;
     }

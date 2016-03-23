@@ -66,40 +66,39 @@ import org.bukkit.util.Vector;
  * @author Jonas
  */
 public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSaveable, Player {
-    
+
     @DBLoad(fieldName = "username", priority = Integer.MAX_VALUE)
     private String username;
     @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class, priority = Integer.MAX_VALUE)
     private UUID uuid;
     private Player cached;
     private final long created;
-    
+
     public GeneralPlayer() {
         this.created = System.currentTimeMillis();
     }
-    
+
     @DBSave(fieldName = "uuid", typeConverter = UUIDStringConverter.class)
     @Override
     public UUID getUniqueId() {
         return uuid;
     }
-    
+
     @DBSave(fieldName = "username")
     @Override
     public String getName() {
         return username;
     }
-    
+
     @Override
     public Player getPlayer() {
-        if(cached != null && cached.isOnline()) {
+        if (cached != null && cached.isOnline()) {
             return cached;
-        }
-        else {
+        } else {
             return cached = Bukkit.getPlayer(uuid);
         }
     }
-    
+
     @Override
     public boolean isOnline() {
         Player p = getPlayer();
@@ -107,46 +106,46 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     }
 
     /**
-     * Get the time that this player instance was created.
-     * Mainly for debug purposes (e.g. for the ghost player issue).
+     * Get the time that this player instance was created. Mainly for debug
+     * purposes (e.g. for the ghost player issue).
      *
      * @return time in MS since epoch when this instance was created.
      */
     public long getCreated() {
         return created;
     }
-    
+
     protected void setName(String username) {
         this.username = username;
     }
-    
+
     protected void setUUID(UUID uuid) {
         this.uuid = uuid;
     }
-    
+
     @Override
     public void sendMessage(String message) {
         getPlayer().sendMessage(message);
     }
-    
+
     public static Player[] toBukkitPlayer(GeneralPlayer... players) {
         Player[] bplayers = new Player[players.length];
-        for(int i = 0; i < players.length; i++) {
+        for (int i = 0; i < players.length; i++) {
             bplayers[i] = players[i].getPlayer();
         }
         return bplayers;
     }
-    
+
     public static Collection<Player> toBukkitPlayer(Collection<GeneralPlayer> players) {
         Collection<Player> list = new HashSet<>();
-        for(GeneralPlayer gp : players) {
+        for (GeneralPlayer gp : players) {
             list.add(gp.getPlayer());
         }
         return list;
     }
-    
+
     public void setDefaults() {
-        
+
     }
 
     @Override
@@ -563,7 +562,7 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     public boolean canSee(Player player) {
         return getPlayer().canSee(player);
     }
-    
+
     public void hidePlayer(GeneralPlayer player) {
         getPlayer().hidePlayer(player.getPlayer());
     }
@@ -575,7 +574,7 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     public boolean canSee(GeneralPlayer player) {
         return getPlayer().canSee(player.getPlayer());
     }
-    
+
     @Override
     @Deprecated
     public boolean isOnGround() {

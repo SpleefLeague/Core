@@ -17,7 +17,7 @@ public class PortalListener implements Listener {
     private static Listener instance;
 
     public static void init() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new PortalListener();
             Bukkit.getPluginManager().registerEvents(instance, SpleefLeague.getInstance());
         }
@@ -29,11 +29,11 @@ public class PortalListener implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
-        if(e.getFrom().getBlockX() == e.getTo().getBlockX() && e.getFrom().getBlockY() == e.getTo().getBlockY() && e.getFrom().getBlockZ() == e.getTo().getBlockZ()) {
+        if (e.getFrom().getBlockX() == e.getTo().getBlockX() && e.getFrom().getBlockY() == e.getTo().getBlockY() && e.getFrom().getBlockZ() == e.getTo().getBlockZ()) {
             return;
         }
         PortalManager.Portal portal = SpleefLeague.getInstance().getPortalManager().getByLocation(e.getTo());
-        if(portal == null) {
+        if (portal == null) {
             return;
         }
         e.getPlayer().teleport(portal.getTeleportTo());
@@ -42,11 +42,11 @@ public class PortalListener implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
-        if(e.getClickedBlock() == null) {
+        if (e.getClickedBlock() == null) {
             return;
         }
         PortalManager.Portal portal = SpleefLeague.getInstance().getPortalManager().getByLocation(e.getClickedBlock().getLocation());
-        if(portal == null) {
+        if (portal == null) {
             return;
         }
         e.getPlayer().teleport(portal.getTeleportTo());

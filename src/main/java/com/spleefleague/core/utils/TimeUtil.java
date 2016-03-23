@@ -16,22 +16,25 @@ import java.util.regex.Pattern;
  * @author Jonas
  */
 public class TimeUtil {
+
     //second, minute, hour, day, month, year
-    private final static int[] seconds = new int[]{1, 60,60 * 60,60 * 60 * 24, 60 * 60 * 24 * 30, 60 * 60 * 24 * 365};
+    private final static int[] seconds = new int[]{1, 60, 60 * 60, 60 * 60 * 24, 60 * 60 * 24 * 30, 60 * 60 * 24 * 365};
     private final static String[] names = new String[]{"second", "minute", "hour", "day", "month", "year"};
-    
+
     public static String dateToString(Date date, boolean future) {
         long diff = Instant.now().getEpochSecond() - date.toInstant().getEpochSecond();
-        if(future) diff *= -1;
-        for(int i = 1; i < seconds.length; i++) {
-            if(diff < seconds[i]) {
+        if (future) {
+            diff *= -1;
+        }
+        for (int i = 1; i < seconds.length; i++) {
+            if (diff < seconds[i]) {
                 long result = diff / seconds[i - 1];
                 return result + " " + names[i - 1] + ((result != 1) ? "s" : "");
             }
         }
         return "";
     }
-    
+
     public static String durationToString(Duration d) {
         String s = "";
         boolean started = false;
@@ -72,7 +75,7 @@ public class TimeUtil {
     }
 
     public static Duration parseDurationString(String time) {
-        
+
         Pattern timePattern = Pattern.compile("[1-9][0-9]*(y|mo|w|h|d|m|s)");
         Matcher matcher = timePattern.matcher(time);
         int years = 0;

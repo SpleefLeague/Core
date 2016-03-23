@@ -10,6 +10,6 @@ package com.spleefleague.core.utils;
  * @author Jonas
  */
 public interface Callback<T> {
-    
+
     public void call(T result);
 }

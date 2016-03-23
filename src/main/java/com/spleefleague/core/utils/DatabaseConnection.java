@@ -26,23 +26,23 @@ public class DatabaseConnection {
 
     private static final UUIDCache uuidCache = new UUIDCache(100);
     private static final RankCache rankCache = new RankCache(100);
-    
+
     public static void initialize() {
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
             public void onJoin(GeneralPlayerLoadedEvent event) {
                 DatabaseConnection.updateCache(event.getPlayer().getUniqueId(), event.getPlayer().getName());
-                if(event.getGeneralPlayer() instanceof SLPlayer) {
-                    DatabaseConnection.updateCache(event.getPlayer().getUniqueId(), ((SLPlayer)event.getGeneralPlayer()).getRank());
+                if (event.getGeneralPlayer() instanceof SLPlayer) {
+                    DatabaseConnection.updateCache(event.getPlayer().getUniqueId(), ((SLPlayer) event.getGeneralPlayer()).getRank());
                 }
             }
-        },SpleefLeague.getInstance());
+        }, SpleefLeague.getInstance());
     }
-    
+
     public static void updateCache(UUID uuid, String username) {
         uuidCache.insert(uuid, username);
     }
-    
+
     public static void updateCache(UUID uuid, Rank rank) {
         rankCache.insert(uuid, rank);
     }
@@ -76,7 +76,7 @@ public class DatabaseConnection {
             return null;
         }
     }
-    
+
     public static Rank getRank(UUID uuid) {
         Rank rank = rankCache.getRank(uuid);
         if (rank != null) {
@@ -97,7 +97,7 @@ public class DatabaseConnection {
             dbcoll.updateOne(index, new Document("$set", update));
         });
     }
-    
+
     public static void find(final MongoCollection<Document> dbcoll, final Document query, Callback<FindIterable<Document>> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
             callback.call(dbcoll.find(query));
@@ -156,7 +156,7 @@ public class DatabaseConnection {
             }
         }
     }
-    
+
     private static class RankCache {
 
         private final FixedSizeList<RankMapEntry> list;

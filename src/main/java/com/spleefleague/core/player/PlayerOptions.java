@@ -21,7 +21,7 @@ import java.util.Set;
  * @author Jonas
  */
 public class PlayerOptions extends DBEntity implements DBLoadable, DBSaveable {
-   
+
     @DBLoad(fieldName = "disabledChannels", typeConverter = ChatChannel.FromStringConverter.class)
     @DBSave(fieldName = "disabledChannels", typeConverter = ChatChannel.FromStringConverter.class)
     protected Set<ChatChannel> disabledChannels;
@@ -31,56 +31,52 @@ public class PlayerOptions extends DBEntity implements DBLoadable, DBSaveable {
     @DBLoad(fieldName = "visibilityMode")
     @DBSave(fieldName = "visibilityMode")
     private VisibilityMode visibilityMode;
-    
+
     protected void apply(SLPlayer slp) {
         setChatChannels(slp);
         setVisibility(slp);
     }
-    
+
     private void setChatChannels(SLPlayer slp) {
         HashSet<ChatChannel> channels = new HashSet<>();
-        for(ChatChannel channel : ChatManager.getAvailableChatChannels(slp)) {
-            if(!channel.isDefault() && enabledChannels.contains(channel)) {
+        for (ChatChannel channel : ChatManager.getAvailableChatChannels(slp)) {
+            if (!channel.isDefault() && enabledChannels.contains(channel)) {
                 channels.add(channel);
-            }
-            else if(!disabledChannels.contains(channel)) {
+            } else if (!disabledChannels.contains(channel)) {
                 channels.add(channel);
             }
         }
         slp.setReceivingChatChannels(channels);
     }
-    
+
     public void disableChatChannel(ChatChannel channel) {
-        if(channel.isDefault()) {
+        if (channel.isDefault()) {
             disabledChannels.add(channel);
-        }
-        else {
+        } else {
             enabledChannels.remove(channel);
         }
     }
-    
+
     public void enableChatChannel(ChatChannel channel) {
-        if(channel.isDefault()) {
+        if (channel.isDefault()) {
             disabledChannels.remove(channel);
-        }
-        else {
+        } else {
             enabledChannels.add(channel);
         }
     }
-    
+
     public boolean isChatChannelEnabled(ChatChannel channel) {
-        if(channel.isDefault()) {
+        if (channel.isDefault()) {
             return !disabledChannels.contains(channel);
-        }
-        else {
+        } else {
             return enabledChannels.contains(channel);
         }
     }
-    
+
     private void setVisibility(SLPlayer slp) {
-        
+
     }
-    
+
     public static PlayerOptions getDefault() {
         PlayerOptions po = new PlayerOptions();
         po.disabledChannels = new HashSet<>();
@@ -88,7 +84,7 @@ public class PlayerOptions extends DBEntity implements DBLoadable, DBSaveable {
         po.visibilityMode = VisibilityMode.DEFAULT;
         return po;
     }
-    
+
     public static enum VisibilityMode {
         ALL,
         NONE,

@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
  *
  * @author Jonas
  */
-public class leave extends BasicCommand{
+public class leave extends BasicCommand {
 
     public leave(CorePlugin plugin, String name, String usage) {
         super(plugin, name, usage);
@@ -24,11 +24,10 @@ public class leave extends BasicCommand{
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(GamePlugin.isQueuedGlobal(p)) {
+        if (GamePlugin.isQueuedGlobal(p)) {
             GamePlugin.dequeueGlobal(p);
             success(p, "You have successfully been removed from the queue.");
-        }
-        else {
+        } else {
             error(p, "You are currently not queued.");
         }
     }

@@ -20,55 +20,58 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author Jonas
  */
 public abstract class CorePlugin extends JavaPlugin {
-    
+
     private final String prefix, chatPrefix;
     public static final Logger LOG = Logger.getLogger("Minecraft");
     public static World DEFAULT_WORLD;
     public static HashSet<CorePlugin> plugins = new HashSet<>();
-    
+
     public CorePlugin(String prefix, String chatPrefix) {
         this.prefix = prefix;
         this.chatPrefix = chatPrefix;
     }
-    
+
     @Override
     public final void onEnable() {
         plugins.add(this);
         DEFAULT_WORLD = Bukkit.getWorlds().get(0);
         start();
     }
-    
+
     @Override
     public final void onDisable() {
         plugins.remove(this);
         stop();
     }
-    
-    public void start(){}
-    public void stop(){}
-    
+
+    public void start() {
+    }
+
+    public void stop() {
+    }
+
     public abstract MongoDatabase getPluginDB();
-    
+
     public String getPrefix() {
         return prefix;
     }
-    
+
     public String getChatPrefix() {
         return chatPrefix;
     }
-    
+
     public void log(String message) {
         System.out.println(prefix + " " + message);
     }
-    
+
     public abstract void syncSave(Player p);
-    
+
     public static void syncSaveAll(Player p) {
-        for(CorePlugin gp : plugins) {
+        for (CorePlugin gp : plugins) {
             gp.syncSave(p);
         }
     }
-    
+
     public static Collection<CorePlugin> getAll() {
         return plugins;
     }

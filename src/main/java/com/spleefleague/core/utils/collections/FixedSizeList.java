@@ -21,65 +21,63 @@ public class FixedSizeList<T> implements Iterable<T> {
     }
 
     public void add(T e) {
-        if(currentPos == array.length) {
+        if (currentPos == array.length) {
             System.arraycopy(array, 1, array, 0, currentPos - 1);
             array[currentPos - 1] = e;
-        }
-        else {
+        } else {
             array[currentPos] = e;
             currentPos++;
         }
     }
-    
+
     public T get(int index) {
-        if(currentPos >= index)
+        if (currentPos >= index) {
             return array[index];
+        }
         return null;
     }
-    
+
     public void remove(int index) {
-        if(currentPos >= index) {
-            if(currentPos == array.length) {
+        if (currentPos >= index) {
+            if (currentPos == array.length) {
                 currentPos--;
                 array[currentPos] = null;
                 System.arraycopy(array, index + 1, array, index, currentPos - index);
-            }
-            else {
+            } else {
                 array[currentPos] = null;
                 System.arraycopy(array, index + 1, array, index, currentPos - index);
                 currentPos--;
             }
         }
     }
-    
+
     public void remove(T element) {
         remove(getIndex(element));
     }
-    
+
     public int getIndex(T element) {
-        for(int i = 0; i < currentPos; i++) {
-            if(element.equals(array[i])) {
+        for (int i = 0; i < currentPos; i++) {
+            if (element.equals(array[i])) {
                 return i;
             }
         }
         return -1;
     }
-    
+
     public void call(int index) {
-        if(currentPos >= index) {  
-            if(currentPos == array.length) { 
+        if (currentPos >= index) {
+            if (currentPos == array.length) {
                 T temp = get(index);
                 System.arraycopy(array, index + 1, array, index, currentPos - index - 1);
                 array[currentPos - 1] = temp;
-            }
-            else {
+            } else {
                 T temp = get(index);
                 System.arraycopy(array, index + 1, array, index, currentPos - index);
                 array[currentPos - 1] = temp;
             }
         }
     }
-    
+
     public void call(T element) {
         call(getIndex(element));
     }

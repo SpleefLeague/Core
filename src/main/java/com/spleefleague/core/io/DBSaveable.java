@@ -10,5 +10,5 @@ package com.spleefleague.core.io;
  * @author Jonas
  */
 public interface DBSaveable {
-    
+
 }

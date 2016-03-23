@@ -28,12 +28,13 @@ public class PortalManager {
 
     /**
      * Get a portal by location.
+     *
      * @param check location to get portal by.
      * @return Portal object if exists, or null if not.
      */
     public Portal getByLocation(Location check) {
-        for(Portal portal : portals) {
-            if(portal.within(check)) {
+        for (Portal portal : portals) {
+            if (portal.within(check)) {
                 return portal;
             }
         }

@@ -29,25 +29,23 @@ public class setmax extends BasicCommand {
     protected void run(Player p, SLPlayer kp, Command cmd, String[] args) {
         runConsole(p, cmd, args);
     }
-    
+
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
-        if(args.length == 1) {
+        if (args.length == 1) {
             int i = getInteger(args[0]);
-            if(i > 0) {
+            if (i > 0) {
                 SpleefLeague.getInstance().setSlotSize(i);
                 Settings.set("max_players", i);
                 success(cs, "Slot size has been changed to " + i + "!");
-            }
-            else {
+            } else {
                 error(cs, args[0] + " is not a valid number.");
             }
-        }
-        else {
+        } else {
             sendUsage(cs);
         }
     }
-    
+
     public static int getInteger(String s) {
         try {
             return Integer.parseInt(s);

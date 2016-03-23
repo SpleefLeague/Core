@@ -9,7 +9,7 @@ public abstract class InventoryMenuComponent {
     private final ItemStackWrapper displayItem;
     private InventoryMenu parent;
     private final Dynamic<Boolean> visibilityController, accessController;
-    
+
     public InventoryMenuComponent(ItemStackWrapper displayItem, Dynamic<Boolean> visibilityController, Dynamic<Boolean> accessController) {
         this.displayItem = displayItem;
         this.visibilityController = visibilityController;
@@ -19,15 +19,15 @@ public abstract class InventoryMenuComponent {
     protected ItemStackWrapper getDisplayItemWrapper() {
         return displayItem;
     }
-    
+
     public ItemStack getDisplayItem(SLPlayer slp) {
         return getDisplayItemWrapper().construct(slp);
     }
-    
+
     public boolean isVisible(SLPlayer slp) {
         return visibilityController.get(slp);
     }
-    
+
     public boolean hasAccess(SLPlayer slp) {
         return accessController.get(slp);
     }
@@ -43,8 +43,7 @@ public abstract class InventoryMenuComponent {
     public InventoryMenuComponent getRoot() {
         if (parent == null) {
             return this;
-        }
-        else {
+        } else {
             return parent.getRoot();
         }
 

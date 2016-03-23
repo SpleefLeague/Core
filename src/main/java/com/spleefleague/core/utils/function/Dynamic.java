@@ -13,16 +13,17 @@ import com.spleefleague.core.player.SLPlayer;
  * @param <V>
  */
 public interface Dynamic<V> {
+
     public V get(SLPlayer slp);
-    
+
     public static <V> Dynamic<V> getConstant(V constant) {
         return (SLPlayer slp) -> constant;
     }
-    
+
     public static <V> DynamicDefault<V> getDynamicDefault(Dynamic<V> dynamicValue, V defaultValue) {
         return getDynamicDefault(dynamicValue, defaultValue, null);
     }
-    
+
     public static <V> DynamicDefault<V> getDynamicDefault(Dynamic<V> dynamicValue, V defaultValue, V nullValue) {
         return new DynamicDefault<V>(defaultValue, nullValue) {
             @Override

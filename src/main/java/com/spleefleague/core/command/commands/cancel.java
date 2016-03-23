@@ -43,21 +43,17 @@ public class cancel extends BasicCommand {
                     if (GamePlugin.isIngameGlobal(tp)) {
                         GamePlugin.cancelGlobal(tp);
                         success(cs, "The battle will be cancelled.");
-                    }
-                    else {
+                    } else {
                         error(cs, "The player " + ChatColor.WHITE + tp.getName() + ChatColor.RED + " is not playing!");
                     }
-                }
-                else {
+                } else {
                     error(cs, "The player " + ChatColor.WHITE + args[0] + ChatColor.RED + " is not initialized yet!");
                 }
-            }
-            else {
+            } else {
                 error(cs, "The player " + ChatColor.WHITE + args[0] + ChatColor.RED + " is not online!");
             }
 
-        }
-        else {
+        } else {
             sendUsage(cs);
         }
     }

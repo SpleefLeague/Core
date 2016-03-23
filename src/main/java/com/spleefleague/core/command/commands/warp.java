@@ -30,11 +30,9 @@ public class warp extends BasicCommand {
 
         if (args.length == 0) {
             sendWarpsList(p);
-        }
-        else if (args.length == 1) {
+        } else if (args.length == 1) {
             teleportToWarp(p, args[0]);
-        }
-        else {
+        } else {
             sendUsage(p);
         }
     }
@@ -68,8 +66,7 @@ public class warp extends BasicCommand {
         if (warp != null) {
             p.teleport(warp.getLocation(), TeleportCause.COMMAND);
             success(p, "You have been teleported to '" + warp.getName() + "'");
-        }
-        else {
+        } else {
             error(p, "The specified warp does not exist");
         }
     }

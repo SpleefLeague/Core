@@ -46,30 +46,29 @@ public class SLMenu {
                 .title("Chat options")
                 .displayName("Chat options")
                 .displayIcon(Material.BOOK_AND_QUILL);
-        for(ChatChannel channel : ChatManager.getVisibleChatChannels()) {
+        for (ChatChannel channel : ChatManager.getVisibleChatChannels()) {
             chatOptions.component(item()
-                .displayName(channel.getDisplayName())
-                .displayIcon(Material.BOOK)
-                .visibilityController((slp) -> slp.getRank().hasPermission(channel.getMinRank()))
-                .description((slp) -> {
-                    List<String> description = new ArrayList<>();
-                    description.add(ChatColor.GRAY + "Click here to");
-                    description.add(slp.isInChatChannel(channel) ? ChatColor.RED + "disable" : ChatColor.GREEN + "enable");
-                    description.add(ChatColor.GRAY + "this channel!");
-                    return description;
-                })
-                .onClick((event) -> {
-                    SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer());
-                    if(slp.isInChatChannel(channel)) {
-                        slp.removeChatChannel(channel);
-                        slp.getOptions().disableChatChannel(channel);
-                    }
-                    else {
-                        slp.addChatChannel(channel);
-                        slp.getOptions().enableChatChannel(channel);
-                    }
-                    event.getItem().getParent().update();
-                }));
+                    .displayName(channel.getDisplayName())
+                    .displayIcon(Material.BOOK)
+                    .visibilityController((slp) -> slp.getRank().hasPermission(channel.getMinRank()))
+                    .description((slp) -> {
+                        List<String> description = new ArrayList<>();
+                        description.add(ChatColor.GRAY + "Click here to");
+                        description.add(slp.isInChatChannel(channel) ? ChatColor.RED + "disable" : ChatColor.GREEN + "enable");
+                        description.add(ChatColor.GRAY + "this channel!");
+                        return description;
+                    })
+                    .onClick((event) -> {
+                        SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer());
+                        if (slp.isInChatChannel(channel)) {
+                            slp.removeChatChannel(channel);
+                            slp.getOptions().disableChatChannel(channel);
+                        } else {
+                            slp.addChatChannel(channel);
+                            slp.getOptions().enableChatChannel(channel);
+                        }
+                        event.getItem().getParent().update();
+                    }));
         }
         InventoryMenuTemplateBuilder builder = menu()
                 .displayName("Options")
@@ -78,7 +77,7 @@ public class SLMenu {
                 .component(chatOptions);
         return builder;
     }
-    
+
     private static InventoryMenuTemplateBuilder createStaffMenu() {
         InventoryMenuTemplateBuilder builder = menu()
                 .displayName("Moderative")
@@ -132,7 +131,7 @@ public class SLMenu {
         slMenuBuilder.component(currentGamemodeMenu++, builder);
         return builder;
     }
-    
+
     public static InventoryMenuTemplate getInstance() {
         return slMenu;
     }

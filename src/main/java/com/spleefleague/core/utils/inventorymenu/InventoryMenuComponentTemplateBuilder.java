@@ -32,12 +32,12 @@ public abstract class InventoryMenuComponentTemplateBuilder<C, T extends Invento
         buildingObj.setDisplayName(displayName);
         return actualBuilder;
     }
-    
+
     public B displayIcon(Material displayIcon) {
         buildingObj.setDisplayIcon(Dynamic.getConstant(displayIcon));
         return actualBuilder;
     }
-    
+
     public B displayIcon(Dynamic<Material> displayIcon) {
         buildingObj.setDisplayIcon(displayIcon);
         return actualBuilder;
@@ -52,7 +52,6 @@ public abstract class InventoryMenuComponentTemplateBuilder<C, T extends Invento
         buildingObj.setDisplayItem(displayItem);
         return actualBuilder;
     }*/
-
     public B displayNumber(int displayNumber) {
         buildingObj.setDisplayNumber(displayNumber);
         return actualBuilder;
@@ -72,24 +71,24 @@ public abstract class InventoryMenuComponentTemplateBuilder<C, T extends Invento
         buildingObj.addDescriptionLine(slp, line);
         return actualBuilder;
     }
-    
+
     public B description(Dynamic<List<String>> description) {
         buildingObj.setDescription(description);
         return actualBuilder;
     }
 
     public B visibilityController(Dynamic<Boolean> visibilitsController) {
-    	buildingObj.setVisibilityController(visibilitsController);
-    	return actualBuilder;
+        buildingObj.setVisibilityController(visibilitsController);
+        return actualBuilder;
     }
-    
-    public B rank(Rank rank){
-    	return accessController((slp) -> slp.getRank().hasPermission(rank));
+
+    public B rank(Rank rank) {
+        return accessController((slp) -> slp.getRank().hasPermission(rank));
     }
-    
-    public B accessController(Dynamic<Boolean> accessController){
-    	buildingObj.setAccessController(accessController);
-    	return actualBuilder;
+
+    public B accessController(Dynamic<Boolean> accessController) {
+        buildingObj.setAccessController(accessController);
+        return actualBuilder;
     }
 
     public T build() {

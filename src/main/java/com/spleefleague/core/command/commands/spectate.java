@@ -31,12 +31,10 @@ public class spectate extends BasicCommand {
                 success(p, "You are no longer spectating a match");
                 p.setAllowFlight(false);
                 p.setFlying(false);
-            }
-            else {
+            } else {
                 error(p, "You are currently not spectating anyone!");
             }
-        }
-        else if (args.length == 1) {
+        } else if (args.length == 1) {
             if (!GamePlugin.isIngameGlobal(p)) {
                 Player target = Bukkit.getPlayer(args[0]);
                 if (target != null) {
@@ -50,16 +48,13 @@ public class spectate extends BasicCommand {
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     error(p, args[0] + " is not online!");
                 }
-            }
-            else {
+            } else {
                 error(p, "You are currently ingame!");
             }
-        }
-        else {
+        } else {
             sendUsage(p);
         }
     }

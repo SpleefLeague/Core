@@ -10,5 +10,7 @@ package com.spleefleague.core.io;
  * @author Jonas
  */
 public interface DBLoadable {
-    default void done() {}
+
+    default void done() {
+    }
 }

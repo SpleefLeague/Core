@@ -20,7 +20,7 @@ import org.bukkit.entity.Player;
  *
  * @author Jonas
  */
-public class spawn extends BasicCommand{
+public class spawn extends BasicCommand {
 
     public spawn(CorePlugin plugin, String name, String usage) {
         super(plugin, name, usage);
@@ -28,14 +28,13 @@ public class spawn extends BasicCommand{
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(slp.getState() == PlayerState.INGAME) {
+        if (slp.getState() == PlayerState.INGAME) {
             error(p, "You are currently ingame!");
-        }
-        else if(slp.getState() == PlayerState.SPECTATING) {
+        } else if (slp.getState() == PlayerState.SPECTATING) {
             GamePlugin.unspectateGlobal(p);
         }
         SpawnManager.SpawnLocation spawnLocation = SpleefLeague.getInstance().getSpawnManager().getNext();
-        if(spawnLocation != null) {
+        if (spawnLocation != null) {
             spawnLocation.incrementPlayersInRadius();
         }
         Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> p.teleport(spawnLocation != null ? spawnLocation.getLocation() : SpleefLeague.getInstance().getSpawnLocation()));

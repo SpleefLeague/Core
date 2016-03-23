@@ -28,7 +28,7 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
     private final boolean menuControls;
     private final SLPlayer slp;
     private final Map<Integer, InventoryMenuComponent> currentComponents;
-    
+
     protected InventoryMenu(ItemStackWrapper displayItem, String title, Map<Integer, InventoryMenuComponent> components, boolean exitOnClickOutside, boolean menuControls, Dynamic<Boolean> accessController, Dynamic<Boolean> visibilityController, SLPlayer slp) {
         super(displayItem, visibilityController, accessController);
         this.slp = slp;
@@ -41,7 +41,7 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
         addMenuControls();
         populateInventory();
     }
-    
+
     public SLPlayer getOwner() {
         return slp;
     }
@@ -67,9 +67,9 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
             currentComponents.put(entry.getKey(), entry.getValue());
         });
         int current = 0;
-        for(int key : allComponents.keySet().stream().filter((key) -> key < 0 && allComponents.get(key).isVisible(slp)).sorted().collect(Collectors.toList())) {
+        for (int key : allComponents.keySet().stream().filter((key) -> key < 0 && allComponents.get(key).isVisible(slp)).sorted().collect(Collectors.toList())) {
             InventoryMenuComponent value = allComponents.get(key);
-            while(currentComponents.containsKey(current)) {
+            while (currentComponents.containsKey(current)) {
                 current++;
             }
             currentComponents.put(current, value);
@@ -100,13 +100,12 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
                             .displayName(ChatColor.GREEN + "Go back")
                             .description("Click to go back one menu level")
                             .onClick(event -> {
-                                if(getParent() != null) {
+                                if (getParent() != null) {
                                     getParent().open();
-                                }
-                                else {
+                                } else {
                                     event.getPlayer().closeInventory();
                                 }
-                             })
+                            })
                             .build().construct(slp);
                     allComponents.put(0, goBackItem);
                     //inventory.setItem(0, goBackItem.getDisplayItemWrapper().construct(slp));
@@ -125,15 +124,13 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
         Player player = slp.getPlayer();
         if (!this.hasAccess(slp)) {
             player.sendMessage(ChatColor.RED + "You are not allowed to open this InventoryMenu");
-        }
-        else {
+        } else {
 
             Inventory current = player.getOpenInventory().getTopInventory();
 
             if (current == null) {
                 player.openInventory(inventory);
-            }
-            else {
+            } else {
                 player.closeInventory();
                 player.openInventory(inventory);
             }
@@ -150,10 +147,9 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
     public void selectItem(int index) {
         if (currentComponents.containsKey(index)) {
             InventoryMenuComponent component = currentComponents.get(index);
-            if(component.hasAccess(slp)) {
+            if (component.hasAccess(slp)) {
                 component.selected();
-            }
-            else {  
+            } else {
                 slp.closeInventory();
                 slp.sendMessage(ChatColor.RED + "You don't have access to this");
             }
@@ -168,7 +164,7 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
     public boolean exitOnClickOutside() {
         return exitOnClickOutside;
     }
-    
+
     public void update() {
         populateInventory();
     }

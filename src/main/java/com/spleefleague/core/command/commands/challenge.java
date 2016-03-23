@@ -34,38 +34,31 @@ public class challenge extends BasicCommand {
                         Challenge challenge = slp.getChallenge(target);
                         if (challenge != null) {
                             challenge.accept(slp);
-                        }
-                        else {
+                        } else {
                             error(p, "You have no open challenges by " + target.getName() + "!");
                         }
-                    }
-                    else {
+                    } else {
                         error(p, "The player " + args[0] + " is not online!");
                     }
-                }
-                else if (args[0].equalsIgnoreCase("decline")) {
+                } else if (args[0].equalsIgnoreCase("decline")) {
                     SLPlayer target = SpleefLeague.getInstance().getPlayerManager().get(args[1]);
                     if (target != null) {
                         Challenge challenge = slp.getChallenge(target);
                         if (challenge != null) {
                             challenge.decline(slp);
                             error(p, "You have declined the challenge"); //Not an actual error, just for the color
-                        }
-                        else {
+                        } else {
                             error(p, "You have no open challenges by " + target.getName() + "!");
                         }
                     }
 
-                }
-                else {
+                } else {
                     sendUsage(p);
                 }
-            }
-            else {
+            } else {
                 sendUsage(p);
             }
-        }
-        else {
+        } else {
             error(p, "You are currently ingame!");
         }
     }

@@ -29,11 +29,10 @@ public class staffchat extends BasicCommand {
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(args.length > 0) {
+        if (args.length > 0) {
             String message = StringUtil.fromArgsArray(args, 0);
             ChatManager.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Staff" + ChatColor.GRAY + "|" + ChatColor.DARK_PURPLE + Config.getString("server_name") + ChatColor.GRAY + "]", ChatColor.GRAY + p.getName() + ": " + ChatColor.GREEN + message, ChatChannel.STAFF);
-        }
-        else {
+        } else {
             sendUsage(p);
         }
     }

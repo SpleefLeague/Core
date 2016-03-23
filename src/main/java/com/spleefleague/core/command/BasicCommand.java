@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
  * @author Jonas
  */
 public abstract class BasicCommand implements CommandExecutor {
-    
+
     protected CorePlugin plugin;
     protected String name;
     protected Rank requiredRank;
@@ -35,7 +35,7 @@ public abstract class BasicCommand implements CommandExecutor {
     public static final String NO_COMMAND_PERMISSION_MESSAGE = "You don't have permission to use this command!";
     public static final String PLAYERDATA_ERROR_MESSAGE = "Your player data hasn't yet been loaded. Please try again.";
     public static final String NO_PLAYER_INSTANCE = Theme.WARNING.buildTheme(false) + "This command can only be run by an instance of a player.";
-    
+
     public BasicCommand(CorePlugin plugin, String name, String usage) {
         this(plugin, name, usage, Rank.DEFAULT);
     }
@@ -49,7 +49,7 @@ public abstract class BasicCommand implements CommandExecutor {
         this.usages = StringUtils.split(usage, "\n");
         plugin.getCommand(name).setExecutor(this);
     }
-    
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
         try {
@@ -79,8 +79,8 @@ public abstract class BasicCommand implements CommandExecutor {
         }
         return true;
     }
-    
-    protected void error(CommandSender cs, String message) {    
+
+    protected void error(CommandSender cs, String message) {
         cs.sendMessage(plugin.getChatPrefix() + " " + Theme.ERROR.buildTheme(false) + message);
     }
 
@@ -94,7 +94,7 @@ public abstract class BasicCommand implements CommandExecutor {
             cs.sendMessage(plugin.getChatPrefix() + " " + Theme.INCOGNITO.buildTheme(false) + m);
         }
     }
-    
+
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
         cs.sendMessage(plugin.getChatPrefix() + " " + NO_PLAYER_INSTANCE);
     }
@@ -103,7 +103,7 @@ public abstract class BasicCommand implements CommandExecutor {
         cs.sendMessage(plugin.getChatPrefix() + " " + NO_PLAYER_INSTANCE);
         return 0;
     }
-    
+
     protected abstract void run(Player p, SLPlayer slp, Command cmd, String[] args);
 
 }

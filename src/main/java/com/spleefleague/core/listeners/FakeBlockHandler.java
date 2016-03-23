@@ -57,7 +57,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class FakeBlockHandler implements Listener {
 
     private PacketAdapter chunk, chunkBulk, breakController, placeController;
-    
+
     private FakeBlockHandler() {
         initPacketListeners();
         Bukkit.getOnlinePlayers().stream().filter((player) -> (!fakeAreas.containsKey(player.getUniqueId()))).forEach((player) -> {
@@ -98,8 +98,7 @@ public class FakeBlockHandler implements Listener {
                     Chunk chunk = event.getPlayer().getWorld().getChunkAt(wpsmc.getChunkX(), wpsmc.getChunkZ());
                     if (((ChunkMap) wpsmc.getChunkMap()).b == 0 && wpsmc.getGroundUpContinuous()) {
                         MultiBlockChangeUtil.removeChunk(event.getPlayer(), chunk);
-                    }
-                    else {
+                    } else {
                         MultiBlockChangeUtil.addChunk(event.getPlayer(), chunk);
                     }
                 });
@@ -123,8 +122,7 @@ public class FakeBlockHandler implements Listener {
                         Chunk chunk = event.getPlayer().getWorld().getChunkAt(wpsmcb.getChunksX()[i], wpsmcb.getChunksZ()[i]);
                         if (((ChunkMap) wpsmcb.getChunks()[i]).b == 0) {
                             MultiBlockChangeUtil.removeChunk(event.getPlayer(), chunk);
-                        }
-                        else {
+                        } else {
                             MultiBlockChangeUtil.addChunk(event.getPlayer(), chunk);
                         }
                     }
@@ -159,19 +157,17 @@ public class FakeBlockHandler implements Listener {
                                 Bukkit.getPluginManager().callEvent(fbbe);
                                 if (fbbe.isCancelled()) {
                                     event.getPlayer().sendBlockChange(fbbe.getBlock().getLocation(), fbbe.getBlock().getType(), (byte) 0);
-                                }
-                                else {
+                                } else {
                                     broken.setType(Material.AIR);
-                                    for(Player subscriber : getSubscribers(broken)) {
-                                        if(subscriber != event.getPlayer()) {
+                                    for (Player subscriber : getSubscribers(broken)) {
+                                        if (subscriber != event.getPlayer()) {
                                             subscriber.sendBlockChange(fbbe.getBlock().getLocation(), Material.AIR, (byte) 0);
                                             sendBreakParticles(subscriber, broken);
                                             sendBreakSound(subscriber, broken);
                                         }
                                     }
                                 }
-                            }
-                            else {
+                            } else {
                                 event.setCancelled(true);
                             }
                         }
@@ -191,7 +187,7 @@ public class FakeBlockHandler implements Listener {
                 Location loc = wrapper.getLocation().toVector().toLocation(event.getPlayer().getWorld());
                 Chunk chunk = loc.getChunk();
                 Set<FakeBlock> fakeBlocks = getFakeBlocksForChunk(event.getPlayer(), chunk.getX(), chunk.getZ());
-                if(fakeBlocks != null) {
+                if (fakeBlocks != null) {
                     for (FakeBlock fakeBlock : fakeBlocks) {
                         if (blockEqual(fakeBlock.getLocation(), loc)) {
                             event.setCancelled(true);
@@ -211,7 +207,7 @@ public class FakeBlockHandler implements Listener {
         manager.addPacketListener(breakController);
         manager.addPacketListener(placeController);
     }
-    
+
     private void sendBreakParticles(Player p, FakeBlock block) {
         PacketPlayOutWorldEvent packet = new PacketPlayOutWorldEvent(2001, new BlockPosition(block.getX(), block.getY(), block.getZ()), 80, false);
         ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
@@ -234,7 +230,7 @@ public class FakeBlockHandler implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if(!fakeAreas.containsKey(event.getPlayer().getUniqueId())) {
+        if (!fakeAreas.containsKey(event.getPlayer().getUniqueId())) {
             fakeAreas.put(event.getPlayer().getUniqueId(), new HashSet<>());
             fakeBlockCache.put(event.getPlayer().getUniqueId(), new FakeBlockCache());
         }
@@ -245,7 +241,7 @@ public class FakeBlockHandler implements Listener {
     private static final Map<UUID, FakeBlockCache> fakeBlockCache;
     private static FakeBlockHandler instance;
     private static final HashMap<Material, Sound> breakSounds;
-    
+
     public static void addArea(FakeArea area, Player... players) {
         addArea(area, true, players);
     }
@@ -279,12 +275,12 @@ public class FakeBlockHandler implements Listener {
             MultiBlockChangeUtil.changeBlocks(blocks, Material.AIR, players);
         }
     }
-    
+
     public static Collection<Player> getSubscribers(FakeBlock block) {
         Collection<Player> players = new HashSet<>();
-        for(Player player : Bukkit.getOnlinePlayers()) {
-            for(FakeArea area : fakeAreas.get(player.getUniqueId())) {
-                if(area.getBlocks().contains(block)) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            for (FakeArea area : fakeAreas.get(player.getUniqueId())) {
+                if (area.getBlocks().contains(block)) {
                     players.add(player);
                     break;
                 }
@@ -315,7 +311,7 @@ public class FakeBlockHandler implements Listener {
         for (Player player : players) {
             fakeAreas.get(player.getUniqueId()).remove(block);
             recalculateCache(player);
-            if(update) {
+            if (update) {
                 player.sendBlockChange(block.getLocation(), Material.AIR, (byte) 0);
             }
         }
@@ -333,16 +329,15 @@ public class FakeBlockHandler implements Listener {
         }
         MultiBlockChangeUtil.changeBlocks(area.getBlocks().toArray(new FakeBlock[0]), players.toArray(new Player[players.size()]));
     }
-    
+
     private static void recalculateCache(Player... players) {
-        for(Player player : players) {
+        for (Player player : players) {
             FakeBlockCache cache = fakeBlockCache.get(player.getUniqueId());
             cache.clear();
-            for(FakeArea area : fakeAreas.get(player.getUniqueId())) {
-                if(area instanceof FakeBlock) {
-                    cache.addBlocks((FakeBlock)area);
-                }
-                else {
+            for (FakeArea area : fakeAreas.get(player.getUniqueId())) {
+                if (area instanceof FakeBlock) {
+                    cache.addBlocks((FakeBlock) area);
+                } else {
                     cache.addArea(area);
                 }
             }
@@ -353,21 +348,21 @@ public class FakeBlockHandler implements Listener {
     public static Set<FakeBlock> getFakeBlocksForChunk(Player player, int x, int z) {
         return fakeBlockCache.get(player.getUniqueId()).getBlocks(x, z);
     }
-    
+
     public static Set<FakeBlock> getFakeBlocksForChunks(Player player, int[] x, int[] z) {
         return fakeBlockCache.get(player.getUniqueId()).getBlocks(x, z);
     }
-    
+
     private static void initBreakSounds() {
-        for(net.minecraft.server.v1_8_R3.Block block : net.minecraft.server.v1_8_R3.Block.REGISTRY) {
+        for (net.minecraft.server.v1_8_R3.Block block : net.minecraft.server.v1_8_R3.Block.REGISTRY) {
             String breaksound = block.stepSound.getBreakSound();
             breakSounds.put(CraftMagicNumbers.getMaterial(block), toSound(breaksound));
         }
     }
-    
+
     private static Sound toSound(String mcname) {
-        for(Sound s : Sound.values()) {
-            if(CraftSound.getSound(s).equals(mcname)) {
+        for (Sound s : Sound.values()) {
+            if (CraftSound.getSound(s).equals(mcname)) {
                 return s;
             }
         }

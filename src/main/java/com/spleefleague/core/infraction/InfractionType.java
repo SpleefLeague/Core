@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.spleefleague.core.infraction;
 
 import org.bukkit.ChatColor;
@@ -18,19 +17,20 @@ public enum InfractionType {
     TEMPBAN("Tempban", ChatColor.RED),
     BAN("Ban", ChatColor.DARK_RED),
     UNBAN("Unban", ChatColor.GREEN);
-    
+
     private final String name;
     private final ChatColor color;
-    
-    private InfractionType(String name, ChatColor color){
+
+    private InfractionType(String name, ChatColor color) {
         this.name = name;
         this.color = color;
     }
-    
-    public String getName(){
+
+    public String getName() {
         return name;
     }
-    public ChatColor getColor(){
+
+    public ChatColor getColor() {
         return color;
     }
 }

@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.spleefleague.core.command.commands;
 
 import com.spleefleague.core.plugin.CorePlugin;
@@ -20,7 +19,7 @@ import org.bukkit.entity.Player;
  *
  * @author Manuel
  */
-public class gamemode extends BasicCommand{
+public class gamemode extends BasicCommand {
 
     public gamemode(CorePlugin plugin, String name, String usage) {
         super(plugin, name, usage, Rank.SENIOR_MODERATOR, Rank.BUILDER, Rank.MODERATOR, Rank.CCMOD);
@@ -28,7 +27,7 @@ public class gamemode extends BasicCommand{
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(slp.getRank() == Rank.MODERATOR || slp.getRank() == Rank.CCMOD) {
+        if (slp.getRank() == Rank.MODERATOR || slp.getRank() == Rank.CCMOD) {
             slp.setGameMode((slp.getGameMode() == GameMode.SPECTATOR ? GameMode.SURVIVAL : GameMode.SPECTATOR));
             success(p, "Gamemode toggled!");
             success(p, "If you wish to toggle back, please use this command again.");
@@ -36,62 +35,58 @@ public class gamemode extends BasicCommand{
         }
         GameMode mode = null;
         Player player = p;
-        if(args.length == 0){
+        if (args.length == 0) {
             sendUsage(p);
             return;
         }
-        if(args.length >= 1){
-            try{
+        if (args.length >= 1) {
+            try {
                 mode = GameMode.valueOf(args[0].toUpperCase());
-            }
-            catch(IllegalArgumentException e){
-                try{
+            } catch (IllegalArgumentException e) {
+                try {
                     mode = GameMode.getByValue(Integer.parseInt(args[0]));
-                }
-                catch(NumberFormatException ex){
+                } catch (NumberFormatException ex) {
                     error(p, "The gamemode \"" + args[0] + "\" doesn't exist!");
                     return;
                 }
             }
         }
-        if(args.length >= 2){
-            if((player = Bukkit.getPlayerExact(args[1])) == null){
+        if (args.length >= 2) {
+            if ((player = Bukkit.getPlayerExact(args[1])) == null) {
                 error(p, "The player \"" + args[1] + "\" is not online!");
                 return;
             }
         }
-        if(player.getGameMode() != mode) {
+        if (player.getGameMode() != mode) {
             player.setGameMode(mode);
             success(player, "Your gamemode has been updated!");
         }
     }
+
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
-        if(args.length >= 2) {
+        if (args.length >= 2) {
             GameMode mode;
-            try{
+            try {
                 mode = GameMode.valueOf(args[0].toUpperCase());
-            }
-            catch(IllegalArgumentException e){
-                try{
+            } catch (IllegalArgumentException e) {
+                try {
                     mode = GameMode.getByValue(Integer.parseInt(args[0]));
-                }
-                catch(NumberFormatException ex){
+                } catch (NumberFormatException ex) {
                     error(cs, "The gamemode \"" + args[0] + "\" doesn't exist!");
                     return;
                 }
             }
             Player player;
-            if((player = Bukkit.getPlayerExact(args[1])) == null){
+            if ((player = Bukkit.getPlayerExact(args[1])) == null) {
                 error(cs, "The player \"" + args[1] + "\" is not online!");
                 return;
             }
-            if(player.getGameMode() != mode) {
+            if (player.getGameMode() != mode) {
                 player.setGameMode(mode);
                 success(player, "Your gamemode has been updated!");
             }
-        }
-        else {
+        } else {
             sendUsage(cs);
         }
     }

@@ -25,28 +25,28 @@ import org.bukkit.scheduler.BukkitTask;
  * @author Jonas
  */
 public class AfkListener implements Listener {
-    
+
     private static Listener instance;
     private static Map<UUID, Long> lastAction;
     private static BukkitTask task;
     private static final long AFK_TIME = 1000 * 60 * 10;
-    
+
     public static void init() {
-        if(instance == null) {
+        if (instance == null) {
             lastAction = new HashMap<>();
             instance = new AfkListener();
             Bukkit.getPluginManager().registerEvents(instance, SpleefLeague.getInstance());
             task = Bukkit.getScheduler().runTaskTimer(SpleefLeague.getInstance(), () -> {
                 long time = System.currentTimeMillis();
-                for(SLPlayer player : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-                    if(time - lastAction.get(player.getUniqueId()) > AFK_TIME && player.getState() != PlayerState.INGAME && !player.getRank().hasPermission(Rank.MODERATOR)) {
+                for (SLPlayer player : SpleefLeague.getInstance().getPlayerManager().getAll()) {
+                    if (time - lastAction.get(player.getUniqueId()) > AFK_TIME && player.getState() != PlayerState.INGAME && !player.getRank().hasPermission(Rank.MODERATOR)) {
                         player.kickPlayer(ChatColor.RED + "You have been afk for too long!");
                     }
                 }
             }, 0, 20 * 10);
         }
     }
-    
+
     public static void stop() {
         task.cancel();
         PlayerJoinEvent.getHandlerList().unregister(instance);
@@ -54,23 +54,23 @@ public class AfkListener implements Listener {
         PlayerMoveEvent.getHandlerList().unregister(instance);
         PlayerCommandPreprocessEvent.getHandlerList().unregister(instance);
     }
-    
+
     private AfkListener() {
-        for(Player player : Bukkit.getOnlinePlayers()) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
             lastAction.put(player.getUniqueId(), System.currentTimeMillis());
         }
     }
-    
+
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         lastAction.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
     }
-    
+
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         lastAction.remove(event.getPlayer().getUniqueId());
     }
-    
+
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
         lastAction.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());

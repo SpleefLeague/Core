@@ -13,11 +13,16 @@ import com.spleefleague.core.player.GeneralPlayer;
  * @param <P>
  */
 public interface QueueableArena<P extends GeneralPlayer> {
-    
+
     public boolean isOccupied();
+
     public boolean isAvailable(P p);
+
     public int getSize();
+
     public String getName();
+
     public boolean isQueued();
+
     public boolean isPaused();
 }

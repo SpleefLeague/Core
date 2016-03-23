@@ -11,7 +11,7 @@ public class InventoryMenuItemTemplateBuilder extends InventoryMenuComponentTemp
         return this;
     }
 
-	//Needed for Builder Inheritance
+    //Needed for Builder Inheritance
     @Override
     protected InventoryMenuItemTemplateBuilder getThis() {
         return this;

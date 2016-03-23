@@ -18,7 +18,7 @@ public class fspeed extends BasicCommand {
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(args.length != 1) {
+        if (args.length != 1) {
             sendUsage(slp);
             return;
         }
@@ -30,7 +30,7 @@ public class fspeed extends BasicCommand {
             return;
         }
         speed = speed / 10;
-        if(speed < 0.1 || speed > 1.0) {
+        if (speed < 0.1 || speed > 1.0) {
             error(slp, "Please enter a number between 1 and 10!");
             return;
         }

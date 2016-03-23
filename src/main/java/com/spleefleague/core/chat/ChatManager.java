@@ -21,13 +21,13 @@ import org.json.simple.JSONObject;
  * @author Jonas
  */
 public class ChatManager {
-    
+
     public static void sendMessage(String p, String m, ChatChannel c) {
         sendMessage(p.concat(" ").concat(m), c);
     }
-    
+
     public static void sendMessage(final String m, final ChatChannel c) {
-        if(c == ChatChannel.STAFF) {
+        if (c == ChatChannel.STAFF) {
             JSONObject send = new JSONObject();
             send.put("message", m);
             SpleefLeague.getInstance().getConnectionClient().send("staff", send);
@@ -54,27 +54,27 @@ public class ChatManager {
     }
 
     private static final HashSet<ChatChannel> channels = new HashSet<>();
-    
+
     public static void registerChannel(ChatChannel channel) {
         registerChannel(channel, false);
     }
-    
+
     public static void registerChannel(ChatChannel channel, boolean silent) {
         channels.add(channel);
-        if(!silent && channel.isDefault()) {
+        if (!silent && channel.isDefault()) {
             SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (!slp.isInChatChannel(channel) && slp.getOptions().isChatChannelEnabled(channel))).forEach((slp) -> {
                 slp.addChatChannel(channel);
             });
         }
     }
-    
+
     public static void unregisterChannel(ChatChannel channel) {
         channels.remove(channel);
         SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(channel))).forEach((slp) -> {
             slp.removeChatChannel(channel);
         });
     }
-    
+
     public static Collection<ChatChannel> getAvailableChatChannels(SLPlayer slp) {
         HashSet<ChatChannel> availableChannels = new HashSet<>();
         channels.stream().filter((channel) -> (channel.isVisible() && slp.getRank().hasPermission(channel.getMinRank()))).forEach((channel) -> {
@@ -82,11 +82,11 @@ public class ChatManager {
         });
         return availableChannels;
     }
-    
+
     public static Collection<ChatChannel> getAllChatChannels() {
         return channels;
     }
-    
+
     public static Collection<ChatChannel> getVisibleChatChannels() {
         Set<ChatChannel> availableChannels = new HashSet<>();
         channels.stream().sorted().filter((channel) -> (channel.isVisible())).forEach((channel) -> {

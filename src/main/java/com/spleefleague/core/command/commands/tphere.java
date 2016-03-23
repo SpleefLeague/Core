@@ -18,24 +18,22 @@ import org.bukkit.event.player.PlayerTeleportEvent;
  *
  * @author Jonas
  */
-public class tphere extends BasicCommand{
-    
+public class tphere extends BasicCommand {
+
     public tphere(CorePlugin plugin, String name, String usage) {
         super(plugin, name, usage, Rank.MODERATOR);
     }
-    
+
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(args.length == 1) {
+        if (args.length == 1) {
             Player target = Bukkit.getPlayer(args[0]);
-            if(target != null) {
+            if (target != null) {
                 target.teleport(p, PlayerTeleportEvent.TeleportCause.COMMAND);
-            }
-            else {
+            } else {
                 error(p, args[0] + " is not online!");
             }
-        }
-        else {
+        } else {
             sendUsage(p);
         }
     }

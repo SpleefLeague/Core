@@ -17,17 +17,17 @@ import org.bukkit.inventory.ItemStack;
  * @author Jonas
  */
 public class InventoryMenuTemplateRepository {
-    
+
     private static final Set<InventoryMenuTemplate> menus = new HashSet<>();
-    
+
     public static void initTemplates() {
         SLMenu.init();
     }
-    
+
     public static void addMenu(InventoryMenuTemplate menu) {
         menus.add(menu);
-    } 
-    
+    }
+
     public static boolean isMenuItem(ItemStack is, SLPlayer slp) {
         return menus.stream().anyMatch((template) -> (template.getDisplayItemStack(slp).equals(is)));
     }

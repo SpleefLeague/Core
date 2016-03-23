@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
  *
  * @author Patrick F.
  */
-
 public class ticketreply extends BasicCommand {
 
     public ticketreply(CorePlugin plugin, String name, String usage) {
@@ -37,13 +36,11 @@ public class ticketreply extends BasicCommand {
                         .append(slp.getName()).color(slp.getRank().getColor().asBungee()).append(": ").color(ChatColor.GRAY.asBungee()).append(message).color(ChatColor.YELLOW.asBungee())
                         .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to respond!").color(ChatColor.GRAY.asBungee()).create()))
                         .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/treply " + player.getName() + " ")).create());
-            }
-            else {
+            } else {
                 error(p, player.getName() + " is not currently online.");
             }
-            
-        }
-        else {
+
+        } else {
             sendUsage(p);
         }
     }

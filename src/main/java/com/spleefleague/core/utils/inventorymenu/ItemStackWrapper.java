@@ -18,13 +18,13 @@ import org.bukkit.material.MaterialData;
  * @author Jonas
  */
 public class ItemStackWrapper {
-    
+
     private final Dynamic<ItemStack> displayItem;
     private final Dynamic<String> displayName;
     private final Dynamic<Material> displayIcon;
     private final Dynamic<Integer> displayNumber;
     private final Dynamic<List<String>> displayDescription;
-    
+
     protected ItemStackWrapper(Dynamic<ItemStack> displayItem, Dynamic<Material> displayIcon, Dynamic<String> displayName, Dynamic<Integer> displayNumber, Dynamic<List<String>> displayDescription) {
         this.displayItem = displayItem;
         this.displayIcon = displayIcon;
@@ -32,18 +32,18 @@ public class ItemStackWrapper {
         this.displayNumber = displayNumber;
         this.displayDescription = displayDescription;
     }
-    
+
     public ItemStack construct(SLPlayer slp) {
         return constructItemStackFromValues(displayItem.get(slp), displayIcon.get(slp), displayName.get(slp), displayNumber.get(slp), displayDescription.get(slp));
     }
-    
+
     private ItemStack constructItemStackFromValues(ItemStack baseStack, Material icon, String name, Integer number, List<String> description) {
         ItemStack is = baseStack.clone();
 
         if (icon != null) {
             is.setType(icon);
             //is.setData() is not working...
-           //Later: is.getData().setData(icon.getData());
+            //Later: is.getData().setData(icon.getData());
         }
 
         if (number != null) {

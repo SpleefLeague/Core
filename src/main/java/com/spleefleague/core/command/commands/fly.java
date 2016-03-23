@@ -26,7 +26,7 @@ public class fly extends BasicCommand {
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(GamePlugin.isIngameGlobal(p) && !p.getAllowFlight()) {
+        if (GamePlugin.isIngameGlobal(p) && !p.getAllowFlight()) {
             error(p, "You cannot fly during matches!");
             return;
         }

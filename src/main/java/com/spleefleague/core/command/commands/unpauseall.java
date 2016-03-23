@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
  *
  * @author Jonas
  */
-public class unpauseall extends BasicCommand{
+public class unpauseall extends BasicCommand {
 
     public unpauseall(CorePlugin plugin, String name, String usage) {
         super(plugin, name, usage, Rank.SENIOR_MODERATOR);
@@ -28,7 +28,7 @@ public class unpauseall extends BasicCommand{
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
         runConsole(p, cmd, args);
     }
-    
+
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
         GamePlugin.setQueueStatusGlobal(true);

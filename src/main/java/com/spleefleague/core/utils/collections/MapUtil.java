@@ -21,11 +21,11 @@ public class MapUtil {
     public static <K, V extends Comparable<? super V>, T extends Map<K, V>> T sortByValue(T map) {
         return sortByValue(map, false);
     }
-    
+
     public static <K extends Comparable<? super K>, V, T extends Map<K, V>> T sortByKey(T map) {
         return sortByKey(map, false);
     }
-    
+
     public static <K, V extends Comparable<? super V>, T extends Map<K, V>> T sortByValue(T map, final boolean descending) {
         return sort(map, new Comparator<Map.Entry<K, V>>() {
             @Override
@@ -34,7 +34,7 @@ public class MapUtil {
             }
         });
     }
-    
+
     public static <K extends Comparable<? super K>, V, T extends Map<K, V>> T sortByKey(T map, final boolean descending) {
         return sort(map, new Comparator<Map.Entry<K, V>>() {
             @Override
@@ -43,7 +43,7 @@ public class MapUtil {
             }
         });
     }
-    
+
     public static <K, V, T extends Map<K, V>> T sort(T map, Comparator<Map.Entry<K, V>> c) {
         List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
         Collections.sort(list, c);

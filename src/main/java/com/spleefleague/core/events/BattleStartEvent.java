@@ -16,16 +16,16 @@ public class BattleStartEvent extends BattleEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private final StartReason reason;
-    
+
     public BattleStartEvent(Battle battle, StartReason reason) {
         super(battle);
         this.reason = reason;
     }
-    
+
     public StartReason getReason() {
         return reason;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return handlers;
@@ -34,7 +34,7 @@ public class BattleStartEvent extends BattleEvent {
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    
+
     public static enum StartReason {
         FORCE,
         QUEUE,

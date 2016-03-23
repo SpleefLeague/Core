@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.spleefleague.core.command.commands;
 
 import java.util.UUID;
@@ -33,45 +32,45 @@ import org.bukkit.entity.Player;
  *
  * @author Manuel
  */
-public class ban extends BasicCommand{
+public class ban extends BasicCommand {
+
     public ban(CorePlugin plugin, String name, String usage) {
         super(plugin, name, usage, Rank.MODERATOR);
     }
-    
+
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
         ban(p, args);
     }
-    
+
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
         ban(cs, args);
     }
+
     private void ban(CommandSender cs, String[] args) {
-        if(args.length >= 2) {
+        if (args.length >= 2) {
             UUID id;
-            if((id = DatabaseConnection.getUUID(args[0])) == null) {
+            if ((id = DatabaseConnection.getUUID(args[0])) == null) {
                 error(cs, "The player \"" + args[0] + "\" has not been on the server yet!");
                 return;
             }
             Player pl;
             String banMessage = StringUtil.fromArgsArray(args, 1);
-            Infraction ban = new Infraction(id, cs instanceof Player ? ((Player)cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.BAN, System.currentTimeMillis(), -1, banMessage);
+            Infraction ban = new Infraction(id, cs instanceof Player ? ((Player) cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.BAN, System.currentTimeMillis(), -1, banMessage);
             SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").deleteOne(new Document("uuid", id.toString()));
-            Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () ->  {
+            Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
                 EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), false);
                 EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), false);
             });
             ChatManager.sendMessage(new ComponentBuilder(SpleefLeague.getInstance().getChatPrefix() + " ").append(args[0] + " has been banned by " + cs.getName() + "!").color(ChatColor.GRAY)
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Reason: " + banMessage).color(ChatColor.GRAY).create())).create(), ChatChannel.STAFF_NOTIFICATIONS);
-            if((pl = Bukkit.getPlayerExact(args[0])) != null) {
+            if ((pl = Bukkit.getPlayerExact(args[0])) != null) {
                 pl.kickPlayer("You have been banned for: " + banMessage);
             }
             success(cs, "The player has been banned!");
-        }
-        else {
+        } else {
             sendUsage(cs);
         }
     }
 }
-

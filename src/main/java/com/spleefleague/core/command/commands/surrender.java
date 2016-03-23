@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
  *
  * @author Jonas
  */
-public class surrender extends BasicCommand{
+public class surrender extends BasicCommand {
 
     public surrender(CorePlugin plugin, String name, String usage) {
         super(plugin, name, usage);
@@ -25,10 +25,9 @@ public class surrender extends BasicCommand{
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(GamePlugin.isIngameGlobal(p)) {
+        if (GamePlugin.isIngameGlobal(p)) {
             GamePlugin.surrenderGlobal(p);
-        }
-        else {
+        } else {
             error(p, "You are currently not ingame!");
         }
     }

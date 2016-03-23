@@ -16,16 +16,16 @@ public class BattleEndEvent extends BattleEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private final EndReason reason;
-    
+
     public BattleEndEvent(Battle battle, EndReason reason) {
         super(battle);
         this.reason = reason;
     }
-    
+
     public EndReason getReason() {
         return reason;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return handlers;
@@ -34,7 +34,7 @@ public class BattleEndEvent extends BattleEvent {
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    
+
     public static enum EndReason {
         NORMAL,
         CANCEL,

@@ -39,46 +39,46 @@ public class ChatChannel extends DBEntity implements DBLoadable, Comparable<Chat
     private boolean temporary = false;
     @DBLoad(fieldName = "order")
     private int order;
-    
+
     private ChatChannel() {
-        
+
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public String getDisplayName() {
         return displayName;
     }
-    
+
     public Rank getMinRank() {
         return minRank;
     }
-    
+
     public void setMinRank(Rank minRank) {
         this.minRank = minRank;
     }
-    
+
     public boolean isDefault() {
         return defaultChannel;
     }
-    
+
     public boolean isTemporary() {
         return temporary;
     }
-    
+
     public boolean isVisible() {
         return visible;
-    }    
+    }
 
     @Override
     public int compareTo(ChatChannel o) {
         return Integer.compare(o.order, order);
     }
-    
+
     private static Map<String, ChatChannel> channels = new HashMap<>();
-    
+
     public static ChatChannel createTemporaryChannel(String name, String displayName, Rank minRank, boolean defaultChannel, boolean visible) {
         ChatChannel channel = new ChatChannel();
         channel.name = name;
@@ -92,24 +92,23 @@ public class ChatChannel extends DBEntity implements DBLoadable, Comparable<Chat
         ChatManager.registerChannel(channel);
         return channel;
     }
-    
+
     public static ChatChannel fromString(String channel) {
         return channels.get(channel);
     }
-    
-    public static final ChatChannel 
-        GLOBAL = getPlaceholderInstance(), 
-        STAFF = getPlaceholderInstance(), 
-        STAFF_NOTIFICATIONS = getPlaceholderInstance();
+
+    public static final ChatChannel GLOBAL = getPlaceholderInstance(),
+            STAFF = getPlaceholderInstance(),
+            STAFF_NOTIFICATIONS = getPlaceholderInstance();
 
     public static ChatChannel valueOf(String name) {
         return channels.get(name);
     }
-    
+
     public static ChatChannel[] values() {
         return channels.values().toArray(new ChatChannel[0]);
     }
-    
+
     private static ChatChannel getPlaceholderInstance() {
         ChatChannel channel = new ChatChannel();
         channel.name = "PLACEHOLDER";
@@ -119,13 +118,13 @@ public class ChatChannel extends DBEntity implements DBLoadable, Comparable<Chat
         channel.minRank = Rank.ADMIN;
         return channel;
     }
-    
+
     public static void init() {
         MongoCursor<Document> dbc = SpleefLeague.getInstance().getPluginDB().getCollection("ChatChannels").find().iterator();
-        while(dbc.hasNext()) {
+        while (dbc.hasNext()) {
             ChatChannel channel = EntityBuilder.load(dbc.next(), ChatChannel.class);
             ChatChannel staticChannel = getField(channel.getName());
-            if(staticChannel != null) {
+            if (staticChannel != null) {
                 staticChannel.name = channel.name;
                 staticChannel.displayName = channel.displayName;
                 staticChannel.defaultChannel = channel.defaultChannel;
@@ -138,11 +137,11 @@ public class ChatChannel extends DBEntity implements DBLoadable, Comparable<Chat
         }
         SpleefLeague.getInstance().log("Loaded " + channels.size() + " chat channels!");
     }
-    
+
     private static ChatChannel getField(String name) {
         try {
             Field field = ChatChannel.class.getField(name);
-            ChatChannel staticChannel = (ChatChannel)field.get(null);
+            ChatChannel staticChannel = (ChatChannel) field.get(null);
             return staticChannel;
         } catch (NoSuchFieldException e) {
         } catch (SecurityException | IllegalArgumentException | IllegalAccessException ex) {
@@ -150,10 +149,11 @@ public class ChatChannel extends DBEntity implements DBLoadable, Comparable<Chat
         }
         return null;
     }
-    
+
     public static class FromStringConverter extends TypeConverter<String, ChatChannel> {
 
-        public FromStringConverter() {}
+        public FromStringConverter() {
+        }
 
         @Override
         public ChatChannel convertLoad(String name) {

@@ -5,7 +5,6 @@
  */
 package com.spleefleague.core.command.commands;
 
-
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.command.BasicCommand;
@@ -21,7 +20,7 @@ import org.bukkit.entity.Player;
  *
  * @author JoBa
  */
-public class ping extends BasicCommand{
+public class ping extends BasicCommand {
 
     public ping(CorePlugin plugin, String name, String usage) {
         super(plugin, name, usage, Rank.DEFAULT);
@@ -38,45 +37,39 @@ public class ping extends BasicCommand{
             }
         }
         showPing(p, j);
-    }    
-    
+    }
+
     private void showPing(Player to, Player whose) {
         boolean same = (to == whose);
         int ping = getPlayerPing(whose);
         ChatColor c = ChatColor.DARK_RED;
-        if(ping < 30) {
+        if (ping < 30) {
             c = ChatColor.DARK_GREEN;
-        }
-        else if(ping < 60) {
+        } else if (ping < 60) {
             c = ChatColor.GREEN;
-        }
-        else if(ping < 120) {
+        } else if (ping < 120) {
             c = ChatColor.YELLOW;
-        }
-        else if(ping < 250) {
+        } else if (ping < 250) {
             c = ChatColor.GOLD;
-        }
-        else if(ping < 500) {
+        } else if (ping < 500) {
             c = ChatColor.RED;
-        }
-        else {
+        } else {
             c = ChatColor.DARK_RED;
         }
         String pingStr = Integer.toString(ping) + " ms";
         if (same) {
-            if(ping != 1337) {
+            if (ping != 1337) {
                 success(to, ChatColor.GRAY + "Your ping is: " + c + pingStr);
-            }
-            else {
+            } else {
                 success(to, ChatColor.GRAY + "Your ping is: " + ChatColor.GREEN + 1 + ChatColor.RED + 3 + ChatColor.YELLOW + 3 + ChatColor.BLUE + 7);
             }
         } else {
             success(to, ChatColor.GRAY + "Showing ping for " + ChatColor.RED + whose.getName() + ChatColor.GRAY + ": " + c + pingStr);
         }
     }
-    
+
     private int getPlayerPing(Player p) {
-        EntityPlayer nmsp = (EntityPlayer)(((CraftPlayer)p).getHandle());
+        EntityPlayer nmsp = (EntityPlayer) (((CraftPlayer) p).getHandle());
         return nmsp.ping;
-    }    
+    }
 }

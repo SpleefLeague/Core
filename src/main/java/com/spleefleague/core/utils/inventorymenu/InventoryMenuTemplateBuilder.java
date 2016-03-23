@@ -9,8 +9,7 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
 
     private static final int ROWSIZE = 9;
     private int dynamic = -1000;
-    
-    
+
     protected InventoryMenuTemplateBuilder() {
 
     }
@@ -19,7 +18,7 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
         buildingObj.setTitle(title);
         return this;
     }
-    
+
     public InventoryMenuTemplateBuilder title(Dynamic<String> title) {
         buildingObj.setTitle(title);
         return this;
@@ -41,11 +40,11 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
         buildingObj.addComponent(position, itemTemplate);
         return this;
     }
-    
+
     public InventoryMenuTemplateBuilder component(InventoryMenuItemTemplate menuItemTemplate) {
         return component(--dynamic, menuItemTemplate);
     }
-    
+
     public InventoryMenuTemplateBuilder component(InventoryMenuItemTemplateBuilder menuItemTemplateBuilder) {
         return component(--dynamic, menuItemTemplateBuilder.build());
     }
@@ -66,15 +65,15 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
         buildingObj.addComponent(position, menuTemplate);
         return this;
     }
-    
+
     public InventoryMenuTemplateBuilder component(InventoryMenuTemplate menuTemplate) {
         return component(++dynamic, menuTemplate);
     }
-    
+
     public InventoryMenuTemplateBuilder component(InventoryMenuTemplateBuilder menuTemplateBuilder) {
         return component(++dynamic, menuTemplateBuilder.build());
     }
-    
+
     public InventoryMenuTemplateBuilder exitOnClickOutside(boolean exitOnClickOutside) {
         buildingObj.setExitOnClickOutside(exitOnClickOutside);
         return this;
@@ -84,7 +83,7 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
         buildingObj.setMenuControls(menuControls);
         return this;
     }
-    
+
     @Override
     protected InventoryMenuTemplateBuilder getThis() {
         return this;

@@ -20,18 +20,17 @@ import org.bukkit.plugin.PluginDescriptionFile;
  * @author Jonas
  */
 public class CommandLoader {
-    
+
     private final ConcurrentMap<String, LoadedCommand> loadedCommands = new ConcurrentHashMap<>();
     private final CorePlugin plugin;
     private final String commandPackage;
-    
+
     private CommandLoader(CorePlugin plugin, String commandPackage) {
         this.plugin = plugin;
         this.commandPackage = commandPackage;
         registerCommands();
     }
-    
-    
+
     private void registerCommands() {
         PluginDescriptionFile pdf = plugin.getDescription();
         for (String command : pdf.getCommands().keySet()) {
@@ -49,7 +48,7 @@ public class CommandLoader {
             registerCommand(command, description, usage);
         }
     }
-    
+
     private void registerCommand(String command, String description, String usage) {
         try {
             command = command.toLowerCase();
@@ -65,15 +64,15 @@ public class CommandLoader {
             logCommandLoadError(command, e);
         }
     }
-    
+
     private void logCommandLoadError(String command, Exception e) {
         SpleefLeague.LOG.log(Level.WARNING, " {0}Failed to load command \"{1}\": {2}", new Object[]{SpleefLeague.getInstance().getPrefix(), command, e.getMessage()});
     }
-    
+
     public LoadedCommand getCommand(String command) {
         return loadedCommands.get(command);
     }
-    
+
     public static CommandLoader loadCommands(CorePlugin plugin, String commandPackage) {
         return new CommandLoader(plugin, commandPackage);
     }

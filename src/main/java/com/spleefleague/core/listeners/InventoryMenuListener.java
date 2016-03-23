@@ -33,7 +33,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 public class InventoryMenuListener implements Listener {
 
     private static Listener instance;
-    
+
     public static void init() {
         if (instance == null) {
             instance = new InventoryMenuListener();
@@ -44,19 +44,16 @@ public class InventoryMenuListener implements Listener {
     private InventoryMenuListener() {
 
     }
-    
+
     @EventHandler
     public void onGeneralPlayerLoaded(GeneralPlayerLoadedEvent event) {
         GeneralPlayer gp = event.getGeneralPlayer();
         if (gp instanceof SLPlayer) {
             SLPlayer slp = (SLPlayer) gp;
-            if(slp.getInventory().getItem(0) == null || slp.getInventory().getItem(0).getType() == Material.AIR) {
+            if (slp.getInventory().getItem(0) == null || slp.getInventory().getItem(0).getType() == Material.AIR) {
                 slp.getInventory().setItem(0, SLMenu.getInstance().getDisplayItemStack(slp));
-            }
-            else {
-                if(!isMenuItem(slp.getInventory().getItem(0), slp)) {
-                    slp.sendMessage(Theme.ERROR + "You did not recieve the SLMenu because your inventory's first slot was occupied. Remove the item and reconnect to receive the menu.");
-                }
+            } else if (!isMenuItem(slp.getInventory().getItem(0), slp)) {
+                slp.sendMessage(Theme.ERROR + "You did not recieve the SLMenu because your inventory's first slot was occupied. Remove the item and reconnect to receive the menu.");
             }
         }
     }
@@ -73,10 +70,10 @@ public class InventoryMenuListener implements Listener {
             }
         }
     }
-    
+
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
-        if(isMenuItem(event.getItemInHand(), getSLPlayer(event.getPlayer()))) {
+        if (isMenuItem(event.getItemInHand(), getSLPlayer(event.getPlayer()))) {
             event.setCancelled(true);
         }
     }
@@ -99,13 +96,11 @@ public class InventoryMenuListener implements Listener {
 
                     exitMenuIfClickOutSide(menu, player);
 
-                }
-                else {
+                } else {
                     int index = event.getRawSlot();
                     if (index < inventory.getSize()) {
                         menu.selectItem(index);
-                    }
-                    else {
+                    } else {
                         exitMenuIfClickOutSide(menu, player);
                     }
                 }
@@ -118,7 +113,7 @@ public class InventoryMenuListener implements Listener {
     public void onInventoryAction(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player) {
             Player p = (Player) event.getWhoClicked();
-            if (event.getCurrentItem() != null && isMenuItem(event.getCurrentItem(),getSLPlayer(p))) {
+            if (event.getCurrentItem() != null && isMenuItem(event.getCurrentItem(), getSLPlayer(p))) {
                 event.setCancelled(true);
             }
         }
@@ -130,7 +125,7 @@ public class InventoryMenuListener implements Listener {
             menu.close(player);
         }
     }
-    
+
     private SLPlayer getSLPlayer(Player player) {
         return SpleefLeague.getInstance().getPlayerManager().get(player);
     }

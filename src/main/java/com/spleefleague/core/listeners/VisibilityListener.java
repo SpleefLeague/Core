@@ -26,7 +26,7 @@ public class VisibilityListener implements Listener {
     private static Listener instance;
 
     public static void init() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new VisibilityListener();
             Bukkit.getPluginManager().registerEvents(instance, SpleefLeague.getInstance());
         }
@@ -38,7 +38,7 @@ public class VisibilityListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onStart(BattleStartEvent e) {
-        if(e.isCancelled()) {
+        if (e.isCancelled()) {
             return;
         }
         Bukkit.getScheduler().runTaskLater(SpleefLeague.getInstance(), () -> {

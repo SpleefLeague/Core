@@ -107,33 +107,28 @@ public abstract class TypeConverter<T, V> {
             World world;
             if (t.get(0) instanceof Integer) {
                 x = (Integer) t.get(0);
-            }
-            else {
+            } else {
                 x = (double) t.get(0);
             }
             if (t.get(1) instanceof Integer) {
                 y = (Integer) t.get(1);
-            }
-            else {
+            } else {
                 y = (double) t.get(1);
             }
             if (t.get(2) instanceof Integer) {
                 z = (Integer) t.get(2);
-            }
-            else {
+            } else {
                 z = (double) t.get(2);
             }
             if (t.size() >= 5) {
                 if (t.get(3) instanceof Integer) {
                     pitch = ((Integer) t.get(3)).floatValue();
-                }
-                else {
+                } else {
                     pitch = ((Double) t.get(3)).floatValue();
                 }
                 if (t.get(4) instanceof Integer) {
                     yaw = ((Integer) t.get(4)).floatValue();
-                }
-                else {
+                } else {
                     yaw = ((Double) t.get(4)).floatValue();
                 }
             }

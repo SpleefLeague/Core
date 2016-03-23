@@ -28,60 +28,59 @@ public class SLPlayer extends GeneralPlayer {
     private PlayerOptions options;
     private boolean hasForumAccount = false;
     private Map<UUID, Challenge> activeChallenges;
-    
+
     public SLPlayer() {
         super();
         this.chatChannels = new HashSet<>();
         this.activeChallenges = new HashMap<>();
         this.sendingChannel = ChatChannel.GLOBAL;
     }
-    
+
     @DBSave(fieldName = "rank", typeConverter = RankStringConverter.class)
     public Rank getRank() {
         return rank;
     }
-    
+
     @DBLoad(fieldName = "rank", typeConverter = RankStringConverter.class)
     public void setRank(final Rank rank) {
         this.rank = rank;
-        if(isOnline()) {
+        if (isOnline()) {
             setPlayerListName(rank.getColor() + getName());
             setDisplayName(rank.getColor() + getName());
-            if(rank.hasPermission(Rank.DEVELOPER)) {
+            if (rank.hasPermission(Rank.DEVELOPER)) {
                 setGameMode(GameMode.CREATIVE);
-            }
-            else {
+            } else {
                 setGameMode(GameMode.SURVIVAL);
             }
             rank.managePermissions(this);
         }
     }
-    
+
     @DBLoad(fieldName = "coins")
     public void setCoins(int coins) {
         this.coins = coins;
     }
-    
+
     @DBSave(fieldName = "coins")
     public int getCoins() {
         return coins;
     }
-    
+
     @DBSave(fieldName = "lastChatPartner", typeConverter = UUIDStringConverter.class)
     public UUID getLastChatPartner() {
         return lastChatPartner;
     }
-    
+
     @DBLoad(fieldName = "lastChatPartner", typeConverter = UUIDStringConverter.class)
     public void setLastChatPartner(UUID lastChatPartner) {
         this.lastChatPartner = lastChatPartner;
     }
-    
+
     @DBSave(fieldName = "options")
     public PlayerOptions getOptions() {
         return options;
     }
-    
+
     @DBLoad(fieldName = "options", priority = -100)
     private void setOptions(PlayerOptions options) {
         this.options = options;
@@ -91,35 +90,35 @@ public class SLPlayer extends GeneralPlayer {
     protected void setReceivingChatChannels(HashSet<ChatChannel> chatChannels) {
         this.chatChannels = chatChannels;
     }
-    
+
     public void setSendingChannel(ChatChannel channel) {
         this.sendingChannel = channel;
     }
-    
+
     public ChatChannel getSendingChannel() {
         return sendingChannel;
     }
-    
+
     public boolean isInChatChannel(ChatChannel channel) {
         return chatChannels.contains(channel);
     }
-    
+
     public void addChatChannel(ChatChannel channel) {
         this.chatChannels.add(channel);
     }
-    
+
     public void removeChatChannel(ChatChannel channel) {
         this.chatChannels.remove(channel);
     }
-    
+
     public void setState(PlayerState state) {
         this.state = state;
     }
-    
+
     public PlayerState getState() {
         return state;
-    }    
-    
+    }
+
     @DBLoad(fieldName = "hasForumAccount")
     public void setForumAccount(boolean forumAccount) {
         this.hasForumAccount = forumAccount;
@@ -129,12 +128,12 @@ public class SLPlayer extends GeneralPlayer {
     public boolean hasForumAccount() {
         return hasForumAccount;
     }
-    
+
     public void resetVisibility() {
-        if(this.getPlayer() != null && this.getPlayer().isOnline()) {
-            for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
-                if(slp != this && this.getState() == PlayerState.IDLE) {
-                    if(slp.getState() == PlayerState.IDLE) {
+        if (this.getPlayer() != null && this.getPlayer().isOnline()) {
+            for (SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
+                if (slp != this && this.getState() == PlayerState.IDLE) {
+                    if (slp.getState() == PlayerState.IDLE) {
                         this.showPlayer(slp);
                         slp.showPlayer(this);
                     }
@@ -142,22 +141,22 @@ public class SLPlayer extends GeneralPlayer {
             }
         }
     }
-    
+
     public void addChallenge(Challenge challenge) {
         activeChallenges.put(challenge.getChallengingPlayer().getUniqueId(), challenge);
     }
-    
+
     public void removeChallenge(Challenge challenge) {
         activeChallenges.remove(challenge.getChallengingPlayer().getUniqueId());
     }
-    
+
     public Challenge getChallenge(SLPlayer challenger) {
         return activeChallenges.get(challenger.getUniqueId());
     }
 
     @Override
     public void done() {
-        if(this.options == null) {
+        if (this.options == null) {
             this.options = PlayerOptions.getDefault();
             this.options.apply(this);
         }

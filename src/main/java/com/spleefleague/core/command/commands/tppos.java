@@ -20,63 +20,58 @@ import org.bukkit.event.player.PlayerTeleportEvent;
  *
  * @author Jonas
  */
-public class tppos extends BasicCommand{
-    
+public class tppos extends BasicCommand {
+
     public tppos(CorePlugin plugin, String name, String usage) {
         super(plugin, name, usage, Rank.MODERATOR, Rank.BUILDER);
     }
-    
+
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(args.length == 3) {
+        if (args.length == 3) {
             try {
                 Location loc = new Location(p.getWorld(), Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
                 p.teleport(loc, PlayerTeleportEvent.TeleportCause.COMMAND);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 sendUsage(p);
             }
-        }
-        else if(args.length == 4) {
+        } else if (args.length == 4) {
             Player target = Bukkit.getPlayer(args[0]);
-            if(target != null) {
+            if (target != null) {
                 try {
                     Location loc = new Location(target.getWorld(), Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
                     target.teleport(loc, PlayerTeleportEvent.TeleportCause.COMMAND);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     sendUsage(p);
                 }
-            }
-            else {
+            } else {
                 error(p, args[0] + " is not online!");
             }
-        }
-        else {
+        } else {
             sendUsage(p);
         }
     }
-    
+
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
         runBlock(cs, cmd, args);
     }
-    
+
     @Override
     protected int runBlock(CommandSender cs, Command cmd, String[] args) {
-        if(args.length == 4) {
+        if (args.length == 4) {
             Player target = Bukkit.getPlayer(args[0]);
-            if(target != null) {
+            if (target != null) {
                 try {
                     Location loc = new Location(target.getWorld(), Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
                     target.teleport(loc, PlayerTeleportEvent.TeleportCause.COMMAND);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     sendUsage(cs);
                 }
-            }
-            else {
+            } else {
                 error(cs, args[0] + " is not online!");
             }
-        }
-        else {
+        } else {
             sendUsage(cs);
         }
         return 0;

@@ -13,24 +13,24 @@ import org.bukkit.event.HandlerList;
  * @author Jonas
  */
 @Deprecated
-public class SlackMessageReceivedEvent extends Event{
+public class SlackMessageReceivedEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
     private final String userid, message;
-    
+
     public SlackMessageReceivedEvent(String userid, String message) {
         this.userid = userid;
         this.message = message;
     }
-    
+
     public String getUserID() {
         return userid;
     }
-    
+
     public String getMessage() {
         return message;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return handlers;
@@ -39,5 +39,5 @@ public class SlackMessageReceivedEvent extends Event{
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    
+
 }

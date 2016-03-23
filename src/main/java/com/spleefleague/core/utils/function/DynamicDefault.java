@@ -13,27 +13,27 @@ import com.spleefleague.core.player.SLPlayer;
  * @param <V>
  */
 public abstract class DynamicDefault<V> implements Dynamic<V> {
-    
+
     private final V defaultValue, nullValue;
-    
+
     protected DynamicDefault(V defaultValue) {
         this(defaultValue, null);
     }
-    
+
     protected DynamicDefault(V defaultValue, V nullValue) {
         this.defaultValue = defaultValue;
         this.nullValue = nullValue;
     }
-    
+
     @Override
     public V get(SLPlayer slp) {
         try {
             V value = slp == null ? defaultValue : getValue(slp);
             return value == null ? nullValue : value;
-        } catch(NullPointerException npe) {
+        } catch (NullPointerException npe) {
             return nullValue;
         }
     }
-    
+
     protected abstract V getValue(SLPlayer slp);
 }

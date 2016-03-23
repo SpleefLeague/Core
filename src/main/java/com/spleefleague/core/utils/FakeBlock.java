@@ -16,11 +16,11 @@ import org.bukkit.Material;
  * @author Jonas
  */
 public class FakeBlock extends FakeArea {
-    
+
     private final Location location;
     private Material material;
     private final int chunkx, chunkz;
-    
+
     public FakeBlock(Location location, Material material) {
         this.location = location;
         this.material = material;
@@ -28,43 +28,43 @@ public class FakeBlock extends FakeArea {
         chunkx = chunk.getX();
         chunkz = chunk.getZ();
     }
-    
+
     public Location getLocation() {
         return location;
     }
-    
+
     public Chunk getChunk() {
         return location.getChunk();
     }
-    
+
     public int getChunkX() {
         return chunkx;
     }
-    
+
     public int getChunkZ() {
         return chunkz;
     }
-    
+
     public Material getType() {
         return material;
     }
-    
+
     public void setType(Material material) {
         this.material = material;
     }
-    
+
     public int getX() {
         return location.getBlockX();
     }
-    
+
     public int getY() {
         return location.getBlockY();
     }
-    
+
     public int getZ() {
         return location.getBlockZ();
     }
-    
+
     @Override
     public Collection<FakeBlock> getBlocks() {
         return Arrays.asList(this);

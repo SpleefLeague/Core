@@ -45,30 +45,29 @@ import org.w3c.dom.NodeList;
  * @author Jonas
  */
 public class map extends BasicCommand {
-    
+
     private HashMap<Short, MapView> maps = new HashMap<>();
-    
+
     public map(CorePlugin plugin, String name, String usage) {
         super(plugin, name, usage, Rank.DEVELOPER);
     }
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(args.length == 2) {
-            if(args[0].equalsIgnoreCase("create")) {
+        if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("create")) {
                 try {
                     MapView mv = Bukkit.getServer().createMap(Bukkit.getWorlds().get(0));
-                    for(MapRenderer mr : mv.getRenderers()) {
+                    for (MapRenderer mr : mv.getRenderers()) {
                         mv.removeRenderer(mr);
                     }
                     URL url = new URL(args[1]);
-                    if(args[1].toLowerCase().endsWith(".gif")) {
+                    if (args[1].toLowerCase().endsWith(".gif")) {
                         mv.addRenderer(new GIFMapBase(url));
-                    }
-                    else {
+                    } else {
                         mv.addRenderer(new MapRenderer() {
                             Image image;
-                            
+
                             {
                                 try {
                                     image = ImageIO.read(url).getScaledInstance(128, 128, 0);
@@ -78,13 +77,12 @@ public class map extends BasicCommand {
                                     Logger.getLogger(map.class.getName()).log(Level.SEVERE, null, ex);
                                 }
                             }
-                           
+
                             @Override
                             public void render(MapView map, MapCanvas canvas, Player player) {
                                 if (image != null) {
                                     canvas.drawImage(0, 0, image);
-                                }
-                                else {
+                                } else {
                                     map.removeRenderer(this);
                                 }
                             }
@@ -96,35 +94,31 @@ public class map extends BasicCommand {
                 } catch (MalformedURLException ex) {
                     error(p, "Invalid URL!");
                 }
-            }
-            else if(args[0].equalsIgnoreCase("destroy")) {
+            } else if (args[0].equalsIgnoreCase("destroy")) {
                 try {
                     short s = Short.parseShort(args[1]);
                     MapView mv = maps.get(s);
-                    if(mv != null) {
-                        for(MapRenderer mr : mv.getRenderers()) {
-                            if(mr instanceof GIFMapBase) {
-                                ((GIFMapBase)mr).stop();
+                    if (mv != null) {
+                        for (MapRenderer mr : mv.getRenderers()) {
+                            if (mr instanceof GIFMapBase) {
+                                ((GIFMapBase) mr).stop();
                                 mv.removeRenderer(mr);
                             }
                         }
-                    }
-                    else {
+                    } else {
                         error(p, s + " is not a valid map ID.");
                     }
-                } catch(Exception e) {
+                } catch (Exception e) {
                     error(p, args[1] + " is not a valid map ID.");
                 }
-            }
-            else {
+            } else {
                 sendUsage(p);
             }
-        }
-        else {
+        } else {
             sendUsage(p);
         }
     }
-    
+
     public static class GIFMapBase extends MapRenderer {
 
         private int picture = 0;
@@ -148,9 +142,9 @@ public class map extends BasicCommand {
                         picture = 0;
                     }
                 }
-            },0,2);
+            }, 0, 2);
         }
-        
+
         public void stop() {
             task.cancel();
         }
@@ -214,18 +208,17 @@ public class map extends BasicCommand {
             }
             return frames;
         }
-        
+
         @Override
         public void render(MapView map, MapCanvas canvas, Player player) {
-            if(!redrawFlags.containsKey(player.getUniqueId())) {
+            if (!redrawFlags.containsKey(player.getUniqueId())) {
                 redrawFlags.put(player.getUniqueId(), true);
             }
-            if(redrawFlags.get(player.getUniqueId())) {
+            if (redrawFlags.get(player.getUniqueId())) {
                 canvas.drawImage(0, 0, frames.get(picture));
                 redrawFlags.put(player.getUniqueId(), false);
                 player.sendMap(map);
-            }
-            else {
+            } else {
                 redrawFlags.put(player.getUniqueId(), true);
             }
         }

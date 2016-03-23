@@ -15,18 +15,20 @@ import org.bukkit.command.CommandSender;
 public interface Debugger {
 
     default void debug() {
-        
+
     }
-    
+
     default void debug(CommandSender cs, SpleefLeague plugin) {
         debug();
     }
-    
+
     interface Stoppable {
+
         void stop();
     }
-    
+
     interface CommandExecutor {
+
         void onCommand(CommandSender cs, String[] args);
     }
 }

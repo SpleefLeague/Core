@@ -21,20 +21,20 @@ public class FakeBlockBreakEvent extends Event implements Cancellable {
     private final Player player;
     private final FakeBlock block;
     private boolean cancelled = false;
-    
+
     public FakeBlockBreakEvent(FakeBlock block, Player player) {
         this.player = player;
         this.block = block;
     }
-    
+
     public Player getPlayer() {
         return player;
     }
-    
+
     public FakeBlock getBlock() {
         return block;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return handlers;

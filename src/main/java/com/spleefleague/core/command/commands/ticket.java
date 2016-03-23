@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
  *
  * @author Patrick F.
  */
-
 public class ticket extends BasicCommand {
 
     public ticket(CorePlugin plugin, String name, String usage) {
@@ -27,7 +26,7 @@ public class ticket extends BasicCommand {
     }
 
     @Override
-    protected void run(Player p, SLPlayer slp, Command cmd, String[] args){
+    protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
         if (args.length > 0) {
             String message = StringUtil.fromArgsArray(args);
             slp.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "Ticket" + ChatColor.DARK_GREEN + "|" + ChatColor.GREEN + slp.getName() + ChatColor.DARK_GREEN + "] " + slp.getRank().getColor() + slp.getName() + ChatColor.GRAY + ": " + ChatColor.YELLOW + message);
@@ -35,8 +34,7 @@ public class ticket extends BasicCommand {
                     .append(slp.getName()).color(slp.getRank().getColor().asBungee()).append(": ").color(ChatColor.GRAY.asBungee()).append(message).color(ChatColor.YELLOW.asBungee())
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to respond!").color(ChatColor.GRAY.asBungee()).create()))
                     .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/treply " + slp.getName() + " ")).create());
-        }
-        else {
+        } else {
             sendUsage(p);
         }
     }

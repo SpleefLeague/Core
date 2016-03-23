@@ -56,7 +56,7 @@ public class rules extends BasicCommand {
 
     private void tellraw(Player p, String txt) {
         IChatBaseComponent localIChatBaseComponent = IChatBaseComponent.ChatSerializer.a(txt);
-        ((CraftPlayer)p).getHandle().sendMessage(localIChatBaseComponent);
+        ((CraftPlayer) p).getHandle().sendMessage(localIChatBaseComponent);
     }
 
     // shortened rules

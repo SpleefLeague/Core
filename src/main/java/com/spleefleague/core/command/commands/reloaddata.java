@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
  *
  * @author Jonas
  */
-public class reloaddata extends BasicCommand{
+public class reloaddata extends BasicCommand {
 
     public reloaddata(CorePlugin plugin, String name, String usage) {
         super(plugin, name, usage, Rank.DEVELOPER);
@@ -29,15 +29,14 @@ public class reloaddata extends BasicCommand{
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
         runConsole(p, cmd, args);
     }
-    
+
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
-        if(args.length == 0) {
+        if (args.length == 0) {
             Bukkit.reload();
-        }
-        else if(args[0].equalsIgnoreCase("ranks")) {
+        } else if (args[0].equalsIgnoreCase("ranks")) {
             Rank.init();
-            for(SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
+            for (SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
                 slp.setRank(Rank.valueOf(slp.getRank().getName()));
             }
             success(cs, "Reloaded " + Rank.values().length + " ranks!");

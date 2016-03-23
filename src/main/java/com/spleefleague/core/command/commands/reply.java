@@ -27,34 +27,31 @@ public class reply extends BasicCommand {
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(args.length > 0) {
+        if (args.length > 0) {
             UUID lastChatpartner = slp.getLastChatPartner();
-            if(lastChatpartner != null) {
+            if (lastChatpartner != null) {
                 SLPlayer target = SpleefLeague.getInstance().getPlayerManager().get(lastChatpartner);
-                if(target != null) {
+                if (target != null) {
                     String prefix1 = ChatColor.GRAY + "[me -> " + target.getRank().getColor() + target.getName() + ChatColor.GRAY + "] " + ChatColor.RESET;
                     String prefix2 = ChatColor.GRAY + "[" + slp.getRank().getColor() + slp.getName() + ChatColor.GRAY + " -> me] " + ChatColor.RESET;
                     String message = toMessage(args);
                     p.sendMessage(prefix1 + message);
                     target.sendMessage(prefix2 + message);
                     target.setLastChatPartner(slp.getUniqueId());
-                }
-                else {
+                } else {
                     error(p, args[0] + " is not online!");
                 }
-            }
-            else {
+            } else {
                 error(p, "You don't have anyone to reply to!");
             }
-        }
-        else {
+        } else {
             sendUsage(p);
         }
     }
-    
+
     private String toMessage(String[] msg) {
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < msg.length; i++) {
+        for (int i = 0; i < msg.length; i++) {
             sb.append(msg[i]).append((i + 1 < msg.length) ? " " : "");
         }
         return sb.toString();

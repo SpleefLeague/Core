@@ -15,7 +15,7 @@ import org.bukkit.ChatColor;
  * @author Jonas
  */
 public enum Theme {
-    
+
     SUCCESS(ChatColor.GREEN),
     SEVERE(ChatColor.DARK_RED),
     ERROR(ChatColor.RED),
@@ -24,23 +24,23 @@ public enum Theme {
     SUPER_SECRET(ChatColor.DARK_GRAY),
     WARNING(ChatColor.GOLD),
     BROADCAST(ChatColor.LIGHT_PURPLE);
-    
+
     private final String prefix;
     private final ChatColor color;
-    
+
     Theme(String prefix, ChatColor color) {
         this.prefix = prefix;
         this.color = color;
     }
-    
+
     Theme(ChatColor color) {
         this(SpleefLeague.getInstance().getChatPrefix(), color);
     }
-    
+
     public String buildTheme(boolean prefix) {
         return (prefix ? this.prefix + " " : "") + color;
     }
-    
+
     @Override
     public String toString() {
         return buildTheme(true);

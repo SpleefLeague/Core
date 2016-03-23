@@ -14,26 +14,26 @@ import org.bukkit.event.Event;
  * @author Jonas
  */
 public abstract class BattleEvent extends Event implements Cancellable {
-    
+
     private final Battle battle;
     private boolean cancelled = false;
-    
+
     public BattleEvent(Battle battle) {
         this.battle = battle;
     }
-    
+
     public Battle getBattle() {
         return battle;
     }
-    
+
     @Override
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
-    
+
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
-    
+
 }

@@ -26,15 +26,13 @@ public class endgame extends BasicCommand {
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(slp.getState() == PlayerState.INGAME) {
-            if(args.length == 0) {
+        if (slp.getState() == PlayerState.INGAME) {
+            if (args.length == 0) {
                 GamePlugin.requestEndgameGlobal(p);
-            }
-            else {
+            } else {
                 sendUsage(p);
             }
-        }
-        else {
+        } else {
             error(p, "You are not ingame!");
         }
     }

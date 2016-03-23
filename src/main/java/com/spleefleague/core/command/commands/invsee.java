@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.spleefleague.core.command.commands;
 
 import com.spleefleague.core.plugin.CorePlugin;
@@ -18,24 +17,23 @@ import org.bukkit.entity.Player;
  *
  * @author Manuel
  */
-public class invsee extends BasicCommand{
+public class invsee extends BasicCommand {
+
     public invsee(CorePlugin plugin, String name, String usage) {
         super(plugin, name, usage, Rank.MODERATOR);
     }
-    
+
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(args.length >= 1) {
+        if (args.length >= 1) {
             Player pl;
-            if((pl = Bukkit.getPlayerExact(args[0])) != null) {
+            if ((pl = Bukkit.getPlayerExact(args[0])) != null) {
                 p.openInventory(pl.getInventory());
                 success(p, "Moo.");
-            }
-            else {
+            } else {
                 error(p, "The player \"" + args[0] + "\" is not online!");
             }
-        }
-        else {
+        } else {
             sendUsage(p);
         }
     }

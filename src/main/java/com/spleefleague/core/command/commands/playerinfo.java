@@ -48,8 +48,7 @@ public class playerinfo extends BasicCommand {
                     SLPlayer target;
                     if (targetPlayer != null) {
                         target = SpleefLeague.getInstance().getPlayerManager().get(targetPlayer);
-                    }
-                    else {
+                    } else {
                         target = SpleefLeague.getInstance().getPlayerManager().loadFake(targetName);
                         if (target == null) {
                             error(p, targetName + " does not exist.");
@@ -64,8 +63,7 @@ public class playerinfo extends BasicCommand {
                     p.sendMessage(ChatColor.DARK_GRAY + "State: " + data.getState());
                     if (target.isOnline()) {
                         p.sendMessage(ChatColor.DARK_GRAY + "IP: " + ChatColor.GRAY + data.getIP());
-                    }
-                    else {
+                    } else {
                         p.sendMessage(ChatColor.DARK_GRAY + "Last seen: " + ChatColor.GRAY + data.getLastSeen());
                     }
                     String sharedAccounts = data.getSharedAccounts();
@@ -74,8 +72,7 @@ public class playerinfo extends BasicCommand {
                     }
                 }
             }.runTaskAsynchronously(SpleefLeague.getInstance());
-        }
-        else {
+        } else {
             sendUsage(p);
         }
     }
@@ -84,7 +81,7 @@ public class playerinfo extends BasicCommand {
 
         private final SLPlayer slp;
         private String lastSeen;
-        
+
         public PlayerData(SLPlayer slp) {
             this.slp = slp;
         }
@@ -100,14 +97,14 @@ public class playerinfo extends BasicCommand {
         public String getUUID() {
             return slp.getUniqueId().toString();
         }
-        
+
         public String getIP() {
             return slp.getAddress().getAddress().toString().substring(1);
         }
-        
+
         public String getLastSeen() {
             //Should never happen
-            if(lastSeen == null) {
+            if (lastSeen == null) {
                 getSharedAccounts();
             }
             return lastSeen;
@@ -120,16 +117,14 @@ public class playerinfo extends BasicCommand {
                     Infraction inf = EntityBuilder.load(dbo, Infraction.class);
                     if (inf.getType() == InfractionType.BAN) {
                         return ChatColor.DARK_RED + "BANNED";
-                    }
-                    else if (inf.getType() == InfractionType.TEMPBAN) {
+                    } else if (inf.getType() == InfractionType.TEMPBAN) {
                         if (inf.getTime() + inf.getDuration() > System.currentTimeMillis()) {
                             return ChatColor.RED + "TEMPBANNED" + ChatColor.GRAY + " (for " + TimeUtil.dateToString(new Date(inf.getTime() + inf.getDuration()), true) + ")";
                         }
                     }
                 }
                 return ChatColor.GRAY + "OFFLINE";
-            }
-            else {
+            } else {
                 return ChatColor.GREEN + StringUtil.upperCaseFirst(slp.getState().toString());
             }
         }
@@ -142,12 +137,13 @@ public class playerinfo extends BasicCommand {
             Date lastOnline = null;
             for (Document doc : col.find(new Document("uuid", playerUUID))) {
                 ips.add(doc.get("ip", String.class));
-                if(lastOnline == null) {
+                if (lastOnline == null) {
                     lastOnline = doc.get("date", Date.class);
-                }
-                else {
+                } else {
                     Date d = doc.get("date", Date.class);
-                    if(lastOnline.before(d)) lastOnline = d;
+                    if (lastOnline.before(d)) {
+                        lastOnline = d;
+                    }
                 }
             }
             lastSeen = lastOnline != null ? TimeUtil.dateToString(lastOnline, false) + " ago" : "Unknown";
@@ -166,11 +162,10 @@ public class playerinfo extends BasicCommand {
             }
             col = SpleefLeague.getInstance().getPluginDB().getCollection("Players");
             String sharedUsernames = null;
-            for(String uuid : sharedUUIDs) {
-                if(sharedUsernames == null) {
+            for (String uuid : sharedUUIDs) {
+                if (sharedUsernames == null) {
                     sharedUsernames = col.find(new Document("uuid", uuid)).first().get("username", String.class);
-                }
-                else {
+                } else {
                     sharedUsernames += ", " + col.find(new Document("uuid", uuid)).first().get("username", String.class);
                 }
             }

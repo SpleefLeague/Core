@@ -17,7 +17,7 @@ public class ConnectionListener implements Listener {
     private static Listener instance;
 
     public static void init() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new ConnectionListener();
             Bukkit.getPluginManager().registerEvents(instance, SpleefLeague.getInstance());
         }
@@ -29,7 +29,7 @@ public class ConnectionListener implements Listener {
 
     @EventHandler
     public void onConnection(ConnectionEvent e) {
-        if(e.getChannel().equalsIgnoreCase("staff")) {
+        if (e.getChannel().equalsIgnoreCase("staff")) {
             SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((SLPlayer slPlayer) -> slPlayer.isInChatChannel(ChatChannel.STAFF)).forEach((SLPlayer slPlayer) -> {
                 try {
                     slPlayer.sendMessage(e.getJSONObject().getString("message"));

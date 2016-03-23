@@ -19,56 +19,56 @@ import java.util.Set;
  * @param <Q>
  * @param <P>
  */
-public abstract class GameQueue<Q extends QueueableArena, P extends GeneralPlayer>{
-    
+public abstract class GameQueue<Q extends QueueableArena, P extends GeneralPlayer> {
+
     private final Collection<Q> queuedArenas;
     private final Map<Q, Set<P>> queues;
-    
+
     public GameQueue() {
         this.queuedArenas = new HashSet<>();
         this.queues = new HashMap<>();
     }
-    
+
     public void registerArena(Q arena) {
-        if(arena.isQueued()) {  
+        if (arena.isQueued()) {
             this.queuedArenas.add(arena);
         }
         this.queues.put(arena, new HashSet<>());
-    }    
-    
+    }
+
     public void unregisterArena(Q arena) {
         this.queuedArenas.remove(arena);
         this.queues.remove(arena);
     }
-    
+
     public void queuePlayer(P player) {
         queuePlayer(player, null);
     }
-    
+
     public void queuePlayer(P player, Q queue) {
         dequeuePlayer(player);
         this.queues.get(queue).add(player);
     }
-    
+
     public void dequeuePlayer(P player) {
-        for(Set<P> queue : queues.values()) {
+        for (Set<P> queue : queues.values()) {
             queue.remove(player);
         }
     }
-    
+
     public boolean isQueued(P player) {
-        for(Set<P> queue : queues.values()) {
-            if(queue.contains(player)) {
+        for (Set<P> queue : queues.values()) {
+            if (queue.contains(player)) {
                 return true;
             }
         }
         return false;
     }
-    
+
     public Collection<Q> getRegisteredArenas() {
         return queuedArenas;
     }
-    
+
     public Map<Q, Set<P>> getQueues() {
         return queues;
     }

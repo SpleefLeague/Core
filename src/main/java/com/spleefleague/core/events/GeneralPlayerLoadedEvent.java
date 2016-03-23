@@ -18,21 +18,21 @@ public class GeneralPlayerLoadedEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     private final GeneralPlayer gp;
     private final boolean firstJoin;
-    
+
     public GeneralPlayerLoadedEvent(GeneralPlayer gp, boolean firstJoin) {
         super(gp.getPlayer());
         this.gp = gp;
         this.firstJoin = firstJoin;
     }
-    
+
     public GeneralPlayer getGeneralPlayer() {
         return gp;
     }
-    
+
     public boolean isFirstJoin() {
         return firstJoin;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return handlers;

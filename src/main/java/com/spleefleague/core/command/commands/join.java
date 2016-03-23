@@ -27,10 +27,9 @@ public class join extends BasicCommand {
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(args.length == 1) {
+        if (args.length == 1) {
             PlayerUtil.sendToServer(p, args[0]);
-        }
-        else {
+        } else {
             sendUsage(p);
         }
     }

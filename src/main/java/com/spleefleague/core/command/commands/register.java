@@ -27,11 +27,11 @@ public class register extends BasicCommand {
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(args.length == 1) {
-            if(!slp.hasForumAccount()) {
+        if (args.length == 1) {
+            if (!slp.hasForumAccount()) {
                 Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
                     Result result = XenforoAPIUtil.createForumUser(p, args[0]);
-                    switch(result) {
+                    switch (result) {
                         case SUCCESS: {
                             slp.setForumAccount(true);
                             success(p, "Your account has been created.");
@@ -55,12 +55,10 @@ public class register extends BasicCommand {
                         }
                     }
                 });
-            }
-            else {
+            } else {
                 error(p, "You already seem to have an account. If you believe this is an error, contact the staff team.");
             }
-        }
-        else {
+        } else {
             sendUsage(slp);
         }
     }

@@ -18,7 +18,7 @@ public class ConnectionClient {
     private Socket socket;
 
     public ConnectionClient() {
-        if(!Config.hasKey("server_name")) {
+        if (!Config.hasKey("server_name")) {
             SpleefLeague.getInstance().getLogger().severe("Server name not set in config, shutting down connections.");
             return;
         }
@@ -56,7 +56,7 @@ public class ConnectionClient {
      * Handle shutdown.
      */
     public void stop() {
-        if(socket != null) {
+        if (socket != null) {
             this.socket.close();
         }
     }
@@ -64,7 +64,7 @@ public class ConnectionClient {
     /**
      * Send a packet via SocketIO.
      *
-     * @param channel    channel to send the packet on.
+     * @param channel channel to send the packet on.
      * @param jsonObject json object to send.
      */
     public void send(String channel, JSONObject jsonObject) {
@@ -72,6 +72,5 @@ public class ConnectionClient {
         jsonObject.put("server", Config.getString("server_name"));
         this.socket.emit("global", jsonObject);
     }
-
 
 }
