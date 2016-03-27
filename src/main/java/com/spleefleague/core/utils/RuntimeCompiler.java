@@ -96,7 +96,7 @@ public class RuntimeCompiler {
         return null;
     }
 
-    private static File compile(File file) {
+    public static File compile(File file) {
         try {
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
             List<String> optionList = new ArrayList<>();

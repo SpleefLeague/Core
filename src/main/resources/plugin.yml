@@ -211,3 +211,11 @@ commands:
         description: Shows you the server rules
         usage:
             /<command> [page]
+    dcmd:
+        description: Manages dynamic commands
+        usage:
+            /<command> add <haste> - register/update new command from haste id
+            /<command> remove <name> - disables a command
+            /<command> list [page] - lists enabled commands
+            /<command> disabled [page] - lists disabled commands
+            /<command> enable <name> - re-enables a disabled command

@@ -37,6 +37,7 @@ import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.queue.Challenge;
 import com.spleefleague.core.utils.DatabaseConnection;
+import com.spleefleague.core.utils.DynamicCommandManager;
 import com.spleefleague.core.utils.MultiBlockChangeUtil;
 import com.spleefleague.core.utils.RuntimeCompiler;
 import com.spleefleague.core.utils.Warp;
@@ -55,6 +56,7 @@ public class SpleefLeague extends CorePlugin {
     private CommandLoader commandLoader;
     private SpawnManager spawnManager;
     private PortalManager portalManager;
+    private DynamicCommandManager dynamicCommandManager;
 
     public SpleefLeague() {
         super("[SpleefLeague]", ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
@@ -87,6 +89,7 @@ public class SpleefLeague extends CorePlugin {
         playerManager = new PlayerManager<>(this, SLPlayer.class);
         portalManager = new PortalManager();
         connectionClient = new ConnectionClient();
+        dynamicCommandManager = new DynamicCommandManager(this);
     }
 
     @Override
@@ -169,6 +172,10 @@ public class SpleefLeague extends CorePlugin {
 
     public Location getSpawnLocation() {
         return spawn;
+    }
+    
+    public DynamicCommandManager getDynamicCommandManager() {
+        return this.dynamicCommandManager;
     }
 
     @Override
