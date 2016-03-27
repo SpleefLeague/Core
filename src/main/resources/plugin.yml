@@ -10,21 +10,21 @@ commands:
         description: Command to set ranks
         aliases: []
         usage: |
-          /<command> <player> <rank>
+            /<command> <player> <rank>
     reply:
         description: Reply to the last private message
         aliases: [r]
         usage: |
-          /<command> <message>
+            /<command> <message>
     tell:
         description: A command to send a private message to a certain command
         aliases: [w, msg]
         usage: |
-          /<command> <player> <message>
+            /<command> <player> <message>
     debug: 
         description: Load a debug class at runtime
         aliases: [d,rd]
-        usage:
+        usage: |
             /<command> <hastebinId>
             /<command> cmd <debuggerId> <cmd> [args]
             /<command> stop <debuggerId>
@@ -37,97 +37,97 @@ commands:
         description: Sets a player's gamemode
         aliases: [gm]
         usage: |
-          /<command> <gamemode> [player]
+            /<command> <gamemode> [player]
     warn:
         description: warn a player
         aliases: []
         usage: |
-          /<command> <player> <message>
+            /<command> <player> <message>
     kick:
         description: kick a player
         aliases: []
         usage: |
-          /<command> <player> <message>
+            /<command> <player> <message>
     tempban:
         description: tempban a player
         aliases: []
         usage: |
-          /<command> <player> <duration> <message>
+            /<command> <player> <duration> <message>
     ban:
         description: ban a player
         aliases: []
         usage: |
-          /<command> <player> <message>
+            /<command> <player> <message>
     unban:
         description: unban a player
         aliases: []
         usage: |
-          /<command> <player> <message>
+            /<command> <player> <message>
     surrender:
         description: surrenders the current game
         aliases: [ragequit]
         usage: |
-          /<command>
+            /<command>
     leave:
         description: Leaves the current queue
         aliases: [l]
         usage: |
-          /<command>
+            /<command>
     cancel:
         description: Cancels a game
         aliases: []
         usage: |
-          /<command> <player>
+            /<command> <player>
     cancelall:
         description: Cancels every game
         aliases: []
         usage: |
-          /<command>
+            /<command>
     infractions:
         description: Displays the infractions of a player
         aliases: []
         usage: |
-          /<command> <player> [page]
+            /<command> <player> [page]
     spectate:
         description: Spectates a battle
         aliases: []
         usage: |
-          /<command> [player]
+            /<command> [player]
     spawn:
         description: Teleports a player back to spawn
         aliases: []
         usage: |
-          /<command>
+            /<command>
     back:
         description: Teleports a player back to their last location
         aliases: []
         usage: |
-          /<command>
+            /<command>
     tp:
         description: Teleports you to another player
         aliases: []
         usage: |
-          /<command> <target>
+            /<command> <target>
     tppos:
         description: Teleports a player to certain coordinates
         aliases: []
         usage: |
-          /<command> [target] <x> <y> <z>
+            /<command> [target] <x> <y> <z>
     tphere:
         description: Teleports a player to you
         aliases: []
         usage: |
-          /<command> <target>
+            /<command> <target>
     invsee:
         description: Open a player's inventory
         aliases: []
         usage: |
-          /<command> <target>
+            /<command> <target>
     points:
         description: Displays a player's Spleef/Jump stats
         aliases: [stats, rating]
         usage: |
-          /<command>
+            /<command>
     endgame:
         description: Requests the current battle to be cancelled
         usage:
@@ -151,7 +151,7 @@ commands:
             /<command> [ranks]
     warp: 
         description: Warp command
-        usage:
+        usage: |
             /<command> 
             /<command> <warpName>
     setwarp: 
@@ -213,7 +213,7 @@ commands:
             /<command> [page]
     dcmd:
         description: Manages dynamic commands
-        usage:
+        usage: |
             /<command> add <haste> - register/update new command from haste id
             /<command> remove <name> - disables a command
             /<command> list [page] - lists enabled commands

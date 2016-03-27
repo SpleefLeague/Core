@@ -40,7 +40,7 @@ public class rules extends BasicCommand {
             low -= rulesPerPage;
         }
         if (high >= rules.length) {
-            high = rules.length - 1;
+            high = rules.length;
         }
         page = low / rulesPerPage;
         int totalPages = rules.length / rulesPerPage;

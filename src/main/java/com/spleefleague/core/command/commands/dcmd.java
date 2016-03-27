@@ -77,7 +77,7 @@ public class dcmd extends BasicCommand {
             low -= commandsPerPage;
         }
         if (high >= commands.length) {
-            high = commands.length - 1;
+            high = commands.length;
         }
         page = low / commandsPerPage;
         int totalPages = commands.length / commandsPerPage;
@@ -115,7 +115,7 @@ public class dcmd extends BasicCommand {
             low -= commandsPerPage;
         }
         if (high >= commands.length) {
-            high = commands.length - 1;
+            high = commands.length;
         }
         page = low / commandsPerPage;
         int totalPages = commands.length / commandsPerPage;
