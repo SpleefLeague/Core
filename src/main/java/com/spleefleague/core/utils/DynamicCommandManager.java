@@ -5,6 +5,16 @@ import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.DynamicCommand.LoadedDynamicCommand;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -23,15 +33,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class DynamicCommandManager implements Listener {
 
@@ -91,6 +92,17 @@ public class DynamicCommandManager implements Listener {
     private void load() {
         try {
             core.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Loading Dynamic Commands");
+            if (!this.core.getDataFolder().exists()) {
+                this.core.getDataFolder().mkdirs();
+            }
+            if (!this.cmdStoragePath.exists()) {
+                this.cmdStoragePath.mkdirs();
+            }
+            if (!this.cmdConfigPath.exists()) {
+                this.cmdConfigPath.createNewFile();
+                this.persist();
+                return;
+            }
             StringBuilder sb;
             try (BufferedReader r = new BufferedReader(new FileReader(this.cmdConfigPath))) {
                 sb = new StringBuilder();
@@ -301,7 +313,7 @@ public class DynamicCommandManager implements Listener {
                 exe.error(sp, BasicCommand.PLAYERDATA_ERROR_MESSAGE);
                 return;
             }
-            if (exe.canExecute(sp)) {
+            if (!exe.canExecute(sp)) {
                 exe.error(sp, BasicCommand.NO_COMMAND_PERMISSION_MESSAGE);
                 return;
             }
