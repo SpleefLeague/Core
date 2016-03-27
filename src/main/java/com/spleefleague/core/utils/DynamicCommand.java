@@ -48,13 +48,11 @@ public interface DynamicCommand {
         private File file;
         private String name;
         private DynamicCommand cmd;
-        private boolean enabled;
         
         public LoadedDynamicCommand(File file, DynamicCommand cmd, String name) {
             this.file = file;
             this.cmd = cmd;
             this.name = name;
-            this.enabled = true;
         }
         
         public DynamicCommand getCommand() {
@@ -67,14 +65,6 @@ public interface DynamicCommand {
         
         public String getName() {
             return this.name;
-        }
-        
-        private void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
-        
-        public boolean isEnabled() {
-            return this.enabled;
         }
         
     }

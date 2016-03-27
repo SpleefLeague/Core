@@ -59,7 +59,18 @@ public class DynamicCommandManager implements Listener {
                 JSONObject cd = new JSONObject();
                 cd.put("name", e.getKey());
                 cd.put("file", e.getValue().getFile().getAbsolutePath());
-                cd.put("enabled", e.getValue().isEnabled());
+                cd.put("enabled", true);
+                data.put(cd);
+            } catch (JSONException ex) {
+                Logger.getLogger(DynamicCommandManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        for (Entry<String, LoadedDynamicCommand> e : unloadedCommands.entrySet()) {
+            try {
+                JSONObject cd = new JSONObject();
+                cd.put("name", e.getKey());
+                cd.put("file", e.getValue().getFile().getAbsolutePath());
+                cd.put("enabled", false);
                 data.put(cd);
             } catch (JSONException ex) {
                 Logger.getLogger(DynamicCommandManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -100,7 +111,10 @@ public class DynamicCommandManager implements Listener {
                         continue;
                     }
                     if (!enabled) {
-                        
+                        DynamicCommand cmd = (DynamicCommand) this.createInstance(f);
+                        LoadedDynamicCommand disabled = new LoadedDynamicCommand(f, cmd, name);
+                        this.unloadedCommands.put(name, disabled);
+                        continue;
                     }
                     this.registerFromClass(f, (ChatColor color, String txt) -> {
                         core.getServer().getConsoleSender().sendMessage(color + txt);
