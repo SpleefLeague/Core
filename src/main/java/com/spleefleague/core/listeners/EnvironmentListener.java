@@ -5,14 +5,16 @@
  */
 package com.spleefleague.core.listeners;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
+import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.command.commands.back;
+import com.spleefleague.core.events.FakeBlockBreakEvent;
+import com.spleefleague.core.io.*;
+import com.spleefleague.core.io.TypeConverter.DateConverter;
+import com.spleefleague.core.player.PlayerState;
+import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.plugin.GamePlugin;
 import com.spleefleague.core.spawn.SpawnManager;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -22,41 +24,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDispenseEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.block.*;
+import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityInteractEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.spleefleague.core.SpleefLeague;
-import com.spleefleague.core.command.commands.back;
-import com.spleefleague.core.events.FakeBlockBreakEvent;
-import com.spleefleague.core.io.DBEntity;
-import com.spleefleague.core.io.DBSave;
-import com.spleefleague.core.io.DBSaveable;
-import com.spleefleague.core.io.EntityBuilder;
-import com.spleefleague.core.io.Settings;
-import com.spleefleague.core.io.TypeConverter;
-import com.spleefleague.core.io.TypeConverter.DateConverter;
-import com.spleefleague.core.player.PlayerState;
-import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.plugin.GamePlugin;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -227,6 +208,16 @@ public class EnvironmentListener implements Listener {
         if (e.getRemover() instanceof Player) {
             e.setCancelled(((Player) e.getRemover()).getGameMode() != GameMode.CREATIVE);
         }
+    }
+
+    @EventHandler
+    public void onPhysics(BlockPhysicsEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onBlockDecay(LeavesDecayEvent evt) {
+        evt.setCancelled(true);
     }
 
     private void logIPAddress(final Player player) {
