@@ -79,10 +79,6 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
-        <repository>
-            <id>lib_id</id>
-            <url>file://${project.basedir}/repo</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -92,13 +88,13 @@
             <version>3.0.3</version>
         </dependency>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
+            <groupId>org.github.paperspigot</groupId>
+            <artifactId>paperspigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
+            <groupId>org.github.paperspigot</groupId>
+            <artifactId>paperspigot</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
