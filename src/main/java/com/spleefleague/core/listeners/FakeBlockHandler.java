@@ -23,23 +23,10 @@ import com.spleefleague.core.utils.FakeArea;
 import com.spleefleague.core.utils.FakeBlock;
 import com.spleefleague.core.utils.MultiBlockChangeUtil;
 import com.spleefleague.core.utils.fakeblock.FakeBlockCache;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk.ChunkMap;
 import net.minecraft.server.v1_8_R3.PacketPlayOutWorldEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -50,8 +37,10 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.*;
+import java.util.Map.Entry;
+
 /**
- *
  * @author Jonas
  */
 public class FakeBlockHandler implements Listener {
@@ -185,8 +174,9 @@ public class FakeBlockHandler implements Listener {
             public void onPacketReceiving(PacketEvent event) {
                 WrapperPlayClientBlockPlace wrapper = new WrapperPlayClientBlockPlace(event.getPacket());
                 Location loc = wrapper.getLocation().toVector().toLocation(event.getPlayer().getWorld());
-                Chunk chunk = loc.getChunk();
-                Set<FakeBlock> fakeBlocks = getFakeBlocksForChunk(event.getPlayer(), chunk.getX(), chunk.getZ());
+                int chunkX = loc.getBlockX() << 4;
+                int chunkZ = loc.getBlockZ() << 4;
+                Set<FakeBlock> fakeBlocks = getFakeBlocksForChunk(event.getPlayer(), chunkX, chunkZ);
                 if (fakeBlocks != null) {
                     for (FakeBlock fakeBlock : fakeBlocks) {
                         if (blockEqual(fakeBlock.getLocation(), loc)) {
