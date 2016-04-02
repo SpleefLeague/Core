@@ -30,6 +30,10 @@ public class challenge extends BasicCommand {
             if (args.length == 2) {
                 if (args[0].equalsIgnoreCase("accept")) {
                     SLPlayer target = SpleefLeague.getInstance().getPlayerManager().get(args[1]);
+                    if (target.getState() == PlayerState.INGAME) {
+                        error(p, "The player is already in a game");
+                        return;
+                    }
                     if (target != null) {
                         Challenge challenge = slp.getChallenge(target);
                         if (challenge != null) {
