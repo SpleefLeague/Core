@@ -5,51 +5,17 @@
  */
 package com.spleefleague.core.player;
 
-import java.util.UUID;
-import com.spleefleague.core.io.DBEntity;
-import com.spleefleague.core.io.DBLoad;
-import com.spleefleague.core.io.DBLoadable;
-import com.spleefleague.core.io.DBSave;
-import com.spleefleague.core.io.DBSaveable;
+import com.spleefleague.core.io.*;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.bukkit.Achievement;
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
-import org.bukkit.EntityEffect;
-import org.bukkit.GameMode;
-import org.bukkit.Instrument;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Note;
-import org.bukkit.Server;
-import org.bukkit.Sound;
-import org.bukkit.Statistic;
-import org.bukkit.WeatherType;
-import org.bukkit.World;
+import net.md_5.bungee.api.chat.BaseComponent;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Egg;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Snowball;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.*;
 import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.permissions.Permission;
@@ -60,6 +26,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
+import org.github.paperspigot.Title;
+
+import java.net.InetSocketAddress;
+import java.util.*;
 
 /**
  *
@@ -666,6 +636,79 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Deprecated
     public void sendTitle(String title, String subtitle) {
         getPlayer().sendTitle(title, subtitle);
+    }
+
+    @Override
+    public void sendTitle(Title title) {
+        getPlayer().sendTitle(title);
+    }
+
+    @Override
+    public void hideTitle() {
+        getPlayer().hideTitle();
+    }
+
+    @Override
+    @Deprecated
+    public void setSubtitle(BaseComponent baseComponent) {
+        getPlayer().setSubtitle(baseComponent);
+    }
+
+    @Override
+    @Deprecated
+    public void showTitle(BaseComponent baseComponent, BaseComponent baseComponent1, int i, int i1, int i2) {
+        getPlayer().showTitle(baseComponent, baseComponent1, i, i1, i2);
+    }
+
+    @Override
+    @Deprecated
+    public void showTitle(BaseComponent[] baseComponents) {
+        getPlayer().showTitle(baseComponents);
+    }
+
+    @Override
+    public void showTitle(BaseComponent[] baseComponents, BaseComponent[] baseComponents1, int i, int i1, int i2) {
+        getPlayer().showTitle(baseComponents, baseComponents1, i, i1, i2);
+    }
+
+    @Override
+    public void setPlayerListHeaderFooter(BaseComponent header, BaseComponent footer) {
+        getPlayer().setPlayerListHeaderFooter(header, footer);
+    }
+
+    @Override
+    public void setPlayerListHeaderFooter(BaseComponent[] baseComponents, BaseComponent[] baseComponents1) {
+        getPlayer().setPlayerListHeaderFooter(baseComponents, baseComponents1);
+    }
+
+    @Override
+    public void setSubtitle(BaseComponent[] baseComponents) {
+        getPlayer().setSubtitle(baseComponents);
+    }
+
+    @Override
+    public void sendMessage(BaseComponent baseComponent) {
+        getPlayer().sendMessage(baseComponent);
+    }
+
+    @Override
+    public void sendMessage(BaseComponent... baseComponents) {
+        getPlayer().sendMessage(baseComponents);
+    }
+
+    @Override
+    public void updateTitle(Title title) {
+        getPlayer().updateTitle(title);
+    }
+
+    @Override
+    public void setTitleTimes(int i, int i1, int i2) {
+        getPlayer().setTitleTimes(i, i1, i2);
+    }
+
+    @Override
+    public void showTitle(BaseComponent baseComponent) {
+        getPlayer().showTitle(baseComponent);
     }
 
     @Override
