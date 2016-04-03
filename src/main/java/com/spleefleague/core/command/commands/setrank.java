@@ -67,7 +67,8 @@ public class setrank extends BasicCommand {
         if (rank == null) {
             error(cs, "The rank " + r + " does not exist!");
         } else {
-            DatabaseConnection.updateFields(SpleefLeague.getInstance().getPluginDB().getCollection("Players"), new Document("username", name), new Document("rank", rank.toString()));
+            DatabaseConnection.updateFields(SpleefLeague.getInstance().getPluginDB().getCollection("Players"), new Document("username", name), new Document("rank", rank.getName()));
+            success(cs, "Attempting rank update for offline player.");
         }
     }
 }
