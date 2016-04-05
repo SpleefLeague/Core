@@ -63,7 +63,7 @@ public class dcmd extends BasicCommand {
         }
         String[] commands = SpleefLeague.getInstance().getDynamicCommandManager().getRegisteredCommands();
         if (commands.length == 0) {
-            p.sendMessage(ChatColor.RED + "No Dynamic Commands are currently loaded");
+            error(p, "No dynamic commands are currently loaded!");
             return;
         }
         page--;
@@ -101,7 +101,7 @@ public class dcmd extends BasicCommand {
         }
         String[] commands = SpleefLeague.getInstance().getDynamicCommandManager().getUnloadedCommands();
         if (commands.length == 0) {
-            p.sendMessage(ChatColor.RED + "No Dynamic Commands are currently unloaded");
+            error(p, "No dynamic commands are currently loaded!");
             return;
         }
         page--;
@@ -129,19 +129,14 @@ public class dcmd extends BasicCommand {
 
     public void add(final CommandSender p, String[] args) {
         String haste = args[1];
-        SpleefLeague.getInstance().getDynamicCommandManager().register(
-                haste,
-                (ChatColor color, String txt) -> {
-                    p.sendMessage(color + txt);
-                }
-        );
+        SpleefLeague.getInstance().getDynamicCommandManager().register(haste, (ChatColor color, String txt) -> p.sendMessage(color + txt));
     }
 
     public void remove(CommandSender p, String[] args) {
         if (SpleefLeague.getInstance().getDynamicCommandManager().unregister(args[1])) {
             success(p, "Unregistered dynamic command: " + args[1]);
         } else {
-            error(p, "Command not found");
+            error(p, "Command not found.");
         }
     }
     

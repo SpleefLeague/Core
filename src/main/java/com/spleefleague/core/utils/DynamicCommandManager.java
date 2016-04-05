@@ -44,8 +44,8 @@ public class DynamicCommandManager implements Listener {
 
     @SuppressWarnings("LeakingThisInConstructor")
     public DynamicCommandManager(SpleefLeague core) {
-        this.loadedCustomCommands = new TreeMap();
-        this.unloadedCommands = new TreeMap();
+        this.loadedCustomCommands = new TreeMap<>();
+        this.unloadedCommands = new TreeMap<>();
         this.core = core;
         this.cmdStoragePath = new File(this.core.getDataFolder(), "commands");
         this.cmdConfigPath = new File(this.core.getDataFolder(), "enabled_commands.json");
