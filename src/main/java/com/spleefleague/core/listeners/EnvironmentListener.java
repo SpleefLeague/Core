@@ -211,11 +211,6 @@ public class EnvironmentListener implements Listener {
     }
 
     @EventHandler
-    public void onPhysics(BlockPhysicsEvent event) {
-        event.setCancelled(true);
-    }
-
-    @EventHandler
     public void onBlockDecay(LeavesDecayEvent evt) {
         evt.setCancelled(true);
     }
