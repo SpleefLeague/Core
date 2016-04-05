@@ -174,8 +174,8 @@ public class FakeBlockHandler implements Listener {
             public void onPacketReceiving(PacketEvent event) {
                 WrapperPlayClientBlockPlace wrapper = new WrapperPlayClientBlockPlace(event.getPacket());
                 Location loc = wrapper.getLocation().toVector().toLocation(event.getPlayer().getWorld());
-                int chunkX = loc.getBlockX() << 4;
-                int chunkZ = loc.getBlockZ() << 4;
+                int chunkX = loc.getChunk().getX();
+                int chunkZ = loc.getChunk().getZ();
                 Set<FakeBlock> fakeBlocks = getFakeBlocksForChunk(event.getPlayer(), chunkX, chunkZ);
                 if (fakeBlocks != null) {
                     for (FakeBlock fakeBlock : fakeBlocks) {
