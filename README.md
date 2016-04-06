@@ -6,7 +6,7 @@ This project is required for the other plugins to compile and run.
 
 ## Compilation
 
-SpleefLeague uses  [Spigot 1.8.8](https://github.com/PaperMC/Paper). For the dependency handling we use [Maven](https://maven.apache.org/download.cgi).
+SpleefLeague uses [Spigot 1.8.8](https://spigotmc.org). For the dependency handling we use [Maven](https://maven.apache.org/download.cgi).
 
 First make sure you have Spigot installed in your local maven repository. To do this download and run  [BuildTools](https://hub.spigotmc.org/jenkins/job/BuildTools/).
 
