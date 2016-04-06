@@ -6,25 +6,18 @@ This project is required for the other plugins to compile and run.
 
 ## Compilation
 
-SpleefLeague uses  [PaperSpigot](https://github.com/PaperMC/Paper), which means that **[Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)** is required. For the dependency handling we use [Maven](https://maven.apache.org/download.cgi).
+SpleefLeague uses  [Spigot 1.8.8](https://github.com/PaperMC/Paper). For the dependency handling we use [Maven](https://maven.apache.org/download.cgi).
 
-Because some dependencies require an older version of Spigot the first thing you have to do is download and run [BuildTools](https://hub.spigotmc.org/jenkins/job/BuildTools/).
+First make sure you have Spigot installed in your local maven repository. To do this download and run  [BuildTools](https://hub.spigotmc.org/jenkins/job/BuildTools/).
 
 ```shell
 mkdir buildtools && cd buildtools
 wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
-java -jar BuildTools.jar --rev 1.8.7
+java -jar BuildTools.jar --rev 1.8.8
 ```
 
-This will install spigot and spigot-api into your local maven repository. After this we need to also get [PaperSpigot](https://github.com/PaperMC/Paper) on the 1.8 branch, and install that as well.
-
-```shell
-git clone --branch ver/1.8.8 https://github.com/PaperMC/Paper.git
-cd Paper
-./build.sh --jar
-```
-
-Right now both Spigot 1.8.7 and PaperSpigot 1.8.8 should be installed. Now you can clone the SpleefLeague core and compile it.
+This will install spigot and spigot-api into your local maven repository.
+Right now Spigot 1.8.8 should be installed. Now you can clone the SpleefLeague core and compile it.
 
 ```shell
 git clone https://github.com/SpleefLeague/Core.git
@@ -34,7 +27,7 @@ mvn package
 
 ## Troubleshooting
 
-If the dependencies for the core aren't resolving properly, check whether your `JAVA_HOME` has been set to the Java 8 JDK properly. You can see the version maven is using by running `mvn -V`. If your `JAVA_HOME` wasn't properly set to Java 8 before try re-running `./build.sh --jar`. If any problems persist with the PaperSpigot dependency try manually running `mvn install` in the project root, or seek help by creating a ticket or contacting a developer.
+If you have any issues seek help by creating an issue or contacting a developer.
 
 ## Contributing
 

@@ -88,13 +88,13 @@
             <version>3.0.3</version>
         </dependency>
         <dependency>
-            <groupId>org.github.paperspigot</groupId>
-            <artifactId>paperspigot-api</artifactId>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.github.paperspigot</groupId>
-            <artifactId>paperspigot</artifactId>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

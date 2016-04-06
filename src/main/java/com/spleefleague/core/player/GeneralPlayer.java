@@ -7,7 +7,6 @@ package com.spleefleague.core.player;
 
 import com.spleefleague.core.io.*;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.Conversation;
@@ -26,7 +25,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
-import org.github.paperspigot.Title;
 
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -636,79 +634,6 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Deprecated
     public void sendTitle(String title, String subtitle) {
         getPlayer().sendTitle(title, subtitle);
-    }
-
-    @Override
-    public void sendTitle(Title title) {
-        getPlayer().sendTitle(title);
-    }
-
-    @Override
-    public void hideTitle() {
-        getPlayer().hideTitle();
-    }
-
-    @Override
-    @Deprecated
-    public void setSubtitle(BaseComponent baseComponent) {
-        getPlayer().setSubtitle(baseComponent);
-    }
-
-    @Override
-    @Deprecated
-    public void showTitle(BaseComponent baseComponent, BaseComponent baseComponent1, int i, int i1, int i2) {
-        getPlayer().showTitle(baseComponent, baseComponent1, i, i1, i2);
-    }
-
-    @Override
-    @Deprecated
-    public void showTitle(BaseComponent[] baseComponents) {
-        getPlayer().showTitle(baseComponents);
-    }
-
-    @Override
-    public void showTitle(BaseComponent[] baseComponents, BaseComponent[] baseComponents1, int i, int i1, int i2) {
-        getPlayer().showTitle(baseComponents, baseComponents1, i, i1, i2);
-    }
-
-    @Override
-    public void setPlayerListHeaderFooter(BaseComponent header, BaseComponent footer) {
-        getPlayer().setPlayerListHeaderFooter(header, footer);
-    }
-
-    @Override
-    public void setPlayerListHeaderFooter(BaseComponent[] baseComponents, BaseComponent[] baseComponents1) {
-        getPlayer().setPlayerListHeaderFooter(baseComponents, baseComponents1);
-    }
-
-    @Override
-    public void setSubtitle(BaseComponent[] baseComponents) {
-        getPlayer().setSubtitle(baseComponents);
-    }
-
-    @Override
-    public void sendMessage(BaseComponent baseComponent) {
-        getPlayer().sendMessage(baseComponent);
-    }
-
-    @Override
-    public void sendMessage(BaseComponent... baseComponents) {
-        getPlayer().sendMessage(baseComponents);
-    }
-
-    @Override
-    public void updateTitle(Title title) {
-        getPlayer().updateTitle(title);
-    }
-
-    @Override
-    public void setTitleTimes(int i, int i1, int i2) {
-        getPlayer().setTitleTimes(i, i1, i2);
-    }
-
-    @Override
-    public void showTitle(BaseComponent baseComponent) {
-        getPlayer().showTitle(baseComponent);
     }
 
     @Override
