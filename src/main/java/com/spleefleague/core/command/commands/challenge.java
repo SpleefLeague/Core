@@ -38,6 +38,7 @@ public class challenge extends BasicCommand {
                         Challenge challenge = slp.getChallenge(target);
                         if (challenge != null) {
                             challenge.accept(slp);
+                            success(p, "You accepted the challenge!");
                         } else {
                             error(p, "You have no open challenges by " + target.getName() + "!");
                         }
