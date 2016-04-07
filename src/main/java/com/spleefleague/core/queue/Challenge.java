@@ -27,36 +27,72 @@ public abstract class Challenge {
     private final SLPlayer challenger;
     private boolean active = true;
     private int secondsLeft = 30;
-    private final Collection<SLPlayer> accepted;
-    private final int required;
+    private final boolean[] accepted;
+    private final SLPlayer[] players;
 
-    public Challenge(SLPlayer challenger, int required) {
+    public Challenge(SLPlayer challenger, SLPlayer... challenged) {
         this.challenger = challenger;
-        this.accepted = new ArrayList<>();
-        this.accepted.add(challenger);
-        this.required = required;
+        this.accepted = new boolean[challenged.length + 1];
+        this.players = new SLPlayer[challenged.length + 1];
+        for (int i = 1; i < challenged.length; i++) {
+            this.players[i] = challenged[i-1];
+        }
+        this.players[0] = challenger;
+        this.accepted[0] = true;
         challenges.add(this);
     }
 
     public void accept(SLPlayer player) {
-        if (!accepted.contains(player)) {
-            this.accepted.add(player);
+        if (!this.hasAccepted(player)) {
+            int index = this.getPlayerIndex(player);
+            if (index == -1) {
+                player.sendMessage(SpleefLeague.getInstance().getChatPrefix() + " " + ChatColor.RED + "Your challenge is invalid");
+                player.removeChallenge(this);
+                return;
+            }
+            this.accepted[index] = true;
             challenger.sendMessage(SpleefLeague.getInstance().getChatPrefix() + " " + ChatColor.RED + player.getName() + ChatColor.GREEN + " has accepted your challenge.");
-            if (accepted.size() == required) {
+            if (this.hasEveryoneAccepted()) {
                 active = false;
-                start(accepted);
+                start(players);
             }
         }
     }
 
+    private int getPlayerIndex(SLPlayer p) {
+        for (int i = 0; i < this.players.length; i++) {
+            if (this.players[i] == p) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public boolean hasEveryoneAccepted() {
+        for (int i = 0; i < this.accepted.length; i++) {
+            if (!this.accepted[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean hasAccepted(SLPlayer player) {
+        int index = getPlayerIndex(player);
+        if (index == -1) {
+            return false;
+        }
+        return this.accepted[index];
+    }
+
     public void decline(SLPlayer player) {
         active = false;
-        for (SLPlayer slp : accepted) {
+        for (SLPlayer slp : players) {
             slp.sendMessage(SpleefLeague.getInstance().getChatPrefix() + " " + ChatColor.RED + player.getName() + " has declined the challenge.");
         }
     }
 
-    public abstract void start(Collection<SLPlayer> accepted);
+    public abstract void start(SLPlayer[] accepted);
 
     public SLPlayer getChallengingPlayer() {
         return challenger;
