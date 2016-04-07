@@ -2,16 +2,18 @@ package com.spleefleague.core.player;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
-import java.util.HashSet;
-import java.util.UUID;
 import com.spleefleague.core.io.DBLoad;
 import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.TypeConverter.RankStringConverter;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
 import com.spleefleague.core.queue.Challenge;
-import java.util.HashMap;
-import java.util.Map;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  *
@@ -28,6 +30,7 @@ public class SLPlayer extends GeneralPlayer {
     private PlayerOptions options;
     private boolean hasForumAccount = false;
     private Map<UUID, Challenge> activeChallenges;
+    private ChatColor chatArrowColor = ChatColor.DARK_GRAY;
 
     public SLPlayer() {
         super();
@@ -170,5 +173,17 @@ public class SLPlayer extends GeneralPlayer {
         this.chatChannels.clear();
         this.chatChannels.add(ChatChannel.GLOBAL);
         setSendingChannel(ChatChannel.GLOBAL);
+    }
+
+    public void setChatArrowColor(ChatColor c) {
+        this.chatArrowColor = c;
+    }
+
+    public ChatColor getChatArrowColor() {
+        return this.chatArrowColor;
+    }
+
+    public void resetChatArrowColor() {
+        this.chatArrowColor = ChatColor.DARK_GRAY;
     }
 }
