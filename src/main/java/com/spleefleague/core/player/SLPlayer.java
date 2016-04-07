@@ -31,6 +31,7 @@ public class SLPlayer extends GeneralPlayer {
     private boolean hasForumAccount = false;
     private Map<UUID, Challenge> activeChallenges;
     private ChatColor chatArrowColor = ChatColor.DARK_GRAY;
+    private String tabName = null;
 
     public SLPlayer() {
         super();
@@ -185,5 +186,17 @@ public class SLPlayer extends GeneralPlayer {
 
     public void resetChatArrowColor() {
         this.chatArrowColor = ChatColor.DARK_GRAY;
+    }
+
+    public void setTabName(String s) {
+        this.tabName = s;
+        setPlayerListName(getTabName());
+    }
+
+    public String getTabName() {
+        if (this.tabName == null) {
+            return getRank().getColor() + getName();
+        }
+        return this.tabName;
     }
 }
