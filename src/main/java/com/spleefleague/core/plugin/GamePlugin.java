@@ -5,9 +5,11 @@
  */
 package com.spleefleague.core.plugin;
 
+import com.spleefleague.core.queue.BattleManager;
+import org.bukkit.entity.Player;
+
 import java.util.Collection;
 import java.util.HashSet;
-import org.bukkit.entity.Player;
 
 /**
  *
@@ -45,6 +47,8 @@ public abstract class GamePlugin extends CorePlugin {
     public abstract boolean isSpectating(Player p);
 
     public abstract void printStats(Player p);
+
+    public abstract BattleManager getBattleManager();
 
     public static void dequeueGlobal(Player p) {
         for (GamePlugin gp : gamePlugins) {

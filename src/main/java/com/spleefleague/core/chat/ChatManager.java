@@ -5,22 +5,28 @@
  */
 package com.spleefleague.core.chat;
 
-import java.util.Collection;
-import java.util.HashSet;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.listeners.ChatListener;
 import com.spleefleague.core.player.SLPlayer;
-import java.util.Set;
-
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.json.simple.JSONObject;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
  * @author Jonas
  */
 public class ChatManager {
+
+    public static void sendMessagePlayer(SLPlayer to, String message) {
+        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
+            to.sendMessage(message);
+        });
+    }
 
     public static void sendMessage(String p, String m, ChatChannel c) {
         sendMessage(p.concat(" ").concat(m), c);

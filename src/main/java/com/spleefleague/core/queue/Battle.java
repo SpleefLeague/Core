@@ -16,7 +16,10 @@ import java.util.Collection;
  */
 public interface Battle<Q extends QueueableArena, P extends GeneralPlayer> {
 
-    public Collection<P> getActivePlayers();
+    Collection<P> getSpectators();
 
-    public Q getArena();
+    Collection<P> getActivePlayers();
+
+    Q getArena();
+
 }
