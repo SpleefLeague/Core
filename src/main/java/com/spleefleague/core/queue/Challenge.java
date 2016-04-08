@@ -34,8 +34,8 @@ public abstract class Challenge {
         this.challenger = challenger;
         this.accepted = new boolean[challenged.length + 1];
         this.players = new SLPlayer[challenged.length + 1];
-        for (int i = 1; i < challenged.length; i++) {
-            this.players[i] = challenged[i-1];
+        for (int i = 0; i < challenged.length; i++) {
+            this.players[i+1] = challenged[i];
         }
         this.players[0] = challenger;
         this.accepted[0] = true;
@@ -61,7 +61,7 @@ public abstract class Challenge {
 
     private int getPlayerIndex(SLPlayer p) {
         for (int i = 0; i < this.players.length; i++) {
-            if (this.players[i] == p) {
+            if (this.players[i].getUniqueId() == p.getUniqueId()) {
                 return i;
             }
         }

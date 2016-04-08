@@ -63,16 +63,7 @@ public class ChatListener implements Listener {
                     }
                 }
                 ChatChannel channel = slp.getSendingChannel();
-                SpleefLeague.getInstance().getPlayerManager().getAll()
-                        .stream()
-                        .filter(spl -> spl.isInChatChannel(channel))
-                        .forEach(spl -> {
-                            if (b.getValue().getActivePlayers().contains(spl) || b.getValue().getSpectators().contains(spl)) {
-                                ChatManager.sendMessagePlayer(spl, slp.getChatArrowColor() + "<" + prefix.getValue() + slp.getRank().getColor() + slp.getName() + slp.getChatArrowColor() + ">" + ChatColor.RESET + " " +  event.getMessage());
-                            } else {
-                                ChatManager.sendMessagePlayer(spl, ChatColor.DARK_GRAY + "<" + prefix.getValue() + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET + " " +  event.getMessage());
-                            }
-                        });
+                ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix.getValue() + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, event.getMessage(), channel);
             }
         }
         if (slp.getRank() != null && !(slp.getRank().hasPermission(Rank.MODERATOR) || Arrays.asList(Rank.MODERATOR).contains(slp.getRank()))) {
