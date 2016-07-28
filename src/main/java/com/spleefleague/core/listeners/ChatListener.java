@@ -48,26 +48,21 @@ public class ChatListener implements Listener {
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer().getUniqueId());
-        if (!lastMessage.containsKey(slp.getUniqueId()) || System.currentTimeMillis() - lastMessage.get(slp.getUniqueId()) > 3000) {
-            ModifiableFinal<String> prefix = new ModifiableFinal<>("");
-            if (!slp.getRank().getDisplayName().equals("Default")) {
-                prefix.setValue(ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getDisplayName() + ChatColor.DARK_GRAY + "] ");
-            }
-            if (!event.isCancelled()) {
-                ModifiableFinal<Battle> b = new ModifiableFinal<>(null);
-                for (GamePlugin p : GamePlugin.getGamePlugins()) {
-                    Battle find = p.getBattleManager().getBattle(slp);
-                    if (find != null) {
-                        b.setValue(find);
-                        break;
-                    }
-                }
-                ChatChannel channel = slp.getSendingChannel();
-                ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix.getValue() + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, event.getMessage(), channel);
-            }
+        ModifiableFinal<String> prefix = new ModifiableFinal<>("");
+        if (!slp.getRank().getDisplayName().equals("Default")) {
+            prefix.setValue(ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getDisplayName() + ChatColor.DARK_GRAY + "] ");
         }
-        if (slp.getRank() != null && !(slp.getRank().hasPermission(Rank.MODERATOR) || Arrays.asList(Rank.MODERATOR).contains(slp.getRank()))) {
-            lastMessage.put(slp.getUniqueId(), System.currentTimeMillis());
+        if (!event.isCancelled()) {
+            ModifiableFinal<Battle> b = new ModifiableFinal<>(null);
+            for (GamePlugin p : GamePlugin.getGamePlugins()) {
+                Battle find = p.getBattleManager().getBattle(slp);
+                if (find != null) {
+                    b.setValue(find);
+                    break;
+                }
+            }
+            ChatChannel channel = slp.getSendingChannel();
+            ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix.getValue() + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, event.getMessage(), channel);
         }
         event.setCancelled(true);
     }
