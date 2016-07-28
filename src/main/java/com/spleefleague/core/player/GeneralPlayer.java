@@ -7,10 +7,12 @@ package com.spleefleague.core.player;
 
 import com.spleefleague.core.io.*;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -613,6 +615,10 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Override
     public void setHealthScale(double scale) throws IllegalArgumentException {
         getPlayer().setHealthScale(scale);
+    }
+
+    public EntityPlayer getHandle() {
+        return ((CraftPlayer)getPlayer()).getHandle();
     }
 
     @Override
