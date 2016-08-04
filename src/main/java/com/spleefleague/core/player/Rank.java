@@ -44,6 +44,7 @@ public class Rank extends DBEntity implements DBLoadable {
     private String[] permissions;
     @DBLoad(fieldName = "exclusivePermissions")
     private String[] exclusivePermissions;
+    private boolean assignedEnum = false;
 
     private Rank() {
 
@@ -103,17 +104,17 @@ public class Rank extends DBEntity implements DBLoadable {
 
     private final static Map<String, Rank> ranks = new HashMap<>();
 
-    public static final Rank ADMIN = getPlaceholderInstance(),
-            COUNCIL = getPlaceholderInstance(),
-            DEVELOPER = getPlaceholderInstance(),
-            SENIOR_MODERATOR = getPlaceholderInstance(),
-            CCMOD = getPlaceholderInstance(),
-            MODERATOR = getPlaceholderInstance(),
-            REFEREE = getPlaceholderInstance(),
-            VIP = getPlaceholderInstance(),
-            BUILDER = getPlaceholderInstance(),
-            ORGANIZER = getPlaceholderInstance(),
-            DEFAULT = getPlaceholderInstance();
+    public static final Rank ADMIN = getPlaceholderInstance(true),
+            COUNCIL = getPlaceholderInstance(true),
+            DEVELOPER = getPlaceholderInstance(true),
+            SENIOR_MODERATOR = getPlaceholderInstance(true),
+            CCMOD = getPlaceholderInstance(true),
+            MODERATOR = getPlaceholderInstance(true),
+            REFEREE = getPlaceholderInstance(true),
+            VIP = getPlaceholderInstance(true),
+            BUILDER = getPlaceholderInstance(true),
+            ORGANIZER = getPlaceholderInstance(true),
+            DEFAULT = getPlaceholderInstance(true);
 
     public static Rank valueOf(String name) {
         return ranks.get(name);
@@ -123,7 +124,7 @@ public class Rank extends DBEntity implements DBLoadable {
         return ranks.values().toArray(new Rank[0]);
     }
 
-    private static Rank getPlaceholderInstance() {
+    private static Rank getPlaceholderInstance(boolean assignedEnum) {
         Rank rank = new Rank();
         rank.color = ChatColor.BLACK;
         rank.displayName = "ERROR";
@@ -132,6 +133,7 @@ public class Rank extends DBEntity implements DBLoadable {
         rank.ladder = Integer.MIN_VALUE;
         rank.exclusivePermissions = new String[0];
         rank.permissions = new String[0];
+        rank.assignedEnum = assignedEnum;
         return rank;
     }
 

@@ -6,6 +6,7 @@ import com.spleefleague.core.io.Config;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import org.bukkit.Bukkit;
+import org.json.JSONTokener;
 import org.json.simple.JSONObject;
 
 import java.net.URISyntaxException;
@@ -33,15 +34,18 @@ public class ConnectionClient {
             send.put("name", Config.getString("server_name"));
             send("connect", send);
         }).on("global", (Object... args) -> {
-            if (args.length != 1) {
+            if (args.length != 2) {
                 return;
             }
             try {
                 org.json.JSONObject jsonObject = (org.json.JSONObject) args[0];
                 if (jsonObject == null || jsonObject.length() == 0) {
-                    return;
+                    jsonObject = new org.json.JSONObject(new JSONTokener(args[1].toString()));
+                    if(jsonObject.length() == 0) {
+                        return;
+                    }
                 }
-                String channel = jsonObject.getString("channel"), server = jsonObject.getString("server");
+                String channel = jsonObject.get("channel").toString(), server = jsonObject.getString("server");
                 jsonObject.remove("channel");
                 jsonObject.remove("server");
                 Bukkit.getPluginManager().callEvent(new ConnectionEvent(channel, server, jsonObject));

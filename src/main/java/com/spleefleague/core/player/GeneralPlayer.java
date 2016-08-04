@@ -5,6 +5,7 @@
  */
 package com.spleefleague.core.player;
 
+import com.google.common.base.Strings;
 import com.spleefleague.core.io.*;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
@@ -58,6 +59,11 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Override
     public String getName() {
         return username;
+    }
+
+    @DBSave(fieldName = "lookupUsername")
+    public String getLookupUsername() {
+        return username.toLowerCase();
     }
 
     @Override

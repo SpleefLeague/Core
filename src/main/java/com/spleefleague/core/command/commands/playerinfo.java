@@ -11,6 +11,7 @@ import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.infraction.Infraction;
 import com.spleefleague.core.infraction.InfractionType;
 import com.spleefleague.core.io.EntityBuilder;
+import com.spleefleague.core.io.connections.ConnectionResponseHandler;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
@@ -26,6 +27,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -70,6 +72,22 @@ public class playerinfo extends BasicCommand {
                     if (sharedAccounts != null) {
                         p.sendMessage(ChatColor.DARK_GRAY + "Shared accounts: " + ChatColor.GRAY + sharedAccounts);
                     }
+                    p.sendMessage(ChatColor.GREEN + "Requesting location...");
+                    JSONObject request = new JSONObject();
+                    request.put("uuid", data.getUUID());
+                    request.put("action", "GET_PLAYER");
+                    new ConnectionResponseHandler("sessions", request, 20 * 10) {
+
+                        @Override
+                        protected void response(JSONObject jsonObject) {
+                            if(jsonObject == null) {
+                                p.sendMessage(ChatColor.DARK_GRAY + "Server: " + ChatColor.GRAY + "NONE (OFFLINE)");
+                            } else {
+                                p.sendMessage(ChatColor.DARK_GRAY + "Server: " + ChatColor.GRAY + jsonObject.get("playerServer").toString());
+                            }
+                        }
+
+                    };
                 }
             }.runTaskAsynchronously(SpleefLeague.getInstance());
         } else {
