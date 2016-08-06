@@ -225,3 +225,8 @@ commands:
         aliases: [sl]
         usage: |
             /<command>
+    skull:
+        description: Give the executor a skull.
+        aliases: []
+        usage: |
+            /<command> <head-name>

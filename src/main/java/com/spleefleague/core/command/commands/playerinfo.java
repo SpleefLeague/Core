@@ -44,52 +44,48 @@ public class playerinfo extends BasicCommand {
         if (args.length < 2) {
             String targetName = (args.length == 0) ? p.getName() : args[0];
             Player targetPlayer = Bukkit.getPlayer(targetName);
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    SLPlayer target;
-                    if (targetPlayer != null) {
-                        target = SpleefLeague.getInstance().getPlayerManager().get(targetPlayer);
-                    } else {
-                        target = SpleefLeague.getInstance().getPlayerManager().loadFake(targetName);
-                        if (target == null) {
-                            error(p, targetName + " does not exist.");
-                            return;
-                        }
+            Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+                SLPlayer target;
+                if (targetPlayer != null) {
+                    target = SpleefLeague.getInstance().getPlayerManager().get(targetPlayer);
+                } else {
+                    target = SpleefLeague.getInstance().getPlayerManager().loadFake(targetName);
+                    if (target == null) {
+                        error(p, targetName + " does not exist.");
+                        return;
                     }
-                    PlayerData data = new PlayerData(target);
-                    p.sendMessage(ChatColor.DARK_GRAY + "[========== " + ChatColor.GRAY + targetName + "'s data " + ChatColor.DARK_GRAY + "==========]");
-                    p.sendMessage(ChatColor.DARK_GRAY + "Name: " + ChatColor.GRAY + data.getName());
-                    p.sendMessage(ChatColor.DARK_GRAY + "UUID: " + ChatColor.GRAY + data.getUUID());
-                    p.sendMessage(ChatColor.DARK_GRAY + "Rank: " + ChatColor.GRAY + data.getRank());
-                    p.sendMessage(ChatColor.DARK_GRAY + "State: " + data.getState());
-                    if (target.isOnline()) {
-                        p.sendMessage(ChatColor.DARK_GRAY + "IP: " + ChatColor.GRAY + data.getIP());
-                    } else {
-                        p.sendMessage(ChatColor.DARK_GRAY + "Last seen: " + ChatColor.GRAY + data.getLastSeen());
-                    }
-                    String sharedAccounts = data.getSharedAccounts();
-                    if (sharedAccounts != null) {
-                        p.sendMessage(ChatColor.DARK_GRAY + "Shared accounts: " + ChatColor.GRAY + sharedAccounts);
-                    }
-                    p.sendMessage(ChatColor.GREEN + "Requesting location...");
-                    JSONObject request = new JSONObject();
-                    request.put("uuid", data.getUUID());
-                    request.put("action", "GET_PLAYER");
-                    new ConnectionResponseHandler("sessions", request, 20 * 10) {
-
-                        @Override
-                        protected void response(JSONObject jsonObject) {
-                            if(jsonObject == null) {
-                                p.sendMessage(ChatColor.DARK_GRAY + "Server: " + ChatColor.GRAY + "NONE (OFFLINE)");
-                            } else {
-                                p.sendMessage(ChatColor.DARK_GRAY + "Server: " + ChatColor.GRAY + jsonObject.get("playerServer").toString());
-                            }
-                        }
-
-                    };
                 }
-            }.runTaskAsynchronously(SpleefLeague.getInstance());
+                JSONObject request = new JSONObject();
+                request.put("uuid", target.getUniqueId());
+                request.put("action", "GET_PLAYER");
+                new ConnectionResponseHandler("sessions", request, 40) {
+
+                    @Override
+                    protected void response(JSONObject jsonObject) {
+                        PlayerData data = new PlayerData(target);
+                        p.sendMessage(ChatColor.DARK_GRAY + "[========== " + ChatColor.GRAY + targetName + "'s data " + ChatColor.DARK_GRAY + "==========]");
+                        p.sendMessage(ChatColor.DARK_GRAY + "Name: " + ChatColor.GRAY + data.getName());
+                        p.sendMessage(ChatColor.DARK_GRAY + "UUID: " + ChatColor.GRAY + data.getUUID());
+                        p.sendMessage(ChatColor.DARK_GRAY + "Rank: " + ChatColor.GRAY + data.getRank());
+                        if(data.getState().equalsIgnoreCase("OFFLINE") && jsonObject != null && !jsonObject.get("playerServer").toString().equalsIgnoreCase("OFFLINE")) {
+                            p.sendMessage(ChatColor.DARK_GRAY + "State: ONLINE");
+                        } else {
+                            p.sendMessage(ChatColor.DARK_GRAY + "State: " + data.getState());
+                        }
+                        if (target.isOnline()) {
+                            p.sendMessage(ChatColor.DARK_GRAY + "IP: " + ChatColor.GRAY + data.getIP());
+                        } else {
+                            p.sendMessage(ChatColor.DARK_GRAY + "Last seen: " + ChatColor.GRAY + data.getLastSeen());
+                        }
+                        p.sendMessage(ChatColor.DARK_GRAY + "Server: " + ChatColor.GRAY + (jsonObject == null ? "NONE (OFFLINE)" : jsonObject.get("playerServer").toString()));
+                        String sharedAccounts = data.getSharedAccounts();
+                        if (sharedAccounts != null) {
+                            p.sendMessage(ChatColor.DARK_GRAY + "Shared accounts: " + ChatColor.GRAY + sharedAccounts);
+                        }
+                    }
+
+                };
+            });
         } else {
             sendUsage(p);
         }
