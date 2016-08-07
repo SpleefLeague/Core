@@ -48,11 +48,12 @@ public class DatabaseConnection {
     }
 
     public static UUID getUUID(String username) {
+        username = username.toLowerCase();
         UUID uuid = uuidCache.getUUID(username);
         if (uuid != null) {
             return uuid;
         }
-        Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").find(new Document("username", username)).first();
+        Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").find(new Document("lookupUsername", username)).first();
         if (dbo != null) {
             uuid = UUID.fromString((String) dbo.get("uuid"));
             updateCache(uuid, username);

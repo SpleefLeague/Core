@@ -89,10 +89,9 @@ public class SpawnManager {
         public void calculatePlayerRadius() {
             double radiusSquared = RADIUS * RADIUS;
             ModifiableFinal<Integer> result = new ModifiableFinal<>(0);
-            location.getWorld().getPlayers().forEach((Player player) -> {
-                if (player.getLocation().distanceSquared(location) <= radiusSquared) {
-                    result.setValue(result.getValue() + 1);
-                }
+            location.getWorld().getPlayers().stream().filter((Player player) -> player.getLocation().distanceSquared(location) <= radiusSquared)
+                    .forEach((Player player) -> {
+                result.setValue(result.getValue() + 1);
             });
             this.playersInRadius = result.getValue();
         }
