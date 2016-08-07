@@ -176,11 +176,11 @@ commands:
         usage:
             /<command> <email>
     spawns:
-        description: List all SL spawns.
+        description: List all SL spawns
         usage:
             /<command>
     fspeed:
-        description: Change flyspeed.
+        description: Change flyspeed
         usage:
             /<command> <speed>
     setmax:
@@ -188,7 +188,7 @@ commands:
         usage:
             /<command> <size>
     ticket:
-        description: Opens a new ticket.
+        description: Opens a new ticket
         usage:
             /<command> <message>
     ticketreply:
@@ -221,12 +221,22 @@ commands:
             /<command> disabled [page] - lists disabled commands
             /<command> enable <name> - re-enables a disabled command
     stafflist:
-        description: List online staff.
+        description: List online staff
         aliases: [sl]
         usage: |
             /<command>
     skull:
-        description: Give the executor a skull.
+        description: Give the executor a skull
         aliases: []
         usage: |
             /<command> <head-name>
+    colorarmor:
+        description: Color the leather armor in your hand
+        aliases: []
+        usage: |
+            /<command> <red> <green> <blue> - Colors from 0-255
+    sping:
+        description: lists everyone or some people's pings
+        aliases: []
+        usage: |
+            /<command> [usernames...]
