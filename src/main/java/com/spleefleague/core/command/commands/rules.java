@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 public class rules extends BasicCommand {
 
-    private final String url = "https://swc.cubecraft.net/threads/official-spleefleague-server-rules.28/";
+    private final String url = "https://spleefleague.com/threads/official-spleefleague-server-rules.28/";
     private final int rulesPerPage = 6;
 
     public rules(CorePlugin plugin, String name, String usage) {
