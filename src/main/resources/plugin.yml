@@ -206,6 +206,7 @@ commands:
             /<command>
     join:
         description: Joins a server
+        aliases: [server]
         usage:
             /<command> <server>
     rules:
@@ -230,3 +231,7 @@ commands:
         aliases: []
         usage: |
             /<command> <head-name>
+    balancing:
+        description: Server balancing management command.
+        usage: |
+            /<command> <refresh>
