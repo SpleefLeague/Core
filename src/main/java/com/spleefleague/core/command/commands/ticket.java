@@ -1,5 +1,6 @@
 package com.spleefleague.core.command.commands;
 
+import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.command.BasicCommand;
@@ -14,6 +15,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -29,11 +31,13 @@ public class ticket extends BasicCommand {
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
         if (args.length > 0) {
             String message = StringUtil.fromArgsArray(args);
-            slp.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "Ticket" + ChatColor.DARK_GREEN + "|" + ChatColor.GREEN + slp.getName() + ChatColor.DARK_GREEN + "] " + slp.getRank().getColor() + slp.getName() + ChatColor.GRAY + ": " + ChatColor.YELLOW + message);
-            ChatManager.sendMessage(ChatChannel.STAFF, new ComponentBuilder("[").color(ChatColor.DARK_GREEN.asBungee()).append("Ticket").color(ChatColor.GREEN.asBungee()).append("|").color(ChatColor.DARK_GREEN.asBungee()).append(slp.getName()).color(ChatColor.GREEN.asBungee()).append("] ").color(ChatColor.DARK_GREEN.asBungee())
-                    .append(slp.getName()).color(slp.getRank().getColor().asBungee()).append(": ").color(ChatColor.GRAY.asBungee()).append(message).color(ChatColor.YELLOW.asBungee())
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to respond!").color(ChatColor.GRAY.asBungee()).create()))
-                    .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/treply " + slp.getName() + " ")).create());
+            JSONObject sendObject = new JSONObject();
+            sendObject.put("rankColor", slp.getRank().getColor().name());
+            sendObject.put("sendUUID", p.getUniqueId());
+            sendObject.put("sendName", p.getName());
+            sendObject.put("shownName", p.getName());
+            sendObject.put("message", message);
+            SpleefLeague.getInstance().getConnectionClient().send("ticket", sendObject);
         } else {
             sendUsage(p);
         }

@@ -6,13 +6,13 @@
 package com.spleefleague.core.io;
 
 import com.mongodb.MongoCredential;
+import com.spleefleague.core.player.Rank;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -59,6 +59,18 @@ public class Config {
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
+    }
+
+    public static List<?> getList(String key) {
+        if(!hasKey(key)) {
+            return null;
+        }
+        Object value = ADDITIONAL_CONFIG.get(key);
+        return Arrays.stream(value.toString().split(",")).collect(Collectors.toList());
+    }
+
+    public static Rank getRank(String key) {
+        return Rank.valueOf(ADDITIONAL_CONFIG.get(key));
     }
 
     public static boolean hasKey(String key) {

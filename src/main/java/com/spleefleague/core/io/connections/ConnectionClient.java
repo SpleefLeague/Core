@@ -10,12 +10,15 @@ import org.json.JSONTokener;
 import org.json.simple.JSONObject;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Josh on 21/02/2016.
  */
 public class ConnectionClient {
 
+    private List<JSONObject> queued;
     private Socket socket;
 
     public ConnectionClient() {
@@ -23,6 +26,7 @@ public class ConnectionClient {
             SpleefLeague.getInstance().getLogger().severe("Server name not set in config, shutting down connections.");
             return;
         }
+        this.queued = new ArrayList<>();
         try {
             this.socket = IO.socket("http://127.0.0.1:9092");
         } catch (URISyntaxException e) {
@@ -33,6 +37,8 @@ public class ConnectionClient {
             JSONObject send = new JSONObject();
             send.put("name", Config.getString("server_name"));
             send("connect", send);
+            queued.forEach((JSONObject jsonObject) -> this.socket.emit("global", jsonObject));
+            queued.clear();
         }).on("global", (Object... args) -> {
             if (args.length != 2) {
                 return;
@@ -74,7 +80,11 @@ public class ConnectionClient {
     public void send(String channel, JSONObject jsonObject) {
         jsonObject.put("channel", channel);
         jsonObject.put("server", Config.getString("server_name"));
-        this.socket.emit("global", jsonObject);
+        if(this.socket == null || !this.socket.connected()) {
+            queued.add(jsonObject);
+        } else {
+            this.socket.emit("global", jsonObject);
+        }
     }
 
 }

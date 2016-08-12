@@ -7,6 +7,7 @@ package com.spleefleague.core.command.commands;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.command.BasicCommand;
+import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
@@ -40,6 +41,9 @@ public class reloaddata extends BasicCommand {
                 slp.setRank(Rank.valueOf(slp.getRank().getName()));
             }
             success(cs, "Reloaded " + Rank.values().length + " ranks!");
+        } else if(args[0].equalsIgnoreCase("settings")) {
+            Settings.loadSettings();
+            success(cs, "Reloaded settings from the database!");
         }
     }
 }

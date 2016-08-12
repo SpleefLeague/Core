@@ -1,8 +1,10 @@
 package com.spleefleague.core.command.commands;
 
+import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.command.BasicCommand;
+import com.spleefleague.core.io.connections.ConnectionResponseHandler;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
@@ -14,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -28,18 +31,36 @@ public class ticketreply extends BasicCommand {
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
         if (args.length > 1) {
-            Player player = Bukkit.getPlayer(args[0]);
-            if (player.isOnline()) {
-                String message = StringUtil.fromArgsArray(args, 1);
-                player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "Ticket" + ChatColor.DARK_GREEN + "|" + ChatColor.GREEN + player.getName() + ChatColor.DARK_GREEN + "] " + slp.getRank().getColor() + slp.getName() + ChatColor.GRAY + ": " + ChatColor.YELLOW + message);
-                ChatManager.sendMessage(ChatChannel.STAFF, new ComponentBuilder("[").color(ChatColor.DARK_GREEN.asBungee()).append("Ticket").color(ChatColor.GREEN.asBungee()).append("|").color(ChatColor.DARK_GREEN.asBungee()).append(player.getName()).color(ChatColor.GREEN.asBungee()).append("] ").color(ChatColor.DARK_GREEN.asBungee())
-                        .append(slp.getName()).color(slp.getRank().getColor().asBungee()).append(": ").color(ChatColor.GRAY.asBungee()).append(message).color(ChatColor.YELLOW.asBungee())
-                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to respond!").color(ChatColor.GRAY.asBungee()).create()))
-                        .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/treply " + player.getName() + " ")).create());
-            } else {
-                error(p, player.getName() + " is not currently online.");
-            }
+            Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+                SLPlayer slPlayer = SpleefLeague.getInstance().getPlayerManager().loadFake(args[0]);
+                if(slPlayer == null) {
+                    error(p, args[0] + " has never played on SpleefLeague!");
+                    return;
+                }
+                JSONObject request = new JSONObject();
+                request.put("uuid", slPlayer.getUniqueId().toString());
+                request.put("action", "GET_PLAYER");
+                new ConnectionResponseHandler("sessions", request, 40) {
 
+                    @Override
+                    protected void response(JSONObject jsonObject) {
+                        if(jsonObject == null || jsonObject.get("playerServer").toString().equalsIgnoreCase("OFFLINE")) {
+                            error(slp, slPlayer.getName() + " isn't online!");
+                            return;
+                        }
+                        String message = StringUtil.fromArgsArray(args, 1);
+                        JSONObject sendObject = new JSONObject();
+                        sendObject.put("rankColor", slp.getRank().getColor().name());
+                        sendObject.put("sendUUID", slPlayer.getUniqueId());
+                        sendObject.put("sendName", slPlayer.getName());
+                        sendObject.put("shownName", slp.getName());
+                        sendObject.put("overrideServer", jsonObject.get("playerServer").toString());
+                        sendObject.put("message", message);
+                        SpleefLeague.getInstance().getConnectionClient().send("ticket", sendObject);
+                    }
+
+                };
+            });
         } else {
             sendUsage(p);
         }

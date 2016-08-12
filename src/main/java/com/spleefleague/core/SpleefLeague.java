@@ -49,7 +49,12 @@ import org.bukkit.entity.Player;
  */
 public class SpleefLeague extends CorePlugin {
 
+    public static final String BROADCAST_FORMAT = ChatColor.DARK_GRAY + "[" + ChatColor.LIGHT_PURPLE + "Broadcast"
+            + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY + "%s";
+
     private MongoClient mongo;
+    private Rank minimumJoinRank;
+    private List<Rank> extraJoinRanks;
     private PlayerManager<SLPlayer> playerManager;
     private Location spawn;
     private ConnectionClient connectionClient;
@@ -73,6 +78,7 @@ public class SpleefLeague extends CorePlugin {
         RuntimeCompiler.loadPermanentDebuggers();
         DatabaseConnection.initialize();
         Rank.init();
+        loadJoinSettings();
         commandLoader = CommandLoader.loadCommands(this, "com.spleefleague.core.command.commands");
         ChatManager.init();
         MultiBlockChangeUtil.init();
@@ -123,6 +129,23 @@ public class SpleefLeague extends CorePlugin {
         }
     }
 
+    private void loadJoinSettings() {
+        minimumJoinRank = (Config.hasKey("minimum_join_rank") ? Config.getRank("minimum_join_rank") : Rank.DEFAULT);
+        List<Rank> result = new ArrayList<>();
+        if(Config.hasKey("extra_join_ranks")) {
+            Config.getList("extra_join_ranks").forEach((Object object) -> {
+                Rank rank;
+                try {
+                    rank = Rank.valueOf(object.toString().toUpperCase());
+                } catch (Exception e) {
+                    return;
+                }
+                result.add(rank);
+            });
+        }
+        extraJoinRanks = result;
+    }
+
     private void initMongo() {
         List<MongoCredential> credentials = Config.getCredentials();
         try {
@@ -148,6 +171,14 @@ public class SpleefLeague extends CorePlugin {
         } catch (IllegalArgumentException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | SecurityException | NoSuchFieldException | InvocationTargetException ex) {
             Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public Rank getMinimumJoinRank() {
+        return minimumJoinRank;
+    }
+
+    public List<Rank> getExtraJoinRanks() {
+        return extraJoinRanks;
     }
 
     public MongoClient getMongo() {

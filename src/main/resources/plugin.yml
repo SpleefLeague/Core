@@ -245,3 +245,13 @@ commands:
         description: Server balancing management command.
         usage: |
             /<command> <refresh>
+    globalschematic:
+        description: Builder schematic management command.
+        aliases: [gs]
+        usage: |
+            /<command> <save|load|list> [name]
+    broadcast:
+        description: Broadcast something server-wide (or locally if need be).
+        aliases: [bc]
+        usage: |
+            /<command> [local] <message>

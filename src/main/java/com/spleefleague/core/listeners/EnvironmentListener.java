@@ -8,13 +8,18 @@ package com.spleefleague.core.listeners;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.command.commands.back;
 import com.spleefleague.core.events.FakeBlockBreakEvent;
+import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.io.*;
 import com.spleefleague.core.io.TypeConverter.DateConverter;
+import com.spleefleague.core.player.GeneralPlayer;
 import com.spleefleague.core.player.PlayerState;
+import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.GamePlugin;
 import com.spleefleague.core.spawn.SpawnManager;
+import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -175,6 +180,36 @@ public class EnvironmentListener implements Listener {
                 if (event.getClickedBlock().getType() == Material.FIRE) {
                     event.setCancelled(true);
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onGeneralPlayerLoaded(GeneralPlayerLoadedEvent event) {
+        GeneralPlayer gp = event.getGeneralPlayer();
+        if (gp instanceof SLPlayer) {
+            SLPlayer slPlayer = (SLPlayer) gp;
+            if(slPlayer.isOnline()) {
+                if(!slPlayer.getRank().hasPermission(SpleefLeague.getInstance().getMinimumJoinRank())
+                        && !SpleefLeague.getInstance().getExtraJoinRanks().contains(slPlayer.getRank())) {
+                    event.getPlayer().kickPlayer("You don't have permission to join this server!");
+                }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void rankCheck(AsyncPlayerPreLoginEvent e) {
+        Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").find(new Document("uuid", e.getUniqueId().toString())).first();
+        if (dbo != null) {
+            Rank rank = null;
+            try {
+                rank = Rank.valueOf(dbo.getString("rank"));
+            } catch (Exception ignored) {}
+            if(rank == null || (!rank.hasPermission(SpleefLeague.getInstance().getMinimumJoinRank())
+                    && !SpleefLeague.getInstance().getExtraJoinRanks().contains(rank))) {
+                e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
+                e.setKickMessage(ChatColor.RED + "You are not of rank to join this server!");
             }
         }
     }

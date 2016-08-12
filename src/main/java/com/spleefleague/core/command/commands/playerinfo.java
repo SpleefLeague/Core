@@ -56,7 +56,7 @@ public class playerinfo extends BasicCommand {
                     }
                 }
                 JSONObject request = new JSONObject();
-                request.put("uuid", target.getUniqueId());
+                request.put("uuid", target.getUniqueId().toString());
                 request.put("action", "GET_PLAYER");
                 new ConnectionResponseHandler("sessions", request, 40) {
 
