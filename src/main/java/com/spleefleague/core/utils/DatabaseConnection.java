@@ -6,17 +6,18 @@
 package com.spleefleague.core.utils;
 
 import com.mongodb.client.FindIterable;
-import com.spleefleague.core.utils.collections.FixedSizeList;
 import com.mongodb.client.MongoCollection;
-import java.util.UUID;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.utils.collections.FixedSizeList;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+
+import java.util.UUID;
 
 /**
  *
@@ -33,7 +34,9 @@ public class DatabaseConnection {
             public void onJoin(GeneralPlayerLoadedEvent event) {
                 DatabaseConnection.updateCache(event.getPlayer().getUniqueId(), event.getPlayer().getName());
                 if (event.getGeneralPlayer() instanceof SLPlayer) {
-                    DatabaseConnection.updateCache(event.getPlayer().getUniqueId(), ((SLPlayer) event.getGeneralPlayer()).getRank());
+                    SLPlayer slp = (SLPlayer) event.getGeneralPlayer();
+                    slp.setRank(slp.getRank());
+                    DatabaseConnection.updateCache(event.getPlayer().getUniqueId(), slp.getRank());
                 }
             }
         }, SpleefLeague.getInstance());

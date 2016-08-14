@@ -6,23 +6,19 @@
 package com.spleefleague.core.player;
 
 import com.mongodb.client.MongoCursor;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import com.spleefleague.core.SpleefLeague;
-import com.spleefleague.core.io.DBEntity;
-import com.spleefleague.core.io.DBLoad;
-import com.spleefleague.core.io.DBLoadable;
-import com.spleefleague.core.io.EntityBuilder;
-import com.spleefleague.core.io.TypeConverter;
+import com.spleefleague.core.io.*;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
+
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -45,6 +41,7 @@ public class Rank extends DBEntity implements DBLoadable {
     @DBLoad(fieldName = "exclusivePermissions")
     private String[] exclusivePermissions;
     private boolean assignedEnum = false;
+    private Team scoreboardTeam;
 
     private Rank() {
 
@@ -102,6 +99,10 @@ public class Rank extends DBEntity implements DBLoadable {
         return permissions;
     }
 
+    public Team getScoreboardTeam() {
+        return this.scoreboardTeam;
+    }
+
     private final static Map<String, Rank> ranks = new HashMap<>();
 
     public static final Rank ADMIN = getPlaceholderInstance(true),
@@ -138,6 +139,11 @@ public class Rank extends DBEntity implements DBLoadable {
     }
 
     public static void init() {
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        Set<Team> teams = scoreboard.getTeams();
+        teams.forEach((t) -> {
+            t.unregister();
+        });
         MongoCursor<Document> dbc = SpleefLeague.getInstance().getPluginDB().getCollection("Ranks").find().iterator();
         while (dbc.hasNext()) {
             Rank rank = EntityBuilder.load(dbc.next(), Rank.class);
@@ -152,6 +158,15 @@ public class Rank extends DBEntity implements DBLoadable {
                 staticRank.exclusivePermissions = rank.exclusivePermissions;
                 rank = staticRank;
             }
+            Team t = scoreboard.registerNewTeam(normalizeRankName(rank.getName()));
+            t.setDisplayName(t.getDisplayName());
+            if (rank.getDisplayName().equalsIgnoreCase(Rank.DEFAULT.getDisplayName())) {
+                t.setPrefix(rank.getColor().toString());
+            } else {
+                t.setPrefix(rank.getColor() + "[" + rank.getDisplayName() + "] ");
+            }
+            t.setSuffix(ChatColor.RESET.toString());
+            rank.scoreboardTeam = t;
             ranks.put(rank.getName(), rank);
         }
         SpleefLeague.getInstance().log("Loaded " + ranks.size() + " ranks!");
@@ -189,6 +204,31 @@ public class Rank extends DBEntity implements DBLoadable {
         @Override
         public String convertSave(Rank rank) {
             return rank.getName();
+        }
+    }
+
+    public static String normalizeRankName(String input) {
+        if (input.length() <= 16) {
+            return input;
+        }
+        if (input.contains("_")) {
+            String[] parts = input.split("_");
+            String output = "";
+            for (String s : parts) {
+                if (s.length() > 3) {
+                    output += s.substring(0, 3);
+                } else {
+                    output += s;
+                }
+                output += "_";
+            }
+            output = output.substring(0, output.length() - 2);
+            if (output.length() > 16) {
+                return output.substring(0, 16);
+            }
+            return output;
+        } else {
+            return input.substring(0, 16);
         }
     }
 }

@@ -51,6 +51,7 @@ public class SLPlayer extends GeneralPlayer {
         if (isOnline()) {
             setPlayerListName(rank.getColor() + getName());
             setDisplayName(rank.getColor() + getName());
+            getRank().getScoreboardTeam().addEntry(getName());
             if (rank.hasPermission(Rank.DEVELOPER)) {
                 setGameMode(GameMode.CREATIVE);
             } else {
