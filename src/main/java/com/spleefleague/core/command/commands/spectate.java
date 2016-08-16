@@ -10,6 +10,7 @@ import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.plugin.GamePlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
@@ -29,8 +30,10 @@ public class spectate extends BasicCommand {
             if (GamePlugin.isSpectatingGlobal(p)) {
                 GamePlugin.unspectateGlobal(p);
                 success(p, "You are no longer spectating a match");
-                p.setAllowFlight(false);
-                p.setFlying(false);
+                if (p.getGameMode() == GameMode.ADVENTURE || p.getGameMode() == GameMode.SURVIVAL) {
+                    p.setAllowFlight(false);
+                    p.setFlying(false);
+                }
             } else {
                 error(p, "You are currently not spectating anyone!");
             }
