@@ -16,6 +16,7 @@ import com.spleefleague.core.io.connections.ConnectionClient;
 import com.spleefleague.core.listeners.*;
 import com.spleefleague.core.portals.PortalManager;
 import com.spleefleague.core.spawn.SpawnManager;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -126,6 +127,10 @@ public class SpleefLeague extends CorePlugin {
         }
         if (Settings.hasKey("max_players")) {
             setSlotSize(Settings.getInteger("max_players"));
+        }
+        if(Settings.hasKey("game_rules")) {
+            Document document = Settings.getDocument("game_rules");
+            document.forEach((String key, Object object) -> CorePlugin.DEFAULT_WORLD.setGameRuleValue(key, object.toString()));
         }
     }
 

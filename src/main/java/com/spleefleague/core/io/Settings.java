@@ -38,6 +38,14 @@ public class Settings {
         return settings.containsKey(key);
     }
 
+    public static Document getDocument(String key) {
+        Document doc = settings.get(key);
+        if (doc == null) {
+            return null;
+        }
+        return doc.get("value", Document.class);
+    }
+
     public static String getString(String key) {
         Document doc = (Document) settings.get(key);
         if (doc == null) {
