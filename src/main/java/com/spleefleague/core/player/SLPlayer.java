@@ -7,8 +7,10 @@ import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.TypeConverter.RankStringConverter;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
 import com.spleefleague.core.queue.Challenge;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.scoreboard.Team;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,6 +53,9 @@ public class SLPlayer extends GeneralPlayer {
         if (isOnline()) {
             setPlayerListName(rank.getColor() + getName());
             setDisplayName(rank.getColor() + getName());
+            for (Team t : Bukkit.getScoreboardManager().getMainScoreboard().getTeams()) {
+                t.removeEntry(getName());
+            }
             getRank().getScoreboardTeam().addEntry(getName());
             if (rank.hasPermission(Rank.DEVELOPER)) {
                 setGameMode(GameMode.CREATIVE);
