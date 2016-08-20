@@ -18,12 +18,11 @@ import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.GamePlugin;
 import com.spleefleague.core.spawn.SpawnManager;
 import org.bson.Document;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,14 +37,13 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
- *
  * @author Jonas
  */
 public class EnvironmentListener implements Listener {
@@ -63,6 +61,122 @@ public class EnvironmentListener implements Listener {
 
     }
 
+    private double parseDouble(String input) {
+        try {
+            return Double.parseDouble(input);
+        } catch (Exception e) {
+            try {
+                return (double) Integer.parseInt(input);
+            } catch (Exception e2) {
+                throw e;
+            }
+        }
+    }
+
+    private ArrayList<Block> getRelative(Block current) {
+        ArrayList<Block> list = new ArrayList<>();
+
+        for(int i = 0; i < 5; i++) {
+            list.add(current.getRelative(BlockFace.DOWN, i));
+        }
+
+        return list;
+    }
+
+    private void doVelocity(Player player, Sign sign) {
+        try {
+            double x = parseDouble(sign.getLine(1));
+            double y = parseDouble(sign.getLine(2));
+            double z = parseDouble(sign.getLine(3));
+
+            player.setVelocity(new Vector(x, y, z));
+        } catch(NumberFormatException ex) { }
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e) {
+        Player player = e.getPlayer();
+        SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(player);
+
+        if (slp == null) {
+            return;
+        }
+
+        if (e.getFrom().getBlockX() != e.getTo().getBlockX() || e.getFrom().getBlockY() != e.getFrom().getBlockY() ||
+            e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
+
+            Block block = e.getTo().getBlock();
+            boolean shouldCancel = false;
+
+            for (Block min : getRelative(block)) {
+                if (min.getType() == Material.SPONGE &&
+                    slp.getRank().getLadder() > Rank.DEFAULT.getLadder()) {
+                    shouldCancel = true;
+                    break;
+                } else if (min.getType() == Material.SIGN_POST || min.getType() == Material.WALL_SIGN) {
+                    Sign sign = (Sign) min.getState();
+                    String first = ChatColor.stripColor(sign.getLine(0)).toLowerCase();
+
+                    if (first.equalsIgnoreCase("[min-rank]")) {
+                        Rank found = Rank.valueOf(sign.getLine(1));
+
+                        if (found != null && slp.getRank().getLadder() < found.getLadder()) {
+                            shouldCancel = true;
+                            break;
+                        }
+                    } else if (first.equalsIgnoreCase("[max-rank]")) {
+                        Rank found = Rank.valueOf(sign.getLine(1));
+
+                        if (found != null && slp.getRank().getLadder() > found.getLadder()) {
+                            shouldCancel = true;
+                            break;
+                        }
+                    } else if (first.equalsIgnoreCase("[jump]")) {
+                        doVelocity(player, sign);
+                        continue;
+                    } else if (first.equalsIgnoreCase("[teleport]")) {
+                        try {
+
+                            double x = parseDouble(sign.getLine(1));
+                            double y = parseDouble(sign.getLine(2));
+                            double z = parseDouble(sign.getLine(3));
+
+                            player.teleport(new Location(player.getWorld(), x, y, z, player.getLocation().getYaw(),
+                                    player.getLocation().getPitch()
+                            ), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                        } catch (NumberFormatException ex) {
+                        }
+
+                        continue;
+                    } else if (sign.getLine(0).equalsIgnoreCase("[effect]")) {
+                        try {
+                            int id = Integer.valueOf(sign.getLine(1));
+                            int time = Integer.valueOf(sign.getLine(2));
+                            int level = Integer.valueOf(sign.getLine(3));
+
+                            player.addPotionEffect(
+                                    new PotionEffect(PotionEffectType.getById(id), time, level, false), true);
+                        } catch (NumberFormatException ex) {
+                        }
+
+                        continue;
+                    }
+                }
+            }
+
+            if (shouldCancel) {
+                Location newLoc = e.getFrom();
+                newLoc.setX(newLoc.getBlockX() + 0.5D);
+                newLoc.setY(newLoc.getBlockY());
+                newLoc.setZ(newLoc.getBlockZ() + 0.5D);
+
+                e.setTo(newLoc);
+                player.teleport(newLoc);
+            }
+        }
+    }
+
+
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -71,7 +185,11 @@ public class EnvironmentListener implements Listener {
             if (spawnLocation != null) {
                 spawnLocation.incrementPlayersInRadius();
             }
-            Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> player.teleport(spawnLocation != null ? spawnLocation.getLocation() : SpleefLeague.getInstance().getSpawnLocation()));
+            Bukkit
+                    .getScheduler()
+                    .runTask(SpleefLeague.getInstance(), () -> player.teleport(spawnLocation != null ?
+                            spawnLocation.getLocation() :
+                            SpleefLeague.getInstance().getSpawnLocation()));
         }
 //        if(!player.hasPlayedBefore()) {
 //            event.setJoinMessage(SpleefLeague.getInstance().getChatPrefix() + " " + ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + player.getName() + ChatColor.BLUE + " to SpleefLeague!");
@@ -102,14 +220,16 @@ public class EnvironmentListener implements Listener {
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event) {
         if (event.getCause() == TeleportCause.COMMAND) {
-            ((back) SpleefLeague.getInstance().getBasicCommand("back")).setLastTeleport(event.getPlayer(), event.getFrom());
+            ((back) SpleefLeague.getInstance().getBasicCommand("back")).setLastTeleport(
+                    event.getPlayer(), event.getFrom());
         }
     }
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
         if (event.getCause() != DamageCause.ENTITY_ATTACK && (event.getEntity() instanceof Player)) {
-            if (event.getCause() == DamageCause.FALL || event.getCause() == DamageCause.LAVA || event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
+            if (event.getCause() == DamageCause.FALL || event.getCause() == DamageCause.LAVA ||
+                event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
                 event.setCancelled(true);
             } else {
                 SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get((Player) event.getEntity());
@@ -150,7 +270,8 @@ public class EnvironmentListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onDrop(PlayerDropItemEvent event) {
-        event.setCancelled(event.getItemDrop().getItemStack().getType() != Material.RED_ROSE && event.getPlayer().getGameMode() != GameMode.CREATIVE);
+        event.setCancelled(event.getItemDrop().getItemStack().getType() != Material.RED_ROSE &&
+                           event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
 
     @EventHandler
@@ -171,9 +292,16 @@ public class EnvironmentListener implements Listener {
                 Material clicked = event.getClickedBlock().getType();
                 if (clicked == Material.CAULDRON) {
                     event.getPlayer().setItemInHand(null);
-                } else if (Arrays.asList(/*Material.CHEST, Material.FURNACE, */Material.DROPPER, Material.ITEM_FRAME, Material.REDSTONE_COMPARATOR, Material.DIODE, Material.DISPENSER, Material.ANVIL, Material.TRAP_DOOR, Material.BED, Material.HOPPER, Material.HOPPER_MINECART).contains(clicked)) {
+                } else if (Arrays
+                        .asList(/*Material.CHEST, Material.FURNACE, */Material.DROPPER, Material.ITEM_FRAME,
+                                Material.REDSTONE_COMPARATOR, Material.DIODE, Material.DISPENSER, Material.ANVIL,
+                                Material.TRAP_DOOR, Material.BED, Material.HOPPER, Material.HOPPER_MINECART
+                        )
+                        .contains(clicked)) {
                     event.setCancelled(true);
-                } else if (item != null && Arrays.asList(Material.WATER_BUCKET, Material.LAVA_BUCKET, Material.BUCKET).contains(item.getType())) {
+                } else if (item != null && Arrays
+                        .asList(Material.WATER_BUCKET, Material.LAVA_BUCKET, Material.BUCKET)
+                        .contains(item.getType())) {
                     event.setCancelled(true);
                 }
             } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
@@ -189,9 +317,9 @@ public class EnvironmentListener implements Listener {
         GeneralPlayer gp = event.getGeneralPlayer();
         if (gp instanceof SLPlayer) {
             SLPlayer slPlayer = (SLPlayer) gp;
-            if(slPlayer.isOnline()) {
-                if(!slPlayer.getRank().hasPermission(SpleefLeague.getInstance().getMinimumJoinRank())
-                        && !SpleefLeague.getInstance().getExtraJoinRanks().contains(slPlayer.getRank())) {
+            if (slPlayer.isOnline()) {
+                if (!slPlayer.getRank().hasPermission(SpleefLeague.getInstance().getMinimumJoinRank()) &&
+                    !SpleefLeague.getInstance().getExtraJoinRanks().contains(slPlayer.getRank())) {
                     event.getPlayer().kickPlayer("You don't have permission to join this server!");
                 }
             }
@@ -200,14 +328,21 @@ public class EnvironmentListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void rankCheck(AsyncPlayerPreLoginEvent e) {
-        Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").find(new Document("uuid", e.getUniqueId().toString())).first();
+        Document dbo = SpleefLeague
+                .getInstance()
+                .getPluginDB()
+                .getCollection("Players")
+                .find(new Document("uuid", e.getUniqueId().toString()))
+                .first();
         if (dbo != null) {
             Rank rank = null;
             try {
                 rank = Rank.valueOf(dbo.getString("rank"));
-            } catch (Exception ignored) {}
-            if(rank == null || (!rank.hasPermission(SpleefLeague.getInstance().getMinimumJoinRank())
-                    && !SpleefLeague.getInstance().getExtraJoinRanks().contains(rank))) {
+            } catch (Exception ignored) {
+            }
+            if (rank == null || (!rank.hasPermission(SpleefLeague.getInstance().getMinimumJoinRank()) &&
+                                 !SpleefLeague.getInstance().getExtraJoinRanks().contains(rank)
+            )) {
                 e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
                 e.setKickMessage(ChatColor.RED + "You are not of rank to join this server!");
             }
@@ -252,7 +387,13 @@ public class EnvironmentListener implements Listener {
 
     private void logIPAddress(final Player player) {
         final String ip = player.getAddress().getAddress().toString();
-        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> EntityBuilder.save(new Connection(player.getUniqueId(), ip), SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections")));
+        Bukkit
+                .getScheduler()
+                .runTaskAsynchronously(SpleefLeague.getInstance(),
+                        () -> EntityBuilder.save(new Connection(player.getUniqueId(), ip),
+                                SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections")
+                        )
+                );
     }
 
     public static class Connection extends DBEntity implements DBSaveable {
