@@ -68,7 +68,7 @@ public class Rank extends DBEntity implements DBLoadable {
     }
 
     public boolean hasPermission(Rank rank) {
-        return this == rank || this.getLadder() > rank.getLadder();
+        return this == rank || this.getLadder() >= rank.getLadder();
     }
 
     public boolean hasPermission(String permission) {
