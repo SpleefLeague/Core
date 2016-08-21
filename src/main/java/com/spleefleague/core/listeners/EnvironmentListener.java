@@ -20,10 +20,14 @@ import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.GamePlugin;
 import com.spleefleague.core.spawn.SpawnManager;
 import org.bson.Document;
-import org.bukkit.*;
-import org.bukkit.block.Biome;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -104,6 +108,121 @@ public class EnvironmentListener implements Listener {
     public void onTeleport(PlayerTeleportEvent event) {
         if (event.getCause() == TeleportCause.COMMAND) {
             ((back) SpleefLeague.getInstance().getBasicCommand("back")).setLastTeleport(event.getPlayer(), event.getFrom());
+        }
+    }
+
+    private double parseDouble(String input) {
+        try {
+            return Double.parseDouble(input);
+        } catch (Exception e) {
+            try {
+                return (double) Integer.parseInt(input);
+            } catch (Exception e2) {
+                throw e;
+            }
+        }
+    }
+
+    private ArrayList<Block> getRelative(Block current) {
+        ArrayList<Block> list = new ArrayList<>();
+
+        for(int i = 0; i < 5; i++) {
+            list.add(current.getRelative(BlockFace.DOWN, i));
+        }
+
+        return list;
+    }
+
+    private void doVelocity(Player player, Sign sign) {
+        try {
+            double x = parseDouble(sign.getLine(1));
+            double y = parseDouble(sign.getLine(2));
+            double z = parseDouble(sign.getLine(3));
+
+            player.setVelocity(new Vector(x, y, z));
+        } catch(NumberFormatException ex) { }
+    }
+
+    @EventHandler
+    public void onSign(PlayerMoveEvent e) {
+        Player player = e.getPlayer();
+        SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(player);
+
+        if (slp == null) {
+            return;
+        }
+
+        if (e.getFrom().getBlockX() != e.getTo().getBlockX() || e.getFrom().getBlockY() != e.getFrom().getBlockY() ||
+                e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
+
+            Block block = e.getTo().getBlock();
+            boolean shouldCancel = false;
+
+            for (Block min : getRelative(block)) {
+                if (min.getType() == Material.SPONGE &&
+                        slp.getRank().getLadder() > Rank.DEFAULT.getLadder()) {
+                    shouldCancel = true;
+                    break;
+                } else if (min.getType() == Material.SIGN_POST || min.getType() == Material.WALL_SIGN) {
+                    Sign sign = (Sign) min.getState();
+                    String first = ChatColor.stripColor(sign.getLine(0)).toLowerCase();
+
+                    if (first.equalsIgnoreCase("[min-rank]")) {
+                        Rank found = Rank.valueOf(sign.getLine(1));
+
+                        if (found != null && slp.getRank().getLadder() < found.getLadder()) {
+                            shouldCancel = true;
+                            break;
+                        }
+                    } else if (first.equalsIgnoreCase("[max-rank]")) {
+                        Rank found = Rank.valueOf(sign.getLine(1));
+
+                        if (found != null && slp.getRank().getLadder() > found.getLadder()) {
+                            shouldCancel = true;
+                            break;
+                        }
+                    } else if (first.equalsIgnoreCase("[jump]")) {
+                        doVelocity(player, sign);
+                        continue;
+                    } else if (first.equalsIgnoreCase("[teleport]")) {
+                        try {
+
+                            double x = parseDouble(sign.getLine(1));
+                            double y = parseDouble(sign.getLine(2));
+                            double z = parseDouble(sign.getLine(3));
+
+                            player.teleport(new Location(player.getWorld(), x, y, z, player.getLocation().getYaw(),
+                                    player.getLocation().getPitch()
+                            ), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                        } catch (NumberFormatException ex) {
+                        }
+
+                        continue;
+                    } else if (sign.getLine(0).equalsIgnoreCase("[effect]")) {
+                        try {
+                            int id = Integer.valueOf(sign.getLine(1));
+                            int time = Integer.valueOf(sign.getLine(2));
+                            int level = Integer.valueOf(sign.getLine(3));
+
+                            player.addPotionEffect(
+                                    new PotionEffect(PotionEffectType.getById(id), time, level, false), true);
+                        } catch (NumberFormatException ex) {
+                        }
+
+                        continue;
+                    }
+                }
+            }
+
+            if (shouldCancel) {
+                Location newLoc = e.getFrom();
+                newLoc.setX(newLoc.getBlockX() + 0.5D);
+                newLoc.setY(newLoc.getBlockY());
+                newLoc.setZ(newLoc.getBlockZ() + 0.5D);
+
+                e.setTo(newLoc);
+                player.teleport(newLoc);
+            }
         }
     }
 
@@ -199,8 +318,25 @@ public class EnvironmentListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGH)
+    public void rankCheck(AsyncPlayerPreLoginEvent e) {
+        Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").find(new Document("uuid", e.getUniqueId().toString()))
+                .projection(Projections.fields(Projections.include("rank"), Projections.excludeId())).first();
+        if (dbo != null) {
+            Rank rank = null;
+            try {
+                rank = Rank.valueOf(dbo.getString("rank"));
+            } catch (Exception ignored) {}
+            if(rank == null || (!rank.hasPermission(SpleefLeague.getInstance().getMinimumJoinRank())
+                    && !SpleefLeague.getInstance().getExtraJoinRanks().contains(rank))) {
+                e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
+                e.setKickMessage(ChatColor.RED + "You are not of rank to join this server!");
+            }
+        }
+    }
+
     @EventHandler
-    public void onMove(PlayerMoveEvent e) {
+    public void onNether(PlayerMoveEvent e) {
         SLPlayer slPlayer = SpleefLeague.getInstance().getPlayerManager().get(e.getPlayer());
         if(slPlayer == null || slPlayer.getRank().hasPermission(Rank.SENIOR_MODERATOR)) {
             return;
@@ -217,23 +353,6 @@ public class EnvironmentListener implements Listener {
             if(Math.abs(System.currentTimeMillis() - slPlayer.getAreaMessageCooldown()) > TimeUnit.SECONDS.toMillis(10)) {
                 slPlayer.updateAreaMessageCooldown();
                 slPlayer.sendMessage(Theme.ERROR.buildTheme(true) + "You are unable to enter this area!");
-            }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGH)
-    public void rankCheck(AsyncPlayerPreLoginEvent e) {
-        Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").find(new Document("uuid", e.getUniqueId().toString()))
-                .projection(Projections.fields(Projections.include("rank"), Projections.excludeId())).first();
-        if (dbo != null) {
-            Rank rank = null;
-            try {
-                rank = Rank.valueOf(dbo.getString("rank"));
-            } catch (Exception ignored) {}
-            if(rank == null || (!rank.hasPermission(SpleefLeague.getInstance().getMinimumJoinRank())
-                    && !SpleefLeague.getInstance().getExtraJoinRanks().contains(rank))) {
-                e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
-                e.setKickMessage(ChatColor.RED + "You are not of rank to join this server!");
             }
         }
     }
