@@ -17,17 +17,18 @@ import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.utils.StringUtil;
 import com.spleefleague.core.utils.TimeUtil;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.ChatColor;
 import org.bson.Document;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.json.simple.JSONObject;
+
+import java.util.*;
 
 /**
  *
@@ -65,7 +66,14 @@ public class playerinfo extends BasicCommand {
                         PlayerData data = new PlayerData(target);
                         p.sendMessage(ChatColor.DARK_GRAY + "[========== " + ChatColor.GRAY + targetName + "'s data " + ChatColor.DARK_GRAY + "==========]");
                         p.sendMessage(ChatColor.DARK_GRAY + "Name: " + ChatColor.GRAY + data.getName());
-                        p.sendMessage(ChatColor.DARK_GRAY + "UUID: " + ChatColor.GRAY + data.getUUID());
+                        TextComponent uuidFirst = new TextComponent("UUID: ");
+                        uuidFirst.setColor(ChatColor.DARK_GRAY);
+                        TextComponent uuidSecond = new TextComponent(data.getUUID());
+                        uuidSecond.setColor(ChatColor.GRAY);
+                        uuidSecond.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] { new TextComponent("Click to put in chatbox") } ));
+                        uuidSecond.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, data.getUUID()));
+                        uuidFirst.addExtra(uuidSecond);
+                        p.spigot().sendMessage(uuidFirst);
                         p.sendMessage(ChatColor.DARK_GRAY + "Rank: " + ChatColor.GRAY + data.getRank());
                         if(data.getState().equalsIgnoreCase("OFFLINE") && jsonObject != null && !jsonObject.get("playerServer").toString().equalsIgnoreCase("OFFLINE")) {
                             p.sendMessage(ChatColor.DARK_GRAY + "State: ONLINE");
