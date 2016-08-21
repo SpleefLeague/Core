@@ -138,8 +138,12 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
 
     public void saveAll() {
         getAll().stream().forEach((gp) -> {
-            EntityBuilder.save(gp, db.getCollection("Players"));
+            save(gp);
         });
+    }
+
+    public void save(G g) {
+        EntityBuilder.save(g, db.getCollection("Players"));
     }
 
     @EventHandler
@@ -156,7 +160,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
             this.map.values().remove(gp);
         }
         Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
-            EntityBuilder.save(gp, db.getCollection("Players"));
+            save(gp);
         });
     }
 
