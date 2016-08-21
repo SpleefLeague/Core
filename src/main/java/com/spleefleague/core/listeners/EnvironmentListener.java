@@ -5,7 +5,9 @@
  */
 package com.spleefleague.core.listeners;
 
+import com.mongodb.client.model.Projections;
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.command.commands.back;
 import com.spleefleague.core.events.FakeBlockBreakEvent;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
@@ -18,10 +20,8 @@ import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.GamePlugin;
 import com.spleefleague.core.spawn.SpawnManager;
 import org.bson.Document;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import org.bukkit.*;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Creature;
@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -198,9 +199,32 @@ public class EnvironmentListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onMove(PlayerMoveEvent e) {
+        SLPlayer slPlayer = SpleefLeague.getInstance().getPlayerManager().get(e.getPlayer());
+        if(slPlayer == null || slPlayer.getRank().hasPermission(Rank.SENIOR_MODERATOR)) {
+            return;
+        }
+        if(e.getTo().getBlock().getBiome() == Biome.HELL) {
+            if(e.getFrom().getBlock().getBiome() == Biome.HELL) {
+                slPlayer.teleport(SpleefLeague.getInstance().getSpawnManager().getNext().getLocation());
+            } else {
+                Location balancedFrom = e.getFrom().clone();
+                balancedFrom.setPitch(e.getTo().getPitch());
+                balancedFrom.setYaw(e.getTo().getYaw());
+                slPlayer.teleport(balancedFrom);
+            }
+            if(Math.abs(System.currentTimeMillis() - slPlayer.getAreaMessageCooldown()) > TimeUnit.SECONDS.toMillis(10)) {
+                slPlayer.updateAreaMessageCooldown();
+                slPlayer.sendMessage(Theme.ERROR.buildTheme(true) + "You are unable to enter this area!");
+            }
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGH)
     public void rankCheck(AsyncPlayerPreLoginEvent e) {
-        Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").find(new Document("uuid", e.getUniqueId().toString())).first();
+        Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").find(new Document("uuid", e.getUniqueId().toString()))
+                .projection(Projections.fields(Projections.include("rank"), Projections.excludeId())).first();
         if (dbo != null) {
             Rank rank = null;
             try {

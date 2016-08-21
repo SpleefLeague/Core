@@ -32,6 +32,7 @@ public class SLPlayer extends GeneralPlayer {
     private Map<UUID, Challenge> activeChallenges;
     private ChatColor chatArrowColor = ChatColor.DARK_GRAY;
     private String tabName = null;
+    private long areaMessageCooldown = 0L;
 
     public SLPlayer() {
         super();
@@ -200,4 +201,13 @@ public class SLPlayer extends GeneralPlayer {
         }
         return this.tabName;
     }
+
+    public void updateAreaMessageCooldown() {
+        this.areaMessageCooldown = System.currentTimeMillis();
+    }
+
+    public long getAreaMessageCooldown() {
+        return areaMessageCooldown;
+    }
+
 }

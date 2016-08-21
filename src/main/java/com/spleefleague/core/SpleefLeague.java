@@ -206,6 +206,8 @@ public class SpleefLeague extends CorePlugin {
         return connectionClient;
     }
 
+    // Use the SpawnManager instead.
+    @Deprecated
     public Location getSpawnLocation() {
         return spawn;
     }
