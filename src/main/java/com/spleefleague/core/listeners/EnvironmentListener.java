@@ -20,14 +20,8 @@ import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.GamePlugin;
 import com.spleefleague.core.spawn.SpawnManager;
 import org.bson.Document;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Dispenser;
-import org.bukkit.block.Sign;
+import org.bukkit.*;
+import org.bukkit.block.*;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,11 +36,11 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -127,7 +121,14 @@ public class EnvironmentListener implements Listener {
         ArrayList<Block> list = new ArrayList<>();
 
         for(int i = 0; i < 5; i++) {
-            list.add(current.getRelative(BlockFace.DOWN, i));
+            try {
+                Block b = current.getRelative(BlockFace.DOWN, i);
+                if (b != null) {
+                    list.add(b);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return list;

@@ -148,7 +148,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
-        load(event.getPlayer());
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> load(event.getPlayer()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR) //Misleading, has to be called last
