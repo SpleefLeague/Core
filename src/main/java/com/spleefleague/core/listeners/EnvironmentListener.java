@@ -339,7 +339,7 @@ public class EnvironmentListener implements Listener {
     @EventHandler
     public void onNether(PlayerMoveEvent e) {
         SLPlayer slPlayer = SpleefLeague.getInstance().getPlayerManager().get(e.getPlayer());
-        if(slPlayer == null || slPlayer.getRank().hasPermission(Rank.SENIOR_MODERATOR)) {
+        if(slPlayer == null || slPlayer.getRank().hasPermission(Rank.MODERATOR_BUILDER)) {
             return;
         }
         if(e.getTo().getBlock().getBiome() == Biome.HELL) {

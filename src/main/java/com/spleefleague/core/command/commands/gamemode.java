@@ -22,12 +22,12 @@ import org.bukkit.entity.Player;
 public class gamemode extends BasicCommand {
 
     public gamemode(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage, Rank.SENIOR_MODERATOR, Rank.BUILDER, Rank.MODERATOR, Rank.CCMOD);
+        super(plugin, name, usage, Rank.MODERATOR, Rank.BUILDER);
     }
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if (slp.getRank() == Rank.MODERATOR || slp.getRank() == Rank.CCMOD) {
+        if (slp.getRank() == Rank.MODERATOR) {
             slp.setGameMode((slp.getGameMode() == GameMode.SPECTATOR ? GameMode.SURVIVAL : GameMode.SPECTATOR));
             success(p, "Gamemode toggled!");
             success(p, "If you wish to toggle back, please use this command again.");
