@@ -68,7 +68,7 @@ public class ChatListener implements Listener {
                     }
                 }
                 ChatChannel channel = slp.getSendingChannel();
-                ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix.getValue() + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, message, channel);
+                ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix.getValue() + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, event.getMessage(), channel);
             }
         }
         if (slp.getRank() != null && !(slp.getRank().hasPermission(Rank.MODERATOR) || Arrays.asList(Rank.MODERATOR).contains(slp.getRank()))) {
