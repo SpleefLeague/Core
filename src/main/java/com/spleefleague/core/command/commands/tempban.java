@@ -5,22 +5,20 @@
  */
 package com.spleefleague.core.command.commands;
 
-import java.time.Duration;
-import java.util.UUID;
-import com.spleefleague.core.plugin.CorePlugin;
+import com.mongodb.client.FindIterable;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
-import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.command.BasicCommand;
-import com.spleefleague.core.player.Rank;
-import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.utils.DatabaseConnection;
-import com.spleefleague.core.io.EntityBuilder;
-import com.spleefleague.core.utils.StringUtil;
-import com.spleefleague.core.utils.TimeUtil;
 import com.spleefleague.core.infraction.Infraction;
 import com.spleefleague.core.infraction.InfractionType;
+import com.spleefleague.core.io.EntityBuilder;
+import com.spleefleague.core.player.Rank;
+import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.plugin.CorePlugin;
+import com.spleefleague.core.utils.DatabaseConnection;
+import com.spleefleague.core.utils.StringUtil;
+import com.spleefleague.core.utils.TimeUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -29,6 +27,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.time.Duration;
+import java.util.UUID;
 
 /**
  *
@@ -57,14 +58,18 @@ public class tempban extends BasicCommand {
                 error(cs, "The player \"" + args[0] + "\" has not been on the server yet!");
                 return;
             }
+            FindIterable<Document> fi = SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").find(new Document("uuid", id.toString()));
+            if (fi.first() != null) {
+                error(cs, "This player is already (temp)banned, unban them first!");
+                return;
+            }
             Player pl;
             Duration duration = TimeUtil.parseDurationString(args[1]);
             String tempbanMessage = StringUtil.fromArgsArray(args, 2);
-            if ((pl = Bukkit.getPlayerExact(args[0])) != null) {
+            if ((pl = Bukkit.getPlayer(args[0])) != null) {
                 pl.kickPlayer("You have been tempbanned for " + TimeUtil.durationToString(duration) + ". " + tempbanMessage);
             }
             Infraction tempban = new Infraction(id, cs instanceof Player ? ((Player) cs).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), InfractionType.TEMPBAN, System.currentTimeMillis(), duration.toMillis(), tempbanMessage);
-            SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").deleteOne(new Document("uuid", id.toString()));
             EntityBuilder.save(tempban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), false);
             EntityBuilder.save(tempban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), false);
             ChatManager.sendMessage(new ComponentBuilder(SpleefLeague.getInstance().getChatPrefix() + " ").append(args[0] + " has been tempbanned by " + cs.getName() + "!").color(ChatColor.GRAY)

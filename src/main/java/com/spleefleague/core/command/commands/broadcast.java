@@ -9,6 +9,7 @@ import com.spleefleague.core.utils.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
@@ -23,8 +24,13 @@ public class broadcast extends BasicCommand {
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
+        this.runConsole(p, cmd, args);
+    }
+
+    @Override
+    protected void runConsole(CommandSender cs, Command cmd, String[] args) {
         if(args.length < 1) {
-            sendUsage(slp);
+            sendUsage(cs);
             return;
         }
         String message = ChatColor.translateAlternateColorCodes('&', StringUtil.fromArgsArray(args));
@@ -37,5 +43,4 @@ public class broadcast extends BasicCommand {
             SpleefLeague.getInstance().getConnectionClient().send("broadcast", send);
         }
     }
-
 }

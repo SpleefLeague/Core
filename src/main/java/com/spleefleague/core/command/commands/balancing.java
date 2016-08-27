@@ -6,6 +6,7 @@ import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
@@ -19,19 +20,24 @@ public class balancing extends BasicCommand {
     }
 
     @Override
-    protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
+    protected void runConsole(CommandSender cs, Command cmd, String[] args) {
         if(args.length == 0) {
-            sendUsage(slp);
+            sendUsage(cs);
             return;
         }
         if(args[0].equalsIgnoreCase("refresh")) {
             JSONObject request = new JSONObject();
             request.put("action", "REFRESH");
             SpleefLeague.getInstance().getConnectionClient().send("rotation", request);
-            success(slp, "Requested balancing refresh!");
+            success(cs, "Requested balancing refresh!");
         } else {
-            sendUsage(slp);
+            sendUsage(cs);
         }
+    }
+
+    @Override
+    protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
+        this.runConsole(p, cmd, args);
     }
 
 }
