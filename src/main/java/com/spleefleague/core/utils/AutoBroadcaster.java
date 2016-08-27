@@ -2,6 +2,7 @@ package com.spleefleague.core.utils;
 
 import com.mongodb.client.MongoCursor;
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.io.Settings;
 import java.util.List;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -16,23 +17,22 @@ public class AutoBroadcaster {
     private static int index = 0;
     private static List<String> notices;
     
-    private static long delay = 60;
+    private static long interval = 60;
 
     public static void init() {
-        MongoCursor<Document> docs = SpleefLeague.getInstance().getPluginDB().getCollection("AutoBroadcaster_Notices").find().iterator();
+        MongoCursor<Document> docs = SpleefLeague.getInstance().getPluginDB().getCollection("AutoBroadcasts").find().iterator();
         while(docs.hasNext())
             notices.add(ChatColor.translateAlternateColorCodes('&', docs.next().getString("message")));
-        docs = SpleefLeague.getInstance().getPluginDB().getCollection("AutoBroadcaster_Delay").find().iterator();
-        if(docs.hasNext())
-            delay = docs.next().getInteger("delay");
-        delay *= 20l;
+        if(Settings.hasKey("autobroadcaster_interval"))
+            interval = Settings.getInteger("autobroadcaster_interval");
+        interval *= 20l;
         if(notices.isEmpty())
             return;
         Bukkit.getScheduler().scheduleSyncRepeatingTask(SpleefLeague.getInstance(), () -> {
             Bukkit.broadcastMessage(notices.get(index++));
             if(index == notices.size())
                 index = 0;
-        }, 0l, delay);
+        }, 0l, interval);
     }
     
 }
