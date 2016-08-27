@@ -2,6 +2,7 @@ package com.spleefleague.core.player;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
+import com.spleefleague.core.cosmetics.Collectibles;
 import com.spleefleague.core.io.DBLoad;
 import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.TypeConverter.RankStringConverter;
@@ -25,11 +26,12 @@ public class SLPlayer extends GeneralPlayer {
 
     private Rank rank;
     private UUID lastChatPartner;
-    private int coins;
+    private int coins, premiumCredits;
     private HashSet<ChatChannel> chatChannels;
     private ChatChannel sendingChannel;
     private PlayerState state = PlayerState.IDLE;
     private PlayerOptions options;
+    private Collectibles collectibles;
     private boolean hasForumAccount = false;
     private Map<UUID, Challenge> activeChallenges;
     private ChatColor chatArrowColor = ChatColor.DARK_GRAY;
@@ -76,6 +78,24 @@ public class SLPlayer extends GeneralPlayer {
     public int getCoins() {
         return coins;
     }
+    
+    public void changeCoins(int delta) {
+        setCoins(coins + delta);
+    }
+    
+    @DBLoad(fieldName = "premiumCredits")
+    public void setPremiumCredits(int credits) {
+        this.premiumCredits = credits;
+    }
+    
+    @DBSave(fieldName = "premiumCredits")
+    public int getPremiumCredits() {
+        return premiumCredits;
+    }
+    
+    public void changePremiumCredits(int delta) {
+        setPremiumCredits(premiumCredits + delta);
+    }
 
     @DBSave(fieldName = "lastChatPartner", typeConverter = UUIDStringConverter.class)
     public UUID getLastChatPartner() {
@@ -96,6 +116,16 @@ public class SLPlayer extends GeneralPlayer {
     private void setOptions(PlayerOptions options) {
         this.options = options;
         options.apply(this);
+    }
+    
+    @DBSave(fieldName = "collectibles")
+    public Collectibles getCollectibles() {
+        return collectibles;
+    }
+    
+    @DBLoad(fieldName = "collectibles", priority = -100)
+    private void setCollectibles(Collectibles collectibles) {
+        this.collectibles = collectibles;
     }
 
     protected void setReceivingChatChannels(HashSet<ChatChannel> chatChannels) {
@@ -171,6 +201,10 @@ public class SLPlayer extends GeneralPlayer {
             this.options = PlayerOptions.getDefault();
             this.options.apply(this);
         }
+        if(this.collectibles == null) {
+            this.collectibles = Collectibles.getDefault(this);
+            this.collectibles.apply(this);
+        }
     }
 
     @Override
@@ -178,6 +212,7 @@ public class SLPlayer extends GeneralPlayer {
         super.setDefaults();
         setRank(Rank.DEFAULT);
         setCoins(0);
+        setPremiumCredits(0);
         this.chatChannels.clear();
         this.chatChannels.add(ChatChannel.GLOBAL);
         setSendingChannel(ChatChannel.GLOBAL);
