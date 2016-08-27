@@ -161,7 +161,7 @@ public class EnvironmentListener implements Listener {
 
             for (Block min : getRelative(block)) {
                 if (min.getType() == Material.SPONGE &&
-                        slp.getRank().getLadder() > Rank.DEFAULT.getLadder()) {
+                        slp.getRank().getLadder() < Rank.MODERATOR.getLadder()) {
                     shouldCancel = true;
                     break;
                 } else if (min.getType() == Material.SIGN_POST || min.getType() == Material.WALL_SIGN) {
