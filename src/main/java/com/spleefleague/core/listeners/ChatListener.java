@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -44,11 +45,15 @@ public class ChatListener implements Listener {
     }
 
     private Map<UUID, Long> lastMessage = new HashMap<>();
+    private final Pattern antiCapsPattern = Pattern.compile(".*[A-Z]{4}.*");
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer().getUniqueId());
         if (!lastMessage.containsKey(slp.getUniqueId()) || System.currentTimeMillis() - lastMessage.get(slp.getUniqueId()) > 3000) {
+            String message = event.getMessage();
+            if(antiCapsPattern.matcher(message).matches())
+                event.setMessage(message.toLowerCase());
             ModifiableFinal<String> prefix = new ModifiableFinal<>("");
             if (!slp.getRank().getDisplayName().equals("Default")) {
                 prefix.setValue(ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getDisplayName() + ChatColor.DARK_GRAY + "] ");
