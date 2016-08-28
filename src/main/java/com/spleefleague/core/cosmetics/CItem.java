@@ -45,15 +45,8 @@ public abstract class CItem {
         this.costInCoins = costInCoins;
         this.costInPremiumCredits = costInPremiumCredits;
         
-        List<String> lore = new ArrayList<>();
-        lore.addAll(description);
-        lore.add("");
-        lore.add(UtilChat.c("&7Left click to buy"));
-        lore.add(UtilChat.c("&7it for &6%d coins", costInCoins));
-        lore.add("");
-        lore.add(UtilChat.c("&7Right click to buy"));
-        lore.add(UtilChat.c("&7it for &b%d premium credits", costInPremiumCredits));
-        this.emptyIcon = new SimpleItemStack(Material.INK_SACK, getName(), lore, (short) 8);
+        setupEmptyIcon();
+        setupIcon();
     }
     
     public boolean select(Player p) {
@@ -87,15 +80,24 @@ public abstract class CItem {
     
     public abstract void onRemoving(Player p);
     
-    protected void setIcon(ItemStack prototype) {
-        this.icon = prototype.clone();
-        ItemMeta im = icon.getItemMeta();
+    private void setupEmptyIcon() {
+        List<String> lore = new ArrayList<>();
+        lore.addAll(description);
+        lore.add("");
+        lore.add(UtilChat.c("&7Left click to buy"));
+        lore.add(UtilChat.c("&7it for &6%d coins", costInCoins));
+        lore.add("");
+        lore.add(UtilChat.c("&7Right click to buy"));
+        lore.add(UtilChat.c("&7it for &b%d premium credits", costInPremiumCredits));
+        this.emptyIcon = new SimpleItemStack(Material.STAINED_CLAY, getName(), lore, (short) 14);
+    }
+    
+    private void setupIcon() {
         List<String> lore = new ArrayList<>();
         lore.addAll(description);
         lore.add("");
         lore.add(UtilChat.c("&aClick to select!"));
-        im.setLore(lore);
-        this.icon.setItemMeta(im);
+        this.icon = new SimpleItemStack(Material.STAINED_CLAY, getName(), lore, (short) 13);
     }
     
 }

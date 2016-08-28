@@ -20,7 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
 /**
- *
+ * This class represents cosmetics submenu, which handles all items of specific CosmeticsType (CType).
  * @author 0xC0deBabe <iam@kostya.sexy>
  */
 public class CInventory {
@@ -86,11 +86,18 @@ public class CInventory {
                     SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(p);
                     Collectibles col = slp.getCollectibles();
                     if(!col.getItems().contains(item.getId())) {
-                        //todo: insert confirmation page
                         if(clickType == ClickType.LEFT)
-                            item.buy(p, true);
+                            TransactionMenu.constructAndOpen(p, player -> item.buy(player, true), menu, Lists.newArrayList(
+                                    "&7Are you sure you want",
+                                    "&7to buy " + item.getName(),
+                                    "&7for &6" + item.getCostInCoins() + " coins&7?"
+                            ));
                         else if(clickType == ClickType.RIGHT)
-                            item.buy(p, false);
+                            TransactionMenu.constructAndOpen(p, player -> item.buy(player, false), menu, Lists.newArrayList(
+                                    "&7Are you sure you want",
+                                    "&7to buy " + item.getName(),
+                                    "&7for &b" + item.getCostInPremiumCredits()+ " coins&7?"
+                            ));
                         return;
                     }
                     if(col.isActive(item.getType().getConflicting())) {
