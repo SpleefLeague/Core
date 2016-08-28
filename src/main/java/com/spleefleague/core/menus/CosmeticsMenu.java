@@ -5,6 +5,7 @@ import static com.spleefleague.core.utils.inventorymenu.InventoryMenuAPI.menu;
 
 import com.spleefleague.core.cosmetics.CType;
 import com.spleefleague.core.player.Rank;
+import com.spleefleague.core.utils.UtilChat;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplate;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplateBuilder;
 import lombok.Getter;
@@ -26,10 +27,10 @@ public class CosmeticsMenu {
                 .displayName("Cosmetics")
                 .displayIcon(Material.GOLD_HELMET)
                 .description(slp -> Lists.newArrayList(
-                        "&7Click here to open",
-                        "&7cosmetics menu.",
-                        "",
-                        "&4&lWork in progress"
+                        UtilChat.c("&7Click here to open"),
+                        UtilChat.c("&7cosmetics menu."),
+                        UtilChat.c(""),
+                        UtilChat.c("&4&lWork in progress")
                 ))
                 .rank(Rank.DEVELOPER)
                 .visibilityController(slp -> slp.getRank().hasPermission(Rank.DEVELOPER));
