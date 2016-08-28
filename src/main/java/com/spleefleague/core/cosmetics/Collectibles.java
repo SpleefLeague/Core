@@ -1,6 +1,5 @@
 package com.spleefleague.core.cosmetics;
 
-import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.io.DBEntity;
 import com.spleefleague.core.io.DBLoad;
 import com.spleefleague.core.io.DBLoadable;
@@ -13,18 +12,17 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.AccessLevel;
 import lombok.Getter;
-import org.bukkit.Bukkit;
+import lombok.NoArgsConstructor;
 import org.bukkit.entity.Player;
 
 /**
  *
  * @author 0xC0deBabe <iam@kostya.sexy>
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Collectibles extends DBEntity implements DBLoadable, DBSaveable {
-    
-    @Getter
-    private final String owner;
 
     @Getter
     @DBLoad(fieldName = "active")
@@ -35,10 +33,6 @@ public class Collectibles extends DBEntity implements DBLoadable, DBSaveable {
     @DBLoad(fieldName = "items")
     @DBSave(fieldName = "items")
     private Set<Integer> items;
-    
-    private Collectibles(SLPlayer slp) {
-        this.owner = slp.getName();
-    }
     
     public void apply(SLPlayer slp) {
         getActiveItems().forEach(ci -> ci.onSelecting(slp));
@@ -60,13 +54,13 @@ public class Collectibles extends DBEntity implements DBLoadable, DBSaveable {
         active.add(item.getId());
     }
     
-    public void removeActive(CType type) {
+    public void removeActive(CType type, Player player) {
         Optional<CItem> opt = getActiveItems().stream().filter(ci -> ci.getType() == type).findAny();
         if(!opt.isPresent())
             return;
         CItem item = opt.get();
         active.remove(item.getId());
-        item.onRemoving(getPlayer());
+        item.onRemoving(player);
     }
     
     public void addItem(int id) {
@@ -74,17 +68,9 @@ public class Collectibles extends DBEntity implements DBLoadable, DBSaveable {
             return;
         items.add(id);
     }
-    
-    public Player getPlayer() {
-        return Bukkit.getPlayer(owner);
-    }
-    
-    public SLPlayer getSLPlayer() {
-        return SpleefLeague.getInstance().getPlayerManager().get(owner);
-    }
 
     public static Collectibles getDefault(SLPlayer slp) {
-        Collectibles col = new Collectibles(slp);
+        Collectibles col = new Collectibles();
         col.active = new HashSet<>();
         col.items = new HashSet<>();
         return col;

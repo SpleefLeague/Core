@@ -196,7 +196,7 @@ public class UtilChat {
     }
     
     public static void s(Theme theme, Player p, String msg) {
-        p.sendMessage(SpleefLeague.getInstance().getChatPrefix() + " " + theme.buildTheme(false) + msg);
+        p.sendMessage(SpleefLeague.getInstance().getChatPrefix() + " " + theme.buildTheme(false) + UtilChat.c(msg));
     }
     
     public static void s(Theme theme, Player p, String msg, Object... args) {

@@ -32,5 +32,6 @@ public enum CType {
             this.conflicting.add(conflict);
             conflict.conflicting.add(this);
         }
+        this.conflicting.add(this);
     }
 }

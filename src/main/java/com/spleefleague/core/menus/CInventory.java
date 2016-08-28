@@ -35,22 +35,20 @@ public class CInventory {
     private InventoryMenuTemplate menu;
 
     CInventory(CType type) {
-        String iname = "Cosmetics: " + type.getSectionName();
         builder = menu()
-                .title(iname)
-                .displayName(iname)
+                .title("Cosmetics: " + type.getSectionName())
+                .displayName(UtilChat.c("&f%s", type.getSectionName()))
                 .displayIcon(type.getIcon());
         this.type = type;
-        
-        builder.component(3, 5, item()
-                .displayName("Back to Cosmetics Menu")
+        builder.component(3, 3, item()
+                .displayName(UtilChat.c("&fBack to Cosmetics Menu"))
                 .displayIcon(Material.ARROW)
                 .onClick(e -> {
                     SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(e.getPlayer());
                     CosmeticsMenu.getMenu().construct(slp).open();
                 })
         );
-        builder.component(4, 5, item()
+        builder.component(4, 3, item()
                 .displayName(UtilChat.c("&6Currency"))
                 .description(slp -> Lists.newArrayList(
                         UtilChat.c("&7You have &6%d coins", slp.getCoins()),
@@ -61,11 +59,14 @@ public class CInventory {
                     UtilChat.s(Theme.INFO, e.getPlayer(), "Earn coins by playing games & buy more premium credits on our website!");
                 })
         );
-        builder.component(5, 5, item()
+        builder.component(5, 3, item()
                 .displayName(UtilChat.c("&cTurn off"))
                 .displayIcon(Material.BARRIER)
                 .onClick(e -> {
-                    SpleefLeague.getInstance().getPlayerManager().get(e.getPlayer()).getCollectibles().removeActive(type);
+                    SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(e.getPlayer());
+                    slp.getCollectibles().removeActive(type, slp);
+                    UtilChat.s(Theme.SUCCESS, slp, "Turned it off :)");
+                    e.getItem().getParent().update();
                 })
         );
         CosmeticsManager.getItems(type).forEach(this::addItem);
@@ -79,7 +80,7 @@ public class CInventory {
     private void addItem(CItem item, int slot) {
         builder.component(slot, item()
                 .displayName(item.getName())
-                .displayItem(slp -> slp.getCollectibles().getItems().contains(item.getId()) ? item.getIcon().clone() : item.getEmptyIcon().clone())
+                .displayItem(slp -> item.getDisplayItem(slp))
                 .onClick(e -> {
                     ClickType clickType = e.getClickType();
                     Player p = e.getPlayer();
@@ -87,17 +88,21 @@ public class CInventory {
                     Collectibles col = slp.getCollectibles();
                     if(!col.getItems().contains(item.getId())) {
                         if(clickType == ClickType.LEFT)
-                            TransactionMenu.constructAndOpen(p, player -> item.buy(player, true), menu, Lists.newArrayList(
+                            TransactionMenu.constructAndOpen(p, player -> item.buy(player, true, menu), menu, Lists.newArrayList(
                                     "&7Are you sure you want",
                                     "&7to buy " + item.getName(),
                                     "&7for &6" + item.getCostInCoins() + " coins&7?"
                             ));
                         else if(clickType == ClickType.RIGHT)
-                            TransactionMenu.constructAndOpen(p, player -> item.buy(player, false), menu, Lists.newArrayList(
+                            TransactionMenu.constructAndOpen(p, player -> item.buy(player, false, menu), menu, Lists.newArrayList(
                                     "&7Are you sure you want",
                                     "&7to buy " + item.getName(),
                                     "&7for &b" + item.getCostInPremiumCredits()+ " premium credits&7?"
                             ));
+                        return;
+                    }
+                    if(item.isActive(slp)) {
+                        UtilChat.s(Theme.ERROR, p, "This item is already selected.");
                         return;
                     }
                     if(col.isActive(item.getType().getConflicting())) {
@@ -106,6 +111,7 @@ public class CInventory {
                     }
                     item.select(p);
                     UtilChat.s(Theme.SUCCESS, p, "Item has been selected.");
+                    e.getItem().getParent().update();
                 })
         );
     }

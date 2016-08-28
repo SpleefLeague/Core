@@ -41,17 +41,23 @@ public class CosmeticsManager {
         CosmeticsListener.init();
         int id = 1;
         add(new ArmorItem(id++, "Leather Armor", new ItemStack[]{
-            new SimpleItemStack(Material.LEATHER_HELMET, "Leather helmet"),
-            new SimpleItemStack(Material.LEATHER_CHESTPLATE, "Leather chestplate"),
+            new SimpleItemStack(Material.LEATHER_BOOTS, "Leather boots"),
             new SimpleItemStack(Material.LEATHER_LEGGINGS, "Leather leggings"),
-            new SimpleItemStack(Material.LEATHER_BOOTS, "Leather boots")
+            new SimpleItemStack(Material.LEATHER_CHESTPLATE, "Leather chestplate"),
+            new SimpleItemStack(Material.LEATHER_HELMET, "Leather helmet")
         }, 500, 1));
         add(new ArmorItem(id++, "Gold Armor", new ItemStack[]{
-            new SimpleItemStack(Material.GOLD_HELMET, "Gold helmet"),
-            new SimpleItemStack(Material.GOLD_CHESTPLATE, "Gold chestplate"),
+            new SimpleItemStack(Material.GOLD_BOOTS, "Gold boots"),
             new SimpleItemStack(Material.GOLD_LEGGINGS, "Gold leggings"),
-            new SimpleItemStack(Material.GOLD_BOOTS, "Gold boots")
+            new SimpleItemStack(Material.GOLD_CHESTPLATE, "Gold chestplate"),
+            new SimpleItemStack(Material.GOLD_HELMET, "Gold helmet")
         }, 2000, 4));
+        add(new ArmorItem(id++, "Diamond Armor", new ItemStack[]{
+            new SimpleItemStack(Material.DIAMOND_BOOTS, "Diamond boots"),
+            new SimpleItemStack(Material.DIAMOND_LEGGINGS, "Diamond leggings"),
+            new SimpleItemStack(Material.DIAMOND_CHESTPLATE, "Diamond chestplate"),
+            new SimpleItemStack(Material.DIAMOND_HELMET, "Diamond helmet")
+        }, 5000, 10));
     }
     
 }
