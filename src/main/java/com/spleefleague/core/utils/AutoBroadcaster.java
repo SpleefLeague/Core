@@ -3,6 +3,7 @@ package com.spleefleague.core.utils;
 import com.mongodb.client.MongoCursor;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.io.Settings;
+import java.util.ArrayList;
 import java.util.List;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -15,7 +16,7 @@ import org.bukkit.ChatColor;
 public class AutoBroadcaster {
     
     private static int index = 0;
-    private static List<String> notices;
+    private static List<String> notices = new ArrayList<>();
     
     private static long interval = 60;
 

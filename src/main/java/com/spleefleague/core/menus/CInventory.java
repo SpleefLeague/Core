@@ -96,7 +96,7 @@ public class CInventory {
                             TransactionMenu.constructAndOpen(p, player -> item.buy(player, false), menu, Lists.newArrayList(
                                     "&7Are you sure you want",
                                     "&7to buy " + item.getName(),
-                                    "&7for &b" + item.getCostInPremiumCredits()+ " coins&7?"
+                                    "&7for &b" + item.getCostInPremiumCredits()+ " premium credits&7?"
                             ));
                         return;
                     }

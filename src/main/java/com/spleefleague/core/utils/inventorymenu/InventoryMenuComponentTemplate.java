@@ -93,7 +93,7 @@ public abstract class InventoryMenuComponentTemplate<C> {
     }
 
     protected void setDisplayItem(ItemStack displayItem) {
-        this.displayItem = Dynamic.getConstant(displayItem);
+        setDisplayItem(Dynamic.getConstant(displayItem));
     }
 
     protected void setDisplayItem(Dynamic<ItemStack> displayItem) {

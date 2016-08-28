@@ -26,15 +26,17 @@ public class TransactionMenu {
         this.menu = InventoryMenuAPI.menu()
                 .title("Transaction")
                 .displayName("Transaction")
-                .component(InventoryMenuAPI.item()
+                .component(2, 1, InventoryMenuAPI.item()
                         .displayItem(new SimpleItemStack(Material.STAINED_GLASS, "&aConfirm", info, (short) 5))
                         .onClick(e -> transaction.process(e.getPlayer()))
-                ).component(InventoryMenuAPI.item()
+                ).component(6, 1, InventoryMenuAPI.item()
                         .displayItem(new SimpleItemStack(Material.STAINED_GLASS, "&cCancel", Lists.newArrayList(
                                 "&7Click to return to",
                                 "&7the previous menu."
                         ), (short) 6))
                         .onClick(e -> cancellationTarget.construct(SpleefLeague.getInstance().getPlayerManager().get(e.getPlayer())).open())
+                ).component(4, 2, InventoryMenuAPI.item()
+                        .displayItem(new SimpleItemStack(Material.PAPER, "&eTransaction page"))
                 )
                 .build();
     }
