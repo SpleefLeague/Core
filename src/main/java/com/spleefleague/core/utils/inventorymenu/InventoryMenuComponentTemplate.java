@@ -25,7 +25,7 @@ public abstract class InventoryMenuComponentTemplate<C> {
     private Dynamic<Boolean> accessController;
 
     protected InventoryMenuComponentTemplate() {
-        this.displayItem = Dynamic.getConstant(new ItemStack(Material.STONE));
+        this.displayItem = Dynamic.getConstant(null);
         this.displayName = Dynamic.getConstant("");
         this.visibilityController = Dynamic.getConstant(true);
         this.accessController = (SLPlayer slp) -> slp.getRank().hasPermission(Rank.DEFAULT);
@@ -45,6 +45,9 @@ public abstract class InventoryMenuComponentTemplate<C> {
     }
 
     public ItemStack getDisplayItemStack(SLPlayer slp) {
+        ItemStack item = displayItem.get(slp);
+        if(item != null)
+            return item;
         return getDisplayItemStackWrapper().construct(slp);
     }
 

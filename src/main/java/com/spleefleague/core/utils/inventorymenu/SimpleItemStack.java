@@ -1,4 +1,4 @@
-package com.spleefleague.core.utils.rines;
+package com.spleefleague.core.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

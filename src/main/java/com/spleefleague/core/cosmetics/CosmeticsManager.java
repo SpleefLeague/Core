@@ -1,7 +1,7 @@
 package com.spleefleague.core.cosmetics;
 
 import com.spleefleague.core.listeners.CosmeticsListener;
-import com.spleefleague.core.utils.rines.SimpleItemStack;
+import com.spleefleague.core.utils.SimpleItemStack;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

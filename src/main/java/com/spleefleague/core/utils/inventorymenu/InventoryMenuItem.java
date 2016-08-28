@@ -1,6 +1,7 @@
 package com.spleefleague.core.utils.inventorymenu;
 
 import com.spleefleague.core.utils.function.Dynamic;
+import org.bukkit.event.inventory.ClickType;
 
 public class InventoryMenuItem extends InventoryMenuComponent {
 
@@ -12,9 +13,9 @@ public class InventoryMenuItem extends InventoryMenuComponent {
     }
 
     @Override
-    protected void selected() {
+    protected void selected(ClickType clickType) {
         if (onClick != null) {
-            onClick.onClick(new InventoryMenuClickEvent(this, this.getParent().getOwner()));
+            onClick.onClick(new InventoryMenuClickEvent(this, clickType, this.getParent().getOwner()));
         }
     }
 }

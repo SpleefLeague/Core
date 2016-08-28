@@ -7,6 +7,7 @@ import org.bukkit.material.MaterialData;
 
 import com.spleefleague.core.utils.function.Dynamic;
 import java.util.List;
+import org.bukkit.inventory.ItemStack;
 
 public abstract class InventoryMenuComponentTemplateBuilder<C, T extends InventoryMenuComponentTemplate<C>, B extends InventoryMenuComponentTemplateBuilder<C, T, B>> {
 
@@ -43,7 +44,7 @@ public abstract class InventoryMenuComponentTemplateBuilder<C, T extends Invento
         return actualBuilder;
     }
 
-    /*public B displayItem(ItemStack displayItem) {
+    public B displayItem(ItemStack displayItem) {
         buildingObj.setDisplayItem(displayItem);
         return actualBuilder;
     }
@@ -51,7 +52,8 @@ public abstract class InventoryMenuComponentTemplateBuilder<C, T extends Invento
     public B displayItem(Dynamic<ItemStack> displayItem) {
         buildingObj.setDisplayItem(displayItem);
         return actualBuilder;
-    }*/
+    }
+    
     public B displayNumber(int displayNumber) {
         buildingObj.setDisplayNumber(displayNumber);
         return actualBuilder;

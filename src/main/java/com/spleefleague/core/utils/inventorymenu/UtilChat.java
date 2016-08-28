@@ -1,4 +1,4 @@
-package com.spleefleague.core.utils.rines;
+package com.spleefleague.core.utils;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.Theme;

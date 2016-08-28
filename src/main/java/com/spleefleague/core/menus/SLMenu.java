@@ -1,6 +1,5 @@
 package com.spleefleague.core.menus;
 
-import com.google.common.collect.Lists;
 import static com.spleefleague.core.utils.inventorymenu.InventoryMenuAPI.item;
 import static com.spleefleague.core.utils.inventorymenu.InventoryMenuAPI.menu;
 
@@ -14,11 +13,8 @@ import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.GamePlugin;
-import com.spleefleague.core.utils.inventorymenu.InventoryMenuItemTemplateBuilder;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplate;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplateBuilder;
-import com.spleefleague.core.utils.rines.RInventoryManager;
-import com.spleefleague.core.utils.rines.UtilChat;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.ChatColor;
@@ -39,7 +35,7 @@ public class SLMenu {
                 //Gamemode submenus added by game plugins
                 .component(createOptionsMenu())
                 .component(createStaffMenu())
-                .component(createCosmeticsMenu());
+                .component(8, CosmeticsMenu.init());
         Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
             slMenu = slMenuBuilder.build();
             InventoryMenuTemplateRepository.addMenu(slMenu);
@@ -129,23 +125,6 @@ public class SLMenu {
                         })
                 );
         return builder;
-    }
-
-    private static InventoryMenuItemTemplateBuilder createCosmeticsMenu() {
-        return item()
-                .displayName("Cosmetics")
-                .displayIcon(Material.GOLD_HELMET)
-                .visibilityController(slp -> slp.getRank().hasPermission(Rank.DEVELOPER))
-                .description(slp -> {
-                    List<String> description = Lists.newArrayList(
-                            UtilChat.c("&7Click here to"),
-                            UtilChat.c("&7open Cosmetics menu."),
-                            "",
-                            UtilChat.c("&4&lWork in Progress")
-                    );
-                    return description;
-                })
-                .onClick(e -> RInventoryManager.openInventory(e.getPlayer(), CosmeticsMenu.getInstance()));
     }
 
     public static InventoryMenuTemplateBuilder getNewGamemodeMenu() {

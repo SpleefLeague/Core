@@ -39,7 +39,6 @@ import com.spleefleague.core.utils.DynamicCommandManager;
 import com.spleefleague.core.utils.MultiBlockChangeUtil;
 import com.spleefleague.core.utils.RuntimeCompiler;
 import com.spleefleague.core.utils.Warp;
-import com.spleefleague.core.utils.rines.RInventoryManager;
 import org.bukkit.entity.Player;
 
 /**
@@ -86,7 +85,6 @@ public class SpleefLeague extends CorePlugin {
         EnvironmentListener.init();
         InfractionListener.init();
         InventoryMenuListener.init();
-        RInventoryManager.init();
         CosmeticsManager.init();
         ConnectionListener.init();
         AfkListener.init();
