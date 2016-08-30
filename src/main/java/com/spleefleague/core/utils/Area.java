@@ -49,6 +49,9 @@ public class Area extends DBEntity implements DBLoadable, DBSaveable {
     }
 
     public boolean isInArea(Location loc) {
+        if (loc == null || low == null || high == null) {
+            return false;
+        }
         if (loc.getWorld() == low.getWorld()) {
             if (loc.getX() >= low.getX() && loc.getX() <= high.getX()) {
                 if (loc.getY() >= low.getY() && loc.getY() <= high.getY()) {
