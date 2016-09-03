@@ -1,6 +1,7 @@
 package com.spleefleague.core.command.commands;
 
 import com.spleefleague.core.command.BasicCommand;
+import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
@@ -11,7 +12,7 @@ import org.bukkit.entity.Player;
 
 public class rules extends BasicCommand {
 
-    private final String url = "https://spleefleague.com/threads/official-spleefleague-server-rules.28/";
+    private final String url = Settings.getString("rules_thread_url");
     private final int rulesPerPage = 6;
 
     public rules(CorePlugin plugin, String name, String usage) {
