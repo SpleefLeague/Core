@@ -58,6 +58,7 @@ public class SpleefLeague extends CorePlugin {
     private Rank minimumJoinRank;
     private List<Rank> extraJoinRanks;
     private PlayerManager<SLPlayer> playerManager;
+    private AutoBroadcaster autoBroadcaster;
     private Location spawn;
     private ConnectionClient connectionClient;
     private CommandLoader commandLoader;
@@ -94,7 +95,8 @@ public class SpleefLeague extends CorePlugin {
         InventoryMenuTemplateRepository.initTemplates();
         Warp.init();
         Challenge.init();
-        AutoBroadcaster.init();
+
+        autoBroadcaster = new AutoBroadcaster(getMongo().getDatabase("SpleefLeague").getCollection("AutoBroadcaster"));
         playerManager = new PlayerManager<>(this, SLPlayer.class);
         portalManager = new PortalManager();
         connectionClient = new ConnectionClient();
@@ -104,6 +106,7 @@ public class SpleefLeague extends CorePlugin {
     @Override
     public void stop() {
         playerManager.saveAll();
+        autoBroadcaster.stopTask();
         connectionClient.stop();
         mongo.close();
     }
@@ -206,6 +209,10 @@ public class SpleefLeague extends CorePlugin {
 
     public ConnectionClient getConnectionClient() {
         return connectionClient;
+    }
+
+    public AutoBroadcaster getAutoBroadcaster() {
+        return autoBroadcaster;
     }
 
     // Use the SpawnManager instead.
