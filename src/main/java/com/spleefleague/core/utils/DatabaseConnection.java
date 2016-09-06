@@ -12,12 +12,15 @@ import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.collections.FixedSizeList;
+import java.util.HashMap;
+import java.util.Map;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.UUID;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  *
@@ -94,6 +97,13 @@ public class DatabaseConnection {
         } else {
             return null;
         }
+    }
+    
+    public static void updateFields(MongoCollection<Document> dbcoll, Document index, Pair<String, Object>... update) {
+        Map<String, Object> updates = new HashMap<>();
+        for(Pair<String, Object> pair : update)
+            updates.put(pair.getKey(), pair.getValue());
+        updateFields(dbcoll, index, new Document(updates));
     }
 
     public static void updateFields(final MongoCollection<Document> dbcoll, final Document index, final Document update) {

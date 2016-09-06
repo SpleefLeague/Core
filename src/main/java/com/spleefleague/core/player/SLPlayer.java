@@ -25,6 +25,8 @@ import java.util.UUID;
 public class SLPlayer extends GeneralPlayer {
 
     private Rank rank;
+    private Rank eternalRank;
+    private long rankExpirationTime;
     private UUID lastChatPartner;
     private int coins, premiumCredits;
     private HashSet<ChatChannel> chatChannels;
@@ -67,6 +69,41 @@ public class SLPlayer extends GeneralPlayer {
             }
             rank.managePermissions(this);
         }
+        checkRankForExpiration();
+    }
+
+    @DBSave(fieldName = "eternalRank", typeConverter = RankStringConverter.class)
+    public Rank getEternalRank() {
+        return eternalRank;
+    }
+
+    @DBLoad(fieldName = "eternalRank", typeConverter = RankStringConverter.class)
+    public void setEternalRank(Rank rank) {
+        this.eternalRank = rank == null ? Rank.DEFAULT : rank;
+    }
+
+    @DBSave(fieldName = "rankExpirationTime")
+    public long getRankExpirationTime() {
+        return rankExpirationTime;
+    }
+    
+    @DBLoad(fieldName = "rankExpirationTime")
+    public void setRankExpirationTime(long expirationgTime) {
+        this.rankExpirationTime = expirationgTime;
+    }
+    
+    private void checkRankForExpiration() {
+        if(this.rankExpirationTime == 0l)
+            return;
+        if(System.currentTimeMillis() > this.rankExpirationTime) {
+            setRankExpirationTime(0l);
+            setRank(this.eternalRank);
+        }
+    }
+    
+    public void setExpiringRank(Rank rank, long rankExpirationTime) {
+        setRankExpirationTime(rankExpirationTime);
+        setRank(rank);
     }
 
     @DBLoad(fieldName = "coins")
