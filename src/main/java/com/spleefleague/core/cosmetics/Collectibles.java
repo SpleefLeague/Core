@@ -12,27 +12,31 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.bukkit.entity.Player;
 
 /**
  *
  * @author 0xC0deBabe <iam@kostya.sexy>
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Collectibles extends DBEntity implements DBLoadable, DBSaveable {
 
-    @Getter
     @DBLoad(fieldName = "active")
     @DBSave(fieldName = "active")
     private Set<Integer> active;
     
-    @Getter
     @DBLoad(fieldName = "items")
     @DBSave(fieldName = "items")
     private Set<Integer> items;
+    
+    private Collectibles() {}
+    
+    public Set<Integer> getActive() {
+        return active;
+    }
+    
+    public Set<Integer> getItems() {
+        return items;
+    }
     
     public void apply(SLPlayer slp) {
         getActiveItems().forEach(ci -> ci.onSelecting(slp));

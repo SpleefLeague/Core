@@ -3,8 +3,6 @@ package com.spleefleague.core.listeners;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.cosmetics.CType;
 import com.spleefleague.core.player.SLPlayer;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,13 +14,14 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
  *
  * @author 0xC0deBabe <iam@kostya.sexy>
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CosmeticsListener implements Listener {
     
     //Is being initialized in CosmeticsManager
     public static void init() {
         Bukkit.getPluginManager().registerEvents(new CosmeticsListener(), SpleefLeague.getInstance());
     }
+    
+    private CosmeticsListener() {}
 
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent e) {

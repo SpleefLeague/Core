@@ -8,7 +8,6 @@ import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.utils.UtilChat;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplate;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplateBuilder;
-import lombok.Getter;
 import org.bukkit.Material;
 
 /**
@@ -17,7 +16,6 @@ import org.bukkit.Material;
  */
 public class CosmeticsMenu {
 
-    @Getter
     private static InventoryMenuTemplate menu;
     private static InventoryMenuTemplateBuilder builder;
     
@@ -37,6 +35,10 @@ public class CosmeticsMenu {
         for(CType type : CType.values())
             builder.component(new CInventory(type).getMenu());
         menu = builder.build();
+        return menu;
+    }
+    
+    public static InventoryMenuTemplate getMenu() {
         return menu;
     }
     

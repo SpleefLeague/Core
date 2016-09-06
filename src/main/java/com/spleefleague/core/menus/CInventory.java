@@ -14,7 +14,6 @@ import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.UtilChat;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplate;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplateBuilder;
-import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -25,13 +24,11 @@ import org.bukkit.event.inventory.ClickType;
  */
 public class CInventory {
     
-    @Getter
     private final CType type;
     
     protected InventoryMenuTemplateBuilder builder;
     private int lastSlot = 0;
     
-    @Getter
     private InventoryMenuTemplate menu;
 
     CInventory(CType type) {
@@ -71,6 +68,14 @@ public class CInventory {
         );
         CosmeticsManager.getItems(type).forEach(this::addItem);
         menu = builder.build();
+    }
+    
+    public CType getType() {
+        return type;
+    }
+    
+    public InventoryMenuTemplate getMenu() {
+        return menu;
     }
     
     private void addItem(CItem item) {

@@ -9,17 +9,14 @@ import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.Data;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  *
  * @author 0xC0deBabe <iam@kostya.sexy>
  */
-@Data
 public abstract class CItem {
 
     private final int id;
@@ -49,6 +46,42 @@ public abstract class CItem {
         setupEmptyIcon();
         setupIcon();
         setupSelectedIcon();
+    }
+    
+    public int getId() {
+        return id;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public CType getType() {
+        return type;
+    }
+    
+    public List<String> getDescription() {
+        return description;
+    }
+    
+    public int getCostInCoins() {
+        return costInCoins;
+    }
+    
+    public int getCostInPremiumCredits() {
+        return costInPremiumCredits;
+    }
+    
+    public ItemStack getIcon() {
+        return icon;
+    }
+    
+    public ItemStack getSelectedIcon() {
+        return selectedIcon;
+    }
+    
+    public ItemStack getEmptyIcon() {
+        return emptyIcon;
     }
     
     public boolean select(Player p) {
