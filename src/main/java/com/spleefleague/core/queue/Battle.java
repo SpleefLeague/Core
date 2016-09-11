@@ -22,4 +22,6 @@ public interface Battle<Q extends QueueableArena, P extends GeneralPlayer> {
 
     Q getArena();
 
+    Collection<P> getPlayers();
+
 }
