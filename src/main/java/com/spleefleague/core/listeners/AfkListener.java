@@ -9,9 +9,6 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.player.PlayerState;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -19,6 +16,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  *
@@ -39,6 +40,9 @@ public class AfkListener implements Listener {
             task = Bukkit.getScheduler().runTaskTimer(SpleefLeague.getInstance(), () -> {
                 long time = System.currentTimeMillis();
                 for (SLPlayer player : SpleefLeague.getInstance().getPlayerManager().getAll()) {
+                    if (player == null) {
+                        continue;
+                    }
                     if (time - lastAction.get(player.getUniqueId()) > AFK_TIME && player.getState() != PlayerState.INGAME && !player.getRank().hasPermission(Rank.MODERATOR)) {
                         player.kickPlayer(ChatColor.RED + "You have been afk for too long!");
                     }

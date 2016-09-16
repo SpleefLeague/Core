@@ -32,6 +32,9 @@ public class DatabaseConnection {
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
             public void onJoin(GeneralPlayerLoadedEvent event) {
+                if (event.getPlayer() == null) {
+                    return;
+                }
                 DatabaseConnection.updateCache(event.getPlayer().getUniqueId(), event.getPlayer().getName());
                 if (event.getGeneralPlayer() instanceof SLPlayer) {
                     SLPlayer slp = (SLPlayer) event.getGeneralPlayer();
