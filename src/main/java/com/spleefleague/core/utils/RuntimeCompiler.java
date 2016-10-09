@@ -1,9 +1,9 @@
 package com.spleefleague.core.utils;
 
 import com.spleefleague.core.SpleefLeague;
-import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.utils.Debugger.CommandExecutor;
 import com.spleefleague.core.utils.Debugger.Stoppable;
+import com.spleefleague.core.utils.debugger.DebuggerStartResult;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -21,10 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,37 +35,28 @@ public class RuntimeCompiler {
     private static File directoryTemp;
     private static File directoryPermanent;
 
-    public static Object loadHastebin(String id) {
+    public static Map<String, Debugger> getRunningDebuggers() {
+        return new HashMap<>(debuggerList);
+    }
+
+    public static Object loadHastebin(String type, String id) {
         try {
-            InputStream is;
-            try {
-                URL url = new URL(Settings.getString("debugger_paste_raw").replace("{id}", id));
-                is = url.openStream();
-            } catch (Exception e) {
-                e.printStackTrace();
-                try {
-                    if (Settings.hasKey("debugger_paste_raw_backup")) {
-                        URL url = new URL(Settings.getString("debugger_paste_raw_backup").replace("{id}", id));
-                        is = url.openStream();
-                    } else {
-                        return null;
-                    }
-                } catch (Exception e2) {
-                    return null;
-                }
+            String content = null;
+            if (type == null) {
+                content = SpleefLeague.getInstance().getDebuggerHostManager().handle(id);
+            } else {
+                content = SpleefLeague.getInstance().getDebuggerHostManager().handle(type, id);
+            }
+            if (content == null) {
+                return null;
             }
             File javaFile = new File(directoryTemp.getPath() + "/" + id + ".java");
             javaFile.createNewFile();
             FileOutputStream fos = new FileOutputStream(javaFile);
             String className = "";
-            int read = 0;
-            byte[] bytes = new byte[1024];
-
-            while ((read = is.read(bytes)) != -1) {
-                fos.write(bytes, 0, read);
-            }
+            byte[] bytes = content.getBytes();
+            fos.write(bytes);
             fos.close();
-            is.close();
             FileInputStream fis = new FileInputStream(javaFile);
             BufferedReader br = new BufferedReader(new InputStreamReader(fis));
             String line;
@@ -190,8 +178,12 @@ public class RuntimeCompiler {
         }
     }
 
-    public static String[] debugFromHastebin(String id, CommandSender cs) {
-        Object o = RuntimeCompiler.loadHastebin(id);
+    public static DebuggerStartResult debugFromHastebin(String id, CommandSender cs) {
+        return debugFromHastebin(null, id, cs);
+    }
+
+    public static DebuggerStartResult debugFromHastebin(String type, String id, CommandSender cs) {
+        Object o = RuntimeCompiler.loadHastebin(type, id);
         try {
             if (!(o instanceof Debugger)) {
                 throw new Exception("Runtime script isn't extending the Debugger class");
@@ -203,7 +195,7 @@ public class RuntimeCompiler {
             }
             String n = o.getClass().getName();
             if (!((debugger instanceof CommandExecutor || debugger instanceof Listener || debugger instanceof Stoppable))) {
-                return new String[]{n};
+                return new DebuggerStartResult(debugger, n);
             } else {
                 int uid = 1;
                 while (RuntimeCompiler.debuggerList.containsKey((o.getClass().getName() + Integer.toString(uid)).toLowerCase())) {
@@ -211,15 +203,7 @@ public class RuntimeCompiler {
                 }
                 n = o.getClass().getName() + Integer.toString(uid);
                 RuntimeCompiler.debuggerList.put(n.toLowerCase(), debugger);
-                if (debugger instanceof CommandExecutor) {
-                    if (debugger instanceof Listener || debugger instanceof Stoppable) {
-                        return new String[]{n, ""};
-                    } else {
-                        return new String[]{n, "", "", ""};
-                    }
-                } else {
-                    return new String[]{n, "", ""};
-                }
+                return new DebuggerStartResult(debugger, n);
             }
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(RuntimeCompiler.class.getName()).log(Level.SEVERE, null, ex);

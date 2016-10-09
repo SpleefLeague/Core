@@ -5,22 +5,6 @@
  */
 package com.spleefleague.core;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import com.spleefleague.core.io.connections.ConnectionClient;
-import com.spleefleague.core.listeners.*;
-import com.spleefleague.core.portals.PortalManager;
-import com.spleefleague.core.spawn.SpawnManager;
-import org.bson.Document;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -31,19 +15,30 @@ import com.spleefleague.core.command.CommandLoader;
 import com.spleefleague.core.io.Config;
 import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.io.Settings;
+import com.spleefleague.core.io.connections.ConnectionClient;
+import com.spleefleague.core.listeners.*;
 import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
 import com.spleefleague.core.player.PlayerManager;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
+import com.spleefleague.core.portals.PortalManager;
 import com.spleefleague.core.queue.Challenge;
-import com.spleefleague.core.utils.AutoBroadcaster;
-import com.spleefleague.core.utils.DatabaseConnection;
-import com.spleefleague.core.utils.DynamicCommandManager;
-import com.spleefleague.core.utils.MultiBlockChangeUtil;
-import com.spleefleague.core.utils.RuntimeCompiler;
-import com.spleefleague.core.utils.Warp;
+import com.spleefleague.core.spawn.SpawnManager;
+import com.spleefleague.core.utils.*;
+import com.spleefleague.core.utils.debugger.DebuggerHostManager;
+import org.bson.Document;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -65,6 +60,7 @@ public class SpleefLeague extends CorePlugin {
     private SpawnManager spawnManager;
     private PortalManager portalManager;
     private DynamicCommandManager dynamicCommandManager;
+    private DebuggerHostManager debuggerHostManager;
 
     public SpleefLeague() {
         super("[SpleefLeague]", ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
@@ -101,6 +97,9 @@ public class SpleefLeague extends CorePlugin {
         portalManager = new PortalManager();
         connectionClient = new ConnectionClient();
         dynamicCommandManager = new DynamicCommandManager(this);
+        debuggerHostManager = new DebuggerHostManager();
+
+        debuggerHostManager.reloadAll(Settings.getList("debugger_hosts"));
     }
 
     @Override
@@ -213,6 +212,10 @@ public class SpleefLeague extends CorePlugin {
 
     public AutoBroadcaster getAutoBroadcaster() {
         return autoBroadcaster;
+    }
+
+    public DebuggerHostManager getDebuggerHostManager() {
+        return this.debuggerHostManager;
     }
 
     // Use the SpawnManager instead.

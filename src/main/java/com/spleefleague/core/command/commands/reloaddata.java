@@ -11,7 +11,6 @@ import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -34,16 +33,20 @@ public class reloaddata extends BasicCommand {
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
         if (args.length == 0) {
-            Bukkit.reload();
+            sendUsage(cs);
         } else if (args[0].equalsIgnoreCase("ranks")) {
             Rank.init();
             for (SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
                 slp.setRank(Rank.valueOf(slp.getRank().getName()));
             }
             success(cs, "Reloaded " + Rank.values().length + " ranks!");
-        } else if(args[0].equalsIgnoreCase("settings")) {
+        } else if (args[0].equalsIgnoreCase("settings")) {
             Settings.loadSettings();
+            SpleefLeague.getInstance().getDebuggerHostManager().reloadAll(Settings.getList("debugger_hosts"));
             success(cs, "Reloaded settings from the database!");
+        } else {
+            error(cs, "unknown option");
+            sendUsage(cs);
         }
     }
 }

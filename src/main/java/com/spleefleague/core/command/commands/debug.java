@@ -6,19 +6,23 @@
 package com.spleefleague.core.command.commands;
 
 import com.spleefleague.core.SpleefLeague;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.plugin.CorePlugin;
+import com.spleefleague.core.utils.Debugger;
 import com.spleefleague.core.utils.RuntimeCompiler;
+import com.spleefleague.core.utils.debugger.DebuggerStartResult;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Arrays;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -46,35 +50,45 @@ public class debug extends BasicCommand {
         if (args.length == 0) {
             sendUsage(cs);
         } else if (args.length == 1) {
-            Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
-                String[] clzl = RuntimeCompiler.debugFromHastebin(args[0], cs);
-                if (clzl == null) {
-                    error(cs, "Failed starting debugger!");
+            if (args[0].equalsIgnoreCase("list")) {
+                Map<String, Debugger> running = RuntimeCompiler.getRunningDebuggers();
+                if (running.isEmpty()) {
+                    cs.sendMessage(ChatColor.RED + "No debuggers are running");
                     return;
                 }
-                String name = clzl[0];
-                if (clzl.length == 1) {
-                    success(cs, ChatColor.GRAY + "Running debugger class: " + ChatColor.GREEN + name);
-                } else if (clzl.length == 2) {
-                    success(cs, ChatColor.GRAY + "Started debugger class with id: " + ChatColor.GREEN + name);
-                    success(cs, ChatColor.GRAY + "run cmd: " + ChatColor.BLUE + "/rd command/cmd " + ChatColor.GREEN + name + ChatColor.BLUE + " <command>");
-                    success(cs, ChatColor.GRAY + "stop: " + ChatColor.BLUE + "/rd stop " + ChatColor.GREEN + name);
-                } else if (clzl.length == 3) {
-                    success(cs, ChatColor.GRAY + "Started debugger class with id: " + ChatColor.GREEN + name);
-                    success(cs, ChatColor.GRAY + "stop: " + ChatColor.BLUE + "/rd stop " + ChatColor.GREEN + name);
-                } else if (clzl.length == 4) {
-                    success(cs, ChatColor.GRAY + "Started debugger class with id: " + ChatColor.GREEN + name);
-                    success(cs, ChatColor.GRAY + "run cmd: " + ChatColor.BLUE + "/rd command/cmd " + ChatColor.GREEN + name + ChatColor.BLUE + " <command>");
+                cs.sendMessage(ChatColor.GRAY + "Running debuggers:");
+                for (String s : running.keySet()) {
+                    cs.sendMessage(ChatColor.GRAY + " - " + ChatColor.GREEN + s);
                 }
-            });
+            } else {
+                Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+                    DebuggerStartResult result = RuntimeCompiler.debugFromHastebin(args[0], cs);
+                    if (result == null) {
+                        error(cs, "Failed starting debugger!");
+                        return;
+                    }
+                    result.informDebuggerStarted(cs);
+                });
+            }
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("stop")) {
                 String n = RuntimeCompiler.stopDebugger(args[1]);
                 if (n == null) {
                     error(cs, "Debugger not found!");
                 } else {
-                    success(cs, ChatColor.GRAY + "Succesfully stopped debugger: " + ChatColor.GREEN + n);
+                    success(cs, ChatColor.GRAY + "Successfully stopped debugger: " + ChatColor.GREEN + n);
                 }
+            } else if (args[0].toLowerCase().startsWith("-host=") && args[0].length() > "-host=".length()) {
+                String host = args[0].substring("-host=".length());
+                String key = args[1];
+                Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+                    DebuggerStartResult result = RuntimeCompiler.debugFromHastebin(host, key, cs);
+                    if (result == null) {
+                        error(cs, "Failed starting debugger!");
+                        return;
+                    }
+                    result.informDebuggerStarted(cs);
+                });
             } else {
                 sendUsage(cs);
             }
@@ -86,7 +100,7 @@ public class debug extends BasicCommand {
                     }
                 } catch (Exception ex) {
                     Logger.getLogger(debug.class.getName()).log(Level.SEVERE, null, ex);
-                    error(cs, "An error occured!");
+                    error(cs, "An error occurred!");
                 }
             } else {
                 sendUsage(cs);

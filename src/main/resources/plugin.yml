@@ -148,7 +148,7 @@ commands:
     reloaddata:
         description: Reloads something
         usage:
-            /<command> [ranks]
+            /<command> <ranks/settings>
     warp: 
         description: Warp command
         usage: |

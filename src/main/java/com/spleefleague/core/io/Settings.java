@@ -6,12 +6,13 @@
 package com.spleefleague.core.io;
 
 import com.mongodb.client.MongoCursor;
-import java.util.HashMap;
-import java.util.List;
 import com.spleefleague.core.SpleefLeague;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+
+import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -83,7 +84,7 @@ public class Settings {
     }
 
     public static List getList(String key) {
-        Document doc = (Document) settings.get(key);
+        Document doc = settings.get(key);
         if (doc == null) {
             return null;
         }
