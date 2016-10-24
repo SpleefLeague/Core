@@ -117,7 +117,7 @@ public class SLPlayer extends GeneralPlayer {
     }
     
     public void changeCoins(int delta) {
-        setCoins(coins + delta);
+        setCoins(Math.max(0, coins + delta));
     }
     
     @DBLoad(fieldName = "premiumCredits")
@@ -131,7 +131,7 @@ public class SLPlayer extends GeneralPlayer {
     }
     
     public void changePremiumCredits(int delta) {
-        setPremiumCredits(premiumCredits + delta);
+        setPremiumCredits(Math.max(0, premiumCredits + delta));
     }
 
     @DBSave(fieldName = "lastChatPartner", typeConverter = UUIDStringConverter.class)

@@ -260,3 +260,8 @@ commands:
         aliases: []
         usage: |
             /<command> <player> <rank> <time in hours>
+    grantcurrency:
+        description: Command to change amount of coins/premium credits player has
+        aliases: []
+        usage: |
+            /<command> <player> <currency type> <amount>
