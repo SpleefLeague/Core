@@ -27,6 +27,9 @@ public class EntityBuilder {
     }
 
     public static <T extends DBEntity & DBSaveable> void save(T object, MongoCollection<Document> dbcoll, boolean override) {
+        if (object == null) {
+            return;
+        }
         DBEntity dbe = (DBEntity) object;
         ObjectId _id = dbe.getObjectId();
         Document index = null;
