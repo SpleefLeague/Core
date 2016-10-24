@@ -79,10 +79,14 @@ public class CInventory {
     }
     
     private void addItem(CItem item) {
+        if(item.isDisabled())
+            return;
         addItem(item, lastSlot++);
     }
     
     private void addItem(CItem item, int slot) {
+        if(item.isDisabled())
+            return;
         builder.component(slot, item()
                 .displayName(item.getName())
                 .displayItem(slp -> item.getDisplayItem(slp))

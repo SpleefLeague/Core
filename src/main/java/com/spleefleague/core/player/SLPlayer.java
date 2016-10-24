@@ -234,12 +234,14 @@ public class SLPlayer extends GeneralPlayer {
 
     @Override
     public void done() {
-        if (this.options == null) {
-            this.options = PlayerOptions.getDefault();
-            this.options.apply(this);
-        }
-        if(this.collectibles == null) {
-            this.collectibles = Collectibles.getDefault(this);
+        try {
+            if(this.options == null) {
+                this.options = PlayerOptions.getDefault();
+                this.options.apply(this);
+            }
+            if(this.collectibles == null)
+                this.collectibles = Collectibles.getDefault();
+        }finally {
             this.collectibles.apply(this);
         }
     }

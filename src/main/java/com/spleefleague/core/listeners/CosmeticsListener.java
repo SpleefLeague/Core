@@ -14,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  *
@@ -27,13 +28,19 @@ public class CosmeticsListener implements Listener {
     }
     
     private CosmeticsListener() {}
+    
+    @EventHandler(priority = EventPriority.LOW)
+    public void onQuit(PlayerQuitEvent e) {
+        SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(e.getPlayer());
+        slp.getCollectibles().unapply(slp);
+    }
 
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(p);
         if(e.getSlotType() == SlotType.ARMOR)
-            if(slp.getCollectibles().isActive(CType.ARMOR))
+            if(slp.getCollectibles().isActive(CType.ARMOR) || slp.getCollectibles().isActive(CType.HAT))
                 e.setCancelled(true);
     }
 

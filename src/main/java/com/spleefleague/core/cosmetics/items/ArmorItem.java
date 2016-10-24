@@ -26,12 +26,18 @@ public class ArmorItem extends CItem {
 
     @Override
     public void onSelecting(Player p) {
+        ItemStack helmet = p.getInventory().getHelmet();
         p.getInventory().setArmorContents(armor);
+        if(helmet != null)
+            p.getInventory().setHelmet(helmet);
     }
 
     @Override
     public void onRemoving(Player p) {
+        ItemStack helmet = p.getInventory().getHelmet();
         p.getInventory().setArmorContents(EMPTY_ARMOR);
+        if(helmet != armor[3])
+            p.getInventory().setHelmet(helmet);
     }
 
 }

@@ -11,7 +11,9 @@ import org.bukkit.Material;
 public enum CType {
     
     ARMOR(Material.LEATHER_CHESTPLATE, "Armor", ActiveArea.EVERYWHERE),
-    STATUS_EFFECT(Material.POTION, "Status effects", ActiveArea.OUT_OF_GAME);
+    HAT(Material.SKULL_ITEM, "Hats", ActiveArea.EVERYWHERE),
+    STATUS_EFFECT(Material.POTION, "Status effects", ActiveArea.OUT_OF_GAME),
+    PARTICLE_EFFECT(Material.NETHER_STAR, "Particle effects", ActiveArea.OUT_OF_GAME);
     
     private final Material icon;
     

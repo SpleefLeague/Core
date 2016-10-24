@@ -62,6 +62,10 @@ public class Collectibles extends DBEntity implements DBLoadable, DBSaveable {
         }
     }
     
+    public void unapply(SLPlayer slp) {
+        getActiveItems().forEach(ci -> ci.onRemoving(slp));
+    }
+    
     public Set<CItem> getActiveItems() {
         return active.stream().map(CosmeticsManager::getItem).collect(Collectors.toSet());
     }
@@ -97,7 +101,7 @@ public class Collectibles extends DBEntity implements DBLoadable, DBSaveable {
         items.remove(id);
     }
 
-    public static Collectibles getDefault(SLPlayer slp) {
+    public static Collectibles getDefault() {
         Collectibles col = new Collectibles();
         col.active = new HashSet<>();
         col.items = new HashSet<>();

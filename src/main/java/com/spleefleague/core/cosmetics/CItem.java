@@ -31,6 +31,8 @@ public abstract class CItem {
     
     private ItemStack icon, selectedIcon, emptyIcon;
     
+    private boolean disabled = false;
+    
     public CItem(int id, String name, CType type, int costInCoins, int costInPremiumCredits) {
         this(id, name, type, new ArrayList<>(), costInCoins, costInPremiumCredits);
     }
@@ -86,6 +88,15 @@ public abstract class CItem {
     
     public ItemStack getEmptyIcon() {
         return emptyIcon;
+    }
+    
+    public boolean isDisabled() {
+        return disabled;
+    }
+    
+    public CItem disabled() {
+        disabled = true;
+        return this;
     }
     
     public boolean select(Player p) {
