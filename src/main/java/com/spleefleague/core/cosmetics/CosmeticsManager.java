@@ -96,7 +96,7 @@ public class CosmeticsManager {
         add(new CommonHatItem(id++, new SimpleItemStack(Material.BEACON, "&6&lBeacon hat"), 2000, 4));
         add(new CommonHatItem(id++, new SimpleItemStack(Material.MELON_BLOCK, "&c&lMelon hat"), 999999, 50));
         
-        add(new ParticleEffectItem(id++, "&7Explosion effect", EnumWrappers.Particle.EXPLOSION_HUGE, 500, 1));
+        add(new ParticleEffectItem(id++, "&7Explosion effect", EnumWrappers.Particle.EXPLOSION_NORMAL, 500, 1));
         add(new ParticleEffectItem(id++, "&7Large smoke effect", EnumWrappers.Particle.SMOKE_LARGE, 500, 1));
         add(new ParticleEffectItem(id++, "&7Red dust effect", EnumWrappers.Particle.REDSTONE, 500, 1));
         add(new ParticleEffectItem(id++, "&6Angry villager effect", EnumWrappers.Particle.VILLAGER_ANGRY, 1000, 2));
