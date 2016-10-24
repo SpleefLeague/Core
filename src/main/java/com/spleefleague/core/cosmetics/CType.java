@@ -10,9 +10,8 @@ import org.bukkit.Material;
  */
 public enum CType {
     
-    ARMOR(true, Material.LEATHER_CHESTPLATE, "Armor", ActiveArea.EVERYWHERE);
-    
-    private final boolean activeDuringTheGame;
+    ARMOR(Material.LEATHER_CHESTPLATE, "Armor", ActiveArea.EVERYWHERE),
+    STATUS_EFFECT(Material.POTION, "Status effects", ActiveArea.OUT_OF_GAME);
     
     private final Material icon;
     
@@ -22,8 +21,7 @@ public enum CType {
     
     private final Set<CType> conflicting = new HashSet<>();
     
-    private CType(boolean activeDuringTheGame, Material icon, String sectionName, ActiveArea activeArea, CType... conflicting) {
-        this.activeDuringTheGame = activeDuringTheGame;
+    private CType(Material icon, String sectionName, ActiveArea activeArea, CType... conflicting) {
         this.icon = icon;
         this.sectionName = sectionName;
         for(CType conflict : conflicting) {
@@ -32,10 +30,6 @@ public enum CType {
         }
         this.activeArea = activeArea;
         this.conflicting.add(this);
-    }
-    
-    public boolean isActiveDureingTheGame() {
-        return activeDuringTheGame;
     }
     
     public Material getIcon() {

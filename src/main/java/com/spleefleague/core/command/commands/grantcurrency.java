@@ -84,23 +84,41 @@ public class grantcurrency extends BasicCommand {
         switch(currencyType) {
             case "coin":
             case "coins":
-                updateCurrencyInDatabase(target, "coins", amount);
                 if(amount > 0) {
-                    UtilChat.s(Theme.SUCCESS, cs, "You've just granted &6%d coins &ato &e%s &a(at least we tried to do so in offline mode).", amount, target);
+                    UtilChat.s(Theme.SUCCESS, cs, "You've just granted &6%d coins &ato &e%s &a(at least we are trying to do so in offline mode).", amount, target);
                 }else {
-                    UtilChat.s(Theme.SUCCESS, cs, "You've just took &6%d coins &afrom &e%s &a(at least we tried to do so in offline mode).", -amount, target);
+                    UtilChat.s(Theme.SUCCESS, cs, "You've just took &6%d coins &afrom &e%s &a(at least we are trying to do so in offline mode).", -amount, target);
                 }
+                DatabaseConnection.find(SpleefLeague.getInstance().getPluginDB().getCollection("Players"), new Document("username", target), result -> {
+                    Document doc = result.first();
+                    if(doc == null) {
+                        UtilChat.s(Theme.ERROR, cs, "We can't find player with name &e%s &c):", target);
+                        return;
+                    }
+                    int total = Math.max(0, doc.getInteger("coins") + amount);
+                    updateCurrencyInDatabase(target, "coins", total);
+                    UtilChat.s(Theme.SUCCESS, cs, "Now &e%s &ashould has &6%d coins&a.", target, total);
+                });
                 break;
             case "credit":
             case "credits":
             case "premiumcredit":
             case "premiumcredits":
-                updateCurrencyInDatabase(target, "premiumCredits", amount);
                 if(amount > 0) {
-                    UtilChat.s(Theme.SUCCESS, cs, "You've just granted &b%d premium credits &ato &e%s &a(at least we tried to do so in offline mode).", amount, target);
+                    UtilChat.s(Theme.SUCCESS, cs, "You've just granted &b%d premium credits &ato &e%s &a(at least we are trying to do so in offline mode).", amount, target);
                 }else {
-                    UtilChat.s(Theme.SUCCESS, cs, "You've just took &b%d premium credits &afrom &e%s &a(at least we tried to do so in offline mode).", -amount, target);
+                    UtilChat.s(Theme.SUCCESS, cs, "You've just took &b%d premium credits &afrom &e%s &a(at least we are trying to do so in offline mode).", -amount, target);
                 }
+                DatabaseConnection.find(SpleefLeague.getInstance().getPluginDB().getCollection("Players"), new Document("username", target), result -> {
+                    Document doc = result.first();
+                    if(doc == null) {
+                        UtilChat.s(Theme.ERROR, cs, "We can't find player with name &e%s &c):", target);
+                        return;
+                    }
+                    int total = Math.max(0, doc.getInteger("premiumCredits") + amount);
+                    updateCurrencyInDatabase(target, "premiumCredits", total);
+                    UtilChat.s(Theme.SUCCESS, cs, "Now &e%s &ashould has &b%d premium credits&a.", target, total);
+                });
                 break;
             default:
                 UtilChat.s(Theme.ERROR, cs, "You specified unknown type of currency. Possible ones are: &bcoins&c, &bcredits&c.");

@@ -1,5 +1,7 @@
-package com.spleefleague.core.cosmetics;
+package com.spleefleague.core.cosmetics.items;
 
+import com.spleefleague.core.cosmetics.CItem;
+import com.spleefleague.core.cosmetics.CType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

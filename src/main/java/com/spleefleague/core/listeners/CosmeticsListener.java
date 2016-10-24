@@ -43,7 +43,7 @@ public class CosmeticsListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onBattleStart(BattleEndEvent e) {
+    public void onBattleEnd(BattleEndEvent e) {
         reapplyCollectiblesForAllActivePlayersOfDaBattle(e.getBattle());
     }
     

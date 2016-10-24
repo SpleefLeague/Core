@@ -1,5 +1,6 @@
 package com.spleefleague.core.cosmetics;
 
+import com.spleefleague.core.cosmetics.items.*;
 import com.spleefleague.core.listeners.CosmeticsListener;
 import com.spleefleague.core.utils.SimpleItemStack;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 
 /**
  *
@@ -19,6 +21,11 @@ public class CosmeticsManager {
     
     private final static Map<Integer, CItem> items = new HashMap<>();
     private final static Map<CType, List<CItem>> perTypes = new HashMap<>();
+    
+    static {
+        for(CType type : CType.values())
+            perTypes.put(type, new ArrayList<>());
+    }
     
     public static CItem getItem(int id) {
         return items.get(id);
@@ -30,13 +37,7 @@ public class CosmeticsManager {
     
     private static void add(CItem item) {
         items.put(item.getId(), item);
-        CType type = item.getType();
-        List<CItem> items = perTypes.get(type);
-        if(items == null) {
-            items = new ArrayList<>();
-            perTypes.put(type, items);
-        }
-        items.add(item);
+        perTypes.get(item.getType()).add(item);
     }
 
     public static void init() {
@@ -72,6 +73,13 @@ public class CosmeticsManager {
             new SimpleItemStack(Material.DIAMOND_CHESTPLATE, "&5&lDiamond chestplate", Enchantment.PROTECTION_ENVIRONMENTAL, 10),
             new SimpleItemStack(Material.DIAMOND_HELMET, "&5&lDiamond helmet", Enchantment.PROTECTION_ENVIRONMENTAL, 10)
         }, 500, 1));
+        add(new StatusEffectItem(id++, "&7Nausea", PotionEffectType.CONFUSION, 1, 500, 1));
+        add(new StatusEffectItem(id++, "&7Blindness", PotionEffectType.BLINDNESS, 1, 500, 1));
+        add(new StatusEffectItem(id++, "&7Slowness", PotionEffectType.CONFUSION, 1, 500, 1));
+        add(new StatusEffectItem(id++, "&6Health Boost", PotionEffectType.HEALTH_BOOST, 5, 1000, 2));
+        add(new StatusEffectItem(id++, "&6Water Breathing", PotionEffectType.WATER_BREATHING, 1, 1000, 2));
+        add(new StatusEffectItem(id++, "&6&lSpeed II", PotionEffectType.SPEED, 2, 2000, 4));
+        add(new StatusEffectItem(id++, "&6&lNight Vision", PotionEffectType.NIGHT_VISION, 1, 2000, 4));
     }
     
 }
