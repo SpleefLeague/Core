@@ -72,6 +72,10 @@ public abstract class CItem {
         return costInPremiumCredits;
     }
     
+    public ActiveArea getActiveArea() {
+        return type.getActiveArea();
+    }
+    
     public ItemStack getIcon() {
         return icon;
     }
@@ -103,7 +107,7 @@ public abstract class CItem {
             }
         else
             if(slp.getPremiumCredits() >= costInPremiumCredits) {
-                slp.changeCoins(-costInPremiumCredits);
+                slp.changePremiumCredits(-costInPremiumCredits);
                 SpleefLeague.getInstance().getPlayerManager().get(p).getCollectibles().addItem(id);
                 UtilChat.s(Theme.SUCCESS, p, "You have just bought %s &afor &b%d premium credits&a.", name, costInPremiumCredits);
             }else {

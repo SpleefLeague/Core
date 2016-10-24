@@ -2,15 +2,18 @@ package com.spleefleague.core.command.commands;
 
 import com.mongodb.client.MongoCollection;
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.utils.DatabaseConnection;
+import com.spleefleague.core.utils.UtilChat;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -25,15 +28,20 @@ public class grantcurrency extends BasicCommand {
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
+        runConsole(p, cmd, args);
+    }
+
+    @Override
+    protected void runConsole(CommandSender cs, Command cmd, String[] args) {
         if(args.length != 3) {
-            sendUsage(p);
+            sendUsage(cs);
             return;
         }
         int amount = 0;
         try {
             amount = Integer.parseInt(args[2]);
         }catch(NumberFormatException ex) {
-            error(p, "The number of coins/credits must be a non-zero integer.");
+            error(cs, "The number of coins/credits must be a non-zero integer.");
             return;
         }
         Player targetPlayer = Bukkit.getPlayerExact(args[0]);
@@ -45,11 +53,11 @@ public class grantcurrency extends BasicCommand {
                 case "coins":
                     targetSlPlayer.changeCoins(amount);
                     if(amount > 0) {
-                        success(p, "You've just granted " + amount + " coins to " + targetPlayer.getName() + ".");
+                        UtilChat.s(Theme.SUCCESS, cs, "You've just granted &6%d coins &ato &e%s&a.", amount, targetPlayer.getName());
                     }else {
-                        success(p, "You've just took " + -amount + " coins from " + targetPlayer.getName() + ".");
+                        UtilChat.s(Theme.SUCCESS, cs, "You've just took &6%d coins &afrom &e%s&a.", -amount, targetPlayer.getName());
                     }
-                    success(p, "Now this player has exactly " + targetSlPlayer.getCoins() + " coins.");
+                    UtilChat.s(Theme.SUCCESS, cs, "Now this player has exactly &6%d coins&a.", targetSlPlayer.getCoins());
                     break;
                 case "credit":
                 case "credits":
@@ -57,30 +65,30 @@ public class grantcurrency extends BasicCommand {
                 case "premiumcredits":
                     targetSlPlayer.changePremiumCredits(amount);
                     if(amount > 0) {
-                        success(p, "You've just granted " + amount + " premium credits to " + targetPlayer.getName() + ".");
+                        UtilChat.s(Theme.SUCCESS, cs, "You've just granted &b%d premium credits &ato &e%s&a.", amount, targetPlayer.getName());
                     }else {
-                        success(p, "You've just took " + -amount + " premium credits from " + targetPlayer.getName() + ".");
+                        UtilChat.s(Theme.SUCCESS, cs, "You've just took &b%d premium credits &afrom &e%s&a.", -amount, targetPlayer.getName());
                     }
-                    success(p, "Now this player has exactly " + targetSlPlayer.getPremiumCredits()+ " premium credits.");
+                    UtilChat.s(Theme.SUCCESS, cs, "Now this player has exactly &b%d premium credits&a.", targetSlPlayer.getPremiumCredits());
                     break;
                 default:
-                    error(p, "You specified unknown type of currency. Possible ones are: coins, credits.");
+                    UtilChat.s(Theme.ERROR, cs, "You specified unknown type of currency. Possible ones are: &bcoins&c, &bcredits&c.");
                     break;
             }
         }else {
-            grantCurrencyOffline(p, args[0], currencyType, amount);
+            grantCurrencyOffline(cs, args[0], currencyType, amount);
         }
     }
     
-    private void grantCurrencyOffline(Player p, String target, String currencyType, int amount) {
+    private void grantCurrencyOffline(CommandSender cs, String target, String currencyType, int amount) {
         switch(currencyType) {
             case "coin":
             case "coins":
                 updateCurrencyInDatabase(target, "coins", amount);
                 if(amount > 0) {
-                    success(p, "You've just granted " + amount + " coins to " + target + " (at least we tried to do so in offline mode).");
+                    UtilChat.s(Theme.SUCCESS, cs, "You've just granted &6%d coins &ato &e%s &a(at least we tried to do so in offline mode).", amount, target);
                 }else {
-                    success(p, "You've just took " + -amount + " coins from " + target + " (at least we tried to do so in offline mode).");
+                    UtilChat.s(Theme.SUCCESS, cs, "You've just took &6%d coins &afrom &e%s &a(at least we tried to do so in offline mode).", -amount, target);
                 }
                 break;
             case "credit":
@@ -89,13 +97,13 @@ public class grantcurrency extends BasicCommand {
             case "premiumcredits":
                 updateCurrencyInDatabase(target, "premiumCredits", amount);
                 if(amount > 0) {
-                    success(p, "You've just granted " + amount + " premium credits to " + target + " (at least we tried to do so in offline mode).");
+                    UtilChat.s(Theme.SUCCESS, cs, "You've just granted &b%d premium credits &ato &e%s &a(at least we tried to do so in offline mode).", amount, target);
                 }else {
-                    success(p, "You've just took " + -amount + " premium credits from " + target + " (at least we tried to do so in offline mode).");
+                    UtilChat.s(Theme.SUCCESS, cs, "You've just took &b%d premium credits &afrom &e%s &a(at least we tried to do so in offline mode).", -amount, target);
                 }
                 break;
             default:
-                error(p, "You specified unknown type of currency. Possible ones are: coins, credits.");
+                UtilChat.s(Theme.ERROR, cs, "You specified unknown type of currency. Possible ones are: &bcoins&c, &bcredits&c.");
                 break;
         }
     }

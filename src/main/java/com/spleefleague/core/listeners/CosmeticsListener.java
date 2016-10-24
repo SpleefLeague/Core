@@ -2,10 +2,15 @@ package com.spleefleague.core.listeners;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.cosmetics.CType;
+import com.spleefleague.core.events.BattleEndEvent;
+import com.spleefleague.core.events.BattleStartEvent;
+import com.spleefleague.core.player.PlayerManager;
 import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.queue.Battle;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
@@ -30,6 +35,24 @@ public class CosmeticsListener implements Listener {
         if(e.getSlotType() == SlotType.ARMOR)
             if(slp.getCollectibles().isActive(CType.ARMOR))
                 e.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBattleStart(BattleStartEvent e) {
+        reapplyCollectiblesForAllActivePlayersOfDaBattle(e.getBattle());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBattleStart(BattleEndEvent e) {
+        reapplyCollectiblesForAllActivePlayersOfDaBattle(e.getBattle());
+    }
+    
+    private void reapplyCollectiblesForAllActivePlayersOfDaBattle(Battle battle) {
+        PlayerManager<SLPlayer> pm = SpleefLeague.getInstance().getPlayerManager();
+        for(Object objectplayer : battle.getActivePlayers()) {
+            SLPlayer slp = pm.get((Player) objectplayer);
+            slp.getCollectibles().reapply(slp);
+        }
     }
     
 }

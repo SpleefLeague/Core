@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -40,24 +42,36 @@ public class CosmeticsManager {
     public static void init() {
         CosmeticsListener.init();
         int id = 1;
-        add(new ArmorItem(id++, "Leather Armor", new ItemStack[]{
-            new SimpleItemStack(Material.LEATHER_BOOTS, "Leather boots"),
-            new SimpleItemStack(Material.LEATHER_LEGGINGS, "Leather leggings"),
-            new SimpleItemStack(Material.LEATHER_CHESTPLATE, "Leather chestplate"),
-            new SimpleItemStack(Material.LEATHER_HELMET, "Leather helmet")
+        add(new ArmorItem(id++, "&7Leather armor", new ItemStack[]{
+            new SimpleItemStack(Material.LEATHER_BOOTS, "&7Leather boots"),
+            new SimpleItemStack(Material.LEATHER_LEGGINGS, "&7Leather leggings"),
+            new SimpleItemStack(Material.LEATHER_CHESTPLATE, "&7Leather chestplate"),
+            new SimpleItemStack(Material.LEATHER_HELMET, "&7Leather helmet")
         }, 500, 1));
-        add(new ArmorItem(id++, "Gold Armor", new ItemStack[]{
-            new SimpleItemStack(Material.GOLD_BOOTS, "Gold boots"),
-            new SimpleItemStack(Material.GOLD_LEGGINGS, "Gold leggings"),
-            new SimpleItemStack(Material.GOLD_CHESTPLATE, "Gold chestplate"),
-            new SimpleItemStack(Material.GOLD_HELMET, "Gold helmet")
+        add(new ArmorItem(id++, "&6&lGold armor", new ItemStack[]{
+            new SimpleItemStack(Material.GOLD_BOOTS, "&6&lGold boots"),
+            new SimpleItemStack(Material.GOLD_LEGGINGS, "&6&lGold leggings"),
+            new SimpleItemStack(Material.GOLD_CHESTPLATE, "&6&lGold chestplate"),
+            new SimpleItemStack(Material.GOLD_HELMET, "&6&lGold helmet")
         }, 2000, 4));
-        add(new ArmorItem(id++, "Diamond Armor", new ItemStack[]{
-            new SimpleItemStack(Material.DIAMOND_BOOTS, "Diamond boots"),
-            new SimpleItemStack(Material.DIAMOND_LEGGINGS, "Diamond leggings"),
-            new SimpleItemStack(Material.DIAMOND_CHESTPLATE, "Diamond chestplate"),
-            new SimpleItemStack(Material.DIAMOND_HELMET, "Diamond helmet")
+        add(new ArmorItem(id++, "&b&lDiamond armor", new ItemStack[]{
+            new SimpleItemStack(Material.DIAMOND_BOOTS, "&b&lDiamond boots"),
+            new SimpleItemStack(Material.DIAMOND_LEGGINGS, "&b&lDiamond leggings"),
+            new SimpleItemStack(Material.DIAMOND_CHESTPLATE, "&b&lDiamond chestplate"),
+            new SimpleItemStack(Material.DIAMOND_HELMET, "&b&lDiamond helmet")
         }, 5000, 10));
+        add(new ArmorItem(id++, "&bAqua leather armor &4&l(TEST)", new ItemStack[]{
+            new SimpleItemStack(Material.LEATHER_BOOTS, "&bAqua leather boots", Color.AQUA),
+            new SimpleItemStack(Material.LEATHER_LEGGINGS, "&bAqua leather leggings", Color.AQUA),
+            new SimpleItemStack(Material.LEATHER_CHESTPLATE, "&bAqua leather chestplate", Color.AQUA),
+            new SimpleItemStack(Material.LEATHER_HELMET, "&bAqua leather helmet", Color.AQUA)
+        }, 500, 1));
+        add(new ArmorItem(id++, "&5&lEnchanted diamond armor &4&l(TEST)", new ItemStack[]{
+            new SimpleItemStack(Material.DIAMOND_BOOTS, "&5&lDiamond boots", Enchantment.PROTECTION_ENVIRONMENTAL, 10),
+            new SimpleItemStack(Material.DIAMOND_LEGGINGS, "&5&lDiamond leggings", Enchantment.PROTECTION_ENVIRONMENTAL, 10),
+            new SimpleItemStack(Material.DIAMOND_CHESTPLATE, "&5&lDiamond chestplate", Enchantment.PROTECTION_ENVIRONMENTAL, 10),
+            new SimpleItemStack(Material.DIAMOND_HELMET, "&5&lDiamond helmet", Enchantment.PROTECTION_ENVIRONMENTAL, 10)
+        }, 500, 1));
     }
     
 }

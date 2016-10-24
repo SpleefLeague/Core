@@ -6,6 +6,7 @@ import com.spleefleague.core.io.DBLoadable;
 import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.DBSaveable;
 import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.plugin.GamePlugin;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -39,7 +40,26 @@ public class Collectibles extends DBEntity implements DBLoadable, DBSaveable {
     }
     
     public void apply(SLPlayer slp) {
-        getActiveItems().forEach(ci -> ci.onSelecting(slp));
+        Set<CItem> activeItems = getActiveItems();
+        activeItems.stream()
+                .filter(ci -> ci.getActiveArea() == ActiveArea.EVERYWHERE ||
+                        ci.getActiveArea() == ActiveArea.OUT_OF_GAME)
+                .forEach(ci -> ci.onSelecting(slp));
+    }
+    
+    public void reapply(SLPlayer slp) {
+        Set<CItem> activeItems = getActiveItems();
+        if(GamePlugin.isIngameGlobal(slp)) {
+            activeItems.stream().filter(ci -> ci.getActiveArea() == ActiveArea.OUT_OF_GAME)
+                    .forEach(ci -> ci.onRemoving(slp));
+            activeItems.stream().filter(ci -> ci.getActiveArea() == ActiveArea.IN_GAME)
+                    .forEach(ci -> ci.onSelecting(slp));
+        }else {
+            activeItems.stream().filter(ci -> ci.getActiveArea() == ActiveArea.OUT_OF_GAME)
+                    .forEach(ci -> ci.onSelecting(slp));
+            activeItems.stream().filter(ci -> ci.getActiveArea() == ActiveArea.IN_GAME)
+                    .forEach(ci -> ci.onRemoving(slp));
+        }
     }
     
     public Set<CItem> getActiveItems() {
@@ -71,6 +91,10 @@ public class Collectibles extends DBEntity implements DBLoadable, DBSaveable {
         if(items.contains(id))
             return;
         items.add(id);
+    }
+    
+    public void removeItem(int id) {
+        items.remove(id);
     }
 
     public static Collectibles getDefault(SLPlayer slp) {
