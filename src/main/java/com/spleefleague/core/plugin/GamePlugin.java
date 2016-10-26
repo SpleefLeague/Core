@@ -5,11 +5,16 @@
  */
 package com.spleefleague.core.plugin;
 
+import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.events.PlayerEndedSpectatingEvent;
+import com.spleefleague.core.events.PlayerStartedSpectatingEvent;
+import com.spleefleague.core.queue.Battle;
 import com.spleefleague.core.queue.BattleManager;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.HashSet;
+import org.bukkit.Bukkit;
 
 /**
  *
@@ -22,6 +27,21 @@ public abstract class GamePlugin extends CorePlugin {
     public GamePlugin(String prefix, String chatPrefix) {
         super(prefix, chatPrefix);
         gamePlugins.add(this);
+    }
+    
+    public boolean spectateGracefully(Player target, Player p) {
+        boolean result = spectate(target, p);
+        if(result)
+            Bukkit.getPluginManager().callEvent(new PlayerStartedSpectatingEvent(p, target, this));
+        return result;
+    }
+    
+    public void unspectateGracefully(Player p) {
+        if(!isSpectating(p))
+            return;
+        Battle battle = getBattleManager().getBattleForSpectator(SpleefLeague.getInstance().getPlayerManager().get(p));
+        unspectate(p);
+        Bukkit.getPluginManager().callEvent(new PlayerEndedSpectatingEvent(p, battle));
     }
 
     public abstract boolean spectate(Player target, Player p);
@@ -82,7 +102,7 @@ public abstract class GamePlugin extends CorePlugin {
 
     public static void unspectateGlobal(Player p) {
         for (GamePlugin gp : gamePlugins) {
-            gp.unspectate(p);
+            gp.unspectateGracefully(p);
         }
     }
 

@@ -288,5 +288,9 @@ public class SLPlayer extends GeneralPlayer {
     public long getAreaMessageCooldown() {
         return areaMessageCooldown;
     }
+    
+    public void reapplyCollectibles() {
+        getCollectibles().reapply(this);
+    }
 
 }

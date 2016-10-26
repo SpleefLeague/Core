@@ -49,7 +49,7 @@ public class Collectibles extends DBEntity implements DBLoadable, DBSaveable {
     
     public void reapply(SLPlayer slp) {
         Set<CItem> activeItems = getActiveItems();
-        if(GamePlugin.isIngameGlobal(slp)) {
+        if(GamePlugin.isIngameGlobal(slp) || GamePlugin.isSpectatingGlobal(slp)) {
             activeItems.stream().filter(ci -> ci.getActiveArea() == ActiveArea.OUT_OF_GAME)
                     .forEach(ci -> ci.onRemoving(slp));
             activeItems.stream().filter(ci -> ci.getActiveArea() == ActiveArea.IN_GAME)
