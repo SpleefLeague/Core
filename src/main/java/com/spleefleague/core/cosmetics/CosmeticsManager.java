@@ -88,7 +88,7 @@ public class CosmeticsManager {
         add(new CommonHatItem(id++, new SimpleItemStack(Material.SPONGE, "&7Sponge hat"), 500, 1));
         add(new CommonHatItem(id++, new SimpleItemStack(Material.REDSTONE_LAMP_OFF, "&7Redstone lamp hat",
                 Lists.newArrayList("&7&oOff, because you are not smart")), 500, 1));
-        add(new CommonHatItem(id++, new SimpleItemStack(Material.BARRIER, "&4&l??&6Empty slot in google doc&4&l??"), 1000, 2));
+        add(new CommonHatItem(id++, new SimpleItemStack(Material.PUMPKIN, "&6Pumpkin"), 1000, 2));
         add(new CommonHatItem(id++, new SimpleItemStack(Material.THIN_GLASS, "&6Glass pane hat"), 1000, 2));
         add(new CommonHatItem(id++, new SimpleItemStack(Material.GLASS, "&6Glass block hat"), 1000, 2));
         add(new RainbowHatItem(id++, 2000, 4));
@@ -105,6 +105,43 @@ public class CosmeticsManager {
         add(new ParticleEffectItem(id++, "&6&lNote effect", EnumWrappers.Particle.NOTE, 2000, 4));
         add(new ParticleEffectItem(id++, "&6&lHeart effect", EnumWrappers.Particle.HEART, 2000, 4));
         add(new ParticleEffectItem(id++, "&6&lSnow shovel effect", EnumWrappers.Particle.SNOW_SHOVEL, 2000, 4));
+        
+        add(new HeadHatItem(id++, "OneSpoone",
+                "MjNiN2RjZmE3NTk2NjNkNjdhOGFmZTc5ZWQwMWExMjI2NzY2N2FiYjM3ZmU2MWRiODM5ZTIwM2NiMzEwMmIifX19",
+                500, 1, Lists.newArrayList("&7Admin of da SpleefLeague")));
+        add(new HeadHatItem(id++, "Jecth",
+                "MmRmMWQyY2RlNzI1MDc0OTYxNWE4NmRlZGE1MmRkNzA1ZjE5YTE5MWIwMzYzODZiMTQ3YzM4Y2Y2Yzk1NCJ9fX0=",
+                500, 1, Lists.newArrayList("&7Admin of da SpleefLeague")));
+        add(new HeadHatItem(id++, "Sinsie",
+                "OWFlNGNhZDE1MmZjMWYzYThkOTMyNTg3NzY3N2I0OWNiNDhjNGE1NmMyNWMyNTZlM2M1YWM0YzY0YmUxYTg3MyJ9fX0=",
+                500, 1, Lists.newArrayList("&7Admin of da SpleefLeague")));
+        add(new HeadHatItem(id++, "Blaezon",
+                "OWFlNGNhZDE1MmZjMWYzYThkOTMyNTg3NzY3N2I0OWNiNDhjNGE1NmMyNWMyNTZlM2M1YWM0YzY0YmUxYTg3MyJ9fX0=",
+                500, 1, Lists.newArrayList(
+                        "&7Admin & Lead Builder",
+                        "&7of da SpleefLeague"
+                )));
+        add(new HeadHatItem(id++, "Vatonage",
+                "YWE4ZWM5Y2IxOTQwMWIzNDdlYTA4NzYxNjU0NzE5ODkxM2Q0YjM5OTYxNmM0YTczOWUxZTFhMDU0MDZhNzMifX19",
+                500, 1, Lists.newArrayList(
+                        "&7Council & Builder",
+                        "&7of the SpleefLeague"
+                )));
+        add(new HeadHatItem(id++, "Worme",
+                "YTk1MWRkOTI3OWExYTdkMDkyMTkyNzU0ZDRmOWNlNGFlZGM5YTY0MWNhZGI2NzY3ZjU2NzViYWRlYTkyZGVlIn19fQ==",
+                500, 1, Lists.newArrayList(
+                        "&7Council & Builder",
+                        "&7of the SpleefLeague"
+                )));
+        add(new HeadHatItem(id++, "Joba",
+                "Y2ZhYzY0NmU0NGIyNzU3MjZhOWFlZTE3YmY2ZTZjZmU4NjYxN2VkOTQ5ZTRhNDhhMmUxZDkxMWU4NjljYTRmOCJ9fX0=",
+                500, 1, Lists.newArrayList("&7Retired Owner of the SpleefLeague")));
+        add(new HeadHatItem(id++, "Thalan10",
+                "ZWUyMzVkY2NmZDk0YWI2NGYwZWE0MjE0MjRlNjRiOWFhODc4NzM2YTg3MjJlNDkzZjUwMmY1MmRkYWE0YiJ9fX0=",
+                500, 1, Lists.newArrayList("&7SL 0.0 owner")));
+        add(new HeadHatItem(id++, "PxlPanda",
+                "ZmQzOTk3ZTQ0ZmVmNmQ1NDllMjE3YjMyMjI3YzZjYzE1ODgxMWE4OTQ4YmE5Nzg1ZDM5MjY0NzhmYTM3Zjg0In19fQ==",
+                500, 1, Lists.newArrayList("&7SL 1.0 & MultiCube owner")));
     }
     
 }
