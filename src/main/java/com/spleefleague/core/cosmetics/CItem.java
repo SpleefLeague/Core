@@ -31,7 +31,7 @@ public abstract class CItem {
     
     private ItemStack icon, selectedIcon, emptyIcon;
     
-    private boolean disabled = false;
+    private Availability availability = Availability.BUYABLE;
     
     public CItem(int id, String name, CType type, int costInCoins, int costInPremiumCredits) {
         this(id, name, type, new ArrayList<>(), costInCoins, costInPremiumCredits);
@@ -90,13 +90,14 @@ public abstract class CItem {
         return emptyIcon;
     }
     
-    public boolean isDisabled() {
-        return disabled;
+    public CItem availability(Availability availability) {
+        this.availability = availability;
+        setupEmptyIcon();
+        return this;
     }
     
-    public CItem disabled() {
-        disabled = true;
-        return this;
+    public Availability getAvailability() {
+        return availability;
     }
     
     public boolean select(Player p) {
@@ -137,11 +138,15 @@ public abstract class CItem {
             lore.addAll(description);
             lore.add("");
         }
-        lore.add(UtilChat.c("&7Left click to buy"));
-        lore.add(UtilChat.c("&7it for &6%d coins", costInCoins));
-        lore.add("");
-        lore.add(UtilChat.c("&7Right click to buy"));
-        lore.add(UtilChat.c("&7it for &b%d premium credits", costInPremiumCredits));
+        if(availability == Availability.BUYABLE) {
+            lore.add(UtilChat.c("&7Left click to buy"));
+            lore.add(UtilChat.c("&7it for &6%d coins", costInCoins));
+            lore.add("");
+            lore.add(UtilChat.c("&7Right click to buy"));
+            lore.add(UtilChat.c("&7it for &b%d premium credits", costInPremiumCredits));
+        }else {
+            lore.addAll(availability.getDescription());
+        }
         this.emptyIcon = new SimpleItemStack(Material.STAINED_CLAY, getName(), lore, (short) 14);
     }
     

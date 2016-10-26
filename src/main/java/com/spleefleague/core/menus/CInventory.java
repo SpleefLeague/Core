@@ -6,6 +6,7 @@ import static com.spleefleague.core.utils.inventorymenu.InventoryMenuAPI.menu;
 import com.google.common.collect.Lists;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.Theme;
+import com.spleefleague.core.cosmetics.Availability;
 import com.spleefleague.core.cosmetics.CItem;
 import com.spleefleague.core.cosmetics.CType;
 import com.spleefleague.core.cosmetics.Collectibles;
@@ -79,13 +80,13 @@ public class CInventory {
     }
     
     private void addItem(CItem item) {
-        if(item.isDisabled())
+        if(item.getAvailability() == Availability.DISABLED)
             return;
         addItem(item, lastSlot++);
     }
     
     private void addItem(CItem item, int slot) {
-        if(item.isDisabled())
+        if(item.getAvailability() == Availability.DISABLED)
             return;
         builder.component(slot, item()
                 .displayName(item.getName())
@@ -96,6 +97,10 @@ public class CInventory {
                     SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(p);
                     Collectibles col = slp.getCollectibles();
                     if(!col.getItems().contains(item.getId())) {
+                        if(item.getAvailability() != Availability.BUYABLE) {
+                            UtilChat.s(Theme.ERROR, p, "This item can not be bough.");
+                            return;
+                        }
                         if(clickType == ClickType.LEFT)
                             TransactionMenu.constructAndOpen(p, player -> item.buy(player, true, menu), menu, Lists.newArrayList(
                                     "&7Are you sure you want",

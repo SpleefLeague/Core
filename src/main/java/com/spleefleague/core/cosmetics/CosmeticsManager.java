@@ -92,7 +92,7 @@ public class CosmeticsManager {
         add(new CommonHatItem(id++, new SimpleItemStack(Material.THIN_GLASS, "&6Glass pane hat"), 1000, 2));
         add(new CommonHatItem(id++, new SimpleItemStack(Material.GLASS, "&6Glass block hat"), 1000, 2));
         add(new RainbowHatItem(id++, 2000, 4));
-        add(new CommonHatItem(id++, new SimpleItemStack(Material.BARRIER, "&6&lCountry flag (wip)"), 2000, 4).disabled());
+        add(new CommonHatItem(id++, new SimpleItemStack(Material.BARRIER, "&6&lCountry flag (wip)"), 2000, 4).availability(Availability.DISABLED));
         add(new CommonHatItem(id++, new SimpleItemStack(Material.BEACON, "&6&lBeacon hat"), 2000, 4));
         add(new CommonHatItem(id++, new SimpleItemStack(Material.MELON_BLOCK, "&c&lMelon hat"), 999999, 50));
         
