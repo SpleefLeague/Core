@@ -82,6 +82,17 @@ public abstract class BattleManager<Q extends QueueableArena, P extends GeneralP
         return null;
     }
 
+    public B getBattleForSpectator(P player) {
+        for (B battle : activeBattles) {
+            for (P p : battle.getSpectators()) {
+                if (player == p) {
+                    return battle;
+                }
+            }
+        }
+        return null;
+    }
+
     public B getBattle(Q arena) {
         for (B battle : activeBattles) {
             if (battle.getArena() == arena) {

@@ -3,7 +3,6 @@ package com.spleefleague.core.utils;
 import com.comphenix.packetwrapper.WrapperPlayServerMapChunk;
 import com.comphenix.packetwrapper.WrapperPlayServerMapChunkBulk;
 import com.comphenix.protocol.events.PacketContainer;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;

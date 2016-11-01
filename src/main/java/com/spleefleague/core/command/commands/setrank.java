@@ -5,12 +5,14 @@
  */
 package com.spleefleague.core.command.commands;
 
+import com.mongodb.client.MongoCollection;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.DatabaseConnection;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -46,7 +48,7 @@ public class setrank extends BasicCommand {
                         rank = null;
                     }
                     if (rank != null) {
-                        slp.setRank(rank);
+                        slp.setExpiringRank(rank, 0l);
                         success(cs, "Rank has been set.");
                     } else {
                         error(cs, "The rank " + args[1] + " does not exist!");
@@ -67,7 +69,11 @@ public class setrank extends BasicCommand {
         if (rank == null) {
             error(cs, "The rank " + r + " does not exist!");
         } else {
-            DatabaseConnection.updateFields(SpleefLeague.getInstance().getPluginDB().getCollection("Players"), new Document("username", name), new Document("rank", rank.getName()));
+            DatabaseConnection.updateFields(SpleefLeague.getInstance().getPluginDB().getCollection("Players"),
+                    new Document("username", name),
+                    Pair.<String, Object>of("rank", rank.getName()),
+                    Pair.<String, Object>of("rankExpirationTime", 0l)
+            );
             success(cs, "Attempting rank update for offline player.");
         }
     }

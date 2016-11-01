@@ -12,7 +12,6 @@ import com.spleefleague.core.io.DBLoad;
 import com.spleefleague.core.io.DBLoadable;
 import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.DBSaveable;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,9 +24,11 @@ public class PlayerOptions extends DBEntity implements DBLoadable, DBSaveable {
     @DBLoad(fieldName = "disabledChannels", typeConverter = ChatChannel.FromStringConverter.class)
     @DBSave(fieldName = "disabledChannels", typeConverter = ChatChannel.FromStringConverter.class)
     protected Set<ChatChannel> disabledChannels;
+    
     @DBLoad(fieldName = "enabledChannels", typeConverter = ChatChannel.FromStringConverter.class)
     @DBSave(fieldName = "enabledChannels", typeConverter = ChatChannel.FromStringConverter.class)
     protected Set<ChatChannel> enabledChannels;
+    
     @DBLoad(fieldName = "visibilityMode")
     @DBSave(fieldName = "visibilityMode")
     private VisibilityMode visibilityMode;

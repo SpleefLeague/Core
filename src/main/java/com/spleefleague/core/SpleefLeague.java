@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.spleefleague.core;
 
 import com.mongodb.MongoClient;
@@ -12,6 +7,7 @@ import com.mongodb.client.MongoDatabase;
 import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.command.CommandLoader;
+import com.spleefleague.core.cosmetics.CosmeticsManager;
 import com.spleefleague.core.io.Config;
 import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.io.Settings;
@@ -86,6 +82,7 @@ public class SpleefLeague extends CorePlugin {
         EnvironmentListener.init();
         InfractionListener.init();
         InventoryMenuListener.init();
+        CosmeticsManager.init();
         ConnectionListener.init();
         AfkListener.init();
         InventoryMenuTemplateRepository.initTemplates();

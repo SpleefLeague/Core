@@ -255,3 +255,18 @@ commands:
         aliases: [bc]
         usage: |
             /<command> [local] <message>
+    settemprank:
+        description: Command to set temporary ranks
+        aliases: []
+        usage: |
+            /<command> <player> <rank> <time in hours>
+    grantcurrency:
+        description: Command to change amount of coins/premium credits player has
+        aliases: []
+        usage: |
+            /<command> <player> <currency type> <amount>
+    collectibles:
+        description: Command to list/give/take cosmetic items
+        aliases: [cosmetics, col]
+        usage: |
+            /<command>

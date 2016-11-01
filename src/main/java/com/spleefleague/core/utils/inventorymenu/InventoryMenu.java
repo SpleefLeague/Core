@@ -9,14 +9,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import com.spleefleague.core.SpleefLeague;
-import com.spleefleague.core.listeners.InventoryMenuListener;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.function.Dynamic;
 import java.util.HashMap;
 import java.util.stream.Collectors;
+import org.bukkit.event.inventory.ClickType;
 
 public class InventoryMenu extends InventoryMenuComponent implements InventoryHolder {
 
@@ -116,7 +114,7 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
     }
 
     @Override
-    public void selected() {
+    public void selected(ClickType clickType) {
         open();
     }
 
@@ -144,11 +142,11 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
         }
     }
 
-    public void selectItem(int index) {
+    public void selectItem(int index, ClickType clickType) {
         if (currentComponents.containsKey(index)) {
             InventoryMenuComponent component = currentComponents.get(index);
             if (component.hasAccess(slp)) {
-                component.selected();
+                component.selected(clickType);
             } else {
                 slp.closeInventory();
                 slp.sendMessage(ChatColor.RED + "You don't have access to this");

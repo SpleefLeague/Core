@@ -2,6 +2,7 @@ package com.spleefleague.core.utils.inventorymenu;
 
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.function.Dynamic;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class InventoryMenuComponent {
@@ -49,5 +50,5 @@ public abstract class InventoryMenuComponent {
 
     }
 
-    abstract void selected();
+    abstract void selected(ClickType clickType);
 }

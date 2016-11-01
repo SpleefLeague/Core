@@ -2,6 +2,7 @@ package com.spleefleague.core.player;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
+import com.spleefleague.core.cosmetics.Collectibles;
 import com.spleefleague.core.io.DBLoad;
 import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.TypeConverter.RankStringConverter;
@@ -24,12 +25,15 @@ import java.util.UUID;
 public class SLPlayer extends GeneralPlayer {
 
     private Rank rank;
+    private Rank eternalRank;
+    private long rankExpirationTime;
     private UUID lastChatPartner;
-    private int coins;
+    private int coins, premiumCredits;
     private HashSet<ChatChannel> chatChannels;
     private ChatChannel sendingChannel;
     private PlayerState state = PlayerState.IDLE;
     private PlayerOptions options;
+    private Collectibles collectibles;
     private boolean hasForumAccount = false;
     private Map<UUID, Challenge> activeChallenges;
     private ChatColor chatArrowColor = ChatColor.DARK_GRAY;
@@ -65,6 +69,41 @@ public class SLPlayer extends GeneralPlayer {
             }
             rank.managePermissions(this);
         }
+        checkRankForExpiration();
+    }
+
+    @DBSave(fieldName = "eternalRank", typeConverter = RankStringConverter.class)
+    public Rank getEternalRank() {
+        return eternalRank;
+    }
+
+    @DBLoad(fieldName = "eternalRank", typeConverter = RankStringConverter.class)
+    public void setEternalRank(Rank rank) {
+        this.eternalRank = rank == null ? Rank.DEFAULT : rank;
+    }
+
+    @DBSave(fieldName = "rankExpirationTime")
+    public long getRankExpirationTime() {
+        return rankExpirationTime;
+    }
+    
+    @DBLoad(fieldName = "rankExpirationTime")
+    public void setRankExpirationTime(long expirationgTime) {
+        this.rankExpirationTime = expirationgTime;
+    }
+    
+    private void checkRankForExpiration() {
+        if(this.rankExpirationTime == 0l)
+            return;
+        if(System.currentTimeMillis() > this.rankExpirationTime) {
+            setRankExpirationTime(0l);
+            setRank(this.eternalRank);
+        }
+    }
+    
+    public void setExpiringRank(Rank rank, long rankExpirationTime) {
+        setRankExpirationTime(rankExpirationTime);
+        setRank(rank);
     }
 
     @DBLoad(fieldName = "coins")
@@ -75,6 +114,24 @@ public class SLPlayer extends GeneralPlayer {
     @DBSave(fieldName = "coins")
     public int getCoins() {
         return coins;
+    }
+    
+    public void changeCoins(int delta) {
+        setCoins(Math.max(0, coins + delta));
+    }
+    
+    @DBLoad(fieldName = "premiumCredits")
+    public void setPremiumCredits(int credits) {
+        this.premiumCredits = credits;
+    }
+    
+    @DBSave(fieldName = "premiumCredits")
+    public int getPremiumCredits() {
+        return premiumCredits;
+    }
+    
+    public void changePremiumCredits(int delta) {
+        setPremiumCredits(Math.max(0, premiumCredits + delta));
     }
 
     @DBSave(fieldName = "lastChatPartner", typeConverter = UUIDStringConverter.class)
@@ -96,6 +153,16 @@ public class SLPlayer extends GeneralPlayer {
     private void setOptions(PlayerOptions options) {
         this.options = options;
         options.apply(this);
+    }
+    
+    @DBSave(fieldName = "collectibles")
+    public Collectibles getCollectibles() {
+        return collectibles;
+    }
+    
+    @DBLoad(fieldName = "collectibles", priority = -100)
+    private void setCollectibles(Collectibles collectibles) {
+        this.collectibles = collectibles;
     }
 
     protected void setReceivingChatChannels(HashSet<ChatChannel> chatChannels) {
@@ -167,9 +234,15 @@ public class SLPlayer extends GeneralPlayer {
 
     @Override
     public void done() {
-        if (this.options == null) {
-            this.options = PlayerOptions.getDefault();
-            this.options.apply(this);
+        try {
+            if(this.options == null) {
+                this.options = PlayerOptions.getDefault();
+                this.options.apply(this);
+            }
+            if(this.collectibles == null)
+                this.collectibles = Collectibles.getDefault();
+        }finally {
+            this.collectibles.apply(this);
         }
     }
 
@@ -178,6 +251,7 @@ public class SLPlayer extends GeneralPlayer {
         super.setDefaults();
         setRank(Rank.DEFAULT);
         setCoins(0);
+        setPremiumCredits(0);
         this.chatChannels.clear();
         this.chatChannels.add(ChatChannel.GLOBAL);
         setSendingChannel(ChatChannel.GLOBAL);
@@ -213,6 +287,10 @@ public class SLPlayer extends GeneralPlayer {
 
     public long getAreaMessageCooldown() {
         return areaMessageCooldown;
+    }
+    
+    public void reapplyCollectibles() {
+        getCollectibles().reapply(this);
     }
 
 }
