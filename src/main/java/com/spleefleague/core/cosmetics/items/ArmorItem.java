@@ -2,6 +2,7 @@ package com.spleefleague.core.cosmetics.items;
 
 import com.spleefleague.core.cosmetics.CItem;
 import com.spleefleague.core.cosmetics.CType;
+import com.spleefleague.core.utils.SimpleItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,7 +37,7 @@ public class ArmorItem extends CItem {
     public void onRemoving(Player p) {
         ItemStack helmet = p.getInventory().getHelmet();
         p.getInventory().setArmorContents(EMPTY_ARMOR);
-        if(helmet != armor[3])
+        if(!SimpleItemStack.areEqualByNames(helmet, armor[3]))
             p.getInventory().setHelmet(helmet);
     }
 

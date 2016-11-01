@@ -1,13 +1,17 @@
 package com.spleefleague.core.cosmetics.items;
 
+import com.comphenix.packetwrapper.AbstractPacket;
 import com.comphenix.packetwrapper.WrapperPlayServerWorldParticles;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.cosmetics.CItem;
 import com.spleefleague.core.cosmetics.CType;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -28,7 +32,7 @@ public class ParticleEffectItem extends CItem {
                 INTERVAL, INTERVAL);
     }
     
-    private static void sendToLocation(EnumWrappers.Particle effect, Location loc, float offsetX, float offsetY, float offsetZ, float speed, int count) {
+    private static AbstractPacket constructPacketForLocation(EnumWrappers.Particle effect, Location loc, float offsetX, float offsetY, float offsetZ, float speed, int count) {
         WrapperPlayServerWorldParticles wrapper = new WrapperPlayServerWorldParticles();
         wrapper.setParticleType(effect);
         wrapper.setX((float) loc.getX());
@@ -38,7 +42,12 @@ public class ParticleEffectItem extends CItem {
         wrapper.setOffsetX(offsetY);
         wrapper.setOffsetX(offsetZ);
         wrapper.setNumberOfParticles(count);
-        Bukkit.getOnlinePlayers().forEach(wrapper::sendPacket);
+        return wrapper;
+    }
+    
+    private static void sendPacketsToLocationInRadius(Collection<AbstractPacket> packets, Location loc, int radius) {
+        Bukkit.getOnlinePlayers().stream().filter(p -> p.getLocation().distance(loc) < radius)
+                .forEach(p -> packets.forEach(packet -> packet.sendPacket(p)));
     }
     
     //All magic in this function happens cause vanilla minecraft
@@ -48,13 +57,15 @@ public class ParticleEffectItem extends CItem {
         Location loc = p.getLocation();
         int i = 0;
         double x = loc.getX(), y = loc.getY(), z = loc.getZ();
+        Set<AbstractPacket> packets = new HashSet<>();
         do {
             loc.setY(y += (1 + R.nextInt(5)) * 0.15f);
             loc.setX(x + ((100 - R.nextInt(200)) / 100f * offset));
             loc.setZ(z + ((100 - R.nextInt(200)) / 100f * offset));
-            sendToLocation(effect, loc, mcoffset, mcoffset, mcoffset, 0.75f, 6);
+            packets.add(constructPacketForLocation(effect, loc, mcoffset, mcoffset, mcoffset, 0.75f, 6));
             ++i;
         }while(i < 4);
+        sendPacketsToLocationInRadius(packets, loc, 48);
     }
     
     private final EnumWrappers.Particle effect;

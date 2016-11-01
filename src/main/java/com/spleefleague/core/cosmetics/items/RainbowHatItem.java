@@ -45,6 +45,7 @@ public class RainbowHatItem extends CItem {
     @Override
     public void onRemoving(Player p) {
         AFFECTED_PLAYERS.remove(p);
+        CommonHatItem.handleRemoving(p);
     }
 
 }

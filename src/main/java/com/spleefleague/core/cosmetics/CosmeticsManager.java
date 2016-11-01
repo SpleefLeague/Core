@@ -51,6 +51,19 @@ public class CosmeticsManager {
             new SimpleItemStack(Material.LEATHER_CHESTPLATE, "&7Leather chestplate"),
             new SimpleItemStack(Material.LEATHER_HELMET, "&7Leather helmet")
         }, 500, 1));
+        addColoredLeatherArmorSet(id++, "&fWhite", Color.WHITE);
+        addColoredLeatherArmorSet(id++, "&8Black", Color.BLACK);
+        addColoredLeatherArmorSet(id++, "&7Silver", Color.SILVER);
+        addColoredLeatherArmorSet(id++, "&bAqua", Color.AQUA);
+        addColoredLeatherArmorSet(id++, "&3Teal", Color.TEAL);
+        addColoredLeatherArmorSet(id++, "&eYellow", Color.YELLOW);
+        addColoredLeatherArmorSet(id++, "&6Orange", Color.ORANGE);
+        addColoredLeatherArmorSet(id++, "&9Blue", Color.BLUE);
+        addColoredLeatherArmorSet(id++, "&1Navy", Color.NAVY);
+        addColoredLeatherArmorSet(id++, "&cRed", Color.RED);
+        addColoredLeatherArmorSet(id++, "&4Maroon", Color.MAROON);
+        addColoredLeatherArmorSet(id++, "&aLime", Color.LIME);
+        addColoredLeatherArmorSet(id++, "&2Green", Color.GREEN);
         add(new ArmorItem(id++, "&6&lGold armor", new ItemStack[]{
             new SimpleItemStack(Material.GOLD_BOOTS, "&6&lGold boots"),
             new SimpleItemStack(Material.GOLD_LEGGINGS, "&6&lGold leggings"),
@@ -63,18 +76,26 @@ public class CosmeticsManager {
             new SimpleItemStack(Material.DIAMOND_CHESTPLATE, "&b&lDiamond chestplate"),
             new SimpleItemStack(Material.DIAMOND_HELMET, "&b&lDiamond helmet")
         }, 5000, 10));
-        add(new ArmorItem(id++, "&bAqua leather armor &4&l(TEST)", new ItemStack[]{
-            new SimpleItemStack(Material.LEATHER_BOOTS, "&bAqua leather boots", Color.AQUA),
-            new SimpleItemStack(Material.LEATHER_LEGGINGS, "&bAqua leather leggings", Color.AQUA),
-            new SimpleItemStack(Material.LEATHER_CHESTPLATE, "&bAqua leather chestplate", Color.AQUA),
-            new SimpleItemStack(Material.LEATHER_HELMET, "&bAqua leather helmet", Color.AQUA)
-        }, 500, 1));
-        add(new ArmorItem(id++, "&5&lEnchanted diamond armor &4&l(TEST)", new ItemStack[]{
+        add(new ArmorItem(id++, "&7&lChainmail armor", new ItemStack[]{
+            new SimpleItemStack(Material.CHAINMAIL_BOOTS, "&7&lChainmail boots"),
+            new SimpleItemStack(Material.CHAINMAIL_LEGGINGS, "&7&lChainmail leggings"),
+            new SimpleItemStack(Material.CHAINMAIL_CHESTPLATE, "&7&lChainmail chestplate"),
+            new SimpleItemStack(Material.CHAINMAIL_HELMET, "&7&lChainmail helmet")
+        }, 500, 1).availability(Availability.UNAVAILABLE));
+        for(int i = 0; i < 5; ++i) {
+            add(new ArmorItem(id++, "&4&lEmpty armor slot", new ItemStack[]{
+                new SimpleItemStack(Material.CHAINMAIL_BOOTS, "&7&lChainmail boots"),
+                new SimpleItemStack(Material.CHAINMAIL_LEGGINGS, "&7&lChainmail leggings"),
+                new SimpleItemStack(Material.CHAINMAIL_CHESTPLATE, "&7&lChainmail chestplate"),
+                new SimpleItemStack(Material.CHAINMAIL_HELMET, "&7&lChainmail helmet")
+            }, 1, 1).availability(Availability.DISABLED));
+        }
+        add(new ArmorItem(id++, "&5&lEnchanted diamond armor", new ItemStack[]{
             new SimpleItemStack(Material.DIAMOND_BOOTS, "&5&lDiamond boots", Enchantment.PROTECTION_ENVIRONMENTAL, 10),
             new SimpleItemStack(Material.DIAMOND_LEGGINGS, "&5&lDiamond leggings", Enchantment.PROTECTION_ENVIRONMENTAL, 10),
             new SimpleItemStack(Material.DIAMOND_CHESTPLATE, "&5&lDiamond chestplate", Enchantment.PROTECTION_ENVIRONMENTAL, 10),
             new SimpleItemStack(Material.DIAMOND_HELMET, "&5&lDiamond helmet", Enchantment.PROTECTION_ENVIRONMENTAL, 10)
-        }, 500, 1));
+        }, 500, 1).availability(Availability.UNAVAILABLE));
         
         add(new StatusEffectItem(id++, "&7Nausea", PotionEffectType.CONFUSION, 1, 500, 1));
         add(new StatusEffectItem(id++, "&7Blindness", PotionEffectType.BLINDNESS, 1, 500, 1));
@@ -83,28 +104,6 @@ public class CosmeticsManager {
         add(new StatusEffectItem(id++, "&6Water breathing", PotionEffectType.WATER_BREATHING, 1, 1000, 2));
         add(new StatusEffectItem(id++, "&6&lSpeed II", PotionEffectType.SPEED, 2, 2000, 4));
         add(new StatusEffectItem(id++, "&6&lNight vision", PotionEffectType.NIGHT_VISION, 1, 2000, 4));
-        
-        add(new CommonHatItem(id++, new SimpleItemStack(Material.DIRT, "&7Dirt block hat"), 500, 1));
-        add(new CommonHatItem(id++, new SimpleItemStack(Material.SPONGE, "&7Sponge hat"), 500, 1));
-        add(new CommonHatItem(id++, new SimpleItemStack(Material.REDSTONE_LAMP_OFF, "&7Redstone lamp hat",
-                Lists.newArrayList("&7&oOff, because you are not smart")), 500, 1));
-        add(new CommonHatItem(id++, new SimpleItemStack(Material.PUMPKIN, "&6Pumpkin"), 1000, 2));
-        add(new CommonHatItem(id++, new SimpleItemStack(Material.THIN_GLASS, "&6Glass pane hat"), 1000, 2));
-        add(new CommonHatItem(id++, new SimpleItemStack(Material.GLASS, "&6Glass block hat"), 1000, 2));
-        add(new RainbowHatItem(id++, 2000, 4));
-        add(new CommonHatItem(id++, new SimpleItemStack(Material.BARRIER, "&6&lCountry flag (wip)"), 2000, 4).availability(Availability.DISABLED));
-        add(new CommonHatItem(id++, new SimpleItemStack(Material.BEACON, "&6&lBeacon hat"), 2000, 4));
-        add(new CommonHatItem(id++, new SimpleItemStack(Material.MELON_BLOCK, "&c&lMelon hat"), 999999, 50));
-        
-        add(new ParticleEffectItem(id++, "&7Explosion effect", EnumWrappers.Particle.EXPLOSION_NORMAL, 500, 1));
-        add(new ParticleEffectItem(id++, "&7Large smoke effect", EnumWrappers.Particle.SMOKE_LARGE, 500, 1));
-        add(new ParticleEffectItem(id++, "&7Red dust effect", EnumWrappers.Particle.REDSTONE, 500, 1));
-        add(new ParticleEffectItem(id++, "&6Angry villager effect", EnumWrappers.Particle.VILLAGER_ANGRY, 1000, 2));
-        add(new ParticleEffectItem(id++, "&6Happy villager effect", EnumWrappers.Particle.VILLAGER_HAPPY, 1000, 2));
-        add(new ParticleEffectItem(id++, "&6Spell effect", EnumWrappers.Particle.SPELL, 1000, 2));
-        add(new ParticleEffectItem(id++, "&6&lNote effect", EnumWrappers.Particle.NOTE, 2000, 4));
-        add(new ParticleEffectItem(id++, "&6&lHeart effect", EnumWrappers.Particle.HEART, 2000, 4));
-        add(new ParticleEffectItem(id++, "&6&lSnow shovel effect", EnumWrappers.Particle.SNOW_SHOVEL, 2000, 4));
         
         add(new HeadHatItem(id++, "OneSpoone",
                 "MjNiN2RjZmE3NTk2NjNkNjdhOGFmZTc5ZWQwMWExMjI2NzY2N2FiYjM3ZmU2MWRiODM5ZTIwM2NiMzEwMmIifX19",
@@ -142,6 +141,38 @@ public class CosmeticsManager {
         add(new HeadHatItem(id++, "PxlPanda",
                 "ZmQzOTk3ZTQ0ZmVmNmQ1NDllMjE3YjMyMjI3YzZjYzE1ODgxMWE4OTQ4YmE5Nzg1ZDM5MjY0NzhmYTM3Zjg0In19fQ==",
                 500, 1, Lists.newArrayList("&7SL 1.0 & MultiCube owner")));
+        
+        add(new CommonHatItem(id++, new SimpleItemStack(Material.DIRT, "&7Dirt block hat"), 500, 1));
+        add(new CommonHatItem(id++, new SimpleItemStack(Material.SPONGE, "&7Sponge hat"), 500, 1));
+        add(new CommonHatItem(id++, new SimpleItemStack(Material.REDSTONE_LAMP_OFF, "&7Redstone lamp hat",
+                Lists.newArrayList("&7&oOff, because you are not smart")), 500, 1));
+        add(new CommonHatItem(id++, new SimpleItemStack(Material.PUMPKIN, "&6Pumpkin hat"), 1000, 2));
+        add(new CommonHatItem(id++, new SimpleItemStack(Material.THIN_GLASS, "&6Glass pane hat"), 1000, 2));
+        add(new CommonHatItem(id++, new SimpleItemStack(Material.GLASS, "&6Glass block hat"), 1000, 2));
+        add(new RainbowHatItem(id++, 2000, 4));
+        add(new CommonHatItem(id++, new SimpleItemStack(Material.BARRIER, "&6&lCountry flag (wip)"), 2000, 4).availability(Availability.DISABLED));
+        add(new CommonHatItem(id++, new SimpleItemStack(Material.BEACON, "&6&lBeacon hat"), 2000, 4));
+        add(new CommonHatItem(id++, new SimpleItemStack(Material.MELON_BLOCK, "&c&lMelon hat"), 999999, 50));
+        
+        add(new ParticleEffectItem(id++, "&7Explosion effect", EnumWrappers.Particle.EXPLOSION_NORMAL, 500, 1));
+        add(new ParticleEffectItem(id++, "&7Large smoke effect", EnumWrappers.Particle.SMOKE_LARGE, 500, 1));
+        add(new ParticleEffectItem(id++, "&7Red dust effect", EnumWrappers.Particle.REDSTONE, 500, 1));
+        add(new ParticleEffectItem(id++, "&6Angry villager effect", EnumWrappers.Particle.VILLAGER_ANGRY, 1000, 2));
+        add(new ParticleEffectItem(id++, "&6Happy villager effect", EnumWrappers.Particle.VILLAGER_HAPPY, 1000, 2));
+        add(new ParticleEffectItem(id++, "&6Spell effect", EnumWrappers.Particle.SPELL, 1000, 2));
+        add(new ParticleEffectItem(id++, "&6&lNote effect", EnumWrappers.Particle.NOTE, 2000, 4));
+        add(new ParticleEffectItem(id++, "&6&lHeart effect", EnumWrappers.Particle.HEART, 2000, 4));
+        add(new ParticleEffectItem(id++, "&6&lSnow shovel effect", EnumWrappers.Particle.SNOW_SHOVEL, 2000, 4));
+        
+    }
+    
+    private static void addColoredLeatherArmorSet(int id, String colorName, Color color) {
+        add(new ArmorItem(id, colorName + " leather armor", new ItemStack[]{
+            new SimpleItemStack(Material.LEATHER_BOOTS, colorName + " leather boots", color),
+            new SimpleItemStack(Material.LEATHER_LEGGINGS, colorName + " leather leggings", color),
+            new SimpleItemStack(Material.LEATHER_CHESTPLATE, colorName + " leather chestplate", color),
+            new SimpleItemStack(Material.LEATHER_HELMET, colorName + " leather helmet", color)
+        }, 500, 1));
     }
     
 }

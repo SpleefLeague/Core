@@ -38,7 +38,7 @@ public class CInventory {
                 .displayName(UtilChat.c("&f%s", type.getSectionName()))
                 .displayIcon(type.getIcon());
         this.type = type;
-        builder.component(3, 3, item()
+        builder.component(3, 4, item()
                 .displayName(UtilChat.c("&fBack to Cosmetics Menu"))
                 .displayIcon(Material.ARROW)
                 .onClick(e -> {
@@ -46,7 +46,7 @@ public class CInventory {
                     CosmeticsMenu.getMenu().construct(slp).open();
                 })
         );
-        builder.component(4, 3, item()
+        builder.component(4, 4, item()
                 .displayName(UtilChat.c("&6Currency"))
                 .description(slp -> Lists.newArrayList(
                         UtilChat.c("&7You have &6%d coins", slp.getCoins()),
@@ -57,7 +57,7 @@ public class CInventory {
                     UtilChat.s(Theme.INFO, e.getPlayer(), "Earn coins by playing games & buy more premium credits on our website!");
                 })
         );
-        builder.component(5, 3, item()
+        builder.component(5, 4, item()
                 .displayName(UtilChat.c("&cTurn off"))
                 .displayIcon(Material.BARRIER)
                 .onClick(e -> {

@@ -118,4 +118,23 @@ public class SimpleItemStack extends ItemStack {
         list.addAll(Arrays.asList(desc.split("\\|")));
         return list;
     }
+    
+    public static boolean areEqualByNames(ItemStack is1, ItemStack is2) {
+        if(is1 == null)
+            return is2 == null;
+        if(is2 == null)
+            return false;
+        ItemMeta im1 = is1.getItemMeta(), im2 = is2.getItemMeta();
+        if(im1 == null)
+            return im2 == null;
+        if(im2 == null)
+            return false;
+        String name1 = im1.getDisplayName(), name2 = im2.getDisplayName();
+        if(name1 == null)
+            return name2 == null;
+        if(name2 == null)
+            return false;
+        return name1.equals(name2);
+    }
+    
 }

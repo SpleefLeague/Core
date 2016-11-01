@@ -26,8 +26,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
  */
 public class CosmeticsListener implements Listener {
     
-    private final static PlayerManager<SLPlayer> pm = SpleefLeague.getInstance().getPlayerManager();
-    
     //Is being initialized in CosmeticsManager
     public static void init() {
         Bukkit.getPluginManager().registerEvents(new CosmeticsListener(), SpleefLeague.getInstance());
@@ -37,14 +35,14 @@ public class CosmeticsListener implements Listener {
     
     @EventHandler(priority = EventPriority.LOW)
     public void onQuit(PlayerQuitEvent e) {
-        SLPlayer slp = pm.get(e.getPlayer());
+        SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(e.getPlayer());
         slp.getCollectibles().unapply(slp);
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        SLPlayer slp = pm.get(p);
+        SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(p);
         if(e.getSlotType() == SlotType.ARMOR)
             if(slp.getCollectibles().isActive(CType.ARMOR) || slp.getCollectibles().isActive(CType.HAT))
                 e.setCancelled(true);
@@ -62,18 +60,19 @@ public class CosmeticsListener implements Listener {
     
     @EventHandler
     public void onPlayerStartedSpectating(PlayerStartedSpectatingEvent e) {
-        pm.get(e.getPlayer()).reapplyCollectibles();
+        SpleefLeague.getInstance().getPlayerManager().get(e.getPlayer()).reapplyCollectibles();
     }
     
     @EventHandler
     public void onPlayerEndedSpectating(PlayerEndedSpectatingEvent e) {
-        pm.get(e.getPlayer()).reapplyCollectibles();
+        SpleefLeague.getInstance().getPlayerManager().get(e.getPlayer()).reapplyCollectibles();
     }
     
     private void reapplyCollectiblesForAllPlayersOfDaBattle(Battle battle) {
         Collection<Player> players = new HashSet<>();
         players.addAll(battle.getPlayers());
         players.addAll(battle.getSpectators());
+        PlayerManager<SLPlayer> pm = SpleefLeague.getInstance().getPlayerManager();
         players.stream().map(pm::get).forEach(SLPlayer::reapplyCollectibles);
     }
     

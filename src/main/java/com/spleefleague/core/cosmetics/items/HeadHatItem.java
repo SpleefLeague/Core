@@ -37,7 +37,7 @@ public class HeadHatItem extends CItem {
 
     @Override
     public void onRemoving(Player p) {
-        p.getInventory().setHelmet(null);
+        CommonHatItem.handleRemoving(p);
     }
     
     private static ItemStack createSkull(String name, String urlToFormat) {

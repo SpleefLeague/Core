@@ -14,8 +14,8 @@ public enum Availability {
     
     BUYABLE(Collections.emptyList()),
     UNAVAILABLE(Lists.newArrayList(
-            "&7This item is currently",
-            "&7unable to obtain."
+            "&cThis item is currently",
+            "&cunable to obtain."
     )),
     DISABLED(Collections.emptyList());
     

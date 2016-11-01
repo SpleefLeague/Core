@@ -26,12 +26,12 @@ public class CosmeticsMenu {
                 .displayIcon(Material.GOLD_HELMET)
                 .description(slp -> Lists.newArrayList(
                         UtilChat.c("&7Click here to open"),
-                        UtilChat.c("&7cosmetics menu."),
-                        UtilChat.c(""),
-                        UtilChat.c("&4&lWork in progress")
-                ))
-                .rank(Rank.DEVELOPER)
-                .visibilityController(slp -> slp.getRank().hasPermission(Rank.DEVELOPER));
+                        UtilChat.c("&7cosmetics menu.")
+//                        UtilChat.c(""),
+//                        UtilChat.c("&4&lWork in progress")
+                ));
+//                .rank(Rank.DEVELOPER)
+//                .visibilityController(slp -> slp.getRank().hasPermission(Rank.DEVELOPER));
         for(CType type : CType.values())
             builder.component(new CInventory(type).getMenu());
         menu = builder.build();
