@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  *
@@ -57,6 +58,7 @@ public class SpleefLeague extends CorePlugin {
     private PortalManager portalManager;
     private DynamicCommandManager dynamicCommandManager;
     private DebuggerHostManager debuggerHostManager;
+    private ServerType serverType;
 
     public SpleefLeague() {
         super("[SpleefLeague]", ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
@@ -97,6 +99,8 @@ public class SpleefLeague extends CorePlugin {
         debuggerHostManager = new DebuggerHostManager();
 
         debuggerHostManager.reloadAll(Settings.getList("debugger_hosts"));
+        
+        loadServerType();
     }
 
     @Override
@@ -178,6 +182,19 @@ public class SpleefLeague extends CorePlugin {
             Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void loadServerType() {
+        serverType = ServerType.MAIN;
+        FileConfiguration config = getConfig();
+        if(!config.isSet("server_type")) {
+            config.set("server_type", "MAIN");
+            saveConfig();
+            return;
+        }
+        try {
+            serverType = ServerType.valueOf(config.getString("server_type").toUpperCase());
+        }catch(Exception ex) {}
+    }
 
     public Rank getMinimumJoinRank() {
         return minimumJoinRank;
@@ -213,6 +230,10 @@ public class SpleefLeague extends CorePlugin {
 
     public DebuggerHostManager getDebuggerHostManager() {
         return this.debuggerHostManager;
+    }
+    
+    public ServerType getServerType() {
+        return serverType;
     }
 
     // Use the SpawnManager instead.

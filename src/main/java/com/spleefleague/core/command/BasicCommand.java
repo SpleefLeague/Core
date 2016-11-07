@@ -5,6 +5,7 @@
  */
 package com.spleefleague.core.command;
 
+import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 import com.spleefleague.core.plugin.CorePlugin;
@@ -12,6 +13,10 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.utils.ServerType;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
@@ -29,7 +34,8 @@ public abstract class BasicCommand implements CommandExecutor {
     protected CorePlugin plugin;
     protected String name;
     protected Rank requiredRank;
-    protected Rank[] additionalRanks;
+    protected final Set<Rank> additionalRanks;
+    protected final Map<ServerType, Set<Rank>> additionalRanksPerServerTypes = new HashMap<>();
     protected boolean hasCommandBlockExecutor = false;
     private String[] usages = null;
     public static final String NO_COMMAND_PERMISSION_MESSAGE = "You don't have permission to use this command!";
@@ -44,7 +50,7 @@ public abstract class BasicCommand implements CommandExecutor {
         this.plugin = plugin;
         this.name = name;
         this.requiredRank = requiredRank;
-        this.additionalRanks = additionalRanks;
+        this.additionalRanks = Sets.newHashSet(additionalRanks);
         usage = usage.replaceAll(Pattern.quote("<command>"), name);
         this.usages = StringUtils.split(usage, "\n");
         plugin.getCommand(name).setExecutor(this);
@@ -57,7 +63,16 @@ public abstract class BasicCommand implements CommandExecutor {
                 Player p = (Player) sender;
                 SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(p);
                 if (slp != null) {
-                    if (slp.getRank() != null && slp.getRank().hasPermission(requiredRank) || Arrays.asList(additionalRanks).contains(slp.getRank())) {
+                    boolean hasPermissions = false;
+                    Rank rank = slp.getRank();
+                    if(rank != null) {
+                        hasPermissions = rank.hasPermission(requiredRank);
+                        hasPermissions |= additionalRanks.contains(rank);
+                        Set<Rank> additionalRanksForCurrentServerType = additionalRanksPerServerTypes.get(SpleefLeague.getInstance().getServerType());
+                        if(additionalRanksForCurrentServerType != null)
+                            hasPermissions |= additionalRanksForCurrentServerType.contains(rank);
+                    }
+                    if (hasPermissions) {
                         run(p, slp, cmd, args);
                     } else {
                         error(sender, NO_COMMAND_PERMISSION_MESSAGE);
@@ -78,6 +93,10 @@ public abstract class BasicCommand implements CommandExecutor {
             e.printStackTrace();
         }
         return true;
+    }
+    
+    protected void setAdditionalRanksDependingOnServerType(ServerType type, Rank... ranks) {
+        additionalRanksPerServerTypes.put(type, Sets.newHashSet(ranks));
     }
 
     protected void error(CommandSender cs, String message) {

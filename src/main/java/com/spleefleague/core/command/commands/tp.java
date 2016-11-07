@@ -11,6 +11,7 @@ import com.spleefleague.core.player.PlayerState;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
+import com.spleefleague.core.utils.ServerType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
@@ -23,7 +24,8 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 public class tp extends BasicCommand {
 
     public tp(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage, Rank.MODERATOR, Rank.BUILDER, Rank.ORGANIZER);
+        super(plugin, name, usage, Rank.MODERATOR, Rank.ORGANIZER);
+        setAdditionalRanksDependingOnServerType(ServerType.BUILD, Rank.BUILDER);
     }
 
     @Override
