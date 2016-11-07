@@ -5,7 +5,6 @@
  */
 package com.spleefleague.core.command.commands;
 
-import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
@@ -21,7 +20,7 @@ import org.bukkit.entity.Player;
 public class fly extends BasicCommand {
 
     public fly(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage, Rank.MODERATOR);
+        super(plugin, name, usage, Rank.MODERATOR, Rank.BUILDER);
     }
 
     @Override

@@ -2,12 +2,14 @@ package com.spleefleague.core.player;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
+import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.cosmetics.Collectibles;
 import com.spleefleague.core.io.DBLoad;
 import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.TypeConverter.RankStringConverter;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
 import com.spleefleague.core.queue.Challenge;
+import com.spleefleague.core.utils.UtilChat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -117,6 +119,8 @@ public class SLPlayer extends GeneralPlayer {
     }
     
     public void changeCoins(int delta) {
+        if(delta > 0)
+            UtilChat.s(Theme.INFO, this, "&6+%d coin%s", delta, delta > 1 ? "s" : "");
         setCoins(Math.max(0, coins + delta));
     }
     
