@@ -2,6 +2,7 @@ package com.spleefleague.core.listeners;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.cosmetics.CType;
+import com.spleefleague.core.cosmetics.Collectibles;
 import com.spleefleague.core.events.BattleEndEvent;
 import com.spleefleague.core.events.BattleStartEvent;
 import com.spleefleague.core.events.PlayerEndedSpectatingEvent;
@@ -36,7 +37,9 @@ public class CosmeticsListener implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onQuit(PlayerQuitEvent e) {
         SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(e.getPlayer());
-        slp.getCollectibles().unapply(slp);
+        Collectibles col = slp.getCollectibles();
+        if(col != null)
+            col.unapply(slp);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -69,11 +72,13 @@ public class CosmeticsListener implements Listener {
     }
     
     private void reapplyCollectiblesForAllPlayersOfDaBattle(Battle battle) {
-        Collection<Player> players = new HashSet<>();
-        players.addAll(battle.getPlayers());
-        players.addAll(battle.getSpectators());
-        PlayerManager<SLPlayer> pm = SpleefLeague.getInstance().getPlayerManager();
-        players.stream().map(pm::get).forEach(SLPlayer::reapplyCollectibles);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(SpleefLeague.getInstance(), () -> {
+            Collection<Player> players = new HashSet<>();
+            players.addAll(battle.getPlayers());
+            players.addAll(battle.getSpectators());
+            PlayerManager<SLPlayer> pm = SpleefLeague.getInstance().getPlayerManager();
+            players.stream().map(pm::get).forEach(SLPlayer::reapplyCollectibles);
+        }, 1l);
     }
     
 }
