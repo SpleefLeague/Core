@@ -253,6 +253,27 @@ public class SpleefLeague extends CorePlugin {
             EntityBuilder.save(slp, getPluginDB().getCollection("Players"));
         }
     }
+    
+    private String getImplVersion() {
+        String version = SpleefLeague.class.getPackage().getImplementationVersion();
+        if(version == null)
+            return "unknown";
+        return version;
+    }
+    
+    public String getCommitId() {
+        String version = getImplVersion();
+        if(version.equals("unknown"))
+            return version;
+        return version.split("\\-")[0];
+    }
+    
+    public String getCommitDate() {
+        String version = getImplVersion();
+        if(version.equals("unknown"))
+            return "";
+        return version.split("\\-")[1];
+    }
 
     private static SpleefLeague instance;
 

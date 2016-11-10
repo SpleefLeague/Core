@@ -270,3 +270,8 @@ commands:
         aliases: [cosmetics, col]
         usage: |
             /<command>
+    version:
+        description: '*VANILLA*Shows SpleefLeagueCore version number'
+        aliases: [ver]
+        usage: |
+            /<command>

@@ -12,6 +12,7 @@ import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.spleefleague.core.SpleefLeague;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -175,7 +176,9 @@ public class MultiBlockChangeUtil implements Listener {
         return chunks;
     }
 
-    public static HashSet<Block> getBlocksInArea(Location pos1, Location pos2) {
+    public static Set<Block> getBlocksInArea(Location pos1, Location pos2) {
+        if(pos1 == null || pos2 == null)
+            return Collections.emptySet();
         Location low = new Location(pos1.getWorld(), Math.min(pos1.getBlockX(), pos2.getBlockX()), Math.min(pos1.getBlockY(), pos2.getBlockY()), Math.min(pos1.getBlockZ(), pos2.getBlockZ()));
         Location high = new Location(pos1.getWorld(), Math.max(pos1.getBlockX(), pos2.getBlockX()), Math.max(pos1.getBlockY(), pos2.getBlockY()), Math.max(pos1.getBlockZ(), pos2.getBlockZ()));
         HashSet<Block> blocks = new HashSet<>();

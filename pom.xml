@@ -10,10 +10,36 @@
     <name>SpleefLeagueCore</name>
 
     <url>http://www.spleefleague.net/</url>
+    
+    <scm>
+        <connection>scm:git:git@github.com:SpleefLeague/Core.git</connection>
+        <developerConnection>scm:git:git@github.com:SpleefLeague/Core.git</developerConnection>
+        <url>git@github.com:SpleefLeague/Core.git</url>
+    </scm>
 
     <properties>
+        <build.number>unknown</build.number>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    
+    <repositories>
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>http://repo.dmulloy2.net/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>sk89q-repo</id>
+            <url>http://maven.sk89q.com/repo/</url>
+        </repository>
+        <repository>
+            <id>rines-repo</id>
+            <url>https://repo.kostya.sexy/</url>
+        </repository>
+    </repositories>
 
     <build>
         <finalName>${project.artifactId}</finalName>
@@ -57,33 +83,34 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
-                        <manifest>
-                            <mainClass>net.spleefleague.core.utils.Main</mainClass>
-                            <packageName>net.spleefleague.core</packageName>
-                        </manifest>
                         <manifestEntries>
+                            <Main-Class>com.spleefleague.core.SpleefLeague</Main-Class> 
+                            <Implementation-Version>${gitcommitid}-${gitcommitdate}</Implementation-Version>
+                            <Specification-Version>${maven.build.timestamp}</Specification-Version>
                             <mode>development</mode>
                             <url>${pom.url}</url>
                         </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>ru.luvas</groupId>
+                <artifactId>gitver</artifactId>
+                <version>1.0</version>
+                <configuration>
+                    <format>git:${project.name}:%s:${build.number}</format>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>describe</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-    <repositories>
-        <repository>
-            <id>dmulloy2-repo</id>
-            <url>http://repo.dmulloy2.net/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>sk89q-repo</id>
-            <url>http://maven.sk89q.com/repo/</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>

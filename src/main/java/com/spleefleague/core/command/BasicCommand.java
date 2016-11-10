@@ -6,7 +6,6 @@
 package com.spleefleague.core.command;
 
 import com.google.common.collect.Sets;
-import java.util.Arrays;
 import java.util.regex.Pattern;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.SpleefLeague;
@@ -93,6 +92,10 @@ public abstract class BasicCommand implements CommandExecutor {
             e.printStackTrace();
         }
         return true;
+    }
+    
+    public String getName() {
+        return name;
     }
     
     protected void setAdditionalRanksDependingOnServerType(ServerType type, Rank... ranks) {
