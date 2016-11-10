@@ -6,6 +6,7 @@ import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
+import com.spleefleague.core.plugin.GamePlugin;
 import com.spleefleague.core.utils.UtilChat;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -33,9 +34,21 @@ public class version extends BasicCommand {
             UtilChat.s(Theme.INFO, cs, "This server is running &cunknown &everion of SpleefLeagueCore.");
         else {
             String subversion = commitId.substring(0, 7);
-            UtilChat.s(Theme.INFO, cs, "This server is running SpleefLeagueCore version &a#%s&e.", subversion);
+            UtilChat.s(Theme.INFO, cs, "This server is running SpleefLeagueCore version &a#%s&e.", subversion.toUpperCase());
             UtilChat.s(Theme.INFO, cs, "It was last time updated at &a%s&e.", SpleefLeague.getInstance().getCommitDate());
-            UtilChat.s(Theme.INFO, cs, "The code can be obtained at &ahttps://github.com/SpleefLeague/Core/tree/%s&e.", commitId);
+            UtilChat.s(Theme.INFO, cs, "Source code of the newest version is available at &ahttps://github.com/SpleefLeague/Core/");
+        }
+        for(GamePlugin plugin : GamePlugin.getGamePlugins()) {
+            UtilChat.s(Theme.INFO, cs, "");
+            commitId = plugin.getCommitId();
+            if(commitId.equals("unknown"))
+                UtilChat.s(Theme.INFO, cs, "There's a %s game plugin of &cunknown &eversion.", plugin.getName());
+            else {
+                String subversion = commitId.substring(0, 7);
+                UtilChat.s(Theme.INFO, cs, "There's a %s game plugin version &a#%s&e.", plugin.getName(), subversion.toUpperCase());
+                UtilChat.s(Theme.INFO, cs, "It was last time updated at &a%s&e.", plugin.getCommitDate());
+                UtilChat.s(Theme.INFO, cs, "Source code of the newest version is available at &ahttps://github.com/SpleefLeague/%s/", plugin.getName());
+            }
         }
     }
     

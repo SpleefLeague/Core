@@ -69,6 +69,27 @@ public abstract class GamePlugin extends CorePlugin {
     public abstract void printStats(Player p);
 
     public abstract BattleManager getBattleManager();
+    
+    private String getImplVersion() {
+        String version = getClass().getPackage().getImplementationVersion();
+        if(version == null)
+            return "unknown";
+        return version;
+    }
+    
+    public String getCommitId() {
+        String version = getImplVersion();
+        if(version.equals("unknown"))
+            return version;
+        return version.split("\\-")[0];
+    }
+    
+    public String getCommitDate() {
+        String version = getImplVersion();
+        if(version.equals("unknown"))
+            return "";
+        return version.split("\\-")[1];
+    }
 
     public static void dequeueGlobal(Player p) {
         for (GamePlugin gp : gamePlugins) {
