@@ -77,7 +77,12 @@ public class CosmeticsListener implements Listener {
             players.addAll(battle.getPlayers());
             players.addAll(battle.getSpectators());
             PlayerManager<SLPlayer> pm = SpleefLeague.getInstance().getPlayerManager();
-            players.stream().map(pm::get).forEach(SLPlayer::reapplyCollectibles);
+            for(Player p : players) {
+                SLPlayer slp = pm.get(p);
+                if(slp == null)
+                    continue;
+                slp.reapplyCollectibles();
+            }
         }, 1l);
     }
     

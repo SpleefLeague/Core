@@ -328,7 +328,9 @@ public class SLPlayer extends GeneralPlayer {
     }
     
     public void reapplyCollectibles() {
-        getCollectibles().reapply(this);
+        Collectibles col = getCollectibles();
+        if(col != null)
+            col.reapply(this);
     }
 
 }
