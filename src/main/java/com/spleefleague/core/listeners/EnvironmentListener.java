@@ -9,6 +9,7 @@ import com.mongodb.client.model.Projections;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.command.commands.back;
+import com.spleefleague.core.cosmetics.DonorRewards;
 import com.spleefleague.core.events.FakeBlockBreakEvent;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.io.*;
@@ -314,8 +315,10 @@ public class EnvironmentListener implements Listener {
                 if(!slPlayer.getRank().hasPermission(SpleefLeague.getInstance().getMinimumJoinRank())
                         && !SpleefLeague.getInstance().getExtraJoinRanks().contains(slPlayer.getRank())) {
                     event.getPlayer().kickPlayer("You don't have permission to join this server!");
+                    return;
                 }
             }
+            DonorRewards.checkWhetherShouldGetCredits(slPlayer);
         }
     }
 

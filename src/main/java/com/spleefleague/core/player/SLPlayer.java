@@ -41,6 +41,8 @@ public class SLPlayer extends GeneralPlayer {
     private ChatColor chatArrowColor = ChatColor.DARK_GRAY;
     private String tabName = null;
     private long areaMessageCooldown = 0L;
+    private int premiumCreditsGotThatMonth;
+    private long premiumCreditsLastReceptionTime;
 
     public SLPlayer() {
         super();
@@ -106,6 +108,38 @@ public class SLPlayer extends GeneralPlayer {
     public void setExpiringRank(Rank rank, long rankExpirationTime) {
         setRankExpirationTime(rankExpirationTime);
         setRank(rank);
+    }
+    
+    public boolean isDonor() {
+        return getRank().getName().equals("$") || isDonorPlus();
+    }
+    
+    public boolean isDonorPlus() {
+        return getRank().getName().equals("$$") || isDonorPlusPlus();
+    }
+    
+    public boolean isDonorPlusPlus() {
+        return getRank().getName().equals("$$$");
+    }
+
+    @DBSave(fieldName = "premiumCreditsGotThatMonth")
+    public int getPremiumCreditsGotThatMonth() {
+        return premiumCreditsGotThatMonth;
+    }
+    
+    @DBLoad(fieldName = "premiumCreditsGotThatMonth")
+    public void setPremiumCreditsGotThatMonth(int premiumCreditsGotThatMonth) {
+        this.premiumCreditsGotThatMonth = premiumCreditsGotThatMonth;
+    }
+
+    @DBSave(fieldName = "premiumCreditsLastReceptionTime")
+    public long getPremiumCreditsLastReceptionTime() {
+        return premiumCreditsLastReceptionTime;
+    }
+    
+    @DBLoad(fieldName = "premiumCreditsLastReceptionTime")
+    public void setPremiumCreditsLastReceptionTime(long premiumCreditsLastReceptionTime) {
+        this.premiumCreditsLastReceptionTime = premiumCreditsLastReceptionTime;
     }
 
     @DBLoad(fieldName = "coins")
