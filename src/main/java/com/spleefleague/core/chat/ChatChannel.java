@@ -93,10 +93,6 @@ public class ChatChannel extends DBEntity implements DBLoadable, Comparable<Chat
         return channel;
     }
 
-    public static ChatChannel fromString(String channel) {
-        return channels.get(channel);
-    }
-
     public static final ChatChannel GLOBAL = getPlaceholderInstance(),
             STAFF = getPlaceholderInstance(),
             STAFF_NOTIFICATIONS = getPlaceholderInstance();
