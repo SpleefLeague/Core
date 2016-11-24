@@ -45,7 +45,7 @@ public class AfkListener implements Listener {
                     }
                     if (time - lastAction.get(player.getUniqueId()) > AFK_TIME &&
                             player.getState() != PlayerState.INGAME &&
-                            !player.getRank().hasPermission(Rank.MODERATOR) && !player.isDonor()) {
+                            !player.getRank().hasPermission(Rank.MODERATOR) && !player.isDonorPlus()) {
                         player.kickPlayer(ChatColor.RED + "You have been afk for too long!");
                     }
                 }
