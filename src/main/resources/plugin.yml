@@ -5,6 +5,7 @@ main: com.spleefleague.core.SpleefLeague
 name: SpleefLeagueCore
 url: http://www.spleefleague.net/
 version: 0.1
+softdepend: [ProtocolLib]
 commands:
     setrank:
         description: Command to set ranks
@@ -273,5 +274,10 @@ commands:
     version:
         description: '*VANILLA*Shows SpleefLeagueCore version number'
         aliases: [ver]
+        usage: |
+            /<command>
+    fakeentity:
+        description: 'A command to work with fake entities'
+        aliases: [fe]
         usage: |
             /<command>

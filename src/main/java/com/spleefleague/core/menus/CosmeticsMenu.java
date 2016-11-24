@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import static com.spleefleague.core.utils.inventorymenu.InventoryMenuAPI.menu;
 
 import com.spleefleague.core.cosmetics.CType;
-import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.utils.UtilChat;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplate;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplateBuilder;

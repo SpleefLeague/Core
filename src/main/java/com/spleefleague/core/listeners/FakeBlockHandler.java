@@ -234,11 +234,18 @@ public class FakeBlockHandler implements Listener {
         }
     }
 
-    private static final ProtocolManager manager;
+    private static final ProtocolManager manager = SpleefLeague.getProtocolManager();
     private static final Map<UUID, Set<FakeArea>> fakeAreas;
     private static final Map<UUID, FakeBlockCache> fakeBlockCache;
     private static FakeBlockHandler instance;
     private static final HashMap<Material, Sound> breakSounds;
+    
+    static {
+        fakeAreas = new HashMap<>();
+        fakeBlockCache = new HashMap<>();
+        breakSounds = new HashMap();
+        initBreakSounds();
+    }
 
     public static void addArea(FakeArea area, Player... players) {
         addArea(area, true, players);
@@ -365,13 +372,5 @@ public class FakeBlockHandler implements Listener {
             }
         }
         return null;
-    }
-
-    static {
-        manager = ProtocolLibrary.getProtocolManager();
-        fakeAreas = new HashMap<>();
-        fakeBlockCache = new HashMap<>();
-        breakSounds = new HashMap();
-        initBreakSounds();
     }
 }

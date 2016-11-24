@@ -1,5 +1,7 @@
 package com.spleefleague.core;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -23,6 +25,7 @@ import com.spleefleague.core.queue.Challenge;
 import com.spleefleague.core.spawn.SpawnManager;
 import com.spleefleague.core.utils.*;
 import com.spleefleague.core.utils.debugger.DebuggerHostManager;
+import com.spleefleague.core.utils.fakeentity.FakeEntitiesManager;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,6 +48,12 @@ public class SpleefLeague extends CorePlugin {
 
     public static final String BROADCAST_FORMAT = ChatColor.DARK_GRAY + "[" + ChatColor.LIGHT_PURPLE + "Broadcast"
             + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY + "%s";
+    
+    private static ProtocolManager manager;
+    
+    public static ProtocolManager getProtocolManager() {
+        return manager;
+    }
 
     private MongoClient mongo;
     private Rank minimumJoinRank;
@@ -68,6 +77,7 @@ public class SpleefLeague extends CorePlugin {
     public void start() {
         //The order is important
         instance = this;
+        manager = ProtocolLibrary.getProtocolManager();
         Config.loadConfig();
         initMongo();
         Settings.loadSettings();
@@ -90,6 +100,7 @@ public class SpleefLeague extends CorePlugin {
         InventoryMenuTemplateRepository.initTemplates();
         Warp.init();
         Challenge.init();
+        new FakeEntitiesManager();
 
         autoBroadcaster = new AutoBroadcaster(getMongo().getDatabase("SpleefLeague").getCollection("AutoBroadcaster"));
         playerManager = new PlayerManager<>(this, SLPlayer.class);
