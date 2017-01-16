@@ -75,10 +75,10 @@ public class FakeEntitiesManager implements Listener {
                         return;
                     WrapperPlayClientUseEntity wrapper = new WrapperPlayClientUseEntity(event.getPacket());
                     synchronized(lock) {
-                        if(creatures.containsKey(wrapper.getTarget())) {
+                        if(creatures.containsKey(wrapper.getTarget(event))) {
                             Task.schedule(() -> {
                                 synchronized(lock) {
-                                    FakeCreature npc = creatures.get(wrapper.getTarget());
+                                    FakeCreature npc = creatures.get(wrapper.getTarget(event));
                                     Player p = event.getPlayer();
                                     if(FakeCreaturesWorker.isPending(p)) {
                                         FakeCreaturesWorker.addWorking(p, npc.getId());

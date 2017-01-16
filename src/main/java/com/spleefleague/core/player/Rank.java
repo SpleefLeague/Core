@@ -141,9 +141,7 @@ public class Rank extends DBEntity implements DBLoadable {
     public static void init() {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         Set<Team> teams = scoreboard.getTeams();
-        teams.forEach((t) -> {
-            t.unregister();
-        });
+        teams.forEach(Team::unregister);
         MongoCursor<Document> dbc = SpleefLeague.getInstance().getPluginDB().getCollection("Ranks").find().iterator();
         while (dbc.hasNext()) {
             Rank rank = EntityBuilder.load(dbc.next(), Rank.class);

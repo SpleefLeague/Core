@@ -4,6 +4,7 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.cosmetics.CItem;
 import com.spleefleague.core.cosmetics.CType;
 import com.spleefleague.core.cosmetics.Collectibles;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,7 +27,7 @@ public class CommonHatItem extends CItem {
 
     @Override
     public void onSelecting(Player p) {
-        p.getInventory().setHelmet(hat);
+        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> p.getInventory().setHelmet(hat));
     }
 
     @Override
@@ -39,7 +40,7 @@ public class CommonHatItem extends CItem {
         Collectibles col = SpleefLeague.getInstance().getPlayerManager().get(p).getCollectibles();
         if(col.isActive(CType.ARMOR)) {
             ArmorItem ai = (ArmorItem) col.getActiveItems().stream().filter(item -> item.getType() == CType.ARMOR).findAny().get();
-            p.getInventory().setHelmet(ai.getArmor()[3]);
+            Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> p.getInventory().setHelmet(ai.getArmor()[3]));
         }
     }
 
