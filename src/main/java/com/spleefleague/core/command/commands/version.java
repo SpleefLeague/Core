@@ -29,27 +29,29 @@ public class version extends BasicCommand {
     
     @Override
     protected void runConsole(CommandSender cs, Command cmd, String[] args) {
+        UtilChat.s(cs, "");
         String commitId = SpleefLeague.getInstance().getCommitId();
         if(commitId.equals("unknown"))
-            UtilChat.s(Theme.INFO, cs, "This server is running &cunknown &everion of SpleefLeagueCore.");
+            UtilChat.s(cs, "&7This server is running &funknown &7version of SpleefLeagueCore.");
         else {
             String subversion = commitId.substring(0, 7);
-            UtilChat.s(Theme.INFO, cs, "This server is running SpleefLeagueCore version &a#%s&e.", subversion.toUpperCase());
-            UtilChat.s(Theme.INFO, cs, "It was last time updated at &a%s&e.", SpleefLeague.getInstance().getCommitDate());
-            UtilChat.s(Theme.INFO, cs, "Source code of the newest version is available at &ahttps://github.com/SpleefLeague/Core/");
+            UtilChat.s(cs, "&7This server is running SpleefLeagueCore version &f#%s&7.", subversion.toUpperCase());
+            UtilChat.s(cs, "&7Last update: &f%s&7.", SpleefLeague.getInstance().getCommitDate());
         }
+        UtilChat.s(cs, "");
         for(GamePlugin plugin : GamePlugin.getGamePlugins()) {
-            UtilChat.s(Theme.INFO, cs, "");
             commitId = plugin.getCommitId();
             if(commitId.equals("unknown"))
-                UtilChat.s(Theme.INFO, cs, "There's a %s game plugin of &cunknown &eversion.", plugin.getName());
+                UtilChat.s(cs, "&7There's a %s game plugin of &funknown &7version.", plugin.getName());
             else {
                 String subversion = commitId.substring(0, 7);
-                UtilChat.s(Theme.INFO, cs, "There's a %s game plugin version &a#%s&e.", plugin.getName(), subversion.toUpperCase());
-                UtilChat.s(Theme.INFO, cs, "It was last time updated at &a%s&e.", plugin.getCommitDate());
-                UtilChat.s(Theme.INFO, cs, "Source code of the newest version is available at &ahttps://github.com/SpleefLeague/%s/", plugin.getName());
+                UtilChat.s(cs, "&7%s plugin version: &f%s&7.", plugin.getName(), subversion.toUpperCase());
+                UtilChat.s(cs, "&7Last update: &f%s&7.", plugin.getCommitDate());
             }
+            UtilChat.s(cs, "");
         }
+        UtilChat.s(cs, "&7All sources are available at &fhttps://github.com/SpleefLeague/");
+        UtilChat.s(cs, "");
     }
     
 }
