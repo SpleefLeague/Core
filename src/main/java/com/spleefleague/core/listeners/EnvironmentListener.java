@@ -327,7 +327,7 @@ public class EnvironmentListener implements Listener {
         Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").find(new Document("uuid", e.getUniqueId().toString()))
                 .projection(Projections.fields(Projections.include("rank"), Projections.excludeId())).first();
         if (dbo != null) {
-            Rank rank = null;
+            Rank rank = Rank.DEFAULT;
             try {
                 rank = Rank.valueOf(dbo.getString("rank"));
             } catch (Exception ignored) {}
