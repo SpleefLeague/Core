@@ -6,7 +6,6 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.cosmetics.CItem;
 import com.spleefleague.core.cosmetics.CType;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -54,11 +53,6 @@ public class ParticleEffectItem extends CItem {
         return wrapper;
     }
     
-    private static void sendPacketsToLocationInRadius(Collection<AbstractPacket> packets, Location loc, int radius) {
-        Bukkit.getOnlinePlayers().stream().filter(p -> p.getLocation().distance(loc) < radius)
-                .forEach(p -> packets.forEach(packet -> packet.sendPacket(p)));
-    }
-    
     //All magic in this function happens cause vanilla minecraft
     //offset doesn't work properly by some reason
     private void sendToPlayer(Player p) {
@@ -74,7 +68,8 @@ public class ParticleEffectItem extends CItem {
             packets.add(constructPacketForLocation(effect, loc, mcoffset, mcoffset, mcoffset, 0.75f, 6));
             ++i;
         }while(i < 4);
-        sendPacketsToLocationInRadius(packets, loc, 48);
+        Bukkit.getOnlinePlayers().stream().filter(player -> player.canSee(p) && player.getLocation().distance(loc) < 48d)
+                .forEach(player -> packets.forEach(packet -> packet.sendPacket(player)));
     }
     
     private final EnumWrappers.Particle effect;
