@@ -5,6 +5,7 @@
  */
 package com.spleefleague.core.command.commands;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.command.BasicCommand;
@@ -184,15 +185,26 @@ public class playerinfo extends BasicCommand {
                 }
             }
             col = SpleefLeague.getInstance().getPluginDB().getCollection("Players");
-            String sharedUsernames = null;
+            StringBuilder sb = new StringBuilder();
             for (String uuid : sharedUUIDs) {
-                if (sharedUsernames == null) {
-                    sharedUsernames = col.find(new Document("uuid", uuid)).first().get("username", String.class);
-                } else {
-                    sharedUsernames += ", " + col.find(new Document("uuid", uuid)).first().get("username", String.class);
+                FindIterable<Document> find = col.find(new Document("uuid", uuid));
+                if(find == null) {
+                    continue;
                 }
+                Document first = find.first();
+                if(first == null) {
+                    continue;
+                }
+                String username = first.get("username", String.class);
+                if(username == null) {
+                    continue;
+                }
+                sb.append(username).append(", ");
             }
-            return sharedUsernames;
+            String result = sb.toString();
+            if(result.isEmpty())
+                return null;
+            return result.substring(0, result.length() - 2) + '.';
         }
     }
 }
