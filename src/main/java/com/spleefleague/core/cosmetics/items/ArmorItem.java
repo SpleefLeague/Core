@@ -3,6 +3,7 @@ package com.spleefleague.core.cosmetics.items;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.cosmetics.CItem;
 import com.spleefleague.core.cosmetics.CType;
+import com.spleefleague.core.utils.SafePlayerTask;
 import com.spleefleague.core.utils.SimpleItemStack;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -29,21 +30,21 @@ public class ArmorItem extends CItem {
 
     @Override
     public void onSelecting(Player p) {
-        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
-            ItemStack helmet = p.getInventory().getHelmet();
-            p.getInventory().setArmorContents(armor);
+        SafePlayerTask.call(p, player -> {
+            ItemStack helmet = player.getInventory().getHelmet();
+            player.getInventory().setArmorContents(armor);
             if (helmet != null)
-                p.getInventory().setHelmet(helmet);
+                player.getInventory().setHelmet(helmet);
         });
     }
 
     @Override
     public void onRemoving(Player p) {
-        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
-            ItemStack helmet = p.getInventory().getHelmet();
-            p.getInventory().setArmorContents(EMPTY_ARMOR);
+        SafePlayerTask.call(p, player -> {
+            ItemStack helmet = player.getInventory().getHelmet();
+            player.getInventory().setArmorContents(EMPTY_ARMOR);
             if(!SimpleItemStack.areEqualByNames(helmet, armor[3]))
-                p.getInventory().setHelmet(helmet);
+                player.getInventory().setHelmet(helmet);
         });
     }
 

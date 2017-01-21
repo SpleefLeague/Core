@@ -13,8 +13,10 @@ import org.bukkit.Bukkit;
 import org.json.simple.JSONObject;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -82,11 +84,11 @@ public class ChatManager {
     }
 
     public static Collection<ChatChannel> getAvailableChatChannels(SLPlayer slp) {
-        HashSet<ChatChannel> availableChannels = new HashSet<>();
-        channels.stream().filter((channel) -> (channel.isVisible() && slp.getRank().hasPermission(channel.getMinRank()))).forEach((channel) -> {
-            availableChannels.add(channel);
-        });
-        return availableChannels;
+        if(slp == null || slp.getRank() == null) {
+            return Collections.emptySet();
+        }
+        return channels.stream().filter(channel -> channel.isVisible() && slp.getRank().hasPermission(channel.getMinRank()))
+                .collect(Collectors.toSet());
     }
 
     public static Collection<ChatChannel> getAllChatChannels() {

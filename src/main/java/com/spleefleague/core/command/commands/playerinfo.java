@@ -109,7 +109,8 @@ public class playerinfo extends BasicCommand {
         }
 
         public String getRank() {
-            return slp.getRank().getColor() + slp.getRank().getDisplayName();
+            Rank rank = slp == null || slp.getRank() == null ? Rank.DEFAULT : slp.getRank();
+            return rank.getColor() + rank.getDisplayName();
         }
 
         public String getName() {

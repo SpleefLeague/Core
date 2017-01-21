@@ -28,8 +28,17 @@ public class ParticleEffectItem extends CItem {
     
     static {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(SpleefLeague.getInstance(),
-                () -> AFFECTED_PLAYERS.forEach((p, i) -> i.sendToPlayer(p)),
-                INTERVAL, INTERVAL);
+                () -> {
+                    Set<Player> toBeRemoved = new HashSet<>();
+                    AFFECTED_PLAYERS.forEach((player, particle) -> {
+                        if(!player.isOnline()) {
+                            toBeRemoved.add(player);
+                        }else {
+                            particle.sendToPlayer(player);
+                        }
+                    });
+                    toBeRemoved.forEach(AFFECTED_PLAYERS::remove);
+                }, INTERVAL, INTERVAL);
     }
     
     private static AbstractPacket constructPacketForLocation(EnumWrappers.Particle effect, Location loc, float offsetX, float offsetY, float offsetZ, float speed, int count) {

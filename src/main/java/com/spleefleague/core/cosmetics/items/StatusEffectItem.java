@@ -1,9 +1,8 @@
 package com.spleefleague.core.cosmetics.items;
 
-import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.cosmetics.CItem;
 import com.spleefleague.core.cosmetics.CType;
-import org.bukkit.Bukkit;
+import com.spleefleague.core.utils.SafePlayerTask;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -27,12 +26,12 @@ public class StatusEffectItem extends CItem {
 
     @Override
     public void onSelecting(Player p) {
-        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> p.addPotionEffect(effect));
+        SafePlayerTask.call(p, player -> player.addPotionEffect(effect));
     }
 
     @Override
     public void onRemoving(Player p) {
-        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> p.removePotionEffect(effect.getType()));
+        SafePlayerTask.call(p, player -> player.removePotionEffect(effect.getType()));
     }
 
 }
