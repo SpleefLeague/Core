@@ -25,6 +25,7 @@ public class RainbowHatItem extends CItem {
     static {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(SpleefLeague.getInstance(), () -> {
             HAT.setDurability((short) ((HAT.getDurability() + 1) % 16));
+            AFFECTED_PLAYERS.removeIf(p -> !p.isOnline()); //??
             AFFECTED_PLAYERS.stream().map(Player::getInventory).forEach(pi -> pi.setHelmet(HAT));
         }, INTERVAL, INTERVAL);
     }

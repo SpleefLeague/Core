@@ -101,11 +101,15 @@ public class SLPlayer extends GeneralPlayer {
             return;
         if(System.currentTimeMillis() > this.rankExpirationTime) {
             setRankExpirationTime(0l);
-            setRank(this.eternalRank);
+            setRank(this.eternalRank == null ? Rank.DEFAULT : this.eternalRank);
         }
     }
     
     public void setExpiringRank(Rank rank, long rankExpirationTime) {
+        Rank currentRank = getRank();
+        if(currentRank != null && getRankExpirationTime() == 0l) {
+            setEternalRank(currentRank);
+        }
         setRankExpirationTime(rankExpirationTime);
         setRank(rank);
     }

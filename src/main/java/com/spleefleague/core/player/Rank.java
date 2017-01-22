@@ -183,9 +183,7 @@ public class Rank extends DBEntity implements DBLoadable {
     }
 
     public void managePermissions(Player player) {
-        for (String permission : getAllPermissions()) {
-            player.addAttachment(SpleefLeague.getInstance(), permission, true);
-        }
+        getAllPermissions().forEach(p -> player.addAttachment(SpleefLeague.getInstance(), p, true));
         player.setOp(hasOp);
     }
 
