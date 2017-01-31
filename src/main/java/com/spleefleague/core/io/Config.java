@@ -37,22 +37,22 @@ public class Config {
             BufferedReader br = new BufferedReader(new FileReader("db.conf"));
             String s;
             while ((s = br.readLine()) != null) {
+                s = s.trim();
                 if (!s.startsWith("#") && s.contains(":")) {
-                    while (s.startsWith(" ")) {
-                        s = s.replaceAll(" ", "");
-                    }
                     String[] command = s.split(":");
                     if (command.length < 2) {
                         continue;
                     }
-                    if (command[0].equalsIgnoreCase("host")) {
-                        DB_HOST = command[1];
+                    String key = command[0].trim();
+                    String val = command[1].trim();
+                    if (key.equalsIgnoreCase("host")) {
+                        DB_HOST = val;
 
-                    } else if (command[0].equalsIgnoreCase("port")) {
-                        DB_PORT = Integer.valueOf(command[1]);
+                    } else if (key.equalsIgnoreCase("port")) {
+                        DB_PORT = Integer.valueOf(val);
 
                     } else {
-                        ADDITIONAL_CONFIG.put(command[0], command[1]);
+                        ADDITIONAL_CONFIG.put(key, val);
                     }
                 }
             }
