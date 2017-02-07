@@ -276,15 +276,18 @@ public class SLPlayer extends GeneralPlayer {
 
     @Override
     public void done() {
-        try {
-            if(this.options == null) {
-                this.options = PlayerOptions.getDefault();
-                this.options.apply(this);
+        //Don't do this for fake players
+        if(this.getPlayer() != null && this.getPlayer().isOnline()) {
+            try {
+                if(this.options == null) {
+                    this.options = PlayerOptions.getDefault();
+                    this.options.apply(this);
+                }
+                if(this.collectibles == null)
+                    this.collectibles = Collectibles.getDefault();
+            } finally {
+                this.collectibles.apply(this);
             }
-            if(this.collectibles == null)
-                this.collectibles = Collectibles.getDefault();
-        }finally {
-            this.collectibles.apply(this);
         }
     }
 
