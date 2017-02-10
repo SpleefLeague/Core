@@ -10,15 +10,16 @@ import com.google.common.io.ByteStreams;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.plugin.CorePlugin;
 import java.lang.reflect.Field;
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
-import net.minecraft.server.v1_8_R3.PacketPlayOutTitle.EnumTitleAction;
-import net.minecraft.server.v1_8_R3.PlayerConnection;
+import java.lang.reflect.InvocationTargetException;
+import net.minecraft.server.v1_11_R1.Entity;
+import net.minecraft.server.v1_11_R1.IChatBaseComponent;
+import net.minecraft.server.v1_11_R1.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_11_R1.PacketPlayOutTitle;
+import net.minecraft.server.v1_11_R1.PacketPlayOutTitle.EnumTitleAction;
+import net.minecraft.server.v1_11_R1.PlayerConnection;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 /**
@@ -45,19 +46,19 @@ public class PlayerUtil {
             field.setAccessible(true);
             Object o = field.get(cp);
             o.getClass().getMethod("clearPermissions").invoke(o);
-        } catch (Exception e) {
+        } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
 
     public static boolean isInWater(Player player) {
         Entity e = ((CraftPlayer) player).getHandle();
-        return e.V();
+        return e.isInWater();
     }
 
     public static boolean isInLava(Player player) {
         Entity e = ((CraftPlayer) player).getHandle();
-        return e.ab();
+        return e.ao();
     }
 
     public static void sendToServer(Player player, String server) {

@@ -102,7 +102,7 @@ public class FakeCreaturesWorker implements Listener {
                             UtilChat.s(Theme.ERROR, p, "This action can't be performed to such an entity.");
                             return;
                         }
-                        ((FakeEquippableCreature) creature).getEquipment().setHand(p.getItemInHand());
+                        ((FakeEquippableCreature) creature).getEquipment().setMainhand(p.getItemInHand());
                         UtilChat.s(Theme.SUCCESS, p, "Done.");
                         break;
                     case "helm":

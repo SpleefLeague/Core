@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.spleefleague.core.utils;
+package com.spleefleague.core.utils.fakeblock;
 
 import com.comphenix.packetwrapper.WrapperPlayServerMultiBlockChange;
 import com.comphenix.protocol.wrappers.ChunkCoordIntPair;
 import com.comphenix.protocol.wrappers.MultiBlockChangeInfo;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.utils.FakeBlock;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +25,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.CraftChunk;
+import org.bukkit.craftbukkit.v1_11_R1.CraftChunk;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -78,7 +79,7 @@ public class MultiBlockChangeUtil implements Listener {
     private static void sendMultiBlockChange(MultiBlockChangeData mbcd, List<Player> affected) {
         if (!affected.isEmpty()) {
             World world = affected.get(0).getWorld();
-            net.minecraft.server.v1_8_R3.Chunk chunk = ((CraftChunk) world.getChunkAt(mbcd.getChunkX(), mbcd.getChunkZ())).getHandle();
+            net.minecraft.server.v1_11_R1.Chunk chunk = ((CraftChunk) world.getChunkAt(mbcd.getChunkX(), mbcd.getChunkZ())).getHandle();
             WrapperPlayServerMultiBlockChange wrapper = new WrapperPlayServerMultiBlockChange();
             wrapper.setChunk(new ChunkCoordIntPair(chunk.locX, chunk.locZ));
             wrapper.setRecords(mbcd.getData());

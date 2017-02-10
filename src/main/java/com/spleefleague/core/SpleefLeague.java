@@ -1,5 +1,6 @@
 package com.spleefleague.core;
 
+import com.spleefleague.core.utils.fakeblock.MultiBlockChangeUtil;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.mongodb.MongoClient;

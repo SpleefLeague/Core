@@ -6,11 +6,9 @@
 package com.spleefleague.core.listeners;
 
 import com.comphenix.packetwrapper.WrapperPlayClientBlockDig;
-import com.comphenix.packetwrapper.WrapperPlayClientBlockPlace;
 import com.comphenix.packetwrapper.WrapperPlayServerMapChunk;
-import com.comphenix.packetwrapper.WrapperPlayServerMapChunkBulk;
+import com.comphenix.packetwrapper.WrapperPlayServerUnloadChunk;
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -18,19 +16,20 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.events.FakeBlockBreakEvent;
-import com.spleefleague.core.utils.ChunkPacketUtil;
+import com.spleefleague.core.utils.fakeblock.ChunkPacketUtil;
 import com.spleefleague.core.utils.FakeArea;
 import com.spleefleague.core.utils.FakeBlock;
-import com.spleefleague.core.utils.MultiBlockChangeUtil;
+import com.spleefleague.core.utils.fakeblock.MultiBlockChangeUtil;
 import com.spleefleague.core.utils.fakeblock.FakeBlockCache;
-import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk.ChunkMap;
-import net.minecraft.server.v1_8_R3.PacketPlayOutWorldEvent;
+import java.lang.reflect.Field;
+import net.minecraft.server.v1_11_R1.BlockPosition;
+import net.minecraft.server.v1_11_R1.PacketPlayOutWorldEvent;
+import net.minecraft.server.v1_11_R1.PacketPlayOutMapChunk;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_11_R1.util.CraftMagicNumbers;
+import net.minecraft.server.v1_11_R1.SoundEffectType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -39,13 +38,15 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Jonas
  */
 public class FakeBlockHandler implements Listener {
 
-    private PacketAdapter chunk, chunkBulk, breakController, placeController;
+    private PacketAdapter chunkData, unloadChunk, breakController, placeController;
 
     private FakeBlockHandler() {
         initPacketListeners();
@@ -57,8 +58,8 @@ public class FakeBlockHandler implements Listener {
 
     public static void stop() {
         if (instance != null) {
-            manager.removePacketListener(instance.chunk);
-            manager.removePacketListener(instance.chunkBulk);
+            manager.removePacketListener(instance.chunkData);
+            manager.removePacketListener(instance.unloadChunk);
             manager.removePacketListener(instance.breakController);
             manager.removePacketListener(instance.placeController);
             HandlerList.unregisterAll(instance);
@@ -74,7 +75,7 @@ public class FakeBlockHandler implements Listener {
     }
 
     private void initPacketListeners() {
-        chunk = new PacketAdapter(SpleefLeague.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.MAP_CHUNK) {
+        chunkData = new PacketAdapter(SpleefLeague.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.MAP_CHUNK) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
 
@@ -85,19 +86,15 @@ public class FakeBlockHandler implements Listener {
                 WrapperPlayServerMapChunk wpsmc = new WrapperPlayServerMapChunk(event.getPacket());
                 Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
                     Chunk chunk = event.getPlayer().getWorld().getChunkAt(wpsmc.getChunkX(), wpsmc.getChunkZ());
-                    if (((ChunkMap) wpsmc.getChunkMap()).b == 0 && wpsmc.getGroundUpContinuous()) {
-                        MultiBlockChangeUtil.removeChunk(event.getPlayer(), chunk);
-                    } else {
-                        MultiBlockChangeUtil.addChunk(event.getPlayer(), chunk);
-                    }
+                    MultiBlockChangeUtil.addChunk(event.getPlayer(), chunk);
                 });
                 Set<FakeBlock> blocks = getFakeBlocksForChunk(event.getPlayer(), wpsmc.getChunkX(), wpsmc.getChunkZ());
-                if (blocks != null) {
-                    ChunkPacketUtil.setBlocksPacketMapChunk(event.getPacket(), blocks);
+                if (true || blocks != null) {
+                    ChunkPacketUtil.setBlocksPacketMapChunk(event.getPlayer().getWorld(), event.getPacket(), blocks);
                 }
             }
         };
-        chunkBulk = new PacketAdapter(SpleefLeague.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.MAP_CHUNK_BULK) {
+        unloadChunk = new PacketAdapter(SpleefLeague.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.UNLOAD_CHUNK) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
 
@@ -105,21 +102,11 @@ public class FakeBlockHandler implements Listener {
 
             @Override
             public void onPacketSending(PacketEvent event) {
-                WrapperPlayServerMapChunkBulk wpsmcb = new WrapperPlayServerMapChunkBulk(event.getPacket());
+                WrapperPlayServerUnloadChunk wpsuc = new WrapperPlayServerUnloadChunk(event.getPacket());
                 Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
-                    for (int i = 0; i < wpsmcb.getChunksX().length; i++) {
-                        Chunk chunk = event.getPlayer().getWorld().getChunkAt(wpsmcb.getChunksX()[i], wpsmcb.getChunksZ()[i]);
-                        if (((ChunkMap) wpsmcb.getChunks()[i]).b == 0) {
-                            MultiBlockChangeUtil.removeChunk(event.getPlayer(), chunk);
-                        } else {
-                            MultiBlockChangeUtil.addChunk(event.getPlayer(), chunk);
-                        }
-                    }
+                    Chunk chunk = event.getPlayer().getWorld().getChunkAt(wpsuc.getChunkX(), wpsuc.getChunkZ());
+                    MultiBlockChangeUtil.removeChunk(event.getPlayer(), chunk);
                 });
-                Set<FakeBlock> blocks = getFakeBlocksForChunks(event.getPlayer(), wpsmcb.getChunksX(), wpsmcb.getChunksZ());
-                if (blocks != null) {
-                    ChunkPacketUtil.setBlocksPacketMapChunk(event.getPacket(), blocks);
-                }
             }
         };
         breakController = new PacketAdapter(SpleefLeague.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.BLOCK_DIG) {
@@ -174,10 +161,13 @@ public class FakeBlockHandler implements Listener {
 
             }
         };
+        /*
         placeController = new PacketAdapter(SpleefLeague.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.BLOCK_PLACE) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
+                PacketPlayInBlockPlace packet = (PacketPlayInBlockPlace)event.getPacket().handle;
                 WrapperPlayClientBlockPlace wrapper = new WrapperPlayClientBlockPlace(event.getPacket());
+                
                 if (wrapper.getLocation().getY() < 0) {
                     return;
                 }
@@ -200,10 +190,11 @@ public class FakeBlockHandler implements Listener {
 
             }
         };
-        //1.9 patch manager.addPacketListener(chunk);
-        manager.addPacketListener(chunkBulk);
+*/
+        manager.addPacketListener(chunkData);
+        manager.addPacketListener(unloadChunk);
         manager.addPacketListener(breakController);
-        manager.addPacketListener(placeController);
+        //manager.addPacketListener(placeController); 
     }
 
     private void sendBreakParticles(Player p, FakeBlock block) {
@@ -212,7 +203,9 @@ public class FakeBlockHandler implements Listener {
     }
 
     private void sendBreakSound(Player p, FakeBlock b) {
-        p.playSound(b.getLocation(), breakSounds.get(b.getType()), 1, 0.9f);
+        net.minecraft.server.v1_11_R1.Entity entity = ((CraftPlayer)p).getHandle();
+        SoundEffectType effectType = breakSounds.get(b.getType());
+        entity.a(effectType.d(), effectType.a() * 0.15F, effectType.b());
     }
 
     private boolean blockEqual(Location loc1, Location loc2) {
@@ -238,7 +231,7 @@ public class FakeBlockHandler implements Listener {
     private static final Map<UUID, Set<FakeArea>> fakeAreas;
     private static final Map<UUID, FakeBlockCache> fakeBlockCache;
     private static FakeBlockHandler instance;
-    private static final HashMap<Material, Sound> breakSounds;
+    private static final HashMap<Material, SoundEffectType> breakSounds;
     
     static {
         fakeAreas = new HashMap<>();
@@ -359,18 +352,18 @@ public class FakeBlockHandler implements Listener {
     }
 
     private static void initBreakSounds() {
-        for (net.minecraft.server.v1_8_R3.Block block : net.minecraft.server.v1_8_R3.Block.REGISTRY) {
-            String breaksound = block.stepSound.getBreakSound();
-            breakSounds.put(CraftMagicNumbers.getMaterial(block), toSound(breaksound));
-        }
-    }
-
-    private static Sound toSound(String mcname) {
-        for (Sound s : Sound.values()) {
-            if (CraftSound.getSound(s).equals(mcname)) {
-                return s;
+        for (net.minecraft.server.v1_11_R1.Block block : net.minecraft.server.v1_11_R1.Block.REGISTRY) {
+            try {
+                Field effectField = net.minecraft.server.v1_11_R1.Block.class.getDeclaredField("stepSound");
+                effectField.setAccessible(true);
+                SoundEffectType effectType = (SoundEffectType) effectField.get(block);
+                breakSounds.put(CraftMagicNumbers.getMaterial(block), effectType);
+            } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException ex) {
+                for(Field field : net.minecraft.server.v1_11_R1.Block.class.getDeclaredFields()) {
+                    System.out.println(field);
+                }
+                Logger.getLogger(FakeBlockHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return null;
     }
 }

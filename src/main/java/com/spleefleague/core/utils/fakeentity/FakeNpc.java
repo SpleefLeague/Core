@@ -5,6 +5,7 @@ import com.comphenix.packetwrapper.WrapperPlayServerEntityDestroy;
 import com.comphenix.packetwrapper.WrapperPlayServerNamedEntitySpawn;
 import com.comphenix.packetwrapper.WrapperPlayServerPlayerInfo;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
@@ -12,7 +13,6 @@ import com.spleefleague.core.utils.Task;
 import com.spleefleague.core.utils.UUIDFetcher;
 import com.spleefleague.core.utils.UtilAlgo;
 import com.spleefleague.core.utils.UtilChat;
-import com.spleefleague.core.utils.fakeentity.FakeEquipment.FakeItem;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -281,7 +281,7 @@ public class FakeNpc extends FakeEquippableCreature {
         json.put("name", rawName);
         json.put("location", UtilAlgo.locToStr(getLocation()));
         JSONObject equipment = new JSONObject();
-        for(FakeItem fi : FakeItem.values())
+        for(ItemSlot fi : ItemSlot.values())
             equipment.put(fi.name().toLowerCase(), UtilAlgo.serialize(getEquipment().getItems().get(fi)));
         json.put("equipment", equipment);
         if(skin != null) {
@@ -301,8 +301,8 @@ public class FakeNpc extends FakeEquippableCreature {
         
         FakeNpc npc = (FakeNpc) constructor.newInstance(uuid, name, loc);
         
-        for(FakeItem fi : FakeItem.values())
-            npc.getEquipment().updateUnsafe(fi, UtilAlgo.deserialize((JSONObject) equipment.get(fi.name().toLowerCase())));
+        for(ItemSlot is : ItemSlot.values())
+            npc.getEquipment().updateUnsafe(is, UtilAlgo.deserialize((JSONObject) equipment.get(is.name().toLowerCase())));
         
         if(json.containsKey("skin")) {
             JSONObject skin = (JSONObject) json.get("skin");

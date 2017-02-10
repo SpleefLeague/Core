@@ -1,6 +1,7 @@
 package com.spleefleague.core.utils.fakeentity;
 
 import com.comphenix.packetwrapper.WrapperPlayServerEntityEquipment;
+import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import java.util.EnumMap;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,7 +15,7 @@ public class FakeEquipment {
     
     private final FakeEquippableCreature relatedEntity;
 
-    private final EnumMap<FakeItem, ItemStack> items = new EnumMap<>(FakeItem.class);
+    private final EnumMap<ItemSlot, ItemStack> items = new EnumMap<>(ItemSlot.class);
     
     FakeEquipment(FakeEquippableCreature relatedEntity) {
         this.relatedEntity = relatedEntity;
@@ -24,66 +25,74 @@ public class FakeEquipment {
         return relatedEntity;
     }
     
-    public EnumMap<FakeItem, ItemStack> getItems() {
+    public EnumMap<ItemSlot, ItemStack> getItems() {
         return items;
     }
 
-    public ItemStack getHand() {
-        return items.get(FakeItem.HAND);
+    public ItemStack getMainhand() {
+        return items.get(ItemSlot.MAINHAND);
+    }
+
+    public ItemStack getOffhand() {
+        return items.get(ItemSlot.OFFHAND);
     }
 
     public ItemStack getHelmet() {
-        return items.get(FakeItem.HELMET);
+        return items.get(ItemSlot.HEAD);
     }
 
     public ItemStack getChestplate() {
-        return items.get(FakeItem.CHESTPLATE);
+        return items.get(ItemSlot.CHEST);
     }
 
     public ItemStack getLeggings() {
-        return items.get(FakeItem.LEGGINGS);
+        return items.get(ItemSlot.LEGS);
     }
 
     public ItemStack getBoots() {
-        return items.get(FakeItem.BOOTS);
+        return items.get(ItemSlot.FEET);
     }
 
-    public void setHand(ItemStack value) {
-        update(FakeItem.HAND, value);
+    public void setMainhand(ItemStack value) {
+        update(ItemSlot.MAINHAND, value);
+    }
+
+    public void setOffhand(ItemStack value) {
+        update(ItemSlot.OFFHAND, value);
     }
 
     public void setHelmet(ItemStack value) {
-        update(FakeItem.HELMET, value);
+        update(ItemSlot.HEAD, value);
     }
 
     public void setChestplate(ItemStack value) {
-        update(FakeItem.CHESTPLATE, value);
+        update(ItemSlot.CHEST, value);
     }
 
     public void setLeggings(ItemStack value) {
-        update(FakeItem.LEGGINGS, value);
+        update(ItemSlot.LEGS, value);
     }
 
     public void setBoots(ItemStack value) {
-        update(FakeItem.BOOTS, value);
+        update(ItemSlot.FEET, value);
     }
 
     public void clearArmor() {
-        for (FakeItem fi : FakeItem.values()) {
-            if (fi != FakeItem.HAND) {
+        for (ItemSlot fi : ItemSlot.values()) {
+            if (fi != ItemSlot.MAINHAND && fi != ItemSlot.OFFHAND) {
                 update(fi, null);
             }
         }
     }
 
     public void clearAll() {
-        for (FakeItem fi : FakeItem.values()) {
+        for (ItemSlot fi : ItemSlot.values()) {
             update(fi, null);
         }
     }
 
     public void show(Player p) {
-        for (FakeItem fi : FakeItem.values()) {
+        for (ItemSlot fi : ItemSlot.values()) {
             ItemStack is = items.get(fi);
             if (is == null || is.getType() == Material.AIR) {
                 continue;
@@ -91,50 +100,29 @@ public class FakeEquipment {
             WrapperPlayServerEntityEquipment wrapper = new WrapperPlayServerEntityEquipment();
             wrapper.setEntityID(relatedEntity.getId());
             wrapper.setItem(items.get(fi));
-            wrapper.setSlot(fi.getSlot());
+            wrapper.setSlot(fi);
             wrapper.sendPacket(p);
         }
     }
 
-    public void update(FakeItem type, ItemStack value) {
+    public void update(ItemSlot slot, ItemStack value) {
         relatedEntity.validate();
-        updateUnsafe(type, value);
+        updateUnsafe(slot, value);
     }
 
-    public void updateUnsafe(FakeItem type, ItemStack value) {
+    public void updateUnsafe(ItemSlot slot, ItemStack value) {
         if (value == null) {
             value = new ItemStack(Material.AIR, 1);
         }
         if (value.getType() == Material.AIR) {
-            items.remove(type);
+            items.remove(slot);
         } else {
-            items.put(type, value);
+            items.put(slot, value);
         }
         WrapperPlayServerEntityEquipment wrapper = new WrapperPlayServerEntityEquipment();
         wrapper.setEntityID(relatedEntity.getId());
         wrapper.setItem(value);
-        wrapper.setSlot(type.getSlot());
+        wrapper.setSlot(slot);
         relatedEntity.getAffectedPlayers().forEach(wrapper::sendPacket);
     }
-    
-    public enum FakeItem {
-        
-        HAND(0),
-        HELMET(4),
-        CHESTPLATE(3),
-        LEGGINGS(2),
-        BOOTS(1);
-
-        private final int slot;
-        
-        public int getSlot() {
-            return slot;
-        }
-        
-        private FakeItem(int slot) {
-            this.slot = slot;
-        }
-        
-    }
-    
 }

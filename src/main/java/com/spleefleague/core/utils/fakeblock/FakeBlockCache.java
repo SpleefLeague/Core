@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class FakeBlockCache {
 
-    private final Map<Integer, FakeChunk> map = new HashMap<>();
+    private final Map<Long, FakeChunk> map = new HashMap<>();
 
     public FakeBlockCache() {
 
@@ -37,7 +37,7 @@ public class FakeBlockCache {
     }
 
     public Set<FakeBlock> getBlocks(int x, int z) {
-        int key = getKey(x, z);
+        long key = getKey(x, z);
         if (map.containsKey(key)) {
             FakeChunk chunk = map.get(key);
             return chunk == null ? null : chunk.getBlocks();
@@ -48,7 +48,7 @@ public class FakeBlockCache {
     public void addBlocks(FakeBlock... blocks) {
         for (FakeBlock block : blocks) {
             int x = block.getChunkX(), z = block.getChunkZ();
-            int key = getKey(x, z);
+            long key = getKey(x, z);
             FakeChunk chunk;
             if (map.containsKey(key)) {
                 chunk = map.get(key);
@@ -63,7 +63,7 @@ public class FakeBlockCache {
     public void addBlocks(Collection<FakeBlock> blocks) {
         for (FakeBlock block : blocks) {
             int x = block.getChunkX(), z = block.getChunkZ();
-            int key = getKey(x, z);
+            long key = getKey(x, z);
             FakeChunk chunk;
             if (map.containsKey(key)) {
                 chunk = map.get(key);
@@ -82,7 +82,7 @@ public class FakeBlockCache {
     public void removeBlocks(FakeBlock... blocks) {
         for (FakeBlock block : blocks) {
             int x = block.getChunkX(), z = block.getChunkZ();
-            int key = getKey(x, z);
+            long key = getKey(x, z);
             if (map.containsKey(key)) {
                 map.get(key).removeBlocks(block);
             }
@@ -92,7 +92,7 @@ public class FakeBlockCache {
     public void removeBlocks(Collection<FakeBlock> blocks) {
         for (FakeBlock block : blocks) {
             int x = block.getChunkX(), z = block.getChunkZ();
-            int key = getKey(x, z);
+            long key = getKey(x, z);
             if (map.containsKey(key)) {
                 map.get(key).removeBlocks(block);
             }
@@ -103,7 +103,7 @@ public class FakeBlockCache {
         removeBlocks(area.getBlocks());
     }
 
-    private static int getKey(int x, int z) {
-        return x + (z << 16);
+    private static long getKey(int x, int z) {
+        return x + (z << 32);
     }
 }

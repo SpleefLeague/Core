@@ -7,12 +7,12 @@ package com.spleefleague.core.player;
 
 import com.spleefleague.core.io.*;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
+import net.minecraft.server.v1_11_R1.EntityPlayer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -30,6 +30,8 @@ import org.bukkit.util.Vector;
 
 import java.net.InetSocketAddress;
 import java.util.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 
 /**
  *
@@ -801,24 +803,6 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     }
 
     @Override
-    @Deprecated
-    public Egg throwEgg() {
-        return getPlayer().throwEgg();
-    }
-
-    @Override
-    @Deprecated
-    public Snowball throwSnowball() {
-        return getPlayer().throwSnowball();
-    }
-
-    @Override
-    @Deprecated
-    public Arrow shootArrow() {
-        return getPlayer().shootArrow();
-    }
-
-    @Override
     public int getRemainingAir() {
         return getPlayer().getRemainingAir();
     }
@@ -1389,5 +1373,242 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Override
     public Set<String> getListeningPluginChannels() {
         return getPlayer().getListeningPluginChannels();
+    }
+    
+    
+
+    @Override
+    public void playSound(Location lctn, Sound sound, SoundCategory sc, float f, float f1) {
+        getPlayer().playSound(lctn, sound, sc, f, f1);
+    }
+
+    @Override
+    public void playSound(Location lctn, String string, SoundCategory sc, float f, float f1) {
+        getPlayer().playSound(lctn, string, sc, f, f1);
+    }
+
+    @Override
+    public void stopSound(Sound sound) {
+        getPlayer().stopSound(sound);
+    }
+
+    @Override
+    public void stopSound(String string) {
+        getPlayer().stopSound(string);
+    }
+
+    @Override
+    public void stopSound(Sound sound, SoundCategory sc) {
+        getPlayer().stopSound(sound, sc);
+    }
+
+    @Override
+    public void stopSound(String string, SoundCategory sc) {
+        getPlayer().stopSound(string, sc);
+    }
+
+    @Override
+    public void sendTitle(String string, String string1, int i, int i1, int i2) {
+        getPlayer().sendTitle(string, string1, i, i1, i2);
+    }
+
+    @Override
+    public void spawnParticle(Particle prtcl, Location lctn, int i) {
+        getPlayer().spawnParticle(prtcl, lctn, i);
+    }
+
+    @Override
+    public void spawnParticle(Particle prtcl, double d, double d1, double d2, int i) {
+        getPlayer().spawnParticle(prtcl, d, d1, d2, i);
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle prtcl, Location lctn, int i, T t) {
+        getPlayer().spawnParticle(prtcl, lctn, i, t);
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle prtcl, double d, double d1, double d2, int i, T t) {
+        getPlayer().spawnParticle(prtcl, d, d1, d2, i, t);
+    }
+
+    @Override
+    public void spawnParticle(Particle prtcl, Location lctn, int i, double d, double d1, double d2) {
+        getPlayer().spawnParticle(prtcl, lctn, i, d, d1, d2);
+    }
+
+    @Override
+    public void spawnParticle(Particle prtcl, double d, double d1, double d2, int i, double d3, double d4, double d5) {
+        getPlayer().spawnParticle(prtcl, d, d1, d2, i, d3, d4, d5);
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle prtcl, Location lctn, int i, double d, double d1, double d2, T t) {
+        getPlayer().spawnParticle(prtcl, lctn, i, d, d1, d2, t);
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle prtcl, double d, double d1, double d2, int i, double d3, double d4, double d5, T t) {
+        getPlayer().spawnParticle(prtcl, d, d1, d2, i, d3, d4, d5, t);
+    }
+
+    @Override
+    public void spawnParticle(Particle prtcl, Location lctn, int i, double d, double d1, double d2, double d3) {
+        getPlayer().spawnParticle(prtcl, lctn, i, d, d1, d2, d3);
+    }
+
+    @Override
+    public void spawnParticle(Particle prtcl, double d, double d1, double d2, int i, double d3, double d4, double d5, double d6) {
+        getPlayer().spawnParticle(prtcl, d, d1, d2, i, d3, d4, d5, d6);
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle prtcl, Location lctn, int i, double d, double d1, double d2, double d3, T t) {
+        getPlayer().spawnParticle(prtcl, lctn, i, d, d1, d2, d3, t);
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle prtcl, double d, double d1, double d2, int i, double d3, double d4, double d5, double d6, T t) {
+        getPlayer().spawnParticle(prtcl, d, d1, d2, i, d3, d4, d5, d6, t);
+    }
+
+    @Override
+    public MainHand getMainHand() {
+        return getPlayer().getMainHand();
+    }
+
+    @Override
+    public InventoryView openMerchant(Villager vlgr, boolean bln) {
+        return getPlayer().openMerchant(vlgr, bln);
+    }
+
+    @Override
+    public InventoryView openMerchant(Merchant mrchnt, boolean bln) {
+        return getPlayer().openMerchant(mrchnt, bln);
+    }
+
+    @Override
+    public boolean isHandRaised() {
+        return getPlayer().isHandRaised();
+    }
+
+    @Override
+    public PotionEffect getPotionEffect(PotionEffectType pet) {
+        return getPlayer().getPotionEffect(pet);
+    }
+
+    @Override
+    public boolean isGliding() {
+        return getPlayer().isGliding();
+    }
+
+    @Override
+    public void setGliding(boolean bln) {
+        getPlayer().setGliding(bln);
+    }
+
+    @Override
+    public void setAI(boolean bln) {
+        getPlayer().setAI(bln);
+    }
+
+    @Override
+    public boolean hasAI() {
+        return getPlayer().hasAI();
+    }
+
+    @Override
+    public void setCollidable(boolean bln) {
+        getPlayer().setCollidable(bln);
+    }
+
+    @Override
+    public boolean isCollidable() {
+        return getPlayer().isCollidable();
+    }
+
+    @Override
+    public AttributeInstance getAttribute(Attribute atrbt) {
+        return getPlayer().getAttribute(atrbt);
+    }
+
+    @Override
+    public List<Entity> getPassengers() {
+        return getPlayer().getPassengers();
+    }
+
+    @Override
+    public boolean addPassenger(Entity entity) {
+        return getPlayer().addPassenger(entity);
+    }
+
+    @Override
+    public boolean removePassenger(Entity entity) {
+        return getPlayer().removePassenger(entity);
+    }
+
+    @Override
+    public void setGlowing(boolean bln) {
+        getPlayer().setGlowing(bln);
+    }
+
+    @Override
+    public boolean isGlowing() {
+        return getPlayer().isGlowing();
+    }
+
+    @Override
+    public void setInvulnerable(boolean bln) {
+        getPlayer().setInvulnerable(bln);
+    }
+
+    @Override
+    public boolean isInvulnerable() {
+        return getPlayer().isInvulnerable();
+    }
+
+    @Override
+    public boolean isSilent() {
+        return getPlayer().isSilent();
+    }
+
+    @Override
+    public void setSilent(boolean bln) {
+        getPlayer().setSilent(bln);
+    }
+
+    @Override
+    public boolean hasGravity() {
+        return getPlayer().hasGravity();
+    }
+
+    @Override
+    public void setGravity(boolean bln) {
+        getPlayer().setGravity(bln);
+    }
+
+    @Override
+    public int getPortalCooldown() {
+        return getPlayer().getPortalCooldown();
+    }
+
+    @Override
+    public void setPortalCooldown(int i) {
+        getPlayer().setPortalCooldown(i);
+    }
+
+    @Override
+    public Set<String> getScoreboardTags() {
+        return getPlayer().getScoreboardTags();
+    }
+
+    @Override
+    public boolean addScoreboardTag(String string) {
+        return getPlayer().addScoreboardTag(string);
+    }
+
+    @Override
+    public boolean removeScoreboardTag(String string) {
+        return getPlayer().removeScoreboardTag(string);
     }
 }
