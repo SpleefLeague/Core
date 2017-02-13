@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -115,13 +116,12 @@ public class DatabaseConnection {
         });
     }
 
-    public static void find(final MongoCollection<Document> dbcoll, final Document query, Callback<FindIterable<Document>> callback) {
+    public static void find(final MongoCollection<Document> dbcoll, final Document query, Consumer<FindIterable<Document>> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
-            callback.call(dbcoll.find(query));
+            callback.accept(dbcoll.find(query));
         });
     }
 
-    //Private classes
     private static class UUIDCache {
 
         private final FixedSizeList<UUIDMapEntry> list;

@@ -339,4 +339,5 @@ public class SLPlayer extends GeneralPlayer {
         if(col != null)
             col.reapply(this);
     }
+
 }

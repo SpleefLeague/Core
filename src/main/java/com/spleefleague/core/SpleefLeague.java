@@ -1,6 +1,6 @@
 package com.spleefleague.core;
 
-import com.spleefleague.core.utils.fakeblock.MultiBlockChangeUtil;
+import com.spleefleague.core.command.dynamic.DynamicCommandManager;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.mongodb.MongoClient;
@@ -26,6 +26,7 @@ import com.spleefleague.core.queue.Challenge;
 import com.spleefleague.core.spawn.SpawnManager;
 import com.spleefleague.core.utils.*;
 import com.spleefleague.core.utils.debugger.DebuggerHostManager;
+import com.spleefleague.core.utils.fakeblock.MultiBlockChangeUtil;
 import com.spleefleague.core.utils.fakeentity.FakeEntitiesManager;
 import org.bson.Document;
 import org.bukkit.Bukkit;

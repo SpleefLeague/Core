@@ -49,21 +49,33 @@ public class Settings {
 
     public static String getString(String key) {
         Document doc = (Document) settings.get(key);
+        if (doc == null) {
+            return null;
+        }
         return doc.get("value", String.class);
     }
 
     public static int getInteger(String key) {
         Document doc = (Document) settings.get(key);
-        return doc.get("value", Integer.class);
+        if (doc == null) {
+            return 0;
+        }
+        return doc.get("value", int.class);
     }
 
     public static boolean getBoolean(String key) {
         Document doc = (Document) settings.get(key);
+        if (doc == null) {
+            return true;
+        }
         return doc.get("value", boolean.class);
     }
 
     public static Location getLocation(String key) {
         Document doc = (Document) settings.get(key);
+        if (doc == null) {
+            return null;
+        }
         return get(key, LocationWrapper.class).location;
     }
 
@@ -73,6 +85,9 @@ public class Settings {
 
     public static List getList(String key) {
         Document doc = settings.get(key);
+        if (doc == null) {
+            return null;
+        }
         return doc.get("value", List.class);
     }
 

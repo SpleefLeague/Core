@@ -1,19 +1,19 @@
+package com.spleefleague.core.utils.fakeblock;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.spleefleague.core.utils.fakeblock;
+
 
 import com.comphenix.packetwrapper.WrapperPlayServerMultiBlockChange;
 import com.comphenix.protocol.wrappers.ChunkCoordIntPair;
 import com.comphenix.protocol.wrappers.MultiBlockChangeInfo;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.spleefleague.core.SpleefLeague;
-import com.spleefleague.core.utils.FakeBlock;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -177,9 +177,7 @@ public class MultiBlockChangeUtil implements Listener {
         return chunks;
     }
 
-    public static Set<Block> getBlocksInArea(Location pos1, Location pos2) {
-        if(pos1 == null || pos2 == null)
-            return Collections.emptySet();
+    public static HashSet<Block> getBlocksInArea(Location pos1, Location pos2) {
         Location low = new Location(pos1.getWorld(), Math.min(pos1.getBlockX(), pos2.getBlockX()), Math.min(pos1.getBlockY(), pos2.getBlockY()), Math.min(pos1.getBlockZ(), pos2.getBlockZ()));
         Location high = new Location(pos1.getWorld(), Math.max(pos1.getBlockX(), pos2.getBlockX()), Math.max(pos1.getBlockY(), pos2.getBlockY()), Math.max(pos1.getBlockZ(), pos2.getBlockZ()));
         HashSet<Block> blocks = new HashSet<>();

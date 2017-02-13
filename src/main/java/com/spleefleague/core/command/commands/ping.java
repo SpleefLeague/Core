@@ -6,7 +6,6 @@
 package com.spleefleague.core.command.commands;
 
 import net.minecraft.server.v1_11_R1.EntityPlayer;
-import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.player.Rank;
@@ -14,11 +13,12 @@ import com.spleefleague.core.player.SLPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 /**
  *
- * @author Joba
+ * @author JoBa
  */
 public class ping extends BasicCommand {
 

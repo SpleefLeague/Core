@@ -1,128 +1,123 @@
 package com.spleefleague.core.utils.fakeentity;
 
 import com.comphenix.packetwrapper.WrapperPlayServerEntityEquipment;
-import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.spleefleague.core.utils.fakeentity.FakeEquippableCreature;
+import java.lang.invoke.LambdaMetafactory;
+import java.util.Collection;
 import java.util.EnumMap;
+import java.util.function.Consumer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-/**
- *
- * @author 0xC0deBabe <iam@kostya.sexy>
- */
 public class FakeEquipment {
-    
     private final FakeEquippableCreature relatedEntity;
+    private final EnumMap<EnumWrappers.ItemSlot, ItemStack> items = new EnumMap(EnumWrappers.ItemSlot.class);
 
-    private final EnumMap<ItemSlot, ItemStack> items = new EnumMap<>(ItemSlot.class);
-    
     FakeEquipment(FakeEquippableCreature relatedEntity) {
         this.relatedEntity = relatedEntity;
     }
-    
+
     public FakeEquippableCreature getRelatedEntity() {
-        return relatedEntity;
+        return this.relatedEntity;
     }
-    
-    public EnumMap<ItemSlot, ItemStack> getItems() {
-        return items;
+
+    public EnumMap<EnumWrappers.ItemSlot, ItemStack> getItems() {
+        return this.items;
     }
 
     public ItemStack getMainhand() {
-        return items.get(ItemSlot.MAINHAND);
+        return this.items.get((Object)EnumWrappers.ItemSlot.MAINHAND);
     }
 
     public ItemStack getOffhand() {
-        return items.get(ItemSlot.OFFHAND);
+        return this.items.get((Object)EnumWrappers.ItemSlot.OFFHAND);
     }
 
     public ItemStack getHelmet() {
-        return items.get(ItemSlot.HEAD);
+        return this.items.get((Object)EnumWrappers.ItemSlot.HEAD);
     }
 
     public ItemStack getChestplate() {
-        return items.get(ItemSlot.CHEST);
+        return this.items.get((Object)EnumWrappers.ItemSlot.CHEST);
     }
 
     public ItemStack getLeggings() {
-        return items.get(ItemSlot.LEGS);
+        return this.items.get((Object)EnumWrappers.ItemSlot.LEGS);
     }
 
     public ItemStack getBoots() {
-        return items.get(ItemSlot.FEET);
+        return this.items.get((Object)EnumWrappers.ItemSlot.FEET);
     }
 
     public void setMainhand(ItemStack value) {
-        update(ItemSlot.MAINHAND, value);
+        this.update(EnumWrappers.ItemSlot.MAINHAND, value);
     }
 
     public void setOffhand(ItemStack value) {
-        update(ItemSlot.OFFHAND, value);
+        this.update(EnumWrappers.ItemSlot.OFFHAND, value);
     }
 
     public void setHelmet(ItemStack value) {
-        update(ItemSlot.HEAD, value);
+        this.update(EnumWrappers.ItemSlot.HEAD, value);
     }
 
     public void setChestplate(ItemStack value) {
-        update(ItemSlot.CHEST, value);
+        this.update(EnumWrappers.ItemSlot.CHEST, value);
     }
 
     public void setLeggings(ItemStack value) {
-        update(ItemSlot.LEGS, value);
+        this.update(EnumWrappers.ItemSlot.LEGS, value);
     }
 
     public void setBoots(ItemStack value) {
-        update(ItemSlot.FEET, value);
+        this.update(EnumWrappers.ItemSlot.FEET, value);
     }
 
     public void clearArmor() {
-        for (ItemSlot fi : ItemSlot.values()) {
-            if (fi != ItemSlot.MAINHAND && fi != ItemSlot.OFFHAND) {
-                update(fi, null);
-            }
+        for (EnumWrappers.ItemSlot fi : EnumWrappers.ItemSlot.values()) {
+            if (fi == EnumWrappers.ItemSlot.MAINHAND || fi == EnumWrappers.ItemSlot.OFFHAND) continue;
+            this.update(fi, null);
         }
     }
 
     public void clearAll() {
-        for (ItemSlot fi : ItemSlot.values()) {
-            update(fi, null);
+        for (EnumWrappers.ItemSlot fi : EnumWrappers.ItemSlot.values()) {
+            this.update(fi, null);
         }
     }
 
     public void show(Player p) {
-        for (ItemSlot fi : ItemSlot.values()) {
-            ItemStack is = items.get(fi);
-            if (is == null || is.getType() == Material.AIR) {
-                continue;
-            }
+        for (EnumWrappers.ItemSlot fi : EnumWrappers.ItemSlot.values()) {
+            ItemStack is = this.items.get(fi);
+            if (is == null || is.getType() == Material.AIR) continue;
             WrapperPlayServerEntityEquipment wrapper = new WrapperPlayServerEntityEquipment();
-            wrapper.setEntityID(relatedEntity.getId());
-            wrapper.setItem(items.get(fi));
+            wrapper.setEntityID(this.relatedEntity.getId());
+            wrapper.setItem(this.items.get(fi));
             wrapper.setSlot(fi);
             wrapper.sendPacket(p);
         }
     }
 
-    public void update(ItemSlot slot, ItemStack value) {
-        relatedEntity.validate();
-        updateUnsafe(slot, value);
+    public void update(EnumWrappers.ItemSlot slot, ItemStack value) {
+        this.relatedEntity.validate();
+        this.updateUnsafe(slot, value);
     }
 
-    public void updateUnsafe(ItemSlot slot, ItemStack value) {
+    public void updateUnsafe(EnumWrappers.ItemSlot slot, ItemStack value) {
         if (value == null) {
             value = new ItemStack(Material.AIR, 1);
         }
         if (value.getType() == Material.AIR) {
-            items.remove(slot);
+            this.items.remove(slot);
         } else {
-            items.put(slot, value);
+            this.items.put(slot, value);
         }
         WrapperPlayServerEntityEquipment wrapper = new WrapperPlayServerEntityEquipment();
-        wrapper.setEntityID(relatedEntity.getId());
+        wrapper.setEntityID(this.relatedEntity.getId());
         wrapper.setItem(value);
         wrapper.setSlot(slot);
-        relatedEntity.getAffectedPlayers().forEach(wrapper::sendPacket);
+        this.relatedEntity.getAffectedPlayers().forEach(wrapper::sendPacket);
     }
 }

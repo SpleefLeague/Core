@@ -1,10 +1,11 @@
-package com.spleefleague.core.utils;
+package com.spleefleague.core.command.dynamic;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.utils.DynamicCommand.LoadedDynamicCommand;
+import com.spleefleague.core.command.dynamic.DynamicCommand.LoadedDynamicCommand;
+import com.spleefleague.core.utils.RuntimeCompiler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -91,7 +92,8 @@ public class DynamicCommandManager implements Listener {
 
     private void load() {
         try {
-            core.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Loading Dynamic Commands");
+            
+            SpleefLeague.getInstance().log("Loading dynamic commands");
             if (!this.core.getDataFolder().exists()) {
                 this.core.getDataFolder().mkdirs();
             }
@@ -131,14 +133,15 @@ public class DynamicCommandManager implements Listener {
                     this.registerFromClass(f, (ChatColor color, String txt) -> {
                         core.getServer().getConsoleSender().sendMessage(color + txt);
                     });
-                } catch (Exception ex) {
+                } catch (JSONException ex) {
+                    
                 }
             }
         } catch (IOException | JSONException ex) {
             Logger.getLogger(DynamicCommandManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.persist();
-        core.getServer().getConsoleSender().sendMessage(ChatColor.WHITE + Integer.toString(this.loadedCustomCommands.size()) + ChatColor.YELLOW + " Dynamic Commands Loaded");
+        SpleefLeague.getInstance().log(Integer.toString(this.loadedCustomCommands.size()) + " Dynamic Commands Loaded");
     }
 
     public String[] getRegisteredCommands() {
