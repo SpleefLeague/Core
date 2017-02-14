@@ -38,7 +38,7 @@ public class globalschematic extends BasicCommand {
 
     @Override
     protected void run(Player p, SLPlayer slp, Command cmd, String[] args) {
-        if(!Settings.hasKey("global_schematics_enabled") || !Settings.getBoolean("global_schematics_enabled") || !Settings.hasKey("global_schematics_save_location")) {
+        if(!Settings.getBoolean("global_schematics_enabled").orElse(false) || !Settings.hasKey("global_schematics_save_location")) {
             error(p, "This command is currently disabled!");
             return;
         }
@@ -57,7 +57,7 @@ public class globalschematic extends BasicCommand {
                     return;
                 }
 
-                File saveLocation = new File(Settings.getString("global_schematics_save_location"));
+                File saveLocation = new File(Settings.getString("global_schematics_save_location").get());
                 File saveFile = new File(saveLocation, args[1] + ".schematic");
 
                 ClipboardFormat format = ClipboardFormat.findByAlias("schematic");
@@ -114,7 +114,7 @@ public class globalschematic extends BasicCommand {
                     return;
                 }
 
-                File loadLocation = new File(Settings.getString("global_schematics_save_location"));
+                File loadLocation = new File(Settings.getString("global_schematics_save_location").get());
                 File loadFile = new File(loadLocation, args[1] + ".schematic");
 
                 if(!loadFile.exists()) {

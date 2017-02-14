@@ -42,7 +42,7 @@ public class reloaddata extends BasicCommand {
             success(cs, "Reloaded " + Rank.values().length + " ranks!");
         } else if (args[0].equalsIgnoreCase("settings")) {
             Settings.loadSettings();
-            SpleefLeague.getInstance().getDebuggerHostManager().reloadAll(Settings.getList("debugger_hosts"));
+            Settings.getList("debugger_hosts").ifPresent(SpleefLeague.getInstance().getDebuggerHostManager()::reloadAll);
             success(cs, "Reloaded settings from the database!");
         } else {
             error(cs, "unknown option");
