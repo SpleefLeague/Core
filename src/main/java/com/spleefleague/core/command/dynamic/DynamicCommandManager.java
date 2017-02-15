@@ -30,6 +30,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -238,18 +240,19 @@ public class DynamicCommandManager implements Listener {
         try {
             InputStream is;
             try {
-                URL url = new URL(Settings.getString("debugger_paste_raw").replace("{id}", id));
+                URL url = new URL(Settings.getString("debugger_paste_raw").get().replace("{id}", id));
                 is = url.openStream();
-            } catch (Exception e) {
+            } catch (IOException | NoSuchElementException e) {
                 e.printStackTrace();
                 try {
-                    if (Settings.hasKey("debugger_paste_raw_backup")) {
-                        URL url = new URL(Settings.getString("debugger_paste_raw_backup").replace("{id}", id));
+                    Optional<String> backup = Settings.getString("debugger_paste_raw_backup");
+                    if (backup.isPresent()) {
+                        URL url = new URL(backup.get().replace("{id}", id));
                         is = url.openStream();
                     } else {
                         return null;
                     }
-                } catch (Exception e2) {
+                } catch (IOException e2) {
                     return null;
                 }
             }

@@ -8,11 +8,9 @@ package com.spleefleague.core.listeners;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
+import com.spleefleague.core.events.ChatChannelMessageEvent;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.plugin.GamePlugin;
-import com.spleefleague.core.queue.Battle;
-import com.spleefleague.core.utils.ModifiableFinal;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -24,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import org.bukkit.event.EventPriority;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -54,26 +54,27 @@ public class ChatListener implements Listener {
             String message = event.getMessage();
             if(antiCapsPattern.matcher(message).matches())
                 event.setMessage(message.toLowerCase());
-            ModifiableFinal<String> prefix = new ModifiableFinal<>("");
+            String prefix = "";
             if (!slp.getRank().getDisplayName().equals("Default")) {
-                prefix.setValue(ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getDisplayName() + ChatColor.DARK_GRAY + "] ");
+                prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + slp.getRank().getDisplayName() + ChatColor.DARK_GRAY + "] ";
             }
             if (!event.isCancelled()) {
-                ModifiableFinal<Battle> b = new ModifiableFinal<>(null);
-                for (GamePlugin p : GamePlugin.getGamePlugins()) {
-                    Battle find = p.getBattleManager().getBattle(slp);
-                    if (find != null) {
-                        b.setValue(find);
-                        break;
-                    }
-                }
                 ChatChannel channel = slp.getSendingChannel();
-                ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix.getValue() + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, event.getMessage(), channel);
+                ChatManager.sendMessage(ChatColor.DARK_GRAY + "<" + prefix + slp.getRank().getColor() + slp.getName() + ChatColor.DARK_GRAY + ">" + ChatColor.RESET, event.getMessage(), channel);
             }
         }
         if (slp.getRank() != null && !(slp.getRank().hasPermission(Rank.MODERATOR) || Arrays.asList(Rank.MODERATOR).contains(slp.getRank()))) {
             lastMessage.put(slp.getUniqueId(), System.currentTimeMillis());
         }
         event.setCancelled(true);
+    }
+    
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onChatChannel(ChatChannelMessageEvent event) {
+        if(event.getChannel() == ChatChannel.STAFF) {
+            JSONObject send = new JSONObject();
+            send.put("message", event.getMessage());
+            SpleefLeague.getInstance().getConnectionClient().send("staff", send);
+        }
     }
 }
