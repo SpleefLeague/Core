@@ -99,7 +99,7 @@ public class FakeBlockHandler implements Listener {
                 }
                 );
                 Set<FakeBlock> blocks = FakeBlockHandler.getFakeBlocksForChunk(event.getPlayer(), wpsmc.getChunkX(), wpsmc.getChunkZ());
-                if (blocks != null) {
+                if (true && blocks != null) {
                     ChunkPacketUtil.setBlocksPacketMapChunk(event.getPlayer().getWorld(), event.getPacket(), blocks);
                 }
             }

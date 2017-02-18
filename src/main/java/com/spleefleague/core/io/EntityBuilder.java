@@ -459,10 +459,10 @@ public class EntityBuilder {
 
             private static <T> Object loadArray(List data, Class<? extends T> type, Class<? extends TypeConverter> tcc) throws InstantiationException, IllegalAccessException {
                 Object[] array = new Object[data.size()];
+                TypeConverter tc = tcc.equals(TypeConverter.class) ? null : tcc.newInstance();
                 for (int i = 0; i < data.size(); i++) {
                     Object o = data.get(i);
-                    if (!tcc.equals(TypeConverter.class)) {
-                        TypeConverter tc = tcc.newInstance();
+                    if (tc != null) {
                         o = tc.convertLoad(o);
                     } else if (o instanceof Document && DBLoadable.class.isAssignableFrom(type)) {
                         o = deserialize((Document) o, type);
@@ -504,25 +504,29 @@ public class EntityBuilder {
                 } else if (cast == int.class) {
                     array = new int[values.length];
                     for (int i = 0; i < values.length; i++) {
-                        int value = (int) values[i];
+                        Number n = (Number) values[i];
+                        int value = n.intValue();
                         ((int[]) array)[i] = value;
                     }
                 } else if (cast == long.class) {
                     array = new int[values.length];
                     for (int i = 0; i < values.length; i++) {
-                        long value = (long) values[i];
+                        Number n = (Number) values[i];
+                        long value = n.longValue();
                         ((long[]) array)[i] = value;
                     }
                 } else if (cast == short.class) {
                     array = new int[values.length];
                     for (int i = 0; i < values.length; i++) {
-                        short value = (short) values[i];
+                        Number n = (Number) values[i];
+                        short value = n.shortValue();
                         ((short[]) array)[i] = value;
                     }
                 } else if (cast == byte.class) {
                     array = new int[values.length];
                     for (int i = 0; i < values.length; i++) {
-                        byte value = (byte) values[i];
+                        Number n = (Number) values[i];
+                        byte value = n.byteValue();
                         ((byte[]) array)[i] = value;
                     }
                 } else if (cast == char.class) {

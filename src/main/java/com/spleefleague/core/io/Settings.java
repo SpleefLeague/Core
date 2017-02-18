@@ -58,7 +58,7 @@ public class Settings {
         if(doc == null) {
             return OptionalInt.empty();
         }
-        return OptionalInt.of(doc.get("value", int.class));
+        return OptionalInt.of(doc.get("value", Integer.class));
     }
 
     public static Optional<Boolean> getBoolean(String key) {
@@ -66,7 +66,7 @@ public class Settings {
         if (doc == null) {
             return Optional.empty();
         }
-        return Optional.of(doc.get("value", boolean.class));
+        return Optional.of(doc.get("value", Boolean.class));
     }
 
     public static Optional<Location> getLocation(String key) {

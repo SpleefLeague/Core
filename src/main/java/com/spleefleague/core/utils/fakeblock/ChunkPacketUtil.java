@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.v1_11_R1.PacketPlayOutMapChunk;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 
@@ -32,25 +34,59 @@ public class ChunkPacketUtil {
             int x = wpsmc.getChunkX();
             int z = wpsmc.getChunkZ();
             Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x, z);
-            if (x == 3 && z == 12/*verified.size() > 0*/) {
+            if (x == 4 && z == 13/*verified.size() > 0*/) {
                 try {
                     Field arrayField = packet.getClass().getDeclaredField("d");
                     arrayField.setAccessible(true);
                     byte[] bytes = (byte[]) arrayField.get(packet);
+                    System.out.println("Raw");
+                    System.out.println(Arrays.toString(bytes));
                     Field bitmaskField = packet.getClass().getDeclaredField("c");
                     bitmaskField.setAccessible(true);
                     int bitmask = bitmaskField.getInt(packet);
                     ChunkSection[] sections = splitToChunkSections(bitmask, bytes, world.getEnvironment() == Environment.NORMAL);
+                    System.out.println("Parsed");
+                    StringBuilder sb = new StringBuilder();
+                    for(ChunkSection section : sections) {
+                        if(section == null) continue;
+                        for(BlockData b : section.getBlockData()) {
+                            sb.append(b.getType().getId()).append(", ");
+                        }
+                    }
+                    System.out.println(sb.toString());
                     //insertFakeBlocks(sections, verified, world.getEnvironment() == Environment.NORMAL);
                     for(int i : verified.keySet()) {
                     //    bitmask |= 1 << i;
                     }
                     int i = (int) (Math.random()* 100);
+                    System.out.println("Actual");
+                    sb = new StringBuilder();
+                    Chunk chunk = world.getChunkAt(x, z);
+                    for (int y = 0; y < 256; y++) {
+                        for (int z_ = 0; z_ < 16; z_++) {
+                            for (int x_ = 0; x_ < 16; x_++) {
+                                sb.append(chunk.getBlock(x_, y, z_).getTypeId()).append(", ");
+                            }
+                        }
+                    }
+                    System.out.println(sb.toString());
                     System.out.println("===");
                     //System.out.println(i + " Raw:\n" + Arrays.toString(bytes));
                     byte[] data = toByteArray(sections);
                     //System.out.println(i + " Modified\n" + Arrays.toString(data));
-                    splitToChunkSections(bitmask, data, world.getEnvironment() == Environment.NORMAL);
+                    sections = splitToChunkSections(bitmask, data, world.getEnvironment() == Environment.NORMAL);
+                    System.out.println("Modified");
+                    sb = new StringBuilder();
+                    for(ChunkSection section : sections) {
+                        if(section == null) continue;
+                        for(BlockData b : section.getBlockData()) {
+                            sb.append(b.getType().getId()).append(", ");
+                        }
+                    }
+                    System.out.println(sb.toString());
+                    
+                    System.out.println("Modified_Raw");
+                    System.out.println(Arrays.toString(data));
                     arrayField.set(packet, data);
                     bitmaskField.set(packet, bitmask);
                 } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException | IOException ex) {
@@ -72,14 +108,17 @@ public class ChunkPacketUtil {
 
     private static void writeChunkSectionData(ByteArrayOutputStream baos, ChunkSection section) throws IOException {
         Set<BlockData> used = section.getContainedBlocks();
-        BlockPalette palette;
+       BlockPalette palette;
         if (used == null) {
             palette = BlockPalette.GLOBAL;
         } else {
-            palette = BlockPalette.createPalette(used.toArray(new BlockData[used.size()]));
-        }
-        for(BlockData d : used) {
-            //System.out.println(d.getType() + " (" + d.getDamage() + ")");
+            palette = BlockPalette.createPalette(used.toArray(new BlockData[used.size()])); 
+            System.out.println("PaletteContained");
+            String a = "";
+            for(BlockData b : used) {
+                a += b.getType() + " ";
+            }
+            System.out.println(a);
         }
         //System.out.println("====");
         for(BlockData d : BlockPalette.createPalette(palette.getPaletteData(), palette.getBitsPerBlock()).getBlocks()) {
@@ -160,11 +199,6 @@ public class ChunkPacketUtil {
                 byte[] lightingData = new byte[2048 + skylightLength];
                 buffer.get(lightingData);
                 sections[index++] = new ChunkSection(blockData, lightingData, palette);
-                StringBuilder sb = new StringBuilder();
-                for(BlockData b : sections[index - 1].getBlockData()) {
-                    sb.append(b.getType().getId()).append(", ");
-                }
-                System.out.println(sb.toString());
                 //buffer.position(buffer.position() + 2048 + skylightLength);
             }
         }
