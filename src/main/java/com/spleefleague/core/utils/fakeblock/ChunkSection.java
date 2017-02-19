@@ -16,11 +16,11 @@ import org.bukkit.Material;
  */
 public class ChunkSection {
     
-    //Maybe not wrap in Object for performance?
     private final BlockData[] blocks;
     private final byte[] lightData;
     private boolean modified = false;
-    private final Set<BlockData> paletteBlocks;
+    private BlockData[] paletteBlocks;
+    private final Set<BlockData> paletteBlockSet;
     
     /**
      * 
@@ -31,6 +31,15 @@ public class ChunkSection {
     public ChunkSection(byte[] blockdata, byte[] lightData, BlockPalette palette) {
         this.blocks = palette.decode(blockdata);
         paletteBlocks = palette.getBlocks();//Null for the global palette
+        if(paletteBlocks != null) {
+            paletteBlockSet = new HashSet<>();
+            for(BlockData data : paletteBlocks) {
+                paletteBlockSet.add(data);
+            }
+        }
+        else {
+            paletteBlockSet = null;
+        }
         this.lightData = lightData;
     }
     
@@ -38,7 +47,8 @@ public class ChunkSection {
         BlockData air = new BlockData(Material.AIR, (byte)0);
         blocks = new BlockData[4096];
         Arrays.fill(blocks, air);
-        paletteBlocks = new HashSet<>();
+        paletteBlocks = null;
+        paletteBlockSet = null;
         lightData = new byte[overworld ? 4096 : 2048];
         Arrays.fill(lightData, (byte)-1);//Default light data, everything is bright
     }
@@ -51,8 +61,11 @@ public class ChunkSection {
         blocks[x + z * 16 + y * 256] = data;
         modified = true;
         if(paletteBlocks != null) {
-            paletteBlocks.add(data);
+            if(!paletteBlockSet.contains(data)) {
+                paletteBlocks = null;
+            }
         }
+        paletteBlockSet.add(data);
     }
     
     public BlockData[] getBlockData() {
@@ -63,7 +76,10 @@ public class ChunkSection {
         return modified;
     }
     
-    public Set<BlockData> getContainedBlocks() {
+    public BlockData[] getContainedBlocks() {
+        if(paletteBlocks == null) {
+            paletteBlocks = paletteBlockSet.toArray(new BlockData[0]);
+        }
         return paletteBlocks;
     }
     

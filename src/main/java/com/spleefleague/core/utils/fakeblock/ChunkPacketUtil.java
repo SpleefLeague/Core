@@ -13,11 +13,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.v1_11_R1.PacketPlayOutMapChunk;
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 
@@ -34,101 +32,54 @@ public class ChunkPacketUtil {
             int x = wpsmc.getChunkX();
             int z = wpsmc.getChunkZ();
             Map<Integer, Collection<FakeBlock>> verified = toVerifiedSectionMap(unverified, x, z);
-            if (x == 4 && z == 13/*verified.size() > 0*/) {
+            if (verified.size() > 0) {
                 try {
                     Field arrayField = packet.getClass().getDeclaredField("d");
                     arrayField.setAccessible(true);
                     byte[] bytes = (byte[]) arrayField.get(packet);
-                    System.out.println("Raw");
-                    System.out.println(Arrays.toString(bytes));
                     Field bitmaskField = packet.getClass().getDeclaredField("c");
                     bitmaskField.setAccessible(true);
                     int bitmask = bitmaskField.getInt(packet);
-                    ChunkSection[] sections = splitToChunkSections(bitmask, bytes, world.getEnvironment() == Environment.NORMAL);
-                    System.out.println("Parsed");
-                    StringBuilder sb = new StringBuilder();
-                    for(ChunkSection section : sections) {
-                        if(section == null) continue;
-                        for(BlockData b : section.getBlockData()) {
-                            sb.append(b.getType().getId()).append(", ");
-                        }
-                    }
-                    System.out.println(sb.toString());
-                    //insertFakeBlocks(sections, verified, world.getEnvironment() == Environment.NORMAL);
-                    for(int i : verified.keySet()) {
-                    //    bitmask |= 1 << i;
-                    }
-                    int i = (int) (Math.random()* 100);
-                    System.out.println("Actual");
-                    sb = new StringBuilder();
-                    Chunk chunk = world.getChunkAt(x, z);
-                    for (int y = 0; y < 256; y++) {
-                        for (int z_ = 0; z_ < 16; z_++) {
-                            for (int x_ = 0; x_ < 16; x_++) {
-                                sb.append(chunk.getBlock(x_, y, z_).getTypeId()).append(", ");
-                            }
-                        }
-                    }
-                    System.out.println(sb.toString());
-                    System.out.println("===");
-                    //System.out.println(i + " Raw:\n" + Arrays.toString(bytes));
-                    byte[] data = toByteArray(sections);
-                    //System.out.println(i + " Modified\n" + Arrays.toString(data));
-                    sections = splitToChunkSections(bitmask, data, world.getEnvironment() == Environment.NORMAL);
-                    System.out.println("Modified");
-                    sb = new StringBuilder();
-                    for(ChunkSection section : sections) {
-                        if(section == null) continue;
-                        for(BlockData b : section.getBlockData()) {
-                            sb.append(b.getType().getId()).append(", ");
-                        }
-                    }
-                    System.out.println(sb.toString());
                     
-                    System.out.println("Modified_Raw");
-                    System.out.println(Arrays.toString(data));
+                    ChunkData chunkData = splitToChunkSections(bitmask, bytes, world.getEnvironment() == Environment.NORMAL);
+                    insertFakeBlocks(chunkData.getSections(), verified, world.getEnvironment() == Environment.NORMAL);
+                    for(int i : verified.keySet()) {
+                        bitmask |= 1 << i;
+                    }
+                    byte[] data = toByteArray(chunkData);
                     arrayField.set(packet, data);
                     bitmaskField.set(packet, bitmask);
-                } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException | IOException ex) {
-                    Logger.getLogger(ChunkPacketUtil.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException | IOException e) {
+                    Logger.getLogger(ChunkPacketUtil.class.getName()).log(Level.SEVERE, null, e);
+                } catch (NullPointerException e) {
+                    Logger.getLogger(ChunkPacketUtil.class.getName()).log(Level.SEVERE, null, e);
+                    Logger.getLogger(ChunkPacketUtil.class.getName()).log(Level.SEVERE, "Debug info: ({0}|{1})", new Object[]{x, z});
                 }
             }
         }
     }
 
-    private static byte[] toByteArray(ChunkSection[] sections) throws IOException {
+    private static byte[] toByteArray(ChunkData data) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        for (ChunkSection section : sections) {
+        for (ChunkSection section : data.getSections()) {
             if(section != null) {
                 writeChunkSectionData(baos, section);
             }
         }
+        baos.write(data.getAdditionalData());
         return baos.toByteArray();
     }
 
     private static void writeChunkSectionData(ByteArrayOutputStream baos, ChunkSection section) throws IOException {
-        Set<BlockData> used = section.getContainedBlocks();
+       BlockData[] used = section.getContainedBlocks();
        BlockPalette palette;
         if (used == null) {
             palette = BlockPalette.GLOBAL;
         } else {
-            palette = BlockPalette.createPalette(used.toArray(new BlockData[used.size()])); 
-            System.out.println("PaletteContained");
-            String a = "";
-            for(BlockData b : used) {
-                a += b.getType() + " ";
-            }
-            System.out.println(a);
+            palette = BlockPalette.createPalette(used); 
         }
-        //System.out.println("====");
-        for(BlockData d : BlockPalette.createPalette(palette.getPaletteData(), palette.getBitsPerBlock()).getBlocks()) {
-            //System.out.println(d.getType() + " (" + d.getDamage() + ")");
-        }
-        //System.out.println("New: ");
         byte bpb = (byte) palette.getBitsPerBlock();
-        //System.out.println("BPB: " + bpb);
         int paletteLength = palette.getLength();
-        //System.out.println("Palette length: " + paletteLength);
         int[] paletteInfo;
         if (paletteLength == 0) {
             paletteInfo = new int[0];
@@ -165,44 +116,37 @@ public class ChunkPacketUtil {
         }
     }
 
-    private static ChunkSection[] splitToChunkSections(int bitmask, byte[] data, boolean isOverworld) {
+    private static ChunkData splitToChunkSections(int bitmask, byte[] data, boolean isOverworld) {
         int skylightLength = isOverworld ? 2048 : 0;
         ChunkSection[] sections = new ChunkSection[16];
-        //System.out.println(Integer.toBinaryString(bitmask));
         ByteBuffer buffer = ByteBuffer.wrap(data);
         ByteBufferReader bbr = new ByteBufferReader(buffer);
         byte index = 0;
         for (int i = 0; i < 16; i++) {
             if ((bitmask & 0x8000 >> i) != 0) {
-                //System.out.println(Arrays.toString(data));
                 short bpb = (short) Byte.toUnsignedInt(buffer.get());
                 int paletteLength = bbr.readVarInt();
                 BlockPalette palette;
-                //System.out.println("PaletteLength: " + paletteLength);
-                //System.out.println("BPB: " + bpb);
                 if (paletteLength != 0 || bpb < 9) {
                     int[] paletteData = new int[paletteLength];
                     for (int j = 0; j < paletteLength; j++) {
                         paletteData[j] = bbr.readVarInt();
                     }
-                    //System.out.println(Arrays.toString(paletteData));
                     palette = BlockPalette.createPalette(paletteData, bpb);
                 } else {
                     palette = BlockPalette.GLOBAL;
                 }
                 int dataLength = bbr.readVarInt();
-                //System.out.println("DataLength: " + dataLength);
                 byte[] blockData = new byte[dataLength * 8];
                 buffer.get(blockData);
-                //System.out.println("Block data:");
-                //System.out.println(Arrays.toString(blockData));
                 byte[] lightingData = new byte[2048 + skylightLength];
                 buffer.get(lightingData);
                 sections[index++] = new ChunkSection(blockData, lightingData, palette);
-                //buffer.position(buffer.position() + 2048 + skylightLength);
             }
         }
-        return sections;
+        byte[] additional = new byte[data.length - buffer.position()];
+        buffer.get(additional);
+        return new ChunkData(sections, additional);
     }
 
     private static Map<Integer, Collection<FakeBlock>> toVerifiedSectionMap(Collection<FakeBlock> unverified, int x, int z) {

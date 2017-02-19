@@ -1,6 +1,7 @@
 package com.spleefleague.core.listeners;
 
 import com.comphenix.packetwrapper.WrapperPlayClientBlockDig;
+import com.comphenix.packetwrapper.WrapperPlayClientUseItem;
 import com.comphenix.packetwrapper.WrapperPlayServerMapChunk;
 import com.comphenix.packetwrapper.WrapperPlayServerUnloadChunk;
 import com.comphenix.protocol.PacketType;
@@ -99,7 +100,7 @@ public class FakeBlockHandler implements Listener {
                 }
                 );
                 Set<FakeBlock> blocks = FakeBlockHandler.getFakeBlocksForChunk(event.getPlayer(), wpsmc.getChunkX(), wpsmc.getChunkZ());
-                if (true && blocks != null) {
+                if (blocks != null) {
                     ChunkPacketUtil.setBlocksPacketMapChunk(event.getPlayer().getWorld(), event.getPacket(), blocks);
                 }
             }
@@ -169,9 +170,36 @@ public class FakeBlockHandler implements Listener {
             public void onPacketSending(PacketEvent event) {
             }
         };
+        placeController = new PacketAdapter(SpleefLeague.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.USE_ITEM) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                WrapperPlayClientUseItem wrapper = new WrapperPlayClientUseItem(event.getPacket());
+                if (wrapper.getLocation().getY() < 0) {
+                    return;
+                }
+                Location loc = wrapper.getLocation().toVector().toLocation(event.getPlayer().getWorld());
+                int chunkX = wrapper.getLocation().getX() >> 4;
+                int chunkZ = wrapper.getLocation().getZ() >> 4;
+                Set<FakeBlock> fakeBlocks = getFakeBlocksForChunk(event.getPlayer(), chunkX, chunkZ);
+                if (fakeBlocks != null) {
+                    for (FakeBlock fakeBlock : fakeBlocks) {
+                        if (blockEqual(fakeBlock.getLocation(), loc)) {
+                            event.setCancelled(true);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onPacketSending(PacketEvent event) {
+
+            }
+        };
         manager.addPacketListener(this.chunkData);
         manager.addPacketListener(this.unloadChunk);
         manager.addPacketListener(this.breakController);
+        manager.addPacketListener(this.placeController);
     }
 
     private void sendBreakParticles(Player p, FakeBlock block) {

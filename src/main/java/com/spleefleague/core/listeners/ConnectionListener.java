@@ -91,6 +91,7 @@ public class ConnectionListener implements Listener {
         } else if(e.getChannel().equalsIgnoreCase("broadcast")) {
             Bukkit.broadcastMessage(String.format(SpleefLeague.BROADCAST_FORMAT, e.getJSONObject().getString("message")));
         }
+        
     }
 
     @EventHandler

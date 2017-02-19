@@ -66,6 +66,7 @@ public class EnvironmentListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        player.setCollidable(false);
         if (SpleefLeague.getInstance().getSpawnManager() != null) {
             SpawnManager.SpawnLocation spawnLocation = SpleefLeague.getInstance().getSpawnManager().getNext();
             if (spawnLocation != null) {

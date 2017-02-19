@@ -5,12 +5,10 @@
  */
 package com.spleefleague.core.utils.fakeblock;
 
+import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.utils.ProtocolLongArrayBitReader;
 import com.spleefleague.core.utils.ProtocolLongArrayBitWriter;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 import org.bukkit.Material;
 
 /**
@@ -22,7 +20,7 @@ public abstract class BlockPalette {
     public static final BlockPalette GLOBAL = GlobalBlockPalette.instance();
     
     public abstract BlockData[] decode(byte[] data);
-    public abstract Set<BlockData> getBlocks();
+    public abstract BlockData[] getBlocks();
     public abstract int getBitsPerBlock();
     public abstract int getLength();
     public abstract int[] getPaletteData();
@@ -33,7 +31,7 @@ public abstract class BlockPalette {
     }
     
     public static BlockPalette createPalette(BlockData[] data) {
-        int bitsPerBlock = Math.max(31 - Integer.numberOfLeadingZeros(data.length), 4);
+        int bitsPerBlock = Math.max(32 - Integer.numberOfLeadingZeros(data.length - 1), 4);
         if(bitsPerBlock < 9) {
             return new EncodedBlockPalette(data, bitsPerBlock);
         }
@@ -61,7 +59,7 @@ public abstract class BlockPalette {
         }
         
         @Override
-        public Set<BlockData> getBlocks() {
+        public BlockData[] getBlocks() {
             return null;
         }
 
@@ -128,8 +126,8 @@ public abstract class BlockPalette {
         }
 
         @Override
-        public Set<BlockData> getBlocks() {
-            return new HashSet<>(Arrays.asList(lookupTable));
+        public BlockData[] getBlocks() {
+            return lookupTable;
         }
 
         @Override
@@ -146,7 +144,12 @@ public abstract class BlockPalette {
                 lookup.put(lookupTable[i], i);
             }
             for(BlockData block : data) {
-                writer.writeInt(lookup.get(block), bitsPerBlock);
+                try {
+                    writer.writeInt(lookup.get(block), bitsPerBlock);
+                } catch(NullPointerException e) {
+                    SpleefLeague.getInstance().log("Error encoding data: " + block.getType());
+                    throw e;
+                }
             }
             return array;
         }
