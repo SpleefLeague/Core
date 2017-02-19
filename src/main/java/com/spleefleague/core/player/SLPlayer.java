@@ -254,8 +254,8 @@ public class SLPlayer extends GeneralPlayer {
             for (SLPlayer slp : SpleefLeague.getInstance().getPlayerManager().getAll()) {
                 if (slp != this && this.getState() == PlayerState.IDLE) {
                     if (slp.getState() == PlayerState.IDLE) {
-                        this.showPlayer(slp);
-                        slp.showPlayer(this);
+                        this.showPlayer(slp.getPlayer());
+                        slp.showPlayer(this.getPlayer());
                     }
                 }
             }

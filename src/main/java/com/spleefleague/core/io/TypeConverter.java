@@ -101,7 +101,16 @@ public abstract class TypeConverter<T, V> {
     public static class LocationConverter extends TypeConverter<List, Location> {
 
         @Override
-        public Location convertLoad(List t) {
+        public Location convertLoad(List l) {
+            List t = new ArrayList<>();
+            for(Object o : l) {
+                if(o instanceof Long) {
+                    t.add(((Long)o).intValue());//Why is this even necessary?
+                }
+                else {
+                    t.add(o);
+                }
+            }
             double x, y, z;
             float pitch = 0, yaw = 0;
             World world;

@@ -6,11 +6,12 @@
 package com.spleefleague.core.chat;
 
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.events.ChatChannelBaseComponentMessageEvent;
+import com.spleefleague.core.events.ChatChannelMessageEvent;
 import com.spleefleague.core.listeners.ChatListener;
 import com.spleefleague.core.player.SLPlayer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
-import org.json.simple.JSONObject;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -35,24 +36,24 @@ public class ChatManager {
     }
 
     public static void sendMessage(final String m, final ChatChannel c) {
-        if (c == ChatChannel.STAFF) {
-            JSONObject send = new JSONObject();
-            send.put("message", m);
-            SpleefLeague.getInstance().getConnectionClient().send("staff", send);
-        } else {
+        ChatChannelMessageEvent event = new ChatChannelMessageEvent(c, m);
+        Bukkit.getPluginManager().callEvent(event);
+        if(!event.isCancelled()) {
             Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
                 Bukkit.getConsoleSender().sendMessage(m);
-                SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(c))).forEach((slp) -> {
-                    slp.sendMessage(m);
+                SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(event.getChannel()))).forEach((slp) -> {
+                    slp.sendMessage(event.getMessage());
                 });
             });
         }
     }
 
     public static void sendMessage(final BaseComponent[] m, final ChatChannel c) {
+        ChatChannelBaseComponentMessageEvent event = new ChatChannelBaseComponentMessageEvent(c, m);
+        Bukkit.getPluginManager().callEvent(event);
         Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
-            SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(c))).forEach((slp) -> {
-                slp.spigot().sendMessage(m);
+            SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(event.getChannel()))).forEach((slp) -> {
+                slp.spigot().sendMessage(event.getMessage());
             });
         });
     }

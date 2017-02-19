@@ -10,14 +10,14 @@ import java.util.*;
 
 public class DebuggerHostManager {
 
-    private static final Class<? extends DebuggerHost>[] default_hosts = new Class[] {
+    private static final Class<? extends DebuggerHost>[] DEFAULT_HOSTS = new Class[] {
             GistHost.class, HastebinHost.class, PastebinHost.class
     };
 
-    private Map<String, Class<? extends DebuggerHost>> typeMap;
+    private final Map<String, Class<? extends DebuggerHost>> typeMap;
 
-    private Collection<DebuggerHost> hosts;
-    private Comparator<DebuggerHost> comparator;
+    private final Collection<DebuggerHost> hosts;
+    private final Comparator<DebuggerHost> comparator;
 
     public DebuggerHostManager() {
         this.comparator = (d1, d2) -> Integer.compare(d1.getIndex(), d2.getIndex());
@@ -61,7 +61,7 @@ public class DebuggerHostManager {
         this.hosts.clear();
         this.typeMap.clear();
 
-        for (Class<? extends DebuggerHost> hostClass : default_hosts) {
+        for (Class<? extends DebuggerHost> hostClass : DEFAULT_HOSTS) {
             try {
                 Constructor<? extends DebuggerHost> c = hostClass.getDeclaredConstructor();
                 DebuggerHost host = c.newInstance();

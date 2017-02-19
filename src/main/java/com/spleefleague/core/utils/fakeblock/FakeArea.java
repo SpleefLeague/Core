@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.spleefleague.core.utils;
+package com.spleefleague.core.utils.fakeblock;
 
 import java.util.Collection;
 import java.util.HashSet;

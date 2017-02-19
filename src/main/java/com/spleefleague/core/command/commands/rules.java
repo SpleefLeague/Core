@@ -4,15 +4,15 @@ import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_11_R1.IChatBaseComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class rules extends BasicCommand {
 
-    private final String url = Settings.getString("rules_thread_url");
+    private final String url = Settings.getString("rules_thread_url").get();
     private final int rulesPerPage = 6;
 
     public rules(CorePlugin plugin, String name, String usage) {
@@ -61,7 +61,7 @@ public class rules extends BasicCommand {
     }
 
     // shortened rules
-    private String[] rules = new String[]{
+    private final String[] rules = new String[]{
         "No spam or full caps statements",
         "No links to illegal or lewd websites of any kind",
         "No hacks or mods which give you an unfair advantage",

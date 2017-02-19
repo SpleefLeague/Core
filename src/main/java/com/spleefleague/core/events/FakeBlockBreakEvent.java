@@ -5,7 +5,7 @@
  */
 package com.spleefleague.core.events;
 
-import com.spleefleague.core.utils.FakeBlock;
+import com.spleefleague.core.utils.fakeblock.FakeBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

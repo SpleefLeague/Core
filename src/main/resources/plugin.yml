@@ -3,8 +3,8 @@ authors: [Joba, Akaiyo, Manuman]
 description: SpleefLeague Core Plugin
 main: com.spleefleague.core.SpleefLeague
 name: SpleefLeagueCore
-url: http://www.spleefleague.net/
-version: 0.1
+url: http://www.spleefleague.com/
+version: 1.0.0
 softdepend: [ProtocolLib]
 commands:
     setrank:

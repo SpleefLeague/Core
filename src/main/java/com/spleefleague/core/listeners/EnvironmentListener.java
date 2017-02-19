@@ -66,6 +66,7 @@ public class EnvironmentListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        player.setCollidable(false);
         if (SpleefLeague.getInstance().getSpawnManager() != null) {
             SpawnManager.SpawnLocation spawnLocation = SpleefLeague.getInstance().getSpawnManager().getNext();
             if (spawnLocation != null) {
@@ -367,9 +368,12 @@ public class EnvironmentListener implements Listener {
         if (!Settings.hasKey("blocked_commands")) {
             return;
         }
-        if (((List<String>) Settings.getList("blocked_commands")).contains(cmd)) {
-            event.setCancelled(true);
-        }
+        Optional<List> optional = Settings.getList("blocked_commands");
+        optional.ifPresent((l) -> {
+            if(l.contains(cmd)) {
+                event.setCancelled(true);
+            }
+        });
     }
 
     @EventHandler

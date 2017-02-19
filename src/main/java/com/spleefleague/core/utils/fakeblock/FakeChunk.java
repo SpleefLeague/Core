@@ -5,7 +5,6 @@
  */
 package com.spleefleague.core.utils.fakeblock;
 
-import com.spleefleague.core.utils.FakeBlock;
 import java.util.HashSet;
 
 public class FakeChunk {

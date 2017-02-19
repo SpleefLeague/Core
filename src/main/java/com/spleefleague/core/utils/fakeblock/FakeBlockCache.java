@@ -5,8 +5,6 @@
  */
 package com.spleefleague.core.utils.fakeblock;
 
-import com.spleefleague.core.utils.FakeArea;
-import com.spleefleague.core.utils.FakeBlock;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;

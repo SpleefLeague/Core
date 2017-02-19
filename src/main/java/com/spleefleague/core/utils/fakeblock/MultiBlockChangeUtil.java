@@ -1,9 +1,11 @@
+package com.spleefleague.core.utils.fakeblock;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.spleefleague.core.utils;
+
 
 import com.comphenix.packetwrapper.WrapperPlayServerMultiBlockChange;
 import com.comphenix.protocol.wrappers.ChunkCoordIntPair;
@@ -12,7 +14,6 @@ import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.spleefleague.core.SpleefLeague;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +25,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.CraftChunk;
+import org.bukkit.craftbukkit.v1_11_R1.CraftChunk;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -78,7 +79,7 @@ public class MultiBlockChangeUtil implements Listener {
     private static void sendMultiBlockChange(MultiBlockChangeData mbcd, List<Player> affected) {
         if (!affected.isEmpty()) {
             World world = affected.get(0).getWorld();
-            net.minecraft.server.v1_8_R3.Chunk chunk = ((CraftChunk) world.getChunkAt(mbcd.getChunkX(), mbcd.getChunkZ())).getHandle();
+            net.minecraft.server.v1_11_R1.Chunk chunk = ((CraftChunk) world.getChunkAt(mbcd.getChunkX(), mbcd.getChunkZ())).getHandle();
             WrapperPlayServerMultiBlockChange wrapper = new WrapperPlayServerMultiBlockChange();
             wrapper.setChunk(new ChunkCoordIntPair(chunk.locX, chunk.locZ));
             wrapper.setRecords(mbcd.getData());
@@ -176,9 +177,7 @@ public class MultiBlockChangeUtil implements Listener {
         return chunks;
     }
 
-    public static Set<Block> getBlocksInArea(Location pos1, Location pos2) {
-        if(pos1 == null || pos2 == null)
-            return Collections.emptySet();
+    public static HashSet<Block> getBlocksInArea(Location pos1, Location pos2) {
         Location low = new Location(pos1.getWorld(), Math.min(pos1.getBlockX(), pos2.getBlockX()), Math.min(pos1.getBlockY(), pos2.getBlockY()), Math.min(pos1.getBlockZ(), pos2.getBlockZ()));
         Location high = new Location(pos1.getWorld(), Math.max(pos1.getBlockX(), pos2.getBlockX()), Math.max(pos1.getBlockY(), pos2.getBlockY()), Math.max(pos1.getBlockZ(), pos2.getBlockZ()));
         HashSet<Block> blocks = new HashSet<>();

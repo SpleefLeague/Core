@@ -157,6 +157,7 @@ public class Rank extends DBEntity implements DBLoadable {
                 rank = staticRank;
             }
             Team t = scoreboard.registerNewTeam(normalizeRankName(rank.getName()));
+            t.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
             t.setDisplayName(t.getDisplayName());
             if (rank.getDisplayName().equalsIgnoreCase(Rank.DEFAULT.getDisplayName())) {
                 t.setPrefix(rank.getColor().toString());

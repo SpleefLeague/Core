@@ -1,4 +1,4 @@
-package com.spleefleague.core.utils;
+package com.spleefleague.core.command.dynamic;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.Theme;

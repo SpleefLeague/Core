@@ -1,11 +1,9 @@
 package com.spleefleague.core.cosmetics.items;
 
-import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.cosmetics.CItem;
 import com.spleefleague.core.cosmetics.CType;
 import com.spleefleague.core.utils.SafePlayerTask;
 import com.spleefleague.core.utils.SimpleItemStack;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

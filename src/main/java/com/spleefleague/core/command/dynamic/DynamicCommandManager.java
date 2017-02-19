@@ -1,10 +1,11 @@
-package com.spleefleague.core.utils;
+package com.spleefleague.core.command.dynamic;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.utils.DynamicCommand.LoadedDynamicCommand;
+import com.spleefleague.core.command.dynamic.DynamicCommand.LoadedDynamicCommand;
+import com.spleefleague.core.utils.RuntimeCompiler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -29,6 +30,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -91,7 +94,8 @@ public class DynamicCommandManager implements Listener {
 
     private void load() {
         try {
-            core.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Loading Dynamic Commands");
+            
+            SpleefLeague.getInstance().log("Loading dynamic commands");
             if (!this.core.getDataFolder().exists()) {
                 this.core.getDataFolder().mkdirs();
             }
@@ -131,14 +135,15 @@ public class DynamicCommandManager implements Listener {
                     this.registerFromClass(f, (ChatColor color, String txt) -> {
                         core.getServer().getConsoleSender().sendMessage(color + txt);
                     });
-                } catch (Exception ex) {
+                } catch (JSONException ex) {
+                    
                 }
             }
         } catch (IOException | JSONException ex) {
             Logger.getLogger(DynamicCommandManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.persist();
-        core.getServer().getConsoleSender().sendMessage(ChatColor.WHITE + Integer.toString(this.loadedCustomCommands.size()) + ChatColor.YELLOW + " Dynamic Commands Loaded");
+        SpleefLeague.getInstance().log(Integer.toString(this.loadedCustomCommands.size()) + " Dynamic Commands Loaded");
     }
 
     public String[] getRegisteredCommands() {
@@ -235,18 +240,19 @@ public class DynamicCommandManager implements Listener {
         try {
             InputStream is;
             try {
-                URL url = new URL(Settings.getString("debugger_paste_raw").replace("{id}", id));
+                URL url = new URL(Settings.getString("debugger_paste_raw").get().replace("{id}", id));
                 is = url.openStream();
-            } catch (Exception e) {
+            } catch (IOException | NoSuchElementException e) {
                 e.printStackTrace();
                 try {
-                    if (Settings.hasKey("debugger_paste_raw_backup")) {
-                        URL url = new URL(Settings.getString("debugger_paste_raw_backup").replace("{id}", id));
+                    Optional<String> backup = Settings.getString("debugger_paste_raw_backup");
+                    if (backup.isPresent()) {
+                        URL url = new URL(backup.get().replace("{id}", id));
                         is = url.openStream();
                     } else {
                         return null;
                     }
-                } catch (Exception e2) {
+                } catch (IOException e2) {
                     return null;
                 }
             }

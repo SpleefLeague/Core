@@ -13,6 +13,8 @@ import org.bukkit.Location;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 /**
  *
@@ -39,74 +41,72 @@ public class Settings {
         return settings.containsKey(key);
     }
 
-    public static Document getDocument(String key) {
+    public static Optional<Document> getDocument(String key) {
+        return Optional.ofNullable(settings.get(key).get("value", Document.class));
+    }
+
+    public static Optional<String> getString(String key) {
+        Document doc = (Document) settings.get(key);
+        if (doc == null) {
+            return Optional.empty();
+        }
+        return Optional.of(doc.get("value", String.class));
+    }
+
+    public static OptionalInt getInteger(String key) {
+        Document doc = (Document) settings.get(key);
+        if(doc == null) {
+            return OptionalInt.empty();
+        }
+        return OptionalInt.of(doc.get("value", Integer.class));
+    }
+
+    public static Optional<Boolean> getBoolean(String key) {
+        Document doc = (Document) settings.get(key);
+        if (doc == null) {
+            return Optional.empty();
+        }
+        return Optional.of(doc.get("value", Boolean.class));
+    }
+
+    public static Optional<Location> getLocation(String key) {
+        Document doc = (Document) settings.get(key);
+        if (doc == null) {
+            return null;
+        }
+        return Optional.of(get(key, LocationWrapper.class).get().location);
+    }
+    
+    public static Optional<List> getList(String key) {
         Document doc = settings.get(key);
         if (doc == null) {
-            return null;
+            return Optional.empty();
         }
-        return doc.get("value", Document.class);
+        return Optional.of(doc.get("value", List.class));
     }
 
-    public static String getString(String key) {
-        Document doc = (Document) settings.get(key);
-        if (doc == null) {
-            return null;
-        }
-        return doc.get("value", String.class);
-    }
-
-    public static int getInteger(String key) {
-        Document doc = (Document) settings.get(key);
-        if (doc == null) {
-            return 0;
-        }
-        return doc.get("value", int.class);
-    }
-
-    public static boolean getBoolean(String key) {
-        Document doc = (Document) settings.get(key);
-        if (doc == null) {
-            return true;
-        }
-        return doc.get("value", boolean.class);
-    }
-
-    public static Location getLocation(String key) {
-        Document doc = (Document) settings.get(key);
-        if (doc == null) {
-            return null;
-        }
-        return get(key, LocationWrapper.class).location;
-    }
-
-    public static Location getLocation(List list) {
-        return new TypeConverter.LocationConverter().convertLoad(list);
-    }
-
-    public static List getList(String key) {
+    public static Optional<Object> get(String key) {
         Document doc = settings.get(key);
-        if (doc == null) {
-            return null;
+        if(doc == null) {
+            return Optional.empty();
         }
-        return doc.get("value", List.class);
+        else {
+            return Optional.of(doc.get("value"));
+        }
     }
 
-    public static Object get(String key) {
-        return settings.get(key).get("value");
-    }
-
-    public static <T extends DBEntity & DBLoadable> T get(String key, Class<? extends T> c) {
+    public static <T extends DBEntity & DBLoadable> Optional<T> get(String key, Class<? extends T> c) {
         Document doc = (Document) settings.get(key);
         if (doc == null) {
-            return null;
+            return Optional.empty();
         }
         Object value = doc.get("value");
         if (c.isAssignableFrom(value.getClass())) {
-            return (T) value;
+            return Optional.of((T)value);
         } else if (value instanceof Document) {
-            return EntityBuilder.load((Document) value, c);
+            return Optional.of(EntityBuilder.load((Document) value, c));
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 

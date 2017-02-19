@@ -1,5 +1,6 @@
 package com.spleefleague.core;
 
+import com.spleefleague.core.command.dynamic.DynamicCommandManager;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.mongodb.MongoClient;
@@ -13,6 +14,8 @@ import com.spleefleague.core.cosmetics.CosmeticsManager;
 import com.spleefleague.core.io.Config;
 import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.io.Settings;
+import com.spleefleague.core.io.TypeConverter;
+import com.spleefleague.core.io.TypeConverter.LocationConverter;
 import com.spleefleague.core.io.connections.ConnectionClient;
 import com.spleefleague.core.listeners.*;
 import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
@@ -23,10 +26,11 @@ import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.portals.PortalManager;
 import com.spleefleague.core.queue.Challenge;
 import com.spleefleague.core.spawn.SpawnManager;
+import com.spleefleague.core.spawn.SpawnManager.SpawnLocation;
 import com.spleefleague.core.utils.*;
 import com.spleefleague.core.utils.debugger.DebuggerHostManager;
+import com.spleefleague.core.utils.fakeblock.MultiBlockChangeUtil;
 import com.spleefleague.core.utils.fakeentity.FakeEntitiesManager;
-import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -38,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
@@ -68,7 +73,7 @@ public class SpleefLeague extends CorePlugin {
     private DynamicCommandManager dynamicCommandManager;
     private DebuggerHostManager debuggerHostManager;
     private ServerType serverType;
-
+    
     public SpleefLeague() {
         super("[SpleefLeague]", ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
     }
@@ -101,16 +106,13 @@ public class SpleefLeague extends CorePlugin {
         Warp.init();
         Challenge.init();
         new FakeEntitiesManager();
-
         autoBroadcaster = new AutoBroadcaster(getMongo().getDatabase("SpleefLeague").getCollection("AutoBroadcaster"));
         playerManager = new PlayerManager<>(this, SLPlayer.class);
         portalManager = new PortalManager();
         connectionClient = new ConnectionClient();
         dynamicCommandManager = new DynamicCommandManager(this);
         debuggerHostManager = new DebuggerHostManager();
-
-        debuggerHostManager.reloadAll(Settings.getList("debugger_hosts"));
-        
+        Settings.getList("debugger_hosts").ifPresent(hosts -> debuggerHostManager.reloadAll(hosts));
         loadServerType();
     }
 
@@ -128,26 +130,22 @@ public class SpleefLeague extends CorePlugin {
 
     public void applySettings() {
         if (Settings.hasKey("default_world")) {
-            String defaultWorld = Settings.getString("default_world");
+            String defaultWorld = Settings.getString("default_world").get();
             CorePlugin.DEFAULT_WORLD = Bukkit.getWorld(defaultWorld);
         }
+        
         if (Settings.hasKey("spawn_new") && Settings.hasKey("spawn_max_players")) {
-            List<SpawnManager.SpawnLocation> spawns = new ArrayList<>();
-            ((List<List>) Settings.getList("spawn_new")).forEach((List list) -> spawns.add(new SpawnManager.SpawnLocation(Settings.getLocation(list))));
-            spawnManager = new SpawnManager(spawns, Settings.getInteger("spawn_max_players"));
-        } else if (Settings.hasKey("spawn")) {
-            spawn = Settings.getLocation("spawn");
-            if (spawn != null) {
-                CorePlugin.DEFAULT_WORLD.setSpawnLocation(spawn.getBlockX(), spawn.getBlockY(), spawn.getBlockZ());
-            }
-        }
-        if (Settings.hasKey("max_players")) {
-            setSlotSize(Settings.getInteger("max_players"));
-        }
-        if(Settings.hasKey("game_rules")) {
-            Document document = Settings.getDocument("game_rules");
-            document.forEach((String key, Object object) -> CorePlugin.DEFAULT_WORLD.setGameRuleValue(key, object.toString()));
-        }
+            LocationConverter lc = new TypeConverter.LocationConverter();
+            List<SpawnLocation> spawns = ((List<List>) Settings.getList("spawn_new").get())
+                    .stream()
+                    .map(lc::convertLoad)
+                    .map(SpawnManager.SpawnLocation::new)
+                    .collect(Collectors.toList());
+            spawnManager = new SpawnManager(spawns, Settings.getInteger("spawn_max_players").getAsInt());
+        } 
+        Settings.getLocation("spawn").ifPresent(s -> CorePlugin.DEFAULT_WORLD.setSpawnLocation(s.getBlockX(), s.getBlockY(), s.getBlockZ()));
+        Settings.getInteger("max_players").ifPresent(s -> setSlotSize(s));
+        Settings.getDocument("game_rules").ifPresent(d -> d.forEach((String key, Object object) -> CorePlugin.DEFAULT_WORLD.setGameRuleValue(key, object.toString())));
     }
 
     private void loadJoinSettings() {

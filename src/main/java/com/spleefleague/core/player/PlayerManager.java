@@ -90,6 +90,10 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
     public Collection<G> getAll() {
         return map.values();
     }
+    
+    public G loadFake(Document query) {
+        return load(query);
+    }
 
     public G loadFake(String name) {
         return load(new Document("username", name));
