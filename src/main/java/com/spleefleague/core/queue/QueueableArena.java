@@ -19,6 +19,8 @@ public interface QueueableArena<P extends GeneralPlayer> {
     public boolean isAvailable(P p);
 
     public int getSize();
+    
+    public int getRequiredPlayers();
 
     public String getName();
 

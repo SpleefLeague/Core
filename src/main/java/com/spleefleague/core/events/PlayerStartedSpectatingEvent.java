@@ -3,6 +3,7 @@ package com.spleefleague.core.events;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.plugin.GamePlugin;
 import com.spleefleague.core.queue.Battle;
+import com.spleefleague.core.queue.BattleManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -21,7 +22,14 @@ public class PlayerStartedSpectatingEvent extends Event {
     public PlayerStartedSpectatingEvent(Player player, Player target, GamePlugin game) {
         this.player = player;
         this.target = target;
-        this.battle = game.getBattleManager().getBattle(SpleefLeague.getInstance().getPlayerManager().get(target));
+        Battle b = null;
+        for(BattleManager bm : game.getBattleManagers()) {
+            b = bm.getBattle(SpleefLeague.getInstance().getPlayerManager().get(target));
+            if(b != null) {
+                break;
+            }
+        }
+        this.battle = b;
     }
 
     public Player getPlayer() {

@@ -39,9 +39,17 @@ public abstract class GamePlugin extends CorePlugin {
     public void unspectateGracefully(Player p) {
         if(!isSpectating(p))
             return;
-        Battle battle = getBattleManager().getBattleForSpectator(SpleefLeague.getInstance().getPlayerManager().get(p));
-        unspectate(p);
-        Bukkit.getPluginManager().callEvent(new PlayerEndedSpectatingEvent(p, battle));
+        Battle battle = null;
+        for(BattleManager bm : getBattleManagers()) {
+            battle = bm.getBattle(SpleefLeague.getInstance().getPlayerManager().get(p));
+            if(battle != null) {
+                break;
+            }
+        }
+        if(battle != null) {
+            unspectate(p);
+            Bukkit.getPluginManager().callEvent(new PlayerEndedSpectatingEvent(p, battle));
+        }
     }
 
     public abstract boolean spectate(Player target, Player p);
@@ -68,7 +76,7 @@ public abstract class GamePlugin extends CorePlugin {
 
     public abstract void printStats(Player p);
 
-    public abstract BattleManager getBattleManager();
+    public abstract BattleManager[] getBattleManagers();
     
     private String getImplVersion() {
         String version = getClass().getPackage().getImplementationVersion();

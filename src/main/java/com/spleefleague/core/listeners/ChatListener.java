@@ -72,6 +72,7 @@ public class ChatListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onChatChannel(ChatChannelMessageEvent event) {
         if(event.getChannel() == ChatChannel.STAFF) {
+            event.setCancelled(true);
             JSONObject send = new JSONObject();
             send.put("message", event.getMessage());
             SpleefLeague.getInstance().getConnectionClient().send("staff", send);

@@ -69,16 +69,21 @@ public class EntityBuilder {
 
     public static Document serialize(DBSaveable object) {
         try {
-            HashMap<String, Output> outputs = getOutputs(object.getClass());
+            Map<Integer, Map<String, Output>> outputs = getOutputs(object.getClass());
             Document set = new Document();
             Document unset = new Document();
             Document query = new Document();
-            for (String name : outputs.keySet()) {
-                Object o = outputs.get(name).get(object);
-                if (o != null) {
-                    set.put(name, o);
-                } else {
-                    unset.put(name, "");
+            List<Integer> priorityList = new ArrayList<>(outputs.keySet());
+            Collections.sort(priorityList);
+            for(Integer priority : priorityList) {
+                Map<String, Output> priorityMap = outputs.get(priority);
+                for (String name : priorityMap.keySet()) {
+                    Object o = priorityMap.get(name).get(object);
+                    if (o != null) {
+                        set.put(name, o);
+                    } else {
+                        unset.put(name, "");
+                    }
                 }
             }
             query.put("$set", set);
@@ -102,12 +107,17 @@ public class EntityBuilder {
             } catch (InstantiationException | IllegalAccessException e) {
                 t = createInstance(c);
             }
-            Map<String, Input> inputs = getInputs(c);
-            for (String name : inputs.keySet()) {
-                Object o = dbo.get(name);
-                if (o != null) {
-                    Input i = inputs.get(name);
-                    i.set(t, o);
+            Map<Integer, Map<String, Input>> inputs = getInputs(c);
+            List<Integer> priorityList = new ArrayList<>(inputs.keySet());
+            Collections.sort(priorityList);
+            for(Integer priority : priorityList) {
+                Map<String, Input> priorityMap = inputs.get(priority);
+                for (String name : priorityMap.keySet()) {
+                    Object o = dbo.get(name);
+                    if (o != null) {
+                        Input i = priorityMap.get(name);
+                        i.set(t, o);
+                    }
                 }
             }
             ((DBLoadable) t).done();
@@ -118,49 +128,67 @@ public class EntityBuilder {
         return null;
     }
 
-    private static Map<String, Input> getInputs(Class c) {
-        Map<String, Input> inputs = new HashMap<>();
+    private static Map<Integer, Map<String, Input>> getInputs(Class c) {
+        Map<Integer, Map<String, Input>> inputs = new HashMap<>();
         Class current = c;
         while (current != null && current.isAssignableFrom(c)) {
             for (Method m : current.getDeclaredMethods()) {
                 DBLoad dbload = m.getAnnotation(DBLoad.class);
                 if (dbload != null) {
-                    inputs.put(dbload.fieldName(), new Input(dbload.priority(), m));
+                    Map<String, Input> map = inputs.get(dbload.priority());
+                    if(map == null) {
+                        map = new HashMap<>();
+                        inputs.put(dbload.priority(), map);
+                    }
+                    map.put(dbload.fieldName(), new Input(dbload.priority(), m));
                 }
 
             }
             for (Field f : current.getDeclaredFields()) {
                 DBLoad dbload = f.getAnnotation(DBLoad.class);
                 if (dbload != null) {
-                    inputs.put(dbload.fieldName(), new Input(dbload.priority(), f));
+                    Map<String, Input> map = inputs.get(dbload.priority());
+                    if(map == null) {
+                        map = new HashMap<>();
+                        inputs.put(dbload.priority(), map);
+                    }
+                    map.put(dbload.fieldName(), new Input(dbload.priority(), f));
                 }
             }
             current = current.getSuperclass();
         }
-        inputs = MapUtil.sortByValue(inputs);
         return inputs;
     }
 
-    private static HashMap<String, Output> getOutputs(Class c) {
-        HashMap<String, Output> outputs = new HashMap<>();
+    private static Map<Integer, Map<String, Output>> getOutputs(Class c) {
+        Map<Integer, Map<String, Output>> outputs = new HashMap<>();
         Class current = c;
         while (current != null && current.isAssignableFrom(c)) {
             for (Method m : current.getDeclaredMethods()) {
                 DBSave dbsave = m.getAnnotation(DBSave.class);
                 if (dbsave != null) {
-                    outputs.put(dbsave.fieldName(), new Output(dbsave.priority(), m));
+                    Map<String, Output> map = outputs.get(dbsave.priority());
+                    if(map == null) {
+                        map = new HashMap<>();
+                        outputs.put(dbsave.priority(), map);
+                    }
+                    map.put(dbsave.fieldName(), new Output(dbsave.priority(), m));
                 }
 
             }
             for (Field f : current.getDeclaredFields()) {
                 DBSave dbsave = f.getAnnotation(DBSave.class);
                 if (dbsave != null) {
-                    outputs.put(dbsave.fieldName(), new Output(dbsave.priority(), f));
+                    Map<String, Output> map = outputs.get(dbsave.priority());
+                    if(map == null) {
+                        map = new HashMap<>();
+                        outputs.put(dbsave.priority(), map);
+                    }
+                    map.put(dbsave.fieldName(), new Output(dbsave.priority(), f));
                 }
             }
             current = current.getSuperclass();
         }
-        outputs = MapUtil.sortByValue(outputs);
         return outputs;
     }
 
