@@ -6,14 +6,14 @@ This project is required for the other plugins to compile and run.
 
 ## Compilation
 
-SpleefLeague uses [Spigot 1.8.8](https://spigotmc.org). For the dependency handling we use [Maven](https://maven.apache.org/download.cgi).
+SpleefLeague uses [Spigot 1.11.2](https://spigotmc.org). For the dependency handling we use [Maven](https://maven.apache.org/download.cgi).
 
 First make sure you have Spigot installed in your local maven repository. To do this download and run  [BuildTools](https://hub.spigotmc.org/jenkins/job/BuildTools/).
 
 ```shell
 mkdir buildtools && cd buildtools
 wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
-java -jar BuildTools.jar --rev 1.8.8
+java -jar BuildTools.jar --rev 1.11.2
 ```
 
 This will install spigot and spigot-api into your local maven repository.
