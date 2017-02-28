@@ -85,7 +85,7 @@ public class MultiBlockChangeUtil implements Listener {
             wrapper.setRecords(mbcd.getData());
             for (Player player : affected) {
                 if (player != null && loadedChunks.containsKey(player.getUniqueId()) && loadedChunks.get(player.getUniqueId()).contains(mbcd.getChunk())) {
-                    wrapper.sendPacket(player);
+                    wrapper.sendPacket(player.getPlayer());
                 }
             }
         }

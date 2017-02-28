@@ -18,6 +18,7 @@ import com.spleefleague.core.utils.fakeblock.FakeBlock;
 import com.spleefleague.core.utils.fakeblock.FakeBlockCache;
 import com.spleefleague.core.utils.fakeblock.MultiBlockChangeUtil;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -226,13 +227,16 @@ public class FakeBlockHandler implements Listener {
             fakeAreas.put(event.getPlayer().getUniqueId(), new HashSet());
             fakeBlockCache.put(event.getPlayer().getUniqueId(), new FakeBlockCache());
         }
+        else {
+            recalculateCache(event.getPlayer());
+        }
     }
 
-    public static /* varargs */ void addArea(FakeArea area, Player... players) {
+    public static void addArea(FakeArea area, Player... players) {
         FakeBlockHandler.addArea(area, true, players);
     }
 
-    public static /* varargs */ void addArea(FakeArea area, boolean update, Player... players) {
+    public static void addArea(FakeArea area, boolean update, Player... players) {
         for (Player player : players) {
             fakeAreas.get(player.getUniqueId()).add(area);
             fakeBlockCache.get(player.getUniqueId()).addArea(area);
@@ -241,12 +245,33 @@ public class FakeBlockHandler implements Listener {
             MultiBlockChangeUtil.changeBlocks(area.getBlocks().toArray(new FakeBlock[0]), players);
         }
     }
+    
+    public static void removeArea(FakeArea area) {
+        removeArea(area, true);
+    }
+    
+    public static void removeArea(FakeArea area, boolean update) {
+        Collection<Player> updated = new ArrayList<>();
+        fakeAreas.entrySet().forEach(e -> {
+            if(e.getValue().contains(area)) {
+                e.getValue().remove(area);
+                Player p = Bukkit.getPlayer(e.getKey());
+                if(p != null) {
+                    updated.add(p);
+                }
+            }
+        });
+        recalculateCache(updated.toArray(new Player[0]));
+        if (update) {
+            MultiBlockChangeUtil.changeBlocks(area.getBlocks().toArray(new FakeBlock[0]), updated.toArray(new Player[0]));
+        }
+    }
 
-    public static /* varargs */ void removeArea(FakeArea area, Player... players) {
+    public static void removeArea(FakeArea area, Player... players) {
         FakeBlockHandler.removeArea(area, true, players);
     }
 
-    public static /* varargs */ void removeArea(FakeArea area, boolean update, Player... players) {
+    public static void removeArea(FakeArea area, boolean update, Player... players) {
         for (Player player : players) {
             fakeAreas.get(player.getUniqueId()).remove(area);
             FakeBlockHandler.recalculateCache(player);
@@ -263,7 +288,7 @@ public class FakeBlockHandler implements Listener {
     }
 
     public static Collection<Player> getSubscribers(FakeBlock block) {
-        HashSet<Player> players = new HashSet<Player>();
+        HashSet<Player> players = new HashSet<>();
         block0:
         for (Player player : Bukkit.getOnlinePlayers()) {
             for (FakeArea area : fakeAreas.get(player.getUniqueId())) {
@@ -277,11 +302,11 @@ public class FakeBlockHandler implements Listener {
         return players;
     }
 
-    public static /* varargs */ void addBlock(FakeBlock block, Player... players) {
+    public static void addBlock(FakeBlock block, Player... players) {
         FakeBlockHandler.addBlock(block, true, players);
     }
 
-    public static /* varargs */ void addBlock(FakeBlock block, boolean update, Player... players) {
+    public static void addBlock(FakeBlock block, boolean update, Player... players) {
         for (Player player : players) {
             fakeAreas.get(player.getUniqueId()).add(block);
             fakeBlockCache.get(player.getUniqueId()).addBlocks(block);
@@ -292,11 +317,11 @@ public class FakeBlockHandler implements Listener {
         }
     }
 
-    public static /* varargs */ void removeBlock(FakeBlock block, Player... players) {
+    public static void removeBlock(FakeBlock block, Player... players) {
         FakeBlockHandler.removeBlock(block, true, players);
     }
 
-    public static /* varargs */ void removeBlock(FakeBlock block, boolean update, Player... players) {
+    public static void removeBlock(FakeBlock block, boolean update, Player... players) {
         for (Player player : players) {
             fakeAreas.get(player.getUniqueId()).remove(block);
             FakeBlockHandler.recalculateCache(player);
@@ -319,7 +344,7 @@ public class FakeBlockHandler implements Listener {
         MultiBlockChangeUtil.changeBlocks(area.getBlocks().toArray(new FakeBlock[0]), players.toArray(new Player[players.size()]));
     }
 
-    private static /* varargs */ void recalculateCache(Player... players) {
+    private static void recalculateCache(Player... players) {
         for (Player player : players) {
             FakeBlockCache cache = fakeBlockCache.get(player.getUniqueId());
             cache.clear();
