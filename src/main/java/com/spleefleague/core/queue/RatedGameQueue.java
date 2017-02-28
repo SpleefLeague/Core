@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -27,7 +26,9 @@ public class RatedGameQueue<Q extends QueueableArena, P extends RatedPlayer> ext
 
     private RatedBattleManager<Q, P, ? extends Battle> battleManager;
     public static final int TICK_DURATION = 15 * 20;
+    public static final int WAIT_TIME_INCOMPLETE_MATCH = 2;
 
+    
     protected RatedGameQueue() {
         super();
         getQueues().put(null, new HashSet<>());
@@ -61,6 +62,9 @@ public class RatedGameQueue<Q extends QueueableArena, P extends RatedPlayer> ext
             }
             battleManager.startBattle(match.getQueue(), match.getPlayers());
         }
+        getQueues().keySet().stream().filter((q) -> (q != null)).forEach((q) -> {
+            this.getMetadata(q).setSkipped(false);
+        });
     }
 
     private Match nextMatch(boolean forceFullTeam) {
@@ -69,27 +73,40 @@ public class RatedGameQueue<Q extends QueueableArena, P extends RatedPlayer> ext
                 for (P p1 : entry.getValue()) {
                     if (entry.getKey() != null) {
                         List<P> allowedPlayers = getAllowed(p1, entry.getKey());
+                        QueueMetadata meta = this.getMetadata(entry.getKey());
                         if(forceFullTeam) {
                             if (allowedPlayers.size() >= entry.getKey().getSize() - 1) {
                                 Collections.shuffle(allowedPlayers);
                                 allowedPlayers = allowedPlayers.subList(0, entry.getKey().getSize() - 1);
                                 allowedPlayers.add(p1);
+                                meta.setSkipped(false);
+                                meta.resetSkips();
                                 return new Match(entry.getKey(), allowedPlayers);
                             }
                         }
                         else {
                             if (allowedPlayers.size() >= entry.getKey().getRequiredPlayers() - 1) {
-                                allowedPlayers.add(p1);
-                                return new Match(entry.getKey(), allowedPlayers);
+                                if(!meta.isSkipped()) {
+                                    meta.incrementSkips();
+                                    meta.setSkipped(true);
+                                }
+                                if(meta.getSkips() >= WAIT_TIME_INCOMPLETE_MATCH) {
+                                    meta.resetSkips();
+                                    allowedPlayers.add(p1);
+                                    return new Match(entry.getKey(), allowedPlayers);
+                                }
                             }
                         }
                     } else {
                         List<Q> availableQueues = getRegisteredArenas().stream().filter((q) -> !q.isOccupied() && !q.isPaused() && q.isAvailable(p1)).collect(Collectors.toList());
                         Collections.shuffle(availableQueues);
                         for (Q queue : availableQueues) {
+                            QueueMetadata meta = this.getMetadata(queue);
                             List<P> allowedPlayers = getAllowed(p1, queue);
                             if (forceFullTeam) {
                                 if (allowedPlayers.size() >= queue.getSize() - 1) {
+                                    meta.setSkipped(false);
+                                    meta.resetSkips();
                                     Collections.shuffle(allowedPlayers);
                                     allowedPlayers = allowedPlayers.subList(0, queue.getSize() - 1);
                                     allowedPlayers.add(p1);
@@ -97,9 +114,16 @@ public class RatedGameQueue<Q extends QueueableArena, P extends RatedPlayer> ext
                                 }
                             } 
                             else {
-                                if (allowedPlayers.size() >= entry.getKey().getRequiredPlayers() - 1) {
-                                    allowedPlayers.add(p1);
-                                    return new Match(entry.getKey(), allowedPlayers);
+                                if (allowedPlayers.size() >= queue.getRequiredPlayers() - 1) {
+                                    if(!meta.isSkipped()) {
+                                        meta.incrementSkips();
+                                        meta.setSkipped(true);
+                                    }
+                                    if(meta.getSkips() >= WAIT_TIME_INCOMPLETE_MATCH) {
+                                        meta.resetSkips();
+                                        allowedPlayers.add(p1);
+                                        return new Match(queue, allowedPlayers);
+                                    }
                                 }
                             }
                         }

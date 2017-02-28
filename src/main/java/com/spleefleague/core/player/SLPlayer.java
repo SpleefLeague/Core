@@ -191,7 +191,7 @@ public class SLPlayer extends GeneralPlayer {
         return options;
     }
 
-    @DBLoad(fieldName = "options", priority = -100)
+    @DBLoad(fieldName = "options", priority = 1)
     private void setOptions(PlayerOptions options) {
         this.options = options;
         options.apply(this);

@@ -24,5 +24,5 @@ public @interface DBSave {
 
     Class<? extends TypeConverter> typeConverter() default TypeConverter.class;
 
-    int priority() default -1;
+    int priority() default 0;
 }

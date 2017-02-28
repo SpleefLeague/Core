@@ -24,5 +24,5 @@ public @interface DBLoad {
 
     Class<? extends TypeConverter> typeConverter() default TypeConverter.class;
 
-    int priority() default -1;
+    int priority() default 0;
 }

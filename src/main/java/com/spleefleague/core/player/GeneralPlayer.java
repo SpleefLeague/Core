@@ -38,9 +38,9 @@ import java.util.*;
  */
 public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSaveable, Player {
 
-    @DBLoad(fieldName = "username", priority = Integer.MAX_VALUE)
+    @DBLoad(fieldName = "username", priority = Integer.MIN_VALUE)
     private String username;
-    @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class, priority = Integer.MAX_VALUE)
+    @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class, priority = Integer.MIN_VALUE)
     private UUID uuid;
     private Player cached;
     private final long created;

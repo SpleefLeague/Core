@@ -22,10 +22,12 @@ public abstract class GameQueue<Q extends QueueableArena, P extends GeneralPlaye
 
     private final Collection<Q> queuedArenas;
     private final Map<Q, Set<P>> queues;
+    private final Map<Q, QueueMetadata> metadata;
 
     public GameQueue() {
         this.queuedArenas = new HashSet<>();
         this.queues = new HashMap<>();
+        this.metadata = new HashMap<>();
     }
 
     public void registerArena(Q arena) {
@@ -33,11 +35,13 @@ public abstract class GameQueue<Q extends QueueableArena, P extends GeneralPlaye
             this.queuedArenas.add(arena);
         }
         this.queues.put(arena, new HashSet<>());
+        this.metadata.put(arena, new QueueMetadata());
     }
 
     public void unregisterArena(Q arena) {
         this.queuedArenas.remove(arena);
         this.queues.remove(arena);
+        this.metadata.remove(arena);
     }
 
     public void queuePlayer(P player) {
@@ -70,5 +74,35 @@ public abstract class GameQueue<Q extends QueueableArena, P extends GeneralPlaye
 
     public Map<Q, Set<P>> getQueues() {
         return queues;
+    }
+    
+    protected QueueMetadata getMetadata(Q q) {
+        return metadata.get(q);
+    }
+    
+    protected class QueueMetadata {
+        
+        public int skips = 0;
+        public boolean skipped = false;
+        
+        public int getSkips() {
+            return skips;
+        }
+        
+        public void incrementSkips() {
+            skips++;
+        }
+        
+        public void resetSkips() {
+            skips = 0;
+        }
+        
+        public boolean isSkipped() {
+            return skipped;
+        }
+        
+        public void setSkipped(boolean skipped) {
+            this.skipped = skipped;
+        }
     }
 }
