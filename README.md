@@ -17,7 +17,7 @@ java -jar BuildTools.jar --rev 1.11.2
 ```
 
 This will install spigot and spigot-api into your local maven repository.
-Right now Spigot 1.8.8 should be installed. Now you can clone the SpleefLeague core and compile it.
+Right now Spigot 1.11.2 should be installed. Now you can clone the SpleefLeague core and compile it.
 
 ```shell
 git clone https://github.com/SpleefLeague/Core.git
