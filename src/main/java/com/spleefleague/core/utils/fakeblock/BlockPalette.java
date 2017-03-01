@@ -86,7 +86,7 @@ public abstract class BlockPalette {
 
         @Override
         public int[] getPaletteData() {
-             throw new UnsupportedOperationException("Not supported.");
+            return new int[0];
         }
     }
     

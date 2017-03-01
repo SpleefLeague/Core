@@ -32,7 +32,7 @@ public class DebuggerHostManager {
                     return host.handle(key);
                 }
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }
         return null;

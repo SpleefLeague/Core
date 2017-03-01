@@ -148,7 +148,7 @@ public class FakeBlockHandler implements Listener {
                             FakeBlockBreakEvent fbbe = new FakeBlockBreakEvent(broken, event.getPlayer());
                             Bukkit.getPluginManager().callEvent((Event) fbbe);
                             if (fbbe.isCancelled()) {
-                                event.getPlayer().sendBlockChange(fbbe.getBlock().getLocation(), fbbe.getBlock().getType(), (byte)0);
+                                event.getPlayer().sendBlockChange(fbbe.getBlock().getLocation(), fbbe.getBlock().getType(), fbbe.getBlock().getDamageValue());
                             } else {
                                 broken.setType(Material.AIR);
                                 for (Player subscriber : FakeBlockHandler.getSubscribers(broken)) {

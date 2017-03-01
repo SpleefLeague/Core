@@ -30,7 +30,8 @@ public abstract class DebuggerHost {
     public abstract String handle(String key) throws Exception;
 
     public String param(String input, String key, Object value) {
-        return input.replaceAll("\\b{" + key + "}\\b", value.toString());
+        System.out.println(input);
+        return input.replaceAll("\\{" + key + "\\}", value.toString());
     }
 
     public final Response getUrlString(URL url) {
@@ -48,7 +49,7 @@ public abstract class DebuggerHost {
                     redirect = true;
                 }
             }
-
+            
             if (redirect) {
                 String newUrl = con.getHeaderField("Location");
                 con = (HttpURLConnection) new URL(newUrl).openConnection();

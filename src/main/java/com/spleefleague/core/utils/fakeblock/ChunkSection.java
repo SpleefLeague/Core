@@ -47,8 +47,10 @@ public class ChunkSection {
         BlockData air = new BlockData(Material.AIR, (byte)0);
         blocks = new BlockData[4096];
         Arrays.fill(blocks, air);
-        paletteBlocks = null;
-        paletteBlockSet = null;
+        //An empty, unsent chunksection contains air blocks
+        paletteBlocks = new BlockData[]{air};
+        paletteBlockSet = new HashSet<>();
+        paletteBlockSet.add(air);
         lightData = new byte[overworld ? 4096 : 2048];
         Arrays.fill(lightData, (byte)-1);//Default light data, everything is bright
     }
@@ -60,12 +62,12 @@ public class ChunkSection {
     public void setBlockRelative(BlockData data, int x, int y, int z) {
         blocks[x + z * 16 + y * 256] = data;
         modified = true;
-        if(paletteBlocks != null) {
+        if(paletteBlockSet != null) {
             if(!paletteBlockSet.contains(data)) {
                 paletteBlocks = null;
             }
+            paletteBlockSet.add(data);
         }
-        paletteBlockSet.add(data);
     }
     
     public BlockData[] getBlockData() {
@@ -78,6 +80,9 @@ public class ChunkSection {
     
     public BlockData[] getContainedBlocks() {
         if(paletteBlocks == null) {
+            if(paletteBlockSet == null) {
+                return null;
+            }
             paletteBlocks = paletteBlockSet.toArray(new BlockData[0]);
         }
         return paletteBlocks;
