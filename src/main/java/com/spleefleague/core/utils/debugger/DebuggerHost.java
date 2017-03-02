@@ -30,7 +30,6 @@ public abstract class DebuggerHost {
     public abstract String handle(String key) throws Exception;
 
     public String param(String input, String key, Object value) {
-        System.out.println(input);
         return input.replaceAll("\\{" + key + "\\}", value.toString());
     }
 

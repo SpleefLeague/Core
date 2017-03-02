@@ -31,8 +31,7 @@ public class DebuggerHostManager {
                 if (host.isMatch(key)) {
                     return host.handle(key);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
         }
         return null;
@@ -46,7 +45,7 @@ public class DebuggerHostManager {
                         return host.handle(key);
                     }
                 }
-            } catch(Exception e) {
+            } catch(Exception ignored) {
 
             }
         }
