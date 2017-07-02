@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
+import org.bukkit.Material;
 
 /**
  *
@@ -339,5 +340,4 @@ public class SLPlayer extends GeneralPlayer {
         if(col != null)
             col.reapply(this);
     }
-
 }

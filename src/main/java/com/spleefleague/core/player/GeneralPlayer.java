@@ -1601,4 +1601,29 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     public boolean removeScoreboardTag(String string) {
         return this.getPlayer().removeScoreboardTag(string);
     }
+
+    @Override
+    public boolean hasCooldown(Material mtrl) {
+        return getPlayer().hasCooldown(mtrl);
+    }
+
+    @Override
+    public int getCooldown(Material mtrl) {
+        return getPlayer().getCooldown(mtrl);
+    }
+
+    @Override
+    public void setCooldown(Material mtrl, int i) {
+        getPlayer().setCooldown(mtrl, i);
+    }
+
+    @Override
+    public double getHeight() {
+        return getPlayer().getHeight();
+    }
+
+    @Override
+    public double getWidth() {
+        return getPlayer().getWidth();
+    }
 }
