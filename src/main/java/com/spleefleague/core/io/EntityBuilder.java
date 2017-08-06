@@ -113,10 +113,9 @@ public class EntityBuilder {
             for(Integer priority : priorityList) {
                 Map<String, Input> priorityMap = inputs.get(priority);
                 for (String name : priorityMap.keySet()) {
-                    Object o = dbo.get(name);
-                    if (o != null) {
+                    if(dbo.containsKey(name)) {
                         Input i = priorityMap.get(name);
-                        i.set(t, o);
+                        i.set(t, dbo.get(name));
                     }
                 }
             }

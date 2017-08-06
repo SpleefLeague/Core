@@ -42,7 +42,11 @@ public class Settings {
     }
 
     public static Optional<Document> getDocument(String key) {
-        return Optional.ofNullable(settings.get(key).get("value", Document.class));
+        Document raw = settings.get(key);
+        if(raw == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(raw.get("value", Document.class));
     }
 
     public static Optional<String> getString(String key) {
@@ -72,7 +76,7 @@ public class Settings {
     public static Optional<Location> getLocation(String key) {
         Document doc = (Document) settings.get(key);
         if (doc == null) {
-            return null;
+            return Optional.empty();
         }
         return Optional.of(get(key, LocationWrapper.class).get().location);
     }

@@ -129,11 +129,8 @@ public class SpleefLeague extends CorePlugin {
     }
 
     public void applySettings() {
-        if (Settings.hasKey("default_world")) {
-            String defaultWorld = Settings.getString("default_world").get();
-            CorePlugin.DEFAULT_WORLD = Bukkit.getWorld(defaultWorld);
-        }
-        
+        String defaultWorld = Settings.getString("default_world").orElse("world");
+        CorePlugin.DEFAULT_WORLD = Bukkit.getWorld(defaultWorld);
         if (Settings.hasKey("spawn_new") && Settings.hasKey("spawn_max_players")) {
             LocationConverter lc = new TypeConverter.LocationConverter();
             List<SpawnLocation> spawns = ((List<List>) Settings.getList("spawn_new").get())
@@ -142,7 +139,7 @@ public class SpleefLeague extends CorePlugin {
                     .map(SpawnManager.SpawnLocation::new)
                     .collect(Collectors.toList());
             spawnManager = new SpawnManager(spawns, Settings.getInteger("spawn_max_players").getAsInt());
-        } 
+        }
         Settings.getLocation("spawn").ifPresent(s -> CorePlugin.DEFAULT_WORLD.setSpawnLocation(s.getBlockX(), s.getBlockY(), s.getBlockZ()));
         Settings.getInteger("max_players").ifPresent(s -> setSlotSize(s));
         Settings.getDocument("game_rules").ifPresent(d -> d.forEach((String key, Object object) -> CorePlugin.DEFAULT_WORLD.setGameRuleValue(key, object.toString())));
