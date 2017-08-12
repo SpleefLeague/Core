@@ -27,18 +27,18 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.v1_11_R1.EntityPlayer;
-import net.minecraft.server.v1_11_R1.Packet;
-import net.minecraft.server.v1_11_R1.PacketPlayOutWorldEvent;
-import net.minecraft.server.v1_11_R1.SoundEffectType;
+import net.minecraft.server.v1_12_R1.EntityPlayer;
+import net.minecraft.server.v1_12_R1.Packet;
+import net.minecraft.server.v1_12_R1.PacketPlayOutWorldEvent;
+import net.minecraft.server.v1_12_R1.SoundEffectType;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_11_R1.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -204,7 +204,7 @@ public class FakeBlockHandler implements Listener {
     }
 
     private void sendBreakParticles(Player p, FakeBlock block) {
-        PacketPlayOutWorldEvent packet = new PacketPlayOutWorldEvent(2001, new net.minecraft.server.v1_11_R1.BlockPosition(block.getX(), block.getY(), block.getZ()), 80, false);
+        PacketPlayOutWorldEvent packet = new PacketPlayOutWorldEvent(2001, new net.minecraft.server.v1_12_R1.BlockPosition(block.getX(), block.getY(), block.getZ()), 80, false);
         ((CraftPlayer) p).getHandle().playerConnection.sendPacket((Packet) packet);
     }
 
@@ -367,12 +367,12 @@ public class FakeBlockHandler implements Listener {
     }
 
     private static void initBreakSounds() {
-        for (net.minecraft.server.v1_11_R1.Block block : net.minecraft.server.v1_11_R1.Block.REGISTRY) {
+        for (net.minecraft.server.v1_12_R1.Block block : net.minecraft.server.v1_12_R1.Block.REGISTRY) {
             try {
-                Field effectField = net.minecraft.server.v1_11_R1.Block.class.getDeclaredField("stepSound");
+                Field effectField = net.minecraft.server.v1_12_R1.Block.class.getDeclaredField("stepSound");
                 effectField.setAccessible(true);
                 SoundEffectType effectType = (SoundEffectType) effectField.get((Object) block);
-                breakSounds.put(CraftMagicNumbers.getMaterial((net.minecraft.server.v1_11_R1.Block) block), effectType);
+                breakSounds.put(CraftMagicNumbers.getMaterial((net.minecraft.server.v1_12_R1.Block) block), effectType);
             } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException ex) {
                 Logger.getLogger(FakeBlockHandler.class.getName()).log(Level.SEVERE, null, ex);
             }

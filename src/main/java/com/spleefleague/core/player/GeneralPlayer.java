@@ -7,12 +7,12 @@ package com.spleefleague.core.player;
 
 import com.spleefleague.core.io.*;
 import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
-import net.minecraft.server.v1_11_R1.EntityPlayer;
+import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -31,6 +31,9 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.Attribute;
 import java.net.InetSocketAddress;
 import java.util.*;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.block.PistonMoveReaction;
 
 /**
  *
@@ -127,1479 +130,1420 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     //There has to be a better way
     @Override
     public String getDisplayName() {
-        return this.getPlayer().getDisplayName();
+        return getPlayer().getDisplayName();
     }
 
     @Override
     public void setDisplayName(String name) {
-        this.getPlayer().setDisplayName(name);
+        getPlayer().setDisplayName(name);
     }
 
     @Override
     public String getPlayerListName() {
-        return this.getPlayer().getPlayerListName();
+        return getPlayer().getPlayerListName();
     }
 
     @Override
     public void setPlayerListName(String name) {
-        this.getPlayer().setPlayerListName(name);
+        getPlayer().setPlayerListName(name);
     }
 
     @Override
     public void setCompassTarget(Location loc) {
-        this.getPlayer().setCompassTarget(loc);
+        getPlayer().setCompassTarget(loc);
     }
 
     @Override
     public Location getCompassTarget() {
-        return this.getPlayer().getCompassTarget();
+        return getPlayer().getCompassTarget();
     }
 
     @Override
     public InetSocketAddress getAddress() {
-        return this.getPlayer().getAddress();
+        return getPlayer().getAddress();
     }
 
     @Override
     public void sendRawMessage(String message) {
-        this.getPlayer().sendRawMessage(message);
+        getPlayer().sendRawMessage(message);
     }
 
     @Override
     public void kickPlayer(String message) {
-        this.getPlayer().kickPlayer(message);
+        getPlayer().kickPlayer(message);
         this.cached = null;
     }
 
     @Override
     public void chat(String msg) {
-        this.getPlayer().chat(msg);
+        getPlayer().chat(msg);
     }
 
     @Override
     public boolean performCommand(String command) {
-        return this.getPlayer().performCommand(command);
+        return getPlayer().performCommand(command);
     }
 
     @Override
     public boolean isSneaking() {
-        return this.getPlayer().isSneaking();
+        return getPlayer().isSneaking();
     }
 
     @Override
     public void setSneaking(boolean sneak) {
-        this.getPlayer().setSneaking(sneak);
+        getPlayer().setSneaking(sneak);
     }
 
     @Override
     public boolean isSprinting() {
-        return this.getPlayer().isSprinting();
+        return getPlayer().isSprinting();
     }
 
     @Override
     public void setSprinting(boolean sprinting) {
-        this.getPlayer().setSprinting(sprinting);
+        getPlayer().setSprinting(sprinting);
     }
 
     @Override
     public void saveData() {
-        this.getPlayer().saveData();
+        getPlayer().saveData();
     }
 
     @Override
     public void loadData() {
-        this.getPlayer().loadData();
+        getPlayer().loadData();
     }
 
     @Override
     public void setSleepingIgnored(boolean isSleeping) {
-        this.getPlayer().setSleepingIgnored(isSleeping);
+        getPlayer().setSleepingIgnored(isSleeping);
     }
 
     @Override
     public boolean isSleepingIgnored() {
-        return this.getPlayer().isSleepingIgnored();
+        return getPlayer().isSleepingIgnored();
     }
 
     @Override
     @Deprecated
     public void playNote(Location loc, byte instrument, byte note) {
-        this.getPlayer().playNote(loc, instrument, note);
+        getPlayer().playNote(loc, instrument, note);
     }
 
     @Override
     public void playNote(Location loc, Instrument instrument, Note note) {
-        this.getPlayer().playNote(loc, instrument, note);
+        getPlayer().playNote(loc, instrument, note);
     }
 
     @Override
     public void playSound(Location location, Sound sound, float volume, float pitch) {
-        this.getPlayer().playSound(location, sound, volume, pitch);
+        getPlayer().playSound(location, sound, volume, pitch);
     }
 
     @Override
     public void playSound(Location location, String sound, float volume, float pitch) {
-        this.getPlayer().playSound(location, sound, volume, pitch);
+        getPlayer().playSound(location, sound, volume, pitch);
     }
 
     @Override
     @Deprecated
     public void playEffect(Location loc, Effect effect, int data) {
-        this.getPlayer().playEffect(loc, effect, data);
+        getPlayer().playEffect(loc, effect, data);
     }
 
     @Override
     public <T> void playEffect(Location loc, Effect effect, T data) {
-        this.getPlayer().playEffect(loc, effect, data);
+        getPlayer().playEffect(loc, effect, data);
     }
 
     @Override
     public void sendBlockChange(Location loc, Material material, byte data) {
-        this.getPlayer().sendBlockChange(loc, material, data);
+        getPlayer().sendBlockChange(loc, material, data);
     }
 
     @Override
     @Deprecated
     public boolean sendChunkChange(Location loc, int sx, int sy, int sz, byte[] data) {
-        return this.getPlayer().sendChunkChange(loc, sx, sy, sz, data);
+        return getPlayer().sendChunkChange(loc, sx, sy, sz, data);
     }
 
     @Override
     @Deprecated
     public void sendBlockChange(Location loc, int material, byte data) {
-        this.getPlayer().sendBlockChange(loc, material, data);
+        getPlayer().sendBlockChange(loc, material, data);
     }
 
     @Override
     public void sendSignChange(Location loc, String[] lines) throws IllegalArgumentException {
-        this.getPlayer().sendSignChange(loc, lines);
+        getPlayer().sendSignChange(loc, lines);
     }
 
     @Override
     public void sendMap(MapView map2) {
-        this.getPlayer().sendMap(map2);
+        getPlayer().sendMap(map2);
     }
 
     @Override
     public void updateInventory() {
-        this.getPlayer().updateInventory();
+        getPlayer().updateInventory();
     }
 
     @Override
     public void awardAchievement(Achievement achievement) {
-        this.getPlayer().awardAchievement(achievement);
+        getPlayer().awardAchievement(achievement);
     }
 
     @Override
     public void removeAchievement(Achievement achievement) {
-        this.getPlayer().removeAchievement(achievement);
+        getPlayer().removeAchievement(achievement);
     }
 
     @Override
     public boolean hasAchievement(Achievement achievement) {
-        return this.getPlayer().hasAchievement(achievement);
+        return getPlayer().hasAchievement(achievement);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic) throws IllegalArgumentException {
-        this.getPlayer().incrementStatistic(statistic);
+        getPlayer().incrementStatistic(statistic);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic) throws IllegalArgumentException {
-        this.getPlayer().decrementStatistic(statistic);
+        getPlayer().decrementStatistic(statistic);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, int amount) throws IllegalArgumentException {
-        this.getPlayer().incrementStatistic(statistic, amount);
+        getPlayer().incrementStatistic(statistic, amount);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, int amount) throws IllegalArgumentException {
-        this.getPlayer().decrementStatistic(statistic, amount);
+        getPlayer().decrementStatistic(statistic, amount);
     }
 
     @Override
     public void setStatistic(Statistic statistic, int newValue) throws IllegalArgumentException {
-        this.getPlayer().setStatistic(statistic, newValue);
+        getPlayer().setStatistic(statistic, newValue);
     }
 
     @Override
     public int getStatistic(Statistic statistic) throws IllegalArgumentException {
-        return this.getPlayer().getStatistic(statistic);
+        return getPlayer().getStatistic(statistic);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, Material material) throws IllegalArgumentException {
-        this.getPlayer().incrementStatistic(statistic, material);
+        getPlayer().incrementStatistic(statistic, material);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, Material material) throws IllegalArgumentException {
-        this.getPlayer().decrementStatistic(statistic, material);
+        getPlayer().decrementStatistic(statistic, material);
     }
 
     @Override
     public int getStatistic(Statistic statistic, Material material) throws IllegalArgumentException {
-        return this.getPlayer().getStatistic(statistic, material);
+        return getPlayer().getStatistic(statistic, material);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, Material material, int amount) throws IllegalArgumentException {
-        this.getPlayer().incrementStatistic(statistic, material, amount);
+        getPlayer().incrementStatistic(statistic, material, amount);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, Material material, int amount) throws IllegalArgumentException {
-        this.getPlayer().decrementStatistic(statistic, material, amount);
+        getPlayer().decrementStatistic(statistic, material, amount);
     }
 
     @Override
     public void setStatistic(Statistic statistic, Material material, int newValue) throws IllegalArgumentException {
-        this.getPlayer().setStatistic(statistic, material, newValue);
+        getPlayer().setStatistic(statistic, material, newValue);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException {
-        this.getPlayer().incrementStatistic(statistic, entityType);
+        getPlayer().incrementStatistic(statistic, entityType);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException {
-        this.getPlayer().decrementStatistic(statistic, entityType);
+        getPlayer().decrementStatistic(statistic, entityType);
     }
 
     @Override
     public int getStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException {
-        return this.getPlayer().getStatistic(statistic, entityType);
+        return getPlayer().getStatistic(statistic, entityType);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, EntityType entityType, int amount) throws IllegalArgumentException {
-        this.getPlayer().incrementStatistic(statistic, entityType, amount);
+        getPlayer().incrementStatistic(statistic, entityType, amount);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, EntityType entityType, int amount) {
-        this.getPlayer().decrementStatistic(statistic, entityType, amount);
+        getPlayer().decrementStatistic(statistic, entityType, amount);
     }
 
     @Override
     public void setStatistic(Statistic statistic, EntityType entityType, int newValue) {
-        this.getPlayer().setStatistic(statistic, entityType, newValue);
+        getPlayer().setStatistic(statistic, entityType, newValue);
     }
 
     @Override
     public void setPlayerTime(long time, boolean relative) {
-        this.getPlayer().setPlayerTime(time, relative);
+        getPlayer().setPlayerTime(time, relative);
     }
 
     @Override
     public long getPlayerTime() {
-        return this.getPlayer().getPlayerTime();
+        return getPlayer().getPlayerTime();
     }
 
     @Override
     public long getPlayerTimeOffset() {
-        return this.getPlayer().getPlayerTimeOffset();
+        return getPlayer().getPlayerTimeOffset();
     }
 
     @Override
     public boolean isPlayerTimeRelative() {
-        return this.getPlayer().isPlayerTimeRelative();
+        return getPlayer().isPlayerTimeRelative();
     }
 
     @Override
     public void resetPlayerTime() {
-        this.getPlayer().resetPlayerTime();
+        getPlayer().resetPlayerTime();
     }
 
     @Override
     public void setPlayerWeather(WeatherType type) {
-        this.getPlayer().setPlayerWeather(type);
+        getPlayer().setPlayerWeather(type);
     }
 
     @Override
     public WeatherType getPlayerWeather() {
-        return this.getPlayer().getPlayerWeather();
+        return getPlayer().getPlayerWeather();
     }
 
     @Override
     public void resetPlayerWeather() {
-        this.getPlayer().resetPlayerWeather();
+        getPlayer().resetPlayerWeather();
     }
 
     @Override
     public void giveExp(int amount) {
-        this.getPlayer().giveExp(amount);
+        getPlayer().giveExp(amount);
     }
 
     @Override
     public void giveExpLevels(int amount) {
-        this.getPlayer().giveExpLevels(amount);
+        getPlayer().giveExpLevels(amount);
     }
 
     @Override
     public float getExp() {
-        return this.getPlayer().getExp();
+        return getPlayer().getExp();
     }
 
     @Override
     public void setExp(float exp) {
-        this.getPlayer().setExp(exp);
+        getPlayer().setExp(exp);
     }
 
     @Override
     public int getLevel() {
-        return this.getPlayer().getLevel();
+        return getPlayer().getLevel();
     }
 
     @Override
     public void setLevel(int level) {
-        this.getPlayer().setLevel(level);
+        getPlayer().setLevel(level);
     }
 
     @Override
     public int getTotalExperience() {
-        return this.getPlayer().getTotalExperience();
+        return getPlayer().getTotalExperience();
     }
 
     @Override
     public void setTotalExperience(int exp) {
-        this.getPlayer().setTotalExperience(exp);
+        getPlayer().setTotalExperience(exp);
     }
 
     @Override
     public float getExhaustion() {
-        return this.getPlayer().getExhaustion();
+        return getPlayer().getExhaustion();
     }
 
     @Override
     public void setExhaustion(float value) {
-        this.getPlayer().setExhaustion(value);
+        getPlayer().setExhaustion(value);
     }
 
     @Override
     public float getSaturation() {
-        return this.getPlayer().getSaturation();
+        return getPlayer().getSaturation();
     }
 
     @Override
     public void setSaturation(float value) {
-        this.getPlayer().setSaturation(value);
+        getPlayer().setSaturation(value);
     }
 
     @Override
     public int getFoodLevel() {
-        return this.getPlayer().getFoodLevel();
+        return getPlayer().getFoodLevel();
     }
 
     @Override
     public void setFoodLevel(int value) {
-        this.getPlayer().setFoodLevel(value);
+        getPlayer().setFoodLevel(value);
     }
 
     @Override
     public Location getBedSpawnLocation() {
-        return this.getPlayer().getBedSpawnLocation();
+        return getPlayer().getBedSpawnLocation();
     }
 
     @Override
     public void setBedSpawnLocation(Location location) {
-        this.getPlayer().setBedSpawnLocation(location);
+        getPlayer().setBedSpawnLocation(location);
     }
 
     @Override
     public void setBedSpawnLocation(Location location, boolean force) {
-        this.getPlayer().setBedSpawnLocation(location, force);
+        getPlayer().setBedSpawnLocation(location, force);
     }
 
     @Override
     public boolean getAllowFlight() {
-        return this.getPlayer().getAllowFlight();
+        return getPlayer().getAllowFlight();
     }
 
     @Override
     public void setAllowFlight(boolean flight) {
-        this.getPlayer().setAllowFlight(flight);
+        getPlayer().setAllowFlight(flight);
     }
 
     @Override
     public void hidePlayer(Player player) {
-        this.getPlayer().hidePlayer(player);
+        getPlayer().hidePlayer(player);
     }
 
     @Override
     public void showPlayer(Player player) {
-        this.getPlayer().showPlayer(player);
+        getPlayer().showPlayer(player);
     }
 
     @Override
     public boolean canSee(Player player) {
-        return this.getPlayer().canSee(player);
+        return getPlayer().canSee(player);
     }
 
     @Override
     @Deprecated
     public boolean isOnGround() {
-        return this.getPlayer().isOnGround();
+        return getPlayer().isOnGround();
     }
 
     @Override
     public boolean isFlying() {
-        return this.getPlayer().isFlying();
+        return getPlayer().isFlying();
     }
 
     @Override
     public void setFlying(boolean value) {
-        this.getPlayer().setFlying(value);
+        getPlayer().setFlying(value);
     }
 
     @Override
     public void setFlySpeed(float value) throws IllegalArgumentException {
-        this.getPlayer().setFlySpeed(value);
+        getPlayer().setFlySpeed(value);
     }
 
     @Override
     public void setWalkSpeed(float value) throws IllegalArgumentException {
-        this.getPlayer().setWalkSpeed(value);
+        getPlayer().setWalkSpeed(value);
     }
 
     @Override
     public float getFlySpeed() {
-        return this.getPlayer().getFlySpeed();
+        return getPlayer().getFlySpeed();
     }
 
     @Override
     public float getWalkSpeed() {
-        return this.getPlayer().getWalkSpeed();
+        return getPlayer().getWalkSpeed();
     }
 
     @Override
     @Deprecated
     public void setTexturePack(String url) {
-        this.getPlayer().setTexturePack(url);
+        getPlayer().setTexturePack(url);
     }
 
     @Override
     public void setResourcePack(String url) {
-        this.getPlayer().setResourcePack(url);
+        getPlayer().setResourcePack(url);
     }
     
     public void setResourcePack(String url, byte[] b) {
-        this.getPlayer().setResourcePack(url, b);
+        getPlayer().setResourcePack(url, b);
     }
 
     @Override
     public Scoreboard getScoreboard() {
-        return this.getPlayer().getScoreboard();
+        return getPlayer().getScoreboard();
     }
 
     @Override
     public void setScoreboard(Scoreboard scoreboard) throws IllegalArgumentException, IllegalStateException {
-        this.getPlayer().setScoreboard(scoreboard);
+        getPlayer().setScoreboard(scoreboard);
     }
 
     @Override
     public boolean isHealthScaled() {
-        return this.getPlayer().isHealthScaled();
+        return getPlayer().isHealthScaled();
     }
 
     @Override
     public void setHealthScaled(boolean scale) {
-        this.getPlayer().setHealthScaled(scale);
+        getPlayer().setHealthScaled(scale);
     }
 
     @Override
     public void setHealthScale(double scale) throws IllegalArgumentException {
-        this.getPlayer().setHealthScale(scale);
+        getPlayer().setHealthScale(scale);
     }
 
     public EntityPlayer getHandle() {
-        return ((CraftPlayer) this.getPlayer()).getHandle();
+        return ((CraftPlayer) getPlayer()).getHandle();
     }
 
     @Override
     public double getHealthScale() {
-        return this.getPlayer().getHealthScale();
+        return getPlayer().getHealthScale();
     }
 
     @Override
     public Entity getSpectatorTarget() {
-        return this.getPlayer().getSpectatorTarget();
+        return getPlayer().getSpectatorTarget();
     }
 
     @Override
     public void setSpectatorTarget(Entity entity) {
-        this.getPlayer().setSpectatorTarget(entity);
+        getPlayer().setSpectatorTarget(entity);
     }
 
     @Override
     @Deprecated
     public void sendTitle(String title, String subtitle) {
-        this.getPlayer().sendTitle(title, subtitle);
+        getPlayer().sendTitle(title, subtitle);
     }
 
     @Override
     public void resetTitle() {
-        this.getPlayer().resetTitle();
+        getPlayer().resetTitle();
     }
 
     @Override
     public Player.Spigot spigot() {
-        return this.getPlayer().spigot();
+        return getPlayer().spigot();
     }
 
     @Override
     public PlayerInventory getInventory() {
-        return this.getPlayer().getInventory();
+        return getPlayer().getInventory();
     }
 
     @Override
     public Inventory getEnderChest() {
-        return this.getPlayer().getEnderChest();
+        return getPlayer().getEnderChest();
     }
 
     @Override
     public boolean setWindowProperty(InventoryView.Property prop, int value) {
-        return this.getPlayer().setWindowProperty(prop, value);
+        return getPlayer().setWindowProperty(prop, value);
     }
 
     @Override
     public InventoryView getOpenInventory() {
-        return this.getPlayer().getOpenInventory();
+        return getPlayer().getOpenInventory();
     }
 
     @Override
     public InventoryView openInventory(Inventory inventory) {
-        return this.getPlayer().openInventory(inventory);
+        return getPlayer().openInventory(inventory);
     }
 
     @Override
     public InventoryView openWorkbench(Location location, boolean force) {
-        return this.getPlayer().openWorkbench(location, force);
+        return getPlayer().openWorkbench(location, force);
     }
 
     @Override
     public InventoryView openEnchanting(Location location, boolean force) {
-        return this.getPlayer().openEnchanting(location, force);
+        return getPlayer().openEnchanting(location, force);
     }
 
     @Override
     public void openInventory(InventoryView inventory) {
-        this.getPlayer().openInventory(inventory);
+        getPlayer().openInventory(inventory);
     }
 
     @Override
     public void closeInventory() {
-        this.getPlayer().closeInventory();
+        getPlayer().closeInventory();
     }
 
     @Override
     public ItemStack getItemInHand() {
-        return this.getPlayer().getItemInHand();
+        return getPlayer().getItemInHand();
     }
 
     @Override
     public void setItemInHand(ItemStack item) {
-        this.getPlayer().setItemInHand(item);
+        getPlayer().setItemInHand(item);
     }
 
     @Override
     public ItemStack getItemOnCursor() {
-        return this.getPlayer().getItemOnCursor();
+        return getPlayer().getItemOnCursor();
     }
 
     @Override
     public void setItemOnCursor(ItemStack item) {
-        this.getPlayer().setItemOnCursor(item);
+        getPlayer().setItemOnCursor(item);
     }
 
     @Override
     public boolean isSleeping() {
-        return this.getPlayer().isSleeping();
+        return getPlayer().isSleeping();
     }
 
     @Override
     public int getSleepTicks() {
-        return this.getPlayer().getSleepTicks();
+        return getPlayer().getSleepTicks();
     }
 
     @Override
     public GameMode getGameMode() {
-        return this.getPlayer().getGameMode();
+        return getPlayer().getGameMode();
     }
 
     @Override
     public void setGameMode(GameMode mode) {
-        this.getPlayer().setGameMode(mode);
+        getPlayer().setGameMode(mode);
     }
 
     @Override
     public boolean isBlocking() {
-        return this.getPlayer().isBlocking();
+        return getPlayer().isBlocking();
     }
 
     @Override
     public int getExpToLevel() {
-        return this.getPlayer().getExpToLevel();
+        return getPlayer().getExpToLevel();
     }
 
     @Override
     public double getEyeHeight() {
-        return this.getPlayer().getEyeHeight();
+        return getPlayer().getEyeHeight();
     }
 
     @Override
     public double getEyeHeight(boolean ignoreSneaking) {
-        return this.getPlayer().getEyeHeight(ignoreSneaking);
+        return getPlayer().getEyeHeight(ignoreSneaking);
     }
 
     @Override
     public Location getEyeLocation() {
-        return this.getPlayer().getEyeLocation();
-    }
-
-    @Override
-    @Deprecated
-    public List<Block> getLineOfSight(HashSet<Byte> transparent, int maxDistance) {
-        return this.getPlayer().getLineOfSight(transparent, maxDistance);
+        return getPlayer().getEyeLocation();
     }
 
     @Override
     public List<Block> getLineOfSight(Set<Material> transparent, int maxDistance) {
-        return this.getPlayer().getLineOfSight(transparent, maxDistance);
+        return getPlayer().getLineOfSight(transparent, maxDistance);
     }
 
     @Override
     @Deprecated
     public Block getTargetBlock(HashSet<Byte> transparent, int maxDistance) {
-        return this.getPlayer().getTargetBlock(transparent, maxDistance);
+        return getPlayer().getTargetBlock(transparent, maxDistance);
     }
 
     @Override
     public Block getTargetBlock(Set<Material> transparent, int maxDistance) {
-        return this.getPlayer().getTargetBlock(transparent, maxDistance);
+        return getPlayer().getTargetBlock(transparent, maxDistance);
     }
 
     @Override
     @Deprecated
     public List<Block> getLastTwoTargetBlocks(HashSet<Byte> transparent, int maxDistance) {
-        return this.getPlayer().getLastTwoTargetBlocks(transparent, maxDistance);
+        return getPlayer().getLastTwoTargetBlocks(transparent, maxDistance);
     }
 
     @Override
     public List<Block> getLastTwoTargetBlocks(Set<Material> transparent, int maxDistance) {
-        return this.getPlayer().getLastTwoTargetBlocks(transparent, maxDistance);
+        return getPlayer().getLastTwoTargetBlocks(transparent, maxDistance);
     }
 
     @Override
     public int getRemainingAir() {
-        return this.getPlayer().getRemainingAir();
+        return getPlayer().getRemainingAir();
     }
 
     @Override
     public void setRemainingAir(int ticks) {
-        this.getPlayer().setRemainingAir(ticks);
+        getPlayer().setRemainingAir(ticks);
     }
 
     @Override
     public int getMaximumAir() {
-        return this.getPlayer().getMaximumAir();
+        return getPlayer().getMaximumAir();
     }
 
     @Override
     public void setMaximumAir(int ticks) {
-        this.getPlayer().setMaximumAir(ticks);
+        getPlayer().setMaximumAir(ticks);
     }
 
     @Override
     public int getMaximumNoDamageTicks() {
-        return this.getPlayer().getMaximumNoDamageTicks();
+        return getPlayer().getMaximumNoDamageTicks();
     }
 
     @Override
     public void setMaximumNoDamageTicks(int ticks) {
-        this.getPlayer().setMaximumNoDamageTicks(ticks);
+        getPlayer().setMaximumNoDamageTicks(ticks);
     }
 
     @Override
     public double getLastDamage() {
-        return this.getPlayer().getLastDamage();
-    }
-
-    @Override
-    @Deprecated
-    public int _INVALID_getLastDamage() {
-        return this.getPlayer()._INVALID_getLastDamage();
+        return getPlayer().getLastDamage();
     }
 
     @Override
     public void setLastDamage(double damage) {
-        this.getPlayer().setLastDamage(damage);
-    }
-
-    @Override
-    @Deprecated
-    public void _INVALID_setLastDamage(int damage) {
-        this.getPlayer()._INVALID_setLastDamage(damage);
+        getPlayer().setLastDamage(damage);
     }
 
     @Override
     public int getNoDamageTicks() {
-        return this.getPlayer().getNoDamageTicks();
+        return getPlayer().getNoDamageTicks();
     }
 
     @Override
     public void setNoDamageTicks(int ticks) {
-        this.getPlayer().setNoDamageTicks(ticks);
+        getPlayer().setNoDamageTicks(ticks);
     }
 
     @Override
     public Player getKiller() {
-        return this.getPlayer().getKiller();
+        return getPlayer().getKiller();
     }
 
     @Override
     public boolean addPotionEffect(PotionEffect effect) {
-        return this.getPlayer().addPotionEffect(effect);
+        return getPlayer().addPotionEffect(effect);
     }
 
     @Override
     public boolean addPotionEffect(PotionEffect effect, boolean force) {
-        return this.getPlayer().addPotionEffect(effect, force);
+        return getPlayer().addPotionEffect(effect, force);
     }
 
     @Override
     public boolean addPotionEffects(Collection<PotionEffect> effects) {
-        return this.getPlayer().addPotionEffects(effects);
+        return getPlayer().addPotionEffects(effects);
     }
 
     @Override
     public boolean hasPotionEffect(PotionEffectType type) {
-        return this.getPlayer().hasPotionEffect(type);
+        return getPlayer().hasPotionEffect(type);
     }
 
     @Override
     public void removePotionEffect(PotionEffectType type) {
-        this.getPlayer().removePotionEffect(type);
+        getPlayer().removePotionEffect(type);
     }
 
     @Override
     public Collection<PotionEffect> getActivePotionEffects() {
-        return this.getPlayer().getActivePotionEffects();
+        return getPlayer().getActivePotionEffects();
     }
 
     @Override
     public boolean hasLineOfSight(Entity other) {
-        return this.getPlayer().hasLineOfSight(other);
+        return getPlayer().hasLineOfSight(other);
     }
 
     @Override
     public boolean getRemoveWhenFarAway() {
-        return this.getPlayer().getRemoveWhenFarAway();
+        return getPlayer().getRemoveWhenFarAway();
     }
 
     @Override
     public void setRemoveWhenFarAway(boolean remove) {
-        this.getPlayer().setRemoveWhenFarAway(remove);
+        getPlayer().setRemoveWhenFarAway(remove);
     }
 
     @Override
     public EntityEquipment getEquipment() {
-        return this.getPlayer().getEquipment();
+        return getPlayer().getEquipment();
     }
 
     @Override
     public void setCanPickupItems(boolean pickup) {
-        this.getPlayer().setCanPickupItems(pickup);
+        getPlayer().setCanPickupItems(pickup);
     }
 
     @Override
     public boolean getCanPickupItems() {
-        return this.getPlayer().getCanPickupItems();
+        return getPlayer().getCanPickupItems();
     }
 
     @Override
     public boolean isLeashed() {
-        return this.getPlayer().isLeashed();
+        return getPlayer().isLeashed();
     }
 
     @Override
     public Entity getLeashHolder() throws IllegalStateException {
-        return this.getPlayer().getLeashHolder();
+        return getPlayer().getLeashHolder();
     }
 
     @Override
     public boolean setLeashHolder(Entity holder) {
-        return this.getPlayer().setLeashHolder(holder);
+        return getPlayer().setLeashHolder(holder);
     }
 
     @Override
     public Location getLocation() {
-        return this.getPlayer().getLocation();
+        return getPlayer().getLocation();
     }
 
     @Override
     public Location getLocation(Location loc) {
-        return this.getPlayer().getLocation(loc);
+        return getPlayer().getLocation(loc);
     }
 
     @Override
     public void setVelocity(Vector velocity) {
-        this.getPlayer().setVelocity(velocity);
+        getPlayer().setVelocity(velocity);
     }
 
     @Override
     public Vector getVelocity() {
-        return this.getPlayer().getVelocity();
+        return getPlayer().getVelocity();
     }
 
     @Override
     public World getWorld() {
-        return this.getPlayer().getWorld();
+        return getPlayer().getWorld();
     }
 
     @Override
     public boolean teleport(Location location) {
-        return this.getPlayer().teleport(location);
+        return getPlayer().teleport(location);
     }
 
     @Override
     public boolean teleport(Location location, PlayerTeleportEvent.TeleportCause cause) {
-        return this.getPlayer().teleport(location, cause);
+        return getPlayer().teleport(location, cause);
     }
 
     @Override
     public boolean teleport(Entity destination) {
-        return this.getPlayer().teleport(destination);
+        return getPlayer().teleport(destination);
     }
 
     @Override
     public boolean teleport(Entity destination, PlayerTeleportEvent.TeleportCause cause) {
-        return this.getPlayer().teleport(destination, cause);
+        return getPlayer().teleport(destination, cause);
     }
 
     @Override
     public List<Entity> getNearbyEntities(double x, double y, double z) {
-        return this.getPlayer().getNearbyEntities(x, y, z);
+        return getPlayer().getNearbyEntities(x, y, z);
     }
 
     @Override
     public int getEntityId() {
-        return this.getPlayer().getEntityId();
+        return getPlayer().getEntityId();
     }
 
     @Override
     public int getFireTicks() {
-        return this.getPlayer().getFireTicks();
+        return getPlayer().getFireTicks();
     }
 
     @Override
     public int getMaxFireTicks() {
-        return this.getPlayer().getMaxFireTicks();
+        return getPlayer().getMaxFireTicks();
     }
 
     @Override
     public void setFireTicks(int ticks) {
-        this.getPlayer().setFireTicks(ticks);
+        getPlayer().setFireTicks(ticks);
     }
 
     @Override
     public void remove() {
-        this.getPlayer().remove();
+        getPlayer().remove();
     }
 
     @Override
     public boolean isDead() {
-        return this.getPlayer().isDead();
+        return getPlayer().isDead();
     }
 
     @Override
     public boolean isValid() {
-        return this.getPlayer().isValid();
+        return getPlayer().isValid();
     }
 
     @Override
     public Server getServer() {
-        return this.getPlayer().getServer();
+        return getPlayer().getServer();
     }
 
     @Override
     public Entity getPassenger() {
-        return this.getPlayer().getPassenger();
+        return getPlayer().getPassenger();
     }
 
     @Override
     public boolean setPassenger(Entity passenger) {
-        return this.getPlayer().setPassenger(passenger);
+        return getPlayer().setPassenger(passenger);
     }
 
     @Override
     public boolean isEmpty() {
-        return this.getPlayer().isEmpty();
+        return getPlayer().isEmpty();
     }
 
     @Override
     public boolean eject() {
-        return this.getPlayer().eject();
+        return getPlayer().eject();
     }
 
     @Override
     public float getFallDistance() {
-        return this.getPlayer().getFallDistance();
+        return getPlayer().getFallDistance();
     }
 
     @Override
     public void setFallDistance(float distance) {
-        this.getPlayer().setFallDistance(distance);
+        getPlayer().setFallDistance(distance);
     }
 
     @Override
     public void setLastDamageCause(EntityDamageEvent event) {
-        this.getPlayer().setLastDamageCause(event);
+        getPlayer().setLastDamageCause(event);
     }
 
     @Override
     public EntityDamageEvent getLastDamageCause() {
-        return this.getPlayer().getLastDamageCause();
+        return getPlayer().getLastDamageCause();
     }
 
     @Override
     public int getTicksLived() {
-        return this.getPlayer().getTicksLived();
+        return getPlayer().getTicksLived();
     }
 
     @Override
     public void setTicksLived(int value) {
-        this.getPlayer().setTicksLived(value);
+        getPlayer().setTicksLived(value);
     }
 
     @Override
     public void playEffect(EntityEffect type) {
-        this.getPlayer().playEffect(type);
+        getPlayer().playEffect(type);
     }
 
     @Override
     public EntityType getType() {
-        return this.getPlayer().getType();
+        return getPlayer().getType();
     }
 
     @Override
     public boolean isInsideVehicle() {
-        return this.getPlayer().isInsideVehicle();
+        return getPlayer().isInsideVehicle();
     }
 
     @Override
     public boolean leaveVehicle() {
-        return this.getPlayer().leaveVehicle();
+        return getPlayer().leaveVehicle();
     }
 
     @Override
     public Entity getVehicle() {
-        return this.getPlayer().getVehicle();
+        return getPlayer().getVehicle();
     }
 
     @Override
     public void setCustomName(String name) {
-        this.getPlayer().setCustomName(name);
+        getPlayer().setCustomName(name);
     }
 
     @Override
     public String getCustomName() {
-        return this.getPlayer().getCustomName();
+        return getPlayer().getCustomName();
     }
 
     @Override
     public void setCustomNameVisible(boolean flag) {
-        this.getPlayer().setCustomNameVisible(flag);
+        getPlayer().setCustomNameVisible(flag);
     }
 
     @Override
     public boolean isCustomNameVisible() {
-        return this.getPlayer().isCustomNameVisible();
+        return getPlayer().isCustomNameVisible();
     }
 
     @Override
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
-        this.getPlayer().setMetadata(metadataKey, newMetadataValue);
+        getPlayer().setMetadata(metadataKey, newMetadataValue);
     }
 
     @Override
     public List<MetadataValue> getMetadata(String metadataKey) {
-        return this.getPlayer().getMetadata(metadataKey);
+        return getPlayer().getMetadata(metadataKey);
     }
 
     @Override
     public boolean hasMetadata(String metadataKey) {
-        return this.getPlayer().hasMetadata(metadataKey);
+        return getPlayer().hasMetadata(metadataKey);
     }
 
     @Override
     public void removeMetadata(String metadataKey, Plugin owningPlugin) {
-        this.getPlayer().removeMetadata(metadataKey, owningPlugin);
+        getPlayer().removeMetadata(metadataKey, owningPlugin);
     }
 
     @Override
     public void sendMessage(String[] messages) {
-        this.getPlayer().sendMessage(messages);
+        getPlayer().sendMessage(messages);
     }
 
     @Override
     public boolean isPermissionSet(String name) {
-        return this.getPlayer().isPermissionSet(name);
+        return getPlayer().isPermissionSet(name);
     }
 
     @Override
     public boolean isPermissionSet(Permission perm) {
-        return this.getPlayer().isPermissionSet(perm);
+        return getPlayer().isPermissionSet(perm);
     }
 
     @Override
     public boolean hasPermission(String name) {
-        return this.getPlayer().hasPermission(name);
+        return getPlayer().hasPermission(name);
     }
 
     @Override
     public boolean hasPermission(Permission perm) {
-        return this.getPlayer().hasPermission(perm);
+        return getPlayer().hasPermission(perm);
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value) {
-        return this.getPlayer().addAttachment(plugin, name, value);
+        return getPlayer().addAttachment(plugin, name, value);
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin) {
-        return this.getPlayer().addAttachment(plugin);
+        return getPlayer().addAttachment(plugin);
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value, int ticks) {
-        return this.getPlayer().addAttachment(plugin, name, value, ticks);
+        return getPlayer().addAttachment(plugin, name, value, ticks);
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin, int ticks) {
-        return this.getPlayer().addAttachment(plugin, ticks);
+        return getPlayer().addAttachment(plugin, ticks);
     }
 
     @Override
     public void removeAttachment(PermissionAttachment attachment) {
-        this.getPlayer().removeAttachment(attachment);
+        getPlayer().removeAttachment(attachment);
     }
 
     @Override
     public void recalculatePermissions() {
-        this.getPlayer().recalculatePermissions();
+        getPlayer().recalculatePermissions();
     }
 
     @Override
     public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-        return this.getPlayer().getEffectivePermissions();
+        return getPlayer().getEffectivePermissions();
     }
 
     @Override
     public boolean isOp() {
-        return this.getPlayer().isOp();
+        return getPlayer().isOp();
     }
 
     @Override
     public void setOp(boolean value) {
-        this.getPlayer().setOp(value);
+        getPlayer().setOp(value);
     }
 
     @Override
     public void damage(double amount) {
-        this.getPlayer().damage(amount);
-    }
-
-    @Override
-    @Deprecated
-    public void _INVALID_damage(int amount) {
-        this.getPlayer()._INVALID_damage(amount);
+        getPlayer().damage(amount);
     }
 
     @Override
     public void damage(double amount, Entity source) {
-        this.getPlayer().damage(amount, source);
-    }
-
-    @Override
-    @Deprecated
-    public void _INVALID_damage(int amount, Entity source) {
-        this.getPlayer()._INVALID_damage(amount, source);
+        getPlayer().damage(amount, source);
     }
 
     @Override
     public double getHealth() {
-        return this.getPlayer().getHealth();
-    }
-
-    @Override
-    @Deprecated
-    public int _INVALID_getHealth() {
-        return this.getPlayer()._INVALID_getHealth();
+        return getPlayer().getHealth();
     }
 
     @Override
     public void setHealth(double health) {
-        this.getPlayer().setHealth(health);
-    }
-
-    @Override
-    public void _INVALID_setHealth(int health) {
-        this.getPlayer()._INVALID_setHealth(health);
+        getPlayer().setHealth(health);
     }
 
     @Override
     public double getMaxHealth() {
-        return this.getPlayer().getMaxHealth();
-    }
-
-    @Override
-    @Deprecated
-    public int _INVALID_getMaxHealth() {
-        return this.getPlayer()._INVALID_getMaxHealth();
+        return getPlayer().getMaxHealth();
     }
 
     @Override
     public void setMaxHealth(double health) {
-        this.getPlayer().setMaxHealth(health);
-    }
-
-    @Override
-    @Deprecated
-    public void _INVALID_setMaxHealth(int health) {
-        this.getPlayer()._INVALID_setMaxHealth(health);
+        getPlayer().setMaxHealth(health);
     }
 
     @Override
     public void resetMaxHealth() {
-        this.getPlayer().resetMaxHealth();
+        getPlayer().resetMaxHealth();
     }
 
     @Override
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectile) {
-        return (T) this.getPlayer().launchProjectile(projectile);
+        return (T) getPlayer().launchProjectile(projectile);
     }
 
     @Override
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectile, Vector velocity) {
-        return (T) this.getPlayer().launchProjectile(projectile, velocity);
+        return (T) getPlayer().launchProjectile(projectile, velocity);
     }
 
     @Override
     public boolean isConversing() {
-        return this.getPlayer().isConversing();
+        return getPlayer().isConversing();
     }
 
     @Override
     public void acceptConversationInput(String input) {
-        this.getPlayer().acceptConversationInput(input);
+        getPlayer().acceptConversationInput(input);
     }
 
     @Override
     public boolean beginConversation(Conversation conversation) {
-        return this.getPlayer().beginConversation(conversation);
+        return getPlayer().beginConversation(conversation);
     }
 
     @Override
     public void abandonConversation(Conversation conversation) {
-        this.getPlayer().abandonConversation(conversation);
+        getPlayer().abandonConversation(conversation);
     }
 
     @Override
     public void abandonConversation(Conversation conversation, ConversationAbandonedEvent details) {
-        this.getPlayer().abandonConversation(conversation, details);
+        getPlayer().abandonConversation(conversation, details);
     }
 
     @Override
     public boolean isBanned() {
-        return this.getPlayer().isBanned();
-    }
-
-    @Override
-    @Deprecated
-    public void setBanned(boolean banned) {
-        this.getPlayer().setBanned(banned);
-    }
-
-    @Override
-    public boolean isWhitelisted() {
-        return this.getPlayer().isWhitelisted();
+        return getPlayer().isBanned();
     }
 
     @Override
     public void setWhitelisted(boolean value) {
-        this.getPlayer().setWhitelisted(value);
+        getPlayer().setWhitelisted(value);
+    }
+
+    @Override
+    public boolean isWhitelisted() {
+        return getPlayer().isWhitelisted();
     }
 
     @Override
     public long getFirstPlayed() {
-        return this.getPlayer().getFirstPlayed();
+        return getPlayer().getFirstPlayed();
     }
 
     @Override
     public long getLastPlayed() {
-        return this.getPlayer().getLastPlayed();
+        return getPlayer().getLastPlayed();
     }
 
     @Override
     public boolean hasPlayedBefore() {
-        return this.getPlayer().hasPlayedBefore();
+        return getPlayer().hasPlayedBefore();
     }
 
     @Override
     public Map<String, Object> serialize() {
-        return this.getPlayer().serialize();
+        return getPlayer().serialize();
     }
 
     @Override
     public void sendPluginMessage(Plugin source, String channel, byte[] message) {
-        this.getPlayer().sendPluginMessage(source, channel, message);
+        getPlayer().sendPluginMessage(source, channel, message);
     }
 
     @Override
     public Set<String> getListeningPluginChannels() {
-        return this.getPlayer().getListeningPluginChannels();
+        return getPlayer().getListeningPluginChannels();
     }
 
     @Override
     public void playSound(Location lctn, Sound sound, SoundCategory sc, float f, float f1) {
-        this.getPlayer().playSound(lctn, sound, sc, f, f1);
+        getPlayer().playSound(lctn, sound, sc, f, f1);
     }
 
     @Override
     public void playSound(Location lctn, String string, SoundCategory sc, float f, float f1) {
-        this.getPlayer().playSound(lctn, string, sc, f, f1);
+        getPlayer().playSound(lctn, string, sc, f, f1);
     }
 
     @Override
     public void stopSound(Sound sound) {
-        this.getPlayer().stopSound(sound);
+        getPlayer().stopSound(sound);
     }
 
     @Override
     public void stopSound(String string) {
-        this.getPlayer().stopSound(string);
+        getPlayer().stopSound(string);
     }
 
     @Override
     public void stopSound(Sound sound, SoundCategory sc) {
-        this.getPlayer().stopSound(sound, sc);
+        getPlayer().stopSound(sound, sc);
     }
 
     @Override
     public void stopSound(String string, SoundCategory sc) {
-        this.getPlayer().stopSound(string, sc);
+        getPlayer().stopSound(string, sc);
     }
 
     @Override
     public void sendTitle(String string, String string1, int i, int i1, int i2) {
-        this.getPlayer().sendTitle(string, string1, i, i1, i2);
+        getPlayer().sendTitle(string, string1, i, i1, i2);
     }
 
     @Override
     public void spawnParticle(Particle prtcl, Location lctn, int i) {
-        this.getPlayer().spawnParticle(prtcl, lctn, i);
+        getPlayer().spawnParticle(prtcl, lctn, i);
     }
 
     @Override
     public void spawnParticle(Particle prtcl, double d, double d1, double d2, int i) {
-        this.getPlayer().spawnParticle(prtcl, d, d1, d2, i);
+        getPlayer().spawnParticle(prtcl, d, d1, d2, i);
     }
 
     @Override
     public <T> void spawnParticle(Particle prtcl, Location lctn, int i, T t) {
-        this.getPlayer().spawnParticle(prtcl, lctn, i, t);
+        getPlayer().spawnParticle(prtcl, lctn, i, t);
     }
 
     @Override
     public <T> void spawnParticle(Particle prtcl, double d, double d1, double d2, int i, T t) {
-        this.getPlayer().spawnParticle(prtcl, d, d1, d2, i, t);
+        getPlayer().spawnParticle(prtcl, d, d1, d2, i, t);
     }
 
     @Override
     public void spawnParticle(Particle prtcl, Location lctn, int i, double d, double d1, double d2) {
-        this.getPlayer().spawnParticle(prtcl, lctn, i, d, d1, d2);
+        getPlayer().spawnParticle(prtcl, lctn, i, d, d1, d2);
     }
 
     @Override
     public void spawnParticle(Particle prtcl, double d, double d1, double d2, int i, double d3, double d4, double d5) {
-        this.getPlayer().spawnParticle(prtcl, d, d1, d2, i, d3, d4, d5);
+        getPlayer().spawnParticle(prtcl, d, d1, d2, i, d3, d4, d5);
     }
 
     @Override
     public <T> void spawnParticle(Particle prtcl, Location lctn, int i, double d, double d1, double d2, T t) {
-        this.getPlayer().spawnParticle(prtcl, lctn, i, d, d1, d2, t);
+        getPlayer().spawnParticle(prtcl, lctn, i, d, d1, d2, t);
     }
 
     @Override
     public <T> void spawnParticle(Particle prtcl, double d, double d1, double d2, int i, double d3, double d4, double d5, T t) {
-        this.getPlayer().spawnParticle(prtcl, d, d1, d2, i, d3, d4, d5, t);
+        getPlayer().spawnParticle(prtcl, d, d1, d2, i, d3, d4, d5, t);
     }
 
     @Override
     public void spawnParticle(Particle prtcl, Location lctn, int i, double d, double d1, double d2, double d3) {
-        this.getPlayer().spawnParticle(prtcl, lctn, i, d, d1, d2, d3);
+        getPlayer().spawnParticle(prtcl, lctn, i, d, d1, d2, d3);
     }
 
     @Override
     public void spawnParticle(Particle prtcl, double d, double d1, double d2, int i, double d3, double d4, double d5, double d6) {
-        this.getPlayer().spawnParticle(prtcl, d, d1, d2, i, d3, d4, d5, d6);
+        getPlayer().spawnParticle(prtcl, d, d1, d2, i, d3, d4, d5, d6);
     }
 
     @Override
     public <T> void spawnParticle(Particle prtcl, Location lctn, int i, double d, double d1, double d2, double d3, T t) {
-        this.getPlayer().spawnParticle(prtcl, lctn, i, d, d1, d2, d3, t);
+        getPlayer().spawnParticle(prtcl, lctn, i, d, d1, d2, d3, t);
     }
 
     @Override
     public <T> void spawnParticle(Particle prtcl, double d, double d1, double d2, int i, double d3, double d4, double d5, double d6, T t) {
-        this.getPlayer().spawnParticle(prtcl, d, d1, d2, i, d3, d4, d5, d6, t);
+        getPlayer().spawnParticle(prtcl, d, d1, d2, i, d3, d4, d5, d6, t);
     }
 
     @Override
     public MainHand getMainHand() {
-        return this.getPlayer().getMainHand();
+        return getPlayer().getMainHand();
     }
 
     @Override
     public InventoryView openMerchant(Villager vlgr, boolean bln) {
-        return this.getPlayer().openMerchant(vlgr, bln);
+        return getPlayer().openMerchant(vlgr, bln);
     }
 
     @Override
     public InventoryView openMerchant(Merchant mrchnt, boolean bln) {
-        return this.getPlayer().openMerchant(mrchnt, bln);
+        return getPlayer().openMerchant(mrchnt, bln);
     }
 
     @Override
     public boolean isHandRaised() {
-        return this.getPlayer().isHandRaised();
+        return getPlayer().isHandRaised();
     }
 
     @Override
     public PotionEffect getPotionEffect(PotionEffectType pet) {
-        return this.getPlayer().getPotionEffect(pet);
+        return getPlayer().getPotionEffect(pet);
     }
 
     @Override
     public boolean isGliding() {
-        return this.getPlayer().isGliding();
+        return getPlayer().isGliding();
     }
 
     @Override
     public void setGliding(boolean bln) {
-        this.getPlayer().setGliding(bln);
+        getPlayer().setGliding(bln);
     }
 
     @Override
     public void setAI(boolean bln) {
-        this.getPlayer().setAI(bln);
+        getPlayer().setAI(bln);
     }
 
     @Override
     public boolean hasAI() {
-        return this.getPlayer().hasAI();
+        return getPlayer().hasAI();
     }
 
     @Override
     public void setCollidable(boolean bln) {
-        this.getPlayer().setCollidable(bln);
+        getPlayer().setCollidable(bln);
     }
 
     @Override
     public boolean isCollidable() {
-        return this.getPlayer().isCollidable();
+        return getPlayer().isCollidable();
     }
 
     @Override
     public AttributeInstance getAttribute(Attribute atrbt) {
-        return this.getPlayer().getAttribute(atrbt);
+        return getPlayer().getAttribute(atrbt);
     }
 
     @Override
     public List<Entity> getPassengers() {
-        return this.getPlayer().getPassengers();
+        return getPlayer().getPassengers();
     }
 
     @Override
     public boolean addPassenger(Entity entity) {
-        return this.getPlayer().addPassenger(entity);
+        return getPlayer().addPassenger(entity);
     }
 
     @Override
     public boolean removePassenger(Entity entity) {
-        return this.getPlayer().removePassenger(entity);
+        return getPlayer().removePassenger(entity);
     }
 
     @Override
     public void setGlowing(boolean bln) {
-        this.getPlayer().setGlowing(bln);
+        getPlayer().setGlowing(bln);
     }
 
     @Override
     public boolean isGlowing() {
-        return this.getPlayer().isGlowing();
+        return getPlayer().isGlowing();
     }
 
     @Override
     public void setInvulnerable(boolean bln) {
-        this.getPlayer().setInvulnerable(bln);
+        getPlayer().setInvulnerable(bln);
     }
 
     @Override
     public boolean isInvulnerable() {
-        return this.getPlayer().isInvulnerable();
+        return getPlayer().isInvulnerable();
     }
 
     @Override
     public boolean isSilent() {
-        return this.getPlayer().isSilent();
+        return getPlayer().isSilent();
     }
 
     @Override
     public void setSilent(boolean bln) {
-        this.getPlayer().setSilent(bln);
+        getPlayer().setSilent(bln);
     }
 
     @Override
     public boolean hasGravity() {
-        return this.getPlayer().hasGravity();
+        return getPlayer().hasGravity();
     }
 
     @Override
     public void setGravity(boolean bln) {
-        this.getPlayer().setGravity(bln);
+        getPlayer().setGravity(bln);
     }
 
     @Override
     public int getPortalCooldown() {
-        return this.getPlayer().getPortalCooldown();
+        return getPlayer().getPortalCooldown();
     }
 
     @Override
     public void setPortalCooldown(int i) {
-        this.getPlayer().setPortalCooldown(i);
+        getPlayer().setPortalCooldown(i);
     }
 
     @Override
     public Set<String> getScoreboardTags() {
-        return this.getPlayer().getScoreboardTags();
+        return getPlayer().getScoreboardTags();
     }
 
     @Override
     public boolean addScoreboardTag(String string) {
-        return this.getPlayer().addScoreboardTag(string);
+        return getPlayer().addScoreboardTag(string);
     }
 
     @Override
     public boolean removeScoreboardTag(String string) {
-        return this.getPlayer().removeScoreboardTag(string);
+        return getPlayer().removeScoreboardTag(string);
     }
 
     @Override
@@ -1625,5 +1569,44 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Override
     public double getWidth() {
         return getPlayer().getWidth();
+    }
+
+    @Override
+    public AdvancementProgress getAdvancementProgress(Advancement a) {
+        return getPlayer().getAdvancementProgress(a);
+    }
+
+    @Override
+    public String getLocale() {
+        return getPlayer().getLocale();
+    }
+
+    @Override
+    @Deprecated
+    public Entity getShoulderEntityLeft() {
+        return getPlayer().getShoulderEntityLeft();
+    }
+
+    @Override
+    @Deprecated
+    public void setShoulderEntityLeft(Entity entity) {
+        getPlayer().setShoulderEntityLeft(entity);
+    }
+
+    @Override
+    @Deprecated
+    public Entity getShoulderEntityRight() {
+        return getPlayer().getShoulderEntityLeft();
+    }
+
+    @Override
+    @Deprecated
+    public void setShoulderEntityRight(Entity entity) {
+        getPlayer().setShoulderEntityLeft(entity);
+    }
+
+    @Override
+    public PistonMoveReaction getPistonMoveReaction() {
+        return getPlayer().getPistonMoveReaction();
     }
 }

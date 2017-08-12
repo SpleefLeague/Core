@@ -19,7 +19,7 @@ import com.spleefleague.core.player.PlayerState;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.GamePlugin;
-import com.spleefleague.core.spawn.SpawnManager;
+import com.spleefleague.core.spawn.SpawnManager.SpawnLocation;
 import org.bson.Document;
 import org.bukkit.*;
 import org.bukkit.block.*;
@@ -67,13 +67,9 @@ public class EnvironmentListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         player.setCollidable(false);
-        if (SpleefLeague.getInstance().getSpawnManager() != null) {
-            SpawnManager.SpawnLocation spawnLocation = SpleefLeague.getInstance().getSpawnManager().getNext();
-            if (spawnLocation != null) {
-                spawnLocation.incrementPlayersInRadius();
-            }
-            Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> player.teleport(spawnLocation != null ? spawnLocation.getLocation() : SpleefLeague.getInstance().getSpawnLocation()));
-        }
+        SpawnLocation spawnManager = SpleefLeague.getInstance().getSpawnManager().getNext();
+        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> player.teleport(spawnManager.getLocation()));
+        
 //        if(!player.hasPlayedBefore()) {
 //            event.setJoinMessage(SpleefLeague.getInstance().getChatPrefix() + " " + ChatColor.BLUE + "Welcome " + ChatColor.YELLOW + player.getName() + ChatColor.BLUE + " to SpleefLeague!");
 //        }

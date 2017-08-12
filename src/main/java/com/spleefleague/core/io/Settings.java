@@ -98,6 +98,16 @@ public class Settings {
             return Optional.of(doc.get("value"));
         }
     }
+    
+    public static <T> Optional<T> getRaw(String key, Class<T> cast) {
+        Document doc = settings.get(key);
+        if(doc == null) {
+            return Optional.empty();
+        }
+        else {
+            return Optional.of((T)doc.get("value"));
+        }
+    }
 
     public static <T extends DBEntity & DBLoadable> Optional<T> get(String key, Class<? extends T> c) {
         Document doc = (Document) settings.get(key);
