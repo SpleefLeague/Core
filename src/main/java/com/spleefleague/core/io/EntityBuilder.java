@@ -7,6 +7,7 @@ package com.spleefleague.core.io;
 
 import com.google.common.collect.Iterables;
 import com.mongodb.client.MongoCollection;
+import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.io.EntityBuilder.IOClass.Input;
 import com.spleefleague.core.io.EntityBuilder.IOClass.Output;
 import com.spleefleague.core.utils.collections.MapUtil;
@@ -113,10 +114,9 @@ public class EntityBuilder {
             for(Integer priority : priorityList) {
                 Map<String, Input> priorityMap = inputs.get(priority);
                 for (String name : priorityMap.keySet()) {
-                    Object o = dbo.get(name);
-                    if (o != null) {
+                    if(dbo.containsKey(name)) {
                         Input i = priorityMap.get(name);
-                        i.set(t, o);
+                        i.set(t, dbo.get(name));
                     }
                 }
             }
@@ -416,8 +416,8 @@ public class EntityBuilder {
             }
 
             private void setField(Object instance, Object value) {
+                Field f = super.field;
                 try {
-                    Field f = super.field;
                     if (f.getType().isEnum() && value instanceof String) {
                         f.set(instance, Enum.valueOf((Class<Enum>) f.getType(), (String) value));
                     } else if (f.getType().isArray() && value instanceof List) {
@@ -444,17 +444,16 @@ public class EntityBuilder {
                     }
                 } catch (Exception e) {
                     String fName = "<unknown>";
-                    if (super.field != null) {
-                        fName = super.field.getName();
+                    if (f != null) {
+                        fName = f.getName();
                     }
                     System.err.println("EntityBuilder failed setting field: " + instance.getClass().getName() + "." + fName);
-                    e.printStackTrace();
                 }
             }
 
             private void setMethod(Object instance, Object value) {
+                Method m = super.method;
                 try {
-                    Method m = super.method;
                     if (m.getParameterTypes()[0].isEnum() && value instanceof String) {
                         m.invoke(instance, Enum.valueOf((Class<Enum>) m.getParameterTypes()[0], (String) value));
                     } else if (m.getParameterTypes()[0].isArray() && value instanceof List) {
@@ -481,7 +480,11 @@ public class EntityBuilder {
                         m.invoke(instance, value);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    String mName = "<unknown>";
+                    if (m != null) {
+                        mName = m.getName();
+                    }
+                    System.err.println("EntityBuilder failed invoking method: " + instance.getClass().getName() + "." + mName);
                 }
             }
 

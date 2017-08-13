@@ -20,6 +20,7 @@ public class ConnectionClient {
 
     private List<JSONObject> queued;
     private Socket socket;
+    private boolean enabled = false;
 
     public ConnectionClient() {
         if (!Config.hasKey("server_name")) {
@@ -30,9 +31,10 @@ public class ConnectionClient {
         try {
             this.socket = IO.socket("http://127.0.0.1:9092");
         } catch (URISyntaxException e) {
-            Bukkit.getServer().shutdown();
+            e.printStackTrace();
             return;
         }
+        enabled = true;
         socket.on(Socket.EVENT_CONNECT, (Object... args) -> {
             JSONObject send = new JSONObject();
             send.put("name", Config.getString("server_name"));
@@ -78,6 +80,9 @@ public class ConnectionClient {
      * @param jsonObject json object to send.
      */
     public void send(String channel, JSONObject jsonObject) {
+        if(!enabled) {
+            return;
+        }
         jsonObject.put("channel", channel);
         jsonObject.put("server", Config.getString("server_name"));
         if(this.socket == null || !this.socket.connected()) {

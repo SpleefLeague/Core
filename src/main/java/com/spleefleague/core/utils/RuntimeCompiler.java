@@ -340,6 +340,9 @@ public class RuntimeCompiler {
         if (ToolProvider.getSystemJavaCompiler() == null || ToolProvider.getSystemJavaCompiler().getStandardFileManager(null, null, null) == null) {
             System.setProperty("java.home", System.getProperty("java.home").replace("jre", "jdk"));
         }
+        if (ToolProvider.getSystemJavaCompiler() == null || ToolProvider.getSystemJavaCompiler().getStandardFileManager(null, null, null) == null) {
+            System.err.println("Java compiler could not be located");
+        }
         directoryTemp = new File(getPluginDirectory().getAbsolutePath() + "/debug/temp");
         if (directoryTemp.exists()) {
             directoryTemp.delete();

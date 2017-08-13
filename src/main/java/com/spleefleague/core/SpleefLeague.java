@@ -40,6 +40,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -129,21 +130,33 @@ public class SpleefLeague extends CorePlugin {
     }
 
     public void applySettings() {
-        if (Settings.hasKey("default_world")) {
-            String defaultWorld = Settings.getString("default_world").get();
-            CorePlugin.DEFAULT_WORLD = Bukkit.getWorld(defaultWorld);
+        //Main world
+        String defaultWorld = Settings.getString("default_world").orElse("world");
+        CorePlugin.DEFAULT_WORLD = Bukkit.getWorld(defaultWorld);
+        //Spawn handling
+        LocationConverter lc = new TypeConverter.LocationConverter();
+        Optional<List> oldSpawn = Settings.getRaw("spawn", List.class);
+        List<List> spawns = Settings.getList("spawn_new").orElse(new ArrayList<>());
+        if(oldSpawn.isPresent()) {
+            spawns.add(oldSpawn.get());
+            this.spawn = lc.convertLoad(oldSpawn.get());
         }
-        
-        if (Settings.hasKey("spawn_new") && Settings.hasKey("spawn_max_players")) {
-            LocationConverter lc = new TypeConverter.LocationConverter();
-            List<SpawnLocation> spawns = ((List<List>) Settings.getList("spawn_new").get())
-                    .stream()
-                    .map(lc::convertLoad)
-                    .map(SpawnManager.SpawnLocation::new)
-                    .collect(Collectors.toList());
-            spawnManager = new SpawnManager(spawns, Settings.getInteger("spawn_max_players").getAsInt());
-        } 
-        Settings.getLocation("spawn").ifPresent(s -> CorePlugin.DEFAULT_WORLD.setSpawnLocation(s.getBlockX(), s.getBlockY(), s.getBlockZ()));
+        else {
+            if(spawns.isEmpty()) {
+                this.spawn = SpleefLeague.DEFAULT_WORLD.getSpawnLocation();
+                spawns.add(lc.convertSave(this.spawn));
+                System.err.println("No spawn defined, using default world spawn!");
+            }
+            else {
+                this.spawn = lc.convertLoad(spawns.get(0));
+            }   
+        }
+        List<SpawnLocation> spawnLocations = spawns
+                .stream()
+                .map(lc::convertLoad)
+                .map(SpawnManager.SpawnLocation::new)
+                .collect(Collectors.toList());
+        spawnManager = new SpawnManager(spawnLocations, Settings.getInteger("spawn_max_players").orElse(50));
         Settings.getInteger("max_players").ifPresent(s -> setSlotSize(s));
         Settings.getDocument("game_rules").ifPresent(d -> d.forEach((String key, Object object) -> CorePlugin.DEFAULT_WORLD.setGameRuleValue(key, object.toString())));
     }

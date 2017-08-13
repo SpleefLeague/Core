@@ -11,7 +11,7 @@ import com.spleefleague.core.player.PlayerState;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.plugin.GamePlugin;
-import com.spleefleague.core.spawn.SpawnManager;
+import com.spleefleague.core.spawn.SpawnManager.SpawnLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
@@ -33,10 +33,7 @@ public class spawn extends BasicCommand {
         } else if (slp.getState() == PlayerState.SPECTATING) {
             GamePlugin.unspectateGlobal(p);
         }
-        SpawnManager.SpawnLocation spawnLocation = SpleefLeague.getInstance().getSpawnManager().getNext();
-        if (spawnLocation != null) {
-            spawnLocation.incrementPlayersInRadius();
-        }
-        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> p.teleport(spawnLocation != null ? spawnLocation.getLocation() : SpleefLeague.getInstance().getSpawnLocation()));
+        SpawnLocation spawnLocation = SpleefLeague.getInstance().getSpawnManager().getNext();
+        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> p.teleport(spawnLocation.getLocation()));
     }
 }

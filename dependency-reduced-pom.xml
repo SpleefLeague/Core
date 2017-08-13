@@ -4,7 +4,7 @@
   <groupId>com.spleefleague</groupId>
   <artifactId>SpleefLeagueCore</artifactId>
   <name>SpleefLeagueCore</name>
-  <version>1.0</version>
+  <version>1.1</version>
   <url>http://www.spleefleague.com/</url>
   <build>
     <finalName>${project.artifactId}</finalName>
@@ -37,7 +37,7 @@
   <repositories>
     <repository>
       <id>dmulloy2-repo</id>
-      <url>http://repo.dmulloy2.net/content/groups/public/</url>
+      <url>http://repo.dmulloy2.net/nexus/repository/public/</url>
     </repository>
     <repository>
       <id>spigot-repo</id>
@@ -52,7 +52,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.11.2-R0.1-SNAPSHOT</version>
+      <version>1.12-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -72,10 +72,6 @@
           <groupId>com.google.code.gson</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>ebean</artifactId>
-          <groupId>org.avaje</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>snakeyaml</artifactId>
           <groupId>org.yaml</groupId>
         </exclusion>
@@ -88,28 +84,8 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot</artifactId>
-      <version>1.11.2-R0.1-SNAPSHOT</version>
+      <version>1.12-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.comphenix.protocol</groupId>
-      <artifactId>ProtocolLib</artifactId>
-      <version>4.1.0</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>ProtocolLib-API</artifactId>
-          <groupId>com.comphenix.protocol</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>cglib-nodep</artifactId>
-          <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>BukkitExecutors</artifactId>
-          <groupId>com.comphenix.executors</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.sk89q.worldedit</groupId>

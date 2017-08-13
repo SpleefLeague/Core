@@ -25,7 +25,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_11_R1.CraftChunk;
+import org.bukkit.craftbukkit.v1_12_R1.CraftChunk;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -79,7 +79,7 @@ public class MultiBlockChangeUtil implements Listener {
     private static void sendMultiBlockChange(MultiBlockChangeData mbcd, List<Player> affected) {
         if (!affected.isEmpty()) {
             World world = affected.get(0).getWorld();
-            net.minecraft.server.v1_11_R1.Chunk chunk = ((CraftChunk) world.getChunkAt(mbcd.getChunkX(), mbcd.getChunkZ())).getHandle();
+            net.minecraft.server.v1_12_R1.Chunk chunk = ((CraftChunk) world.getChunkAt(mbcd.getChunkX(), mbcd.getChunkZ())).getHandle();
             WrapperPlayServerMultiBlockChange wrapper = new WrapperPlayServerMultiBlockChange();
             wrapper.setChunk(new ChunkCoordIntPair(chunk.locX, chunk.locZ));
             wrapper.setRecords(mbcd.getData());

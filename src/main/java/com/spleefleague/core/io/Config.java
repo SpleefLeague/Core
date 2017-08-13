@@ -20,13 +20,17 @@ import java.util.stream.Collectors;
  */
 public class Config {
 
-    //Assumed default values
-    public static String DB_HOST = "mongo.spleefleague.com";
-    public static int DB_PORT = 27017;
+    public static String DB_HOST;
+    public static int DB_PORT;
     private static HashMap<String, String> ADDITIONAL_CONFIG;
-
+    private static boolean configLoaded = false;
+    
     static {
         ADDITIONAL_CONFIG = new HashMap<>();
+    }
+    
+    public static boolean isConfigLoaded() {
+        return configLoaded;
     }
 
     public static void loadConfig() {
@@ -56,6 +60,7 @@ public class Config {
                     }
                 }
             }
+            configLoaded = true;
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }

@@ -33,18 +33,17 @@ public class Rank extends DBEntity implements DBLoadable {
     @DBLoad(fieldName = "ladder")
     private int ladder;
     @DBLoad(fieldName = "hasOp")
-    private boolean hasOp;
+    private boolean hasOp = false;
     @DBLoad(fieldName = "color")
     private ChatColor color;
     @DBLoad(fieldName = "permissions")
-    private String[] permissions;
+    private String[] permissions = new String[0];
     @DBLoad(fieldName = "exclusivePermissions")
-    private String[] exclusivePermissions;
-    private boolean assignedEnum = false;
+    private String[] exclusivePermissions = new String[0];
     private Team scoreboardTeam;
 
     private Rank() {
-
+        
     }
 
     public String getName() {
@@ -105,17 +104,18 @@ public class Rank extends DBEntity implements DBLoadable {
 
     private final static Map<String, Rank> ranks = new HashMap<>();
 
-    public static final Rank ADMIN = getPlaceholderInstance(true),
-            COUNCIL = getPlaceholderInstance(true),
-            DEVELOPER = getPlaceholderInstance(true),
-            SENIOR_MODERATOR = getPlaceholderInstance(true),
-            MODERATOR_BUILDER = getPlaceholderInstance(true),
-            MODERATOR = getPlaceholderInstance(true),
-            REFEREE = getPlaceholderInstance(true),
-            VIP = getPlaceholderInstance(true),
-            BUILDER = getPlaceholderInstance(true),
-            ORGANIZER = getPlaceholderInstance(true),
-            DEFAULT = getPlaceholderInstance(true);
+    public static final Rank 
+            ADMIN = getPlaceholderInstance(),
+            COUNCIL = getPlaceholderInstance(),
+            DEVELOPER = getPlaceholderInstance(),
+            SENIOR_MODERATOR = getPlaceholderInstance(),
+            MODERATOR_BUILDER = getPlaceholderInstance(),
+            MODERATOR = getPlaceholderInstance(),
+            REFEREE = getPlaceholderInstance(),
+            VIP = getPlaceholderInstance(),
+            BUILDER = getPlaceholderInstance(),
+            ORGANIZER = getPlaceholderInstance(),
+            DEFAULT = getPlaceholderInstance();
 
     public static Rank valueOf(String name) {
         return ranks.get(name);
@@ -125,7 +125,7 @@ public class Rank extends DBEntity implements DBLoadable {
         return ranks.values().toArray(new Rank[0]);
     }
 
-    private static Rank getPlaceholderInstance(boolean assignedEnum) {
+    private static Rank getPlaceholderInstance() {
         Rank rank = new Rank();
         rank.color = ChatColor.BLACK;
         rank.displayName = "ERROR";
@@ -134,7 +134,6 @@ public class Rank extends DBEntity implements DBLoadable {
         rank.ladder = Integer.MIN_VALUE;
         rank.exclusivePermissions = new String[0];
         rank.permissions = new String[0];
-        rank.assignedEnum = assignedEnum;
         return rank;
     }
 
