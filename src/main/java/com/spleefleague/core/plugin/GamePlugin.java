@@ -41,7 +41,7 @@ public abstract class GamePlugin extends CorePlugin {
             return;
         Battle battle = null;
         for(BattleManager bm : getBattleManagers()) {
-            battle = bm.getBattle(SpleefLeague.getInstance().getPlayerManager().get(p));
+            battle = bm.getBattleForSpectator(SpleefLeague.getInstance().getPlayerManager().get(p));
             if(battle != null) {
                 break;
             }
