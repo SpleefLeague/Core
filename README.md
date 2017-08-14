@@ -1,6 +1,6 @@
 # SpleefLeague Core
 
-The core plugin of [SpleefLeague](https://swc.cubecraft.net/), which handles the general data of the server, and provides an API for the other plugins to build on.
+The core plugin of [SpleefLeague](https://spleefleague.com/), which handles the general data of the server, and provides an API for the other plugins to build on.
 
 This project is required for the other plugins to compile and run.
 
