@@ -12,7 +12,6 @@ import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.utils.TimeUtil;
 import com.spleefleague.core.infraction.Infraction;
 import com.spleefleague.core.infraction.InfractionType;
-import com.spleefleague.core.utils.DatabaseConnection;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;

@@ -9,6 +9,7 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.events.ChatChannelMessageEvent;
+import com.spleefleague.core.io.connections.ConnectionClient;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import org.bukkit.Bukkit;
@@ -50,7 +51,7 @@ public class ChatListener implements Listener {
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer().getUniqueId());
-        if (!lastMessage.containsKey(slp.getUniqueId()) || System.currentTimeMillis() - lastMessage.get(slp.getUniqueId()) > 3000) {
+        if (!lastMessage.containsKey(slp.getUniqueId()) || System.currentTimeMillis() - lastMessage.get(slp.getUniqueId()) > 2000) {
             String message = event.getMessage();
             if(antiCapsPattern.matcher(message).matches())
                 event.setMessage(message.toLowerCase());
@@ -72,10 +73,13 @@ public class ChatListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onChatChannel(ChatChannelMessageEvent event) {
         if(event.getChannel() == ChatChannel.STAFF) {
-            event.setCancelled(true);
-            JSONObject send = new JSONObject();
-            send.put("message", event.getMessage());
-            SpleefLeague.getInstance().getConnectionClient().send("staff", send);
+            ConnectionClient cc = SpleefLeague.getInstance().getConnectionClient();
+            if(cc.isEnabled()) {
+                event.setCancelled(true);
+                JSONObject send = new JSONObject();
+                send.put("message", event.getMessage());
+                SpleefLeague.getInstance().getConnectionClient().send("staff", send);
+            }
         }
     }
 }

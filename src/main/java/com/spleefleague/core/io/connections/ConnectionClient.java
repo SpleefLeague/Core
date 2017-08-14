@@ -63,6 +63,14 @@ public class ConnectionClient {
         });
         this.socket.connect();
     }
+    
+    /**
+     * Returns the current state
+     * @return true, if the connection channel is enabled. Does not gurantee that it is connected.
+     */
+    public boolean isEnabled() {
+        return this.enabled;
+    }
 
     /**
      * Handle shutdown.
