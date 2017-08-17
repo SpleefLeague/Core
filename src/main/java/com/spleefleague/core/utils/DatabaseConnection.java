@@ -7,6 +7,8 @@ package com.spleefleague.core.utils;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Collation;
+import com.mongodb.client.model.CollationStrength;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.player.Rank;
@@ -31,8 +33,13 @@ public class DatabaseConnection {
 
     private static final UUIDCache uuidCache = new UUIDCache(100);
     private static final RankCache rankCache = new RankCache(100);
+    public static Collation usernameCollation;
 
     public static void initialize() {
+        usernameCollation = Collation.builder()
+                .locale("en")
+                .collationStrength(CollationStrength.SECONDARY)
+                .build();
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
             public void onJoin(GeneralPlayerLoadedEvent event) {
@@ -58,12 +65,11 @@ public class DatabaseConnection {
     }
 
     public static UUID getUUID(String username) {
-        username = username.toLowerCase();
         UUID uuid = uuidCache.getUUID(username);
         if (uuid != null) {
             return uuid;
         }
-        Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").find(new Document("lookupUsername", username)).first();
+        Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("Players").find(new Document("username", username)).collation(usernameCollation).first();
         if (dbo != null) {
             uuid = UUID.fromString((String) dbo.get("uuid"));
             updateCache(uuid, username);

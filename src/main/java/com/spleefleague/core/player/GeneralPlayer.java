@@ -64,11 +64,6 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
         return username;
     }
 
-    @DBSave(fieldName = "lookupUsername")
-    public String getLookupUsername() {
-        return username.toLowerCase();
-    }
-
     @Override
     public Player getPlayer() {
         if (cached != null && cached.isOnline()) {

@@ -33,11 +33,17 @@ public abstract class ConnectionResponseHandler implements Listener {
         Bukkit.getPluginManager().registerEvents(this, SpleefLeague.getInstance());
 
         sendObject.put("responseID", responseID.toString());
-        SpleefLeague.getInstance().getConnectionClient().send(channel, sendObject);
-
-        this.taskID = Bukkit.getScheduler().runTaskLater(SpleefLeague.getInstance(), () -> {
+        ConnectionClient cc = SpleefLeague.getInstance().getConnectionClient();
+        if(cc.isEnabled()) {
+            cc.send(channel, sendObject);
+            this.taskID = Bukkit.getScheduler().runTaskLater(SpleefLeague.getInstance(), () -> {
+                response(null);
+            }, timeout).getTaskId();
+        }
+        else {
+            this.taskID = -1;
             response(null);
-        }, timeout).getTaskId();
+        }
     }
 
     protected abstract void response(JSONObject jsonObject);
