@@ -23,8 +23,8 @@ import org.bukkit.entity.Player;
 public class gamemode extends BasicCommand {
 
     public gamemode(CorePlugin plugin, String name, String usage) {
-        super(plugin, name, usage, Rank.MODERATOR);
-        setAdditionalRanksDependingOnServerType(ServerType.BUILD, Rank.BUILDER);
+        super(plugin, name, usage, Rank.MODERATOR, Rank.BUILDER);
+        //setAdditionalRanksDependingOnServerType(ServerType.BUILD, Rank.BUILDER);
     }
 
     @Override

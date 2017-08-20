@@ -2,15 +2,10 @@ package com.spleefleague.core.listeners;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
-import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.command.commands.ticket;
 import com.spleefleague.core.events.ConnectionEvent;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
-import com.spleefleague.core.io.Config;
 import com.spleefleague.core.player.SLPlayer;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

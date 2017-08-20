@@ -85,6 +85,7 @@ public class EnvironmentListener implements Listener {
         //event.setQuitMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has left the server");
         event.setQuitMessage(null);
         GamePlugin.unspectateGlobal(event.getPlayer());
+        logConnection(event.getPlayer(), false);
     }
 
     @EventHandler
