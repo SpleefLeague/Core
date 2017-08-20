@@ -5,8 +5,8 @@
  */
 package com.spleefleague.core.command.commands;
 
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Projections;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.command.BasicCommand;
 import com.spleefleague.core.infraction.Infraction;
@@ -30,6 +30,7 @@ import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
 import java.util.*;
+import org.bson.conversions.Bson;
 
 /**
  *
@@ -87,9 +88,13 @@ public class playerinfo extends BasicCommand {
                             p.sendMessage(ChatColor.DARK_GRAY + "Last seen: " + ChatColor.GRAY + data.getLastSeen());
                         }
                         p.sendMessage(ChatColor.DARK_GRAY + "Server: " + ChatColor.GRAY + (jsonObject == null ? "NONE (OFFLINE)" : jsonObject.get("playerServer").toString()));
-                        String sharedAccounts = data.getSharedAccounts();
-                        if (sharedAccounts != null) {
-                            p.sendMessage(ChatColor.DARK_GRAY + "Shared accounts: " + ChatColor.GRAY + sharedAccounts);
+                        List<String> sharedNames = data.getSharedAccountNames();
+                        if(!sharedNames.isEmpty()) {
+                            StringJoiner sj = new StringJoiner(", ");
+                            for(String name : data.getSharedAccountNames()) {
+                                sj.add(name);
+                            }   
+                            p.sendMessage(ChatColor.DARK_GRAY + "Shared accounts: " + ChatColor.GRAY + sj.toString());
                         }
                     }
 
@@ -129,14 +134,15 @@ public class playerinfo extends BasicCommand {
         public String getLastSeen() {
             //Should never happen
             if (lastSeen == null) {
-                getSharedAccounts();
+                lastSeen = calculateLastSeen();
             }
             return lastSeen;
         }
 
         public String getState() {
             if (!slp.isOnline()) {
-                Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").find(new Document("uuid", slp.getUniqueId().toString())).first();
+                Document query = new Document("uuid", slp.getUniqueId().toString());
+                Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").find(query).first();
                 if (dbo != null) {
                     Infraction inf = EntityBuilder.load(dbo, Infraction.class);
                     if (inf.getType() == InfractionType.BAN) {
@@ -152,59 +158,107 @@ public class playerinfo extends BasicCommand {
                 return ChatColor.GREEN + StringUtil.upperCaseFirst(slp.getState().toString());
             }
         }
-
-        public String getSharedAccounts() {
-            String playerUUID = slp.getUniqueId().toString();
-            Set<String> sharedUUIDs = new HashSet<>();
-            Collection<String> ips = new HashSet<>();
+        
+        public String calculateLastSeen() {
             MongoCollection<Document> col = SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections");
-            Date lastOnline = null;
-            for (Document doc : col.find(new Document("uuid", playerUUID))) {
-                ips.add(doc.get("ip", String.class));
-                if (lastOnline == null) {
-                    lastOnline = doc.get("date", Date.class);
-                } else {
-                    Date d = doc.get("date", Date.class);
-                    if (lastOnline.before(d)) {
-                        lastOnline = d;
-                    }
-                }
+            Document query = new Document("uuid", getUUID())
+                    .append("type", "LEAVE");
+            Document sort = new Document("date", -1);
+            Bson projection = Projections.fields(Projections.excludeId(), Projections.include("date"));
+            Document doc = col.find(query).sort(sort).projection(projection).limit(1).first();
+            if(doc != null) {
+                Date lastLogout = doc.getDate("date");
+                return TimeUtil.dateToString(lastLogout, false) + " ago";
             }
-            lastSeen = lastOnline != null ? TimeUtil.dateToString(lastOnline, false) + " ago" : "Unknown";
-            Set<Document> orQuerry = new HashSet<>();
-            for (String ip : ips) {
-                orQuerry.add(new Document("ip", ip));
-                Thread.currentThread().getStackTrace();
+            else {
+                return "Unknown";
             }
-            if (!orQuerry.isEmpty()) {
-                for (Document doc : col.find(new Document("$or", orQuerry))) {
-                    String uuid = doc.get("uuid", String.class);
-                    if (!uuid.equals(playerUUID)) {
-                        sharedUUIDs.add(uuid);
-                    }
-                }
+        }
+
+        public List<String> getSharedAccountNames() {
+            String playerUUID = slp.getUniqueId().toString();
+            MongoCollection<Document> col = SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections");
+            List<Document> aggregation = generateAggregationPipeline(playerUUID);
+            Document result = col.aggregate(aggregation).first();
+            if(result == null) {
+                return new ArrayList<>();
             }
-            col = SpleefLeague.getInstance().getPluginDB().getCollection("Players");
-            StringBuilder sb = new StringBuilder();
-            for (String uuid : sharedUUIDs) {
-                FindIterable<Document> find = col.find(new Document("uuid", uuid));
-                if(find == null) {
-                    continue;
-                }
-                Document first = find.first();
-                if(first == null) {
-                    continue;
-                }
-                String username = first.get("username", String.class);
-                if(username == null) {
-                    continue;
-                }
-                sb.append(username).append(", ");
-            }
-            String result = sb.toString();
-            if(result.isEmpty())
-                return null;
-            return result.substring(0, result.length() - 2) + '.';
+            return (List<String>)result.get("shared");
+        }
+        
+        private List<Document> generateAggregationPipeline(String uuid) {
+            return Arrays.asList(new Document[]{
+		new Document(
+                    "$match", 
+                    new Document("uuid", uuid)
+		),
+		new Document(
+                    "$project",
+                        new Document("_id", 0)
+                        .append("ip", 1)
+                        .append("uuid", 1)
+		),
+		new Document(
+                    "$group",
+                        new Document("_id", "$uuid")
+                        .append("ip", 
+                            new Document("$addToSet", "$ip")
+                        )
+		),
+		new Document(
+                    "$unwind", 
+                        new Document("path", "$ip")
+		),
+		new Document(
+                    "$lookup",
+                        new Document("from", "PlayerConnections")
+                        .append("localField", "ip")
+                        .append("foreignField", "ip")
+                        .append("as", "matching")
+		),
+                new Document(
+                    "$unwind", 
+                        new Document("path", "$matching")
+		),
+		new Document(
+                    "$project",
+                        new Document("_id", 0)
+                        .append("uuid", "$matching.uuid")
+                        .append("notOriginUUID", 
+                            new Document("$cmp", Arrays.asList(new String[]{"$_id","$matching.uuid"}))
+                        )
+		),
+                new Document(
+                    "$match", 
+                        new Document("notOriginUUID", 1)
+		),
+		new Document(
+                    "$lookup",
+                        new Document("from", "Players")
+                        .append("localField", "uuid")
+			.append("foreignField", "uuid")
+			.append("as", "player")
+				
+		),
+		new Document(
+                    "$project",
+                        new Document("username", 
+                            new Document("$arrayElemAt", Arrays.asList(new Object[]{"$player.username",0}))
+                        )
+		),
+		new Document(
+                    "$group",
+                        new Document("_id", "$_id")
+                        .append("shared", 
+                            new Document("$addToSet", "$username")
+                        )
+		),
+		new Document(
+                    "$project",
+                        new Document("_id", 0)
+                        .append("shared", 1)
+		)
+            });
         }
     }
 }

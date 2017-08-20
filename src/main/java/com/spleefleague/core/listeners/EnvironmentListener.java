@@ -77,7 +77,7 @@ public class EnvironmentListener implements Listener {
 //            event.setJoinMessage(ChatColor.YELLOW + player.getName() + " has joined the server");
 //        }
         event.setJoinMessage(null);//During SWC
-        logIPAddress(event.getPlayer());
+        logConnection(event.getPlayer(), true);
     }
 
     @EventHandler
@@ -397,9 +397,10 @@ public class EnvironmentListener implements Listener {
         evt.setCancelled(true);
     }
 
-    private void logIPAddress(final Player player) {
-        final String ip = player.getAddress().getAddress().toString();
-        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> EntityBuilder.save(new Connection(player.getUniqueId(), ip), SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections")));
+    private void logConnection(final Player player, boolean joined) {
+        final String ip = player.getAddress().getAddress().getHostAddress();
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () ->
+            EntityBuilder.save(new Connection(player.getUniqueId(), ip, joined), SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections")));
     }
 
     public static class Connection extends DBEntity implements DBSaveable {
@@ -410,11 +411,14 @@ public class EnvironmentListener implements Listener {
         private String ip;
         @DBSave(fieldName = "date", typeConverter = DateConverter.class)
         private Date date;
-
-        public Connection(UUID uuid, String ip) {
+        @DBSave(fieldName = "type")
+        private String type;
+        
+        public Connection(UUID uuid, String ip, boolean joined) {
             this.uuid = uuid;
-            this.ip = ip;
             this.date = new Date();
+            this.ip = joined ? ip : null;
+            this.type = joined ? "JOIN" : "LEAVE";
         }
     }
 }
