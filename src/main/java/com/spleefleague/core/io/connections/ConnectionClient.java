@@ -23,13 +23,13 @@ public class ConnectionClient {
     private boolean enabled = false;
 
     public ConnectionClient() {
-        if (!Config.hasKey("server_name")) {
-            SpleefLeague.getInstance().getLogger().severe("Server name not set in config, shutting down connections.");
+        if (!Config.hasKey("connection_host")) {
+            SpleefLeague.getInstance().getLogger().severe("Connection client host not specified, shutting down..");
             return;
         }
         this.queued = new ArrayList<>();
         try {
-            this.socket = IO.socket("http://127.0.0.1:9092");
+            this.socket = IO.socket(Config.getString("connection_host"));
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;

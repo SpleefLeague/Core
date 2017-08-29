@@ -8,8 +8,9 @@ import com.spleefleague.core.io.connections.ConnectionResponseHandler;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
+import com.spleefleague.core.utils.DatabaseConnection;
 import com.spleefleague.core.utils.StringUtil;
-import com.sun.scenario.Settings;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
@@ -32,26 +33,26 @@ public class ticketreply extends BasicCommand {
             String message = StringUtil.fromArgsArray(args, 1);
             if(cc.isEnabled()) {
                 Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
-                    SLPlayer target = SpleefLeague.getInstance().getPlayerManager().loadFake(args[0]);
-                    if(target == null) {
+                    UUID targetId = DatabaseConnection.getUUID(args[0]);
+                    if(targetId == null) {
                         error(p, args[0] + " has never played on SpleefLeague!");
                         return;
                     }
                     JSONObject request = new JSONObject();
-                    request.put("uuid", target.getUniqueId().toString());
+                    request.put("uuid", targetId.toString());
                     request.put("action", "GET_PLAYER");
                     new ConnectionResponseHandler("sessions", request, 40) {
 
                         @Override
                         protected void response(JSONObject jsonObject) {
                             if(jsonObject == null || jsonObject.get("playerServer").toString().equalsIgnoreCase("OFFLINE")) {
-                                error(slp, target.getName() + " isn't online!");
+                                error(slp, args[0] + " isn't online!");
                                 return;
                             }
                             JSONObject sendObject = new JSONObject();
                             sendObject.put("rankColor", slp.getRank().getColor().name());
-                            sendObject.put("sendUUID", target.getUniqueId());
-                            sendObject.put("sendName", target.getName());
+                            sendObject.put("sendUUID", targetId);
+                            sendObject.put("sendName", args[0]);
                             sendObject.put("shownName", slp.getName());
                             sendObject.put("overrideServer", jsonObject.get("playerServer").toString());
                             sendObject.put("message", message);

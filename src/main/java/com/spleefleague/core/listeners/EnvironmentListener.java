@@ -43,6 +43,8 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import org.bukkit.event.server.TabCompleteEvent;
 
 /**
  *
@@ -63,6 +65,19 @@ public class EnvironmentListener implements Listener {
 
     }
 
+    
+    @EventHandler
+    public void onTabComplete(TabCompleteEvent event) {
+        if(event.getBuffer().length() > 0 && event.getBuffer().charAt(0) != '/') {
+            event.setCompletions(Bukkit
+                    .getOnlinePlayers()
+                    .stream()
+                    .map(Player::getName)
+                    .filter(s -> s.toLowerCase().startsWith(event.getBuffer().toLowerCase()))
+                    .collect(Collectors.toList()));
+        }
+    }
+    
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();

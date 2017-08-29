@@ -5,6 +5,7 @@
  */
 package com.spleefleague.core.command.commands;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Projections;
 import com.spleefleague.core.SpleefLeague;
@@ -18,6 +19,7 @@ import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.utils.StringUtil;
 import com.spleefleague.core.utils.TimeUtil;
+import java.time.Duration;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -30,7 +32,9 @@ import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
 import java.util.*;
+import java.util.concurrent.Semaphore;
 import org.bson.conversions.Bson;
+import org.bukkit.scheduler.BukkitTask;
 
 /**
  *
@@ -65,37 +69,45 @@ public class playerinfo extends BasicCommand {
 
                     @Override
                     protected void response(JSONObject jsonObject) {
-                        PlayerData data = new PlayerData(target);
-                        p.sendMessage(ChatColor.DARK_GRAY + "[========== " + ChatColor.GRAY + targetName + "'s data " + ChatColor.DARK_GRAY + "==========]");
-                        p.sendMessage(ChatColor.DARK_GRAY + "Name: " + ChatColor.GRAY + data.getName());
-                        TextComponent uuidFirst = new TextComponent("UUID: ");
-                        uuidFirst.setColor(ChatColor.DARK_GRAY);
-                        TextComponent uuidSecond = new TextComponent(data.getUUID());
-                        uuidSecond.setColor(ChatColor.GRAY);
-                        uuidSecond.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] { new TextComponent("Click to put in chatbox") } ));
-                        uuidSecond.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, data.getUUID()));
-                        uuidFirst.addExtra(uuidSecond);
-                        p.spigot().sendMessage(uuidFirst);
-                        p.sendMessage(ChatColor.DARK_GRAY + "Rank: " + ChatColor.GRAY + data.getRank());
-                        if(data.getState().equalsIgnoreCase("OFFLINE") && jsonObject != null && !jsonObject.get("playerServer").toString().equalsIgnoreCase("OFFLINE")) {
-                            p.sendMessage(ChatColor.DARK_GRAY + "State: ONLINE");
-                        } else {
-                            p.sendMessage(ChatColor.DARK_GRAY + "State: " + data.getState());
-                        }
-                        if (target.isOnline()) {
-                            p.sendMessage(ChatColor.DARK_GRAY + "IP: " + ChatColor.GRAY + data.getIP());
-                        } else {
-                            p.sendMessage(ChatColor.DARK_GRAY + "Last seen: " + ChatColor.GRAY + data.getLastSeen());
-                        }
-                        p.sendMessage(ChatColor.DARK_GRAY + "Server: " + ChatColor.GRAY + (jsonObject == null ? "NONE (OFFLINE)" : jsonObject.get("playerServer").toString()));
-                        List<String> sharedNames = data.getSharedAccountNames();
-                        if(!sharedNames.isEmpty()) {
-                            StringJoiner sj = new StringJoiner(", ");
-                            for(String name : data.getSharedAccountNames()) {
-                                sj.add(name);
-                            }   
-                            p.sendMessage(ChatColor.DARK_GRAY + "Shared accounts: " + ChatColor.GRAY + sj.toString());
-                        }
+                        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+                            PlayerData data = new PlayerData(target);
+                            data.calculate();
+                            
+                            TextComponent uuidFirst = new TextComponent("UUID: ");
+                            uuidFirst.setColor(ChatColor.DARK_GRAY);
+                            TextComponent uuidSecond = new TextComponent(data.getUUID());
+                            uuidSecond.setColor(ChatColor.GRAY);
+                            uuidSecond.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] { new TextComponent("Click to put in chatbox") } ));
+                            uuidSecond.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, data.getUUID()));
+                            uuidFirst.addExtra(uuidSecond);
+                            
+                            p.sendMessage(ChatColor.DARK_GRAY + "[========== " + ChatColor.GRAY + targetName + "'s data " + ChatColor.DARK_GRAY + "==========]");
+                            p.sendMessage(ChatColor.DARK_GRAY + "Name: " + ChatColor.GRAY + data.getName());
+                            p.spigot().sendMessage(uuidFirst);
+                            p.sendMessage(ChatColor.DARK_GRAY + "Rank: " + ChatColor.GRAY + data.getRank());
+                            if(data.getState().equalsIgnoreCase("OFFLINE") && jsonObject != null && !jsonObject.get("playerServer").toString().equalsIgnoreCase("OFFLINE")) {
+                                p.sendMessage(ChatColor.DARK_GRAY + "State: ONLINE");
+                            } else {
+                                p.sendMessage(ChatColor.DARK_GRAY + "State: " + data.getState());
+                            }
+                            if (target.isOnline()) {
+                                p.sendMessage(ChatColor.DARK_GRAY + "IP: " + ChatColor.GRAY + data.getIP());
+                            } else {
+                                p.sendMessage(ChatColor.DARK_GRAY + "Last seen: " + ChatColor.GRAY + data.getLastSeen());
+                            }
+                            p.sendMessage(ChatColor.DARK_GRAY + "Server: " + ChatColor.GRAY + (jsonObject == null ? "NONE (OFFLINE)" : jsonObject.get("playerServer").toString()));
+                            List<String> sharedNames = data.getSharedAccountNames();
+                            if(!sharedNames.isEmpty()) {
+                                StringJoiner sj = new StringJoiner(", ");
+                                for(String name : data.getSharedAccountNames()) {
+                                    sj.add(name);
+                                }   
+                                p.sendMessage(ChatColor.DARK_GRAY + "Shared accounts: " + ChatColor.GRAY + sj.toString());
+                            }
+                            if(data.getOnlineTime() != null) {
+                                p.sendMessage(ChatColor.DARK_GRAY + "Total online time: " + ChatColor.GRAY + data.getOnlineTime());
+                            }
+                        });
                     }
 
                 };
@@ -109,9 +121,38 @@ public class playerinfo extends BasicCommand {
 
         private final SLPlayer slp;
         private String lastSeen;
+        private String state;
+        private String onlineTime;
+        private List<String> sharedAccountNames;
 
         public PlayerData(SLPlayer slp) {
             this.slp = slp;
+        }
+        
+        public void calculate() {
+            SpleefLeague sl = SpleefLeague.getInstance();
+            Semaphore s = new Semaphore(0);
+            Runnable calcLastSeen = () -> {
+                lastSeen = calculateLastSeen();
+                s.release();
+            };
+            Runnable calcState = () -> {
+                state = calculateState();
+                s.release();
+            };
+            Runnable calcOnlineTime = () -> {
+                onlineTime = calculateOnlineTime();
+                s.release();
+            };
+            Runnable calcSharedAccountNames = () -> {
+                sharedAccountNames = calculateSharedAccountNames();
+                s.release();
+            };
+            Bukkit.getScheduler().runTaskAsynchronously(sl, calcLastSeen);
+            Bukkit.getScheduler().runTaskAsynchronously(sl, calcState);
+            Bukkit.getScheduler().runTaskAsynchronously(sl, calcOnlineTime);
+            Bukkit.getScheduler().runTaskAsynchronously(sl, calcSharedAccountNames);
+            s.acquireUninterruptibly(4);
         }
 
         public String getRank() {
@@ -132,14 +173,22 @@ public class playerinfo extends BasicCommand {
         }
 
         public String getLastSeen() {
-            //Should never happen
-            if (lastSeen == null) {
-                lastSeen = calculateLastSeen();
-            }
             return lastSeen;
         }
 
         public String getState() {
+            return state;
+        }
+
+        public String getOnlineTime() {
+            return onlineTime;
+        }
+
+        public List<String> getSharedAccountNames() {
+            return sharedAccountNames;
+        }
+        
+        private String calculateState() {
             if (!slp.isOnline()) {
                 Document query = new Document("uuid", slp.getUniqueId().toString());
                 Document dbo = SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").find(query).first();
@@ -159,7 +208,7 @@ public class playerinfo extends BasicCommand {
             }
         }
         
-        public String calculateLastSeen() {
+        private String calculateLastSeen() {
             MongoCollection<Document> col = SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections");
             Document query = new Document("uuid", getUUID())
                     .append("type", "LEAVE");
@@ -174,8 +223,47 @@ public class playerinfo extends BasicCommand {
                 return "Unknown";
             }
         }
+        
+        private String calculateOnlineTime() {
+            MongoCollection<Document> col = SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections");
+            Document query = new Document("uuid", getUUID());
+            Document sort = new Document("date", 1);
+            Bson projection = Projections.fields(Projections.excludeId(), Projections.include("date"), Projections.include("type"));
+            FindIterable<Document> result = col.find(query).sort(sort).projection(projection);
+            long delta = 0;
+            boolean lastJoin = false;
+            long lastJoinTime = 0;
+            for(Document document : result) {
+                if(document.getString("type").equals("LEAVE")) {
+                    if(lastJoin) {
+                        delta += document.getDate("date").getTime();
+                        lastJoin = false;
+                    }
+                }
+                else if(document.getString("type").equals("JOIN")) {
+                    if(!lastJoin) {
+                        long time = document.getDate("date").getTime();
+                        delta -= time;
+                        lastJoin = true;
+                        lastJoinTime = time;
+                    }
+                }
+            }
+            if(slp.isOnline()) {
+                delta += new Date().getTime();
+            }
+            else if(lastJoin) {
+                delta += lastJoinTime;
+            }
+            if(delta > 0) {
+                return TimeUtil.durationToString(Duration.ofMillis(delta));
+            }
+            else {
+                return null;
+            }
+        }
 
-        public List<String> getSharedAccountNames() {
+        private List<String> calculateSharedAccountNames() {
             String playerUUID = slp.getUniqueId().toString();
             MongoCollection<Document> col = SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections");
             List<Document> aggregation = generateAggregationPipeline(playerUUID);
