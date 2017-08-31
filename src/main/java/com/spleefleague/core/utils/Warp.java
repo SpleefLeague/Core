@@ -50,7 +50,7 @@ public class Warp extends DBEntity implements DBLoadable, DBSaveable, Comparable
     private static Map<String, Warp> warps;
 
     public static Warp byName(String name) {
-        return warps.get(name);
+        return warps.get(name.toLowerCase());
     }
 
     public static Collection<Warp> getAll() {
@@ -69,7 +69,7 @@ public class Warp extends DBEntity implements DBLoadable, DBSaveable, Comparable
 
     public static void addWarp(Warp warp) {
         Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
-            warps.put(warp.getName(), warp);
+            warps.put(warp.getName().toLowerCase(), warp);
             MongoCollection<Document> collection = SpleefLeague.getInstance().getPluginDB().getCollection("Warps");
             EntityBuilder.save(warp, collection);
         });
@@ -77,7 +77,7 @@ public class Warp extends DBEntity implements DBLoadable, DBSaveable, Comparable
 
     public static void removeWarp(Warp warp) {
         Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
-            warps.remove(warp.getName());
+            warps.remove(warp.getName().toLowerCase());
             MongoCollection<Document> coll = SpleefLeague.getInstance().getPluginDB().getCollection("Warps");
             EntityBuilder.delete(warp, coll);
         });
