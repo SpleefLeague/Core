@@ -62,7 +62,7 @@ public class Warp extends DBEntity implements DBLoadable, DBSaveable, Comparable
         MongoCursor<Document> dbc = SpleefLeague.getInstance().getPluginDB().getCollection("Warps").find().iterator();
         while (dbc.hasNext()) {
             Warp warp = EntityBuilder.load(dbc.next(), Warp.class);
-            warps.put(warp.getName(), warp);
+            warps.put(warp.getName().toLowerCase(), warp);
         }
         SpleefLeague.getInstance().log("Loaded " + warps.size() + " warps!");
     }
