@@ -318,7 +318,9 @@ public class playerinfo extends BasicCommand {
 		),
                 new Document(
                     "$match", 
-                        new Document("notOriginUUID", 1)
+                        new Document("notOriginUUID", 
+                            new Document("$ne", 0)
+                        )
 		),
 		new Document(
                     "$lookup",
