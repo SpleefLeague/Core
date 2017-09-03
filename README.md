@@ -1,23 +1,23 @@
 # SpleefLeague Core
 
-The core plugin of [SpleefLeague](https://swc.cubecraft.net/), which handles the general data of the server, and provides an API for the other plugins to build on.
+The core plugin of [SpleefLeague](https://spleefleague.com/), which handles the general data of the server, and provides an API for the other plugins to build on.
 
 This project is required for the other plugins to compile and run.
 
 ## Compilation
 
-SpleefLeague uses [Spigot 1.11.2](https://spigotmc.org). For the dependency handling we use [Maven](https://maven.apache.org/download.cgi).
+SpleefLeague uses [Spigot 1.12.1](https://spigotmc.org). For the dependency handling we use [Maven](https://maven.apache.org/download.cgi).
 
 First make sure you have Spigot installed in your local maven repository. To do this download and run  [BuildTools](https://hub.spigotmc.org/jenkins/job/BuildTools/).
 
 ```shell
 mkdir buildtools && cd buildtools
 wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
-java -jar BuildTools.jar --rev 1.11.2
+java -jar BuildTools.jar --rev 1.12.1
 ```
 
 This will install spigot and spigot-api into your local maven repository.
-Right now Spigot 1.11.2 should be installed. Now you can clone the SpleefLeague core and compile it.
+Right now Spigot 1.12.1 should be installed. Now you can clone the SpleefLeague core and compile it.
 
 ```shell
 git clone https://github.com/SpleefLeague/Core.git

@@ -11,6 +11,7 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.plugin.CorePlugin;
+import com.spleefleague.core.plugin.PlayerHandling;
 import com.spleefleague.core.utils.DatabaseConnection;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -41,7 +42,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
     private final MongoDatabase db;
     private final Class<G> playerClass;
 
-    public PlayerManager(CorePlugin plugin, Class<G> playerClass) {
+    public <C extends CorePlugin & PlayerHandling> PlayerManager(C plugin, Class<G> playerClass) {
         this.map = new ConcurrentHashMap<>();
         this.db = plugin.getPluginDB();
         this.playerClass = playerClass;

@@ -53,6 +53,7 @@ public class SLPlayer extends GeneralPlayer {
 
     @DBSave(fieldName = "rank", typeConverter = RankStringConverter.class)
     public Rank getRank() {
+        checkRankForExpiration();
         return rank;
     }
 
@@ -73,7 +74,6 @@ public class SLPlayer extends GeneralPlayer {
             }
             rank.managePermissions(this);
         }
-        checkRankForExpiration();
     }
 
     @DBSave(fieldName = "eternalRank", typeConverter = RankStringConverter.class)
@@ -83,7 +83,7 @@ public class SLPlayer extends GeneralPlayer {
 
     @DBLoad(fieldName = "eternalRank", typeConverter = RankStringConverter.class)
     public void setEternalRank(Rank rank) {
-        this.eternalRank = rank == null ? Rank.DEFAULT : rank;
+        this.eternalRank = rank;
     }
 
     @DBSave(fieldName = "rankExpirationTime")
@@ -97,19 +97,16 @@ public class SLPlayer extends GeneralPlayer {
     }
     
     private void checkRankForExpiration() {
-        if(this.rankExpirationTime == 0l)
+        if(this.rankExpirationTime == 0) {
             return;
+        }
         if(System.currentTimeMillis() > this.rankExpirationTime) {
-            setRankExpirationTime(0l);
-            setRank(this.eternalRank == null ? Rank.DEFAULT : this.eternalRank);
+            setRankExpirationTime(0);
+            setRank(this.eternalRank);
         }
     }
     
     public void setExpiringRank(Rank rank, long rankExpirationTime) {
-        Rank currentRank = getRank();
-        if(currentRank != null && getRankExpirationTime() == 0l) {
-            setEternalRank(currentRank);
-        }
         setRankExpirationTime(rankExpirationTime);
         setRank(rank);
     }
@@ -295,6 +292,8 @@ public class SLPlayer extends GeneralPlayer {
     public void setDefaults() {
         super.setDefaults();
         setRank(Rank.DEFAULT);
+        setEternalRank(Rank.DEFAULT);
+        this.setRankExpirationTime(0);
         setCoins(0);
         setPremiumCredits(0);
         this.chatChannels.clear();

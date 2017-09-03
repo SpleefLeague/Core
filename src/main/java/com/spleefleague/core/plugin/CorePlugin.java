@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,13 +22,12 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public abstract class CorePlugin extends JavaPlugin {
 
-    private final String prefix, chatPrefix;
+    private final String chatPrefix;
     public static final Logger LOG = Logger.getLogger("Minecraft");
     public static World DEFAULT_WORLD;
     public static HashSet<CorePlugin> plugins = new HashSet<>();
 
-    public CorePlugin(String prefix, String chatPrefix) {
-        this.prefix = prefix;
+    public CorePlugin(String chatPrefix) {
         this.chatPrefix = chatPrefix;
     }
 
@@ -50,10 +50,8 @@ public abstract class CorePlugin extends JavaPlugin {
     public void stop() {
     }
 
-    public abstract MongoDatabase getPluginDB();
-
     public String getPrefix() {
-        return prefix;
+        return ChatColor.stripColor(chatPrefix);
     }
 
     public String getChatPrefix() {
@@ -61,14 +59,14 @@ public abstract class CorePlugin extends JavaPlugin {
     }
 
     public void log(String message) {
-        System.out.println(prefix + " " + message);
+        System.out.println(getPrefix() + " " + message);
     }
-
-    public abstract void syncSave(Player p);
 
     public static void syncSaveAll(Player p) {
         for (CorePlugin gp : plugins) {
-            gp.syncSave(p);
+            if(gp instanceof PlayerHandling) {
+                ((PlayerHandling) gp).syncSave(p);
+            }
         }
     }
 

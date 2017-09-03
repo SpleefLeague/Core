@@ -2,9 +2,10 @@ package com.spleefleague.core.listeners;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
-import com.spleefleague.core.command.commands.ticket;
+import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.events.ConnectionEvent;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
+import com.spleefleague.core.io.Config;
 import com.spleefleague.core.player.SLPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,6 +16,9 @@ import org.json.JSONException;
 import org.json.simple.JSONObject;
 
 import java.util.UUID;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
 
 /**
  * Created by Josh on 21/02/2016.
@@ -64,12 +68,10 @@ public class ConnectionListener implements Listener {
                     server = (e.getJSONObject().has("overrideServer") ? e.getJSONObject().getString("overrideServer") : e.getOriginatingServer());
             UUID playerUUID = UUID.fromString(e.getJSONObject().getString("sendUUID"));
             ChatColor chatColor = ChatColor.valueOf(e.getJSONObject().getString("rankColor").toUpperCase());
-            ticket ticketCommand = (ticket)SpleefLeague.getInstance().getBasicCommand("ticket");
-            ticketCommand.sendTicket(playerName, shownName, playerUUID, message, server, chatColor);
+            sendTicket(playerName, shownName, playerUUID, message, server, chatColor);
         } else if(e.getChannel().equalsIgnoreCase("broadcast")) {
             Bukkit.broadcastMessage(String.format(SpleefLeague.BROADCAST_FORMAT, e.getJSONObject().getString("message")));
         }
-        
     }
 
     @EventHandler
@@ -83,6 +85,28 @@ public class ConnectionListener implements Listener {
             send.put("action", "UPDATE_INFO");
             SpleefLeague.getInstance().getConnectionClient().send("sessions", send);
         }
-    }
+    }       
 
+    public static void sendTicket(String playerName, String shownName, UUID playerUUID, String message, String server, ChatColor chatColor) {
+        ChatManager.sendMessage(ChatChannel.STAFF,
+                new ComponentBuilder("[").color(ChatColor.DARK_GREEN.asBungee()).append("Ticket")
+                        .color(ChatColor.GREEN.asBungee()).append("|").color(ChatColor.DARK_GREEN.asBungee())
+                        .append(playerName).color(ChatColor.GREEN.asBungee()).append("] ").color(ChatColor.DARK_GREEN.asBungee())
+                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to join " + server + "!").color(ChatColor.GRAY.asBungee()).create()))
+                        .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/join " + server))
+                        .append(shownName).color(chatColor.asBungee()).append(": ").color(ChatColor.GRAY.asBungee())
+                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to join " + server + "!").color(ChatColor.GRAY.asBungee()).create()))
+                        .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/join " + server))
+                        .append(message).color((server.equalsIgnoreCase(Config.getString("server_name")) ? ChatColor.YELLOW.asBungee() : ChatColor.RED.asBungee()))
+                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Server: " + server)
+                                .color(ChatColor.GRAY.asBungee())
+                                .append("\n")
+                                .append("Click to respond!").color(ChatColor.GRAY.asBungee()).create()))
+                        .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/treply " + playerName + " ")).create());
+        if (Bukkit.getPlayer(playerUUID) != null) {
+            Bukkit.getPlayer(playerUUID).sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "Ticket"
+                    + ChatColor.DARK_GREEN + "|" + ChatColor.GREEN + playerName + ChatColor.DARK_GREEN + "] "
+                    + chatColor + shownName + ChatColor.GRAY + ": " + ChatColor.YELLOW + message);
+        }
+    }
 }

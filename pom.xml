@@ -5,7 +5,7 @@
     <version>1.1</version>
     <packaging>jar</packaging>
 
-    <artifactId>SpleefLeagueCore</artifactId>
+    <artifactId>Core</artifactId>
     <groupId>com.spleefleague</groupId>
     <name>SpleefLeagueCore</name>
 

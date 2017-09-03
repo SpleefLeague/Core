@@ -1,6 +1,5 @@
 package com.spleefleague.core;
 
-import com.spleefleague.core.command.dynamic.DynamicCommandManager;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.mongodb.MongoClient;
@@ -8,8 +7,6 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 import com.spleefleague.core.chat.ChatManager;
-import com.spleefleague.core.command.BasicCommand;
-import com.spleefleague.core.command.CommandLoader;
 import com.spleefleague.core.cosmetics.CosmeticsManager;
 import com.spleefleague.core.io.Config;
 import com.spleefleague.core.io.EntityBuilder;
@@ -23,6 +20,7 @@ import com.spleefleague.core.player.PlayerManager;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
+import com.spleefleague.core.plugin.PlayerHandling;
 import com.spleefleague.core.portals.PortalManager;
 import com.spleefleague.core.queue.Challenge;
 import com.spleefleague.core.spawn.SpawnManager;
@@ -50,7 +48,7 @@ import org.bukkit.configuration.file.FileConfiguration;
  *
  * @author Jonas
  */
-public class SpleefLeague extends CorePlugin {
+public class SpleefLeague extends CorePlugin implements PlayerHandling {
 
     public static final String BROADCAST_FORMAT = ChatColor.DARK_GRAY + "[" + ChatColor.LIGHT_PURPLE + "Broadcast"
             + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY + "%s";
@@ -68,15 +66,13 @@ public class SpleefLeague extends CorePlugin {
     private AutoBroadcaster autoBroadcaster;
     private Location spawn;
     private ConnectionClient connectionClient;
-    private CommandLoader commandLoader;
     private SpawnManager spawnManager;
     private PortalManager portalManager;
-    private DynamicCommandManager dynamicCommandManager;
     private DebuggerHostManager debuggerHostManager;
     private ServerType serverType;
     
     public SpleefLeague() {
-        super("[SpleefLeague]", ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
+        super(ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
     }
 
     @Override
@@ -92,7 +88,6 @@ public class SpleefLeague extends CorePlugin {
         DatabaseConnection.initialize();
         Rank.init();
         loadJoinSettings();
-        commandLoader = CommandLoader.loadCommands(this, "com.spleefleague.core.command.commands");
         ChatManager.init();
         MultiBlockChangeUtil.init();
         FakeBlockHandler.init();
@@ -111,7 +106,6 @@ public class SpleefLeague extends CorePlugin {
         playerManager = new PlayerManager<>(this, SLPlayer.class);
         portalManager = new PortalManager();
         connectionClient = new ConnectionClient();
-        dynamicCommandManager = new DynamicCommandManager(this);
         debuggerHostManager = new DebuggerHostManager();
         Settings.getList("debugger_hosts").ifPresent(hosts -> debuggerHostManager.reloadAll(hosts));
         loadServerType();
@@ -123,10 +117,6 @@ public class SpleefLeague extends CorePlugin {
         autoBroadcaster.stopTask();
         connectionClient.stop();
         mongo.close();
-    }
-
-    public BasicCommand getBasicCommand(String name) {
-        return commandLoader.getCommand(name).getExecutor();
     }
 
     public void applySettings() {
@@ -262,10 +252,6 @@ public class SpleefLeague extends CorePlugin {
     @Deprecated
     public Location getSpawnLocation() {
         return spawn;
-    }
-    
-    public DynamicCommandManager getDynamicCommandManager() {
-        return this.dynamicCommandManager;
     }
 
     @Override

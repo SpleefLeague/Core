@@ -8,7 +8,6 @@ package com.spleefleague.core.listeners;
 import com.mongodb.client.model.Projections;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.Theme;
-import com.spleefleague.core.command.commands.back;
 import com.spleefleague.core.cosmetics.DonorRewards;
 import com.spleefleague.core.events.FakeBlockBreakEvent;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
@@ -115,7 +114,7 @@ public class EnvironmentListener implements Listener {
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event) {
         if (event.getCause() == TeleportCause.COMMAND) {
-            ((back) SpleefLeague.getInstance().getBasicCommand("back")).setLastTeleport(event.getPlayer(), event.getFrom());
+            //((back) SpleefLeague.getInstance().getBasicCommand("back")).setLastTeleport(event.getPlayer(), event.getFrom());
         }
     }
 
