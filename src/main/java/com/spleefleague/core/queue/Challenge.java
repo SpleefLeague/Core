@@ -88,7 +88,9 @@ public abstract class Challenge {
     public void decline(SLPlayer player) {
         active = false;
         for (SLPlayer slp : players) {
-            slp.sendMessage(SpleefLeague.getInstance().getChatPrefix() + " " + ChatColor.RED + player.getName() + " has declined the challenge.");
+            if(slp != player) {
+                slp.sendMessage(SpleefLeague.getInstance().getChatPrefix() + " " + ChatColor.RED + player.getName() + " has declined the challenge.");
+            }
         }
     }
 

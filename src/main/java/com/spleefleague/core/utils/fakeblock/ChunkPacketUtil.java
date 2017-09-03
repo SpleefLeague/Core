@@ -23,7 +23,7 @@ import org.bukkit.World.Environment;
  * @author Jonas
  */
 public class ChunkPacketUtil {
-
+    
     public static void setBlocksPacketMapChunk(World world, PacketContainer packetContainer, Collection<FakeBlock> unverified) {
         if (packetContainer.getHandle() instanceof PacketPlayOutMapChunk) {
             PacketPlayOutMapChunk packet = (PacketPlayOutMapChunk) packetContainer.getHandle();
@@ -39,12 +39,13 @@ public class ChunkPacketUtil {
                     Field bitmaskField = packet.getClass().getDeclaredField("c");
                     bitmaskField.setAccessible(true);
                     int bitmask = bitmaskField.getInt(packet);
-                    
-                    ChunkData chunkData = splitToChunkSections(bitmask, bytes, world.getEnvironment() == Environment.NORMAL);
-                    insertFakeBlocks(chunkData.getSections(), verified, world.getEnvironment() == Environment.NORMAL);
-                    for(int i : verified.keySet()) {
+                    int originalMask = bitmask;
+                    for (int i : verified.keySet()) {
                         bitmask |= 1 << i;
                     }
+                    ChunkData chunkData = splitToChunkSections(bitmask, originalMask, bytes, world.getEnvironment() == Environment.NORMAL);
+                    insertFakeBlocks(chunkData.getSections(), verified, world.getEnvironment() == Environment.NORMAL);
+
                     byte[] data = toByteArray(chunkData);
                     arrayField.set(packet, data);
                     bitmaskField.set(packet, bitmask);
@@ -61,7 +62,7 @@ public class ChunkPacketUtil {
     private static byte[] toByteArray(ChunkData data) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         for (ChunkSection section : data.getSections()) {
-            if(section != null) {
+            if (section != null) {
                 writeChunkSectionData(baos, section);
             }
         }
@@ -70,12 +71,12 @@ public class ChunkPacketUtil {
     }
 
     private static void writeChunkSectionData(ByteArrayOutputStream baos, ChunkSection section) throws IOException {
-       BlockData[] used = section.getContainedBlocks();
-       BlockPalette palette;
+        BlockData[] used = section.getContainedBlocks();
+        BlockPalette palette;
         if (used == null) {
             palette = BlockPalette.GLOBAL;
         } else {
-            palette = BlockPalette.createPalette(used); 
+            palette = BlockPalette.createPalette(used);
         }
         byte bpb = (byte) palette.getBitsPerBlock();
         int paletteLength = palette.getLength();
@@ -100,12 +101,7 @@ public class ChunkPacketUtil {
     private static void insertFakeBlocks(ChunkSection[] sections, Map<Integer, Collection<FakeBlock>> blocks, boolean overworld) {
         for (Entry<Integer, Collection<FakeBlock>> e : blocks.entrySet()) {
             int id = e.getKey();
-            ChunkSection section;
-            if (sections[id] != null) {
-                section = sections[id];
-            } else {
-                section = sections[id] = new ChunkSection(overworld);
-            }
+            ChunkSection section = sections[id];
             for (FakeBlock block : e.getValue()) {
                 BlockData data = new BlockData(block.getType(), block.getDamageValue());
                 int relX = ((block.getX() % 16) + 16) % 16; //Actual positive modulo, in java % means remainder
@@ -115,32 +111,36 @@ public class ChunkPacketUtil {
         }
     }
 
-    private static ChunkData splitToChunkSections(int bitmask, byte[] data, boolean isOverworld) {
+    private static ChunkData splitToChunkSections(int bitmask, int originalMask, byte[] data, boolean isOverworld) {
         int skylightLength = isOverworld ? 2048 : 0;
         ChunkSection[] sections = new ChunkSection[16];
         ByteBuffer buffer = ByteBuffer.wrap(data);
         ByteBufferReader bbr = new ByteBufferReader(buffer);
-        byte index = 0;
         for (int i = 0; i < 16; i++) {
-            if ((bitmask & 0x8000 >> i) != 0) {
-                short bpb = (short) Byte.toUnsignedInt(buffer.get());
-                int paletteLength = bbr.readVarInt();
-                BlockPalette palette;
-                if (paletteLength != 0 || bpb < 9) {
-                    int[] paletteData = new int[paletteLength];
-                    for (int j = 0; j < paletteLength; j++) {
-                        paletteData[j] = bbr.readVarInt();
+            if ((bitmask & 0x8000 >> (15 - i)) != 0) {
+                if ((originalMask & 0x8000 >> (15 - i)) != 0) {
+                    short bpb = (short) Byte.toUnsignedInt(buffer.get());
+                    int paletteLength = bbr.readVarInt();
+                    BlockPalette palette;
+                    if (paletteLength != 0 || bpb < 9) {
+                        int[] paletteData = new int[paletteLength];
+                        for (int j = 0; j < paletteLength; j++) {
+                            paletteData[j] = bbr.readVarInt();
+                        }
+                        palette = BlockPalette.createPalette(paletteData, bpb);
+                    } else {
+                        palette = BlockPalette.GLOBAL;
                     }
-                    palette = BlockPalette.createPalette(paletteData, bpb);
-                } else {
-                    palette = BlockPalette.GLOBAL;
+                    int dataLength = bbr.readVarInt();
+                    byte[] blockData = new byte[dataLength * 8];
+                    buffer.get(blockData);
+                    byte[] lightingData = new byte[2048 + skylightLength];
+                    buffer.get(lightingData);
+                    sections[i] = new ChunkSection(blockData, lightingData, palette);
                 }
-                int dataLength = bbr.readVarInt();
-                byte[] blockData = new byte[dataLength * 8];
-                buffer.get(blockData);
-                byte[] lightingData = new byte[2048 + skylightLength];
-                buffer.get(lightingData);
-                sections[index++] = new ChunkSection(blockData, lightingData, palette);
+                else {
+                    sections[i] = new ChunkSection(isOverworld);
+                }
             }
         }
         byte[] additional = new byte[data.length - buffer.position()];

@@ -8,7 +8,6 @@ package com.spleefleague.core.listeners;
 import com.mongodb.client.model.Projections;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.Theme;
-import com.spleefleague.core.command.commands.back;
 import com.spleefleague.core.cosmetics.DonorRewards;
 import com.spleefleague.core.events.FakeBlockBreakEvent;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
@@ -43,6 +42,8 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import org.bukkit.event.server.TabCompleteEvent;
 
 /**
  *
@@ -63,6 +64,19 @@ public class EnvironmentListener implements Listener {
 
     }
 
+    
+    @EventHandler
+    public void onTabComplete(TabCompleteEvent event) {
+        if(event.getBuffer().length() > 0 && event.getBuffer().charAt(0) != '/') {
+            event.setCompletions(Bukkit
+                    .getOnlinePlayers()
+                    .stream()
+                    .map(Player::getName)
+                    .filter(s -> s.toLowerCase().startsWith(event.getBuffer().toLowerCase()))
+                    .collect(Collectors.toList()));
+        }
+    }
+    
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -77,7 +91,7 @@ public class EnvironmentListener implements Listener {
 //            event.setJoinMessage(ChatColor.YELLOW + player.getName() + " has joined the server");
 //        }
         event.setJoinMessage(null);//During SWC
-        logIPAddress(event.getPlayer());
+        logConnection(event.getPlayer(), true);
     }
 
     @EventHandler
@@ -85,6 +99,7 @@ public class EnvironmentListener implements Listener {
         //event.setQuitMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has left the server");
         event.setQuitMessage(null);
         GamePlugin.unspectateGlobal(event.getPlayer());
+        logConnection(event.getPlayer(), false);
     }
 
     @EventHandler
@@ -99,7 +114,7 @@ public class EnvironmentListener implements Listener {
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event) {
         if (event.getCause() == TeleportCause.COMMAND) {
-            ((back) SpleefLeague.getInstance().getBasicCommand("back")).setLastTeleport(event.getPlayer(), event.getFrom());
+            //((back) SpleefLeague.getInstance().getBasicCommand("back")).setLastTeleport(event.getPlayer(), event.getFrom());
         }
     }
 
@@ -397,9 +412,10 @@ public class EnvironmentListener implements Listener {
         evt.setCancelled(true);
     }
 
-    private void logIPAddress(final Player player) {
-        final String ip = player.getAddress().getAddress().toString();
-        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> EntityBuilder.save(new Connection(player.getUniqueId(), ip), SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections")));
+    private void logConnection(final Player player, boolean joined) {
+        final String ip = player.getAddress().getAddress().getHostAddress();
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () ->
+            EntityBuilder.save(new Connection(player.getUniqueId(), ip, joined), SpleefLeague.getInstance().getPluginDB().getCollection("PlayerConnections")));
     }
 
     public static class Connection extends DBEntity implements DBSaveable {
@@ -410,11 +426,14 @@ public class EnvironmentListener implements Listener {
         private String ip;
         @DBSave(fieldName = "date", typeConverter = DateConverter.class)
         private Date date;
-
-        public Connection(UUID uuid, String ip) {
+        @DBSave(fieldName = "type")
+        private String type;
+        
+        public Connection(UUID uuid, String ip, boolean joined) {
             this.uuid = uuid;
-            this.ip = ip;
             this.date = new Date();
+            this.ip = joined ? ip : null;
+            this.type = joined ? "JOIN" : "LEAVE";
         }
     }
 }

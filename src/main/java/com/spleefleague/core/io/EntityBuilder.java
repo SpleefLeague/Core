@@ -7,10 +7,8 @@ package com.spleefleague.core.io;
 
 import com.google.common.collect.Iterables;
 import com.mongodb.client.MongoCollection;
-import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.io.EntityBuilder.IOClass.Input;
 import com.spleefleague.core.io.EntityBuilder.IOClass.Output;
-import com.spleefleague.core.utils.collections.MapUtil;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import sun.reflect.ReflectionFactory;

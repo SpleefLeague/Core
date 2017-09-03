@@ -24,8 +24,8 @@ public abstract class GamePlugin extends CorePlugin {
 
     private static final HashSet<GamePlugin> gamePlugins = new HashSet<>();
 
-    public GamePlugin(String prefix, String chatPrefix) {
-        super(prefix, chatPrefix);
+    public GamePlugin(String chatPrefix) {
+        super(chatPrefix);
         gamePlugins.add(this);
     }
     
@@ -41,7 +41,7 @@ public abstract class GamePlugin extends CorePlugin {
             return;
         Battle battle = null;
         for(BattleManager bm : getBattleManagers()) {
-            battle = bm.getBattle(SpleefLeague.getInstance().getPlayerManager().get(p));
+            battle = bm.getBattleForSpectator(SpleefLeague.getInstance().getPlayerManager().get(p));
             if(battle != null) {
                 break;
             }
@@ -74,7 +74,7 @@ public abstract class GamePlugin extends CorePlugin {
 
     public abstract boolean isSpectating(Player p);
 
-    public abstract void printStats(Player p);
+    public abstract void printStats(Player p, Player target);
 
     public abstract BattleManager[] getBattleManagers();
     
@@ -168,9 +168,9 @@ public abstract class GamePlugin extends CorePlugin {
         }
     }
 
-    public static void printAllStats(Player p) {
+    public static void printAllStats(Player p, Player target) {
         for (GamePlugin gp : gamePlugins) {
-            gp.printStats(p);
+            gp.printStats(p, target);
         }
     }
 

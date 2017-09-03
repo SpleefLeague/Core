@@ -6,10 +6,12 @@
 package com.spleefleague.core.player;
 
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Collation;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.plugin.CorePlugin;
+import com.spleefleague.core.plugin.PlayerHandling;
 import com.spleefleague.core.utils.DatabaseConnection;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -40,7 +42,7 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
     private final MongoDatabase db;
     private final Class<G> playerClass;
 
-    public PlayerManager(CorePlugin plugin, Class<G> playerClass) {
+    public <C extends CorePlugin & PlayerHandling> PlayerManager(C plugin, Class<G> playerClass) {
         this.map = new ConcurrentHashMap<>();
         this.db = plugin.getPluginDB();
         this.playerClass = playerClass;
@@ -94,22 +96,30 @@ public class PlayerManager<G extends GeneralPlayer> implements Listener {
     public G loadFake(Document query) {
         return load(query);
     }
+    
+    public G loadFake(Document query, Collation collation) {
+        return load(query, collation);
+    }
 
     public G loadFake(String name) {
-        return load(new Document("username", name));
+        return load(new Document("username", name), DatabaseConnection.usernameCollation);
     }
 
     public G loadFake(UUID uuid) {
         return load(new Document("uuid", uuid.toString()));
     }
 
-    private G load(Document query) {
-        Document doc = db.getCollection("Players").find(query).first();
+    private G load(Document query, Collation collation) {
+        Document doc = db.getCollection("Players").find(query).collation(collation).first();
         if (doc == null) {
             return null;
         } else {
             return EntityBuilder.load(doc, getPlayerClass());
         }
+    }
+
+    private G load(Document query) {
+        return load(query, null);
     }
 
     private void load(final Player player) {
