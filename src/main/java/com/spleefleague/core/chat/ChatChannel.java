@@ -7,14 +7,15 @@ package com.spleefleague.core.chat;
 
 import com.mongodb.client.MongoCursor;
 import com.spleefleague.core.SpleefLeague;
-import com.spleefleague.core.io.DBEntity;
-import com.spleefleague.core.io.DBLoad;
-import com.spleefleague.core.io.DBLoadable;
-import com.spleefleague.core.io.EntityBuilder;
-import com.spleefleague.core.io.TypeConverter;
+import com.spleefleague.core.io.typeconverters.RankConverter;
 import java.util.HashMap;
 import java.util.Map;
 import com.spleefleague.core.player.Rank;
+import com.spleefleague.entitybuilder.DBEntity;
+import com.spleefleague.entitybuilder.DBLoad;
+import com.spleefleague.entitybuilder.DBLoadable;
+import com.spleefleague.entitybuilder.EntityBuilder;
+import com.spleefleague.entitybuilder.TypeConverter;
 import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +27,7 @@ import org.bson.Document;
  */
 public class ChatChannel extends DBEntity implements DBLoadable, Comparable<ChatChannel> {
 
-    @DBLoad(fieldName = "minRank", typeConverter = Rank.FromStringConverter.class)
+    @DBLoad(fieldName = "minRank", typeConverter = RankConverter.class)
     private Rank minRank;
     @DBLoad(fieldName = "name")
     private String name;

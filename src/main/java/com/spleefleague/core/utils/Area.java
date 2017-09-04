@@ -5,12 +5,13 @@
  */
 package com.spleefleague.core.utils;
 
-import com.spleefleague.core.io.TypeConverter;
-import com.spleefleague.core.io.DBEntity;
-import com.spleefleague.core.io.DBLoad;
-import com.spleefleague.core.io.DBLoadable;
-import com.spleefleague.core.io.DBSave;
-import com.spleefleague.core.io.DBSaveable;
+import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.io.typeconverters.LocationConverter;
+import com.spleefleague.entitybuilder.DBEntity;
+import com.spleefleague.entitybuilder.DBLoad;
+import com.spleefleague.entitybuilder.DBLoadable;
+import com.spleefleague.entitybuilder.DBSave;
+import com.spleefleague.entitybuilder.DBSaveable;
 import java.util.HashSet;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -21,11 +22,11 @@ import org.bukkit.block.Block;
  */
 public class Area extends DBEntity implements DBLoadable, DBSaveable {
 
-    @DBLoad(fieldName = "low", typeConverter = TypeConverter.LocationConverter.class)
-    @DBSave(fieldName = "low", typeConverter = TypeConverter.LocationConverter.class)
+    @DBLoad(fieldName = "low", typeConverter = LocationConverter.class)
+    @DBSave(fieldName = "low", typeConverter = LocationConverter.class)
     private Location low;
-    @DBLoad(fieldName = "high", typeConverter = TypeConverter.LocationConverter.class)
-    @DBSave(fieldName = "high", typeConverter = TypeConverter.LocationConverter.class)
+    @DBLoad(fieldName = "high", typeConverter = LocationConverter.class)
+    @DBSave(fieldName = "high", typeConverter = LocationConverter.class)
     private Location high;
 
     public Area(Location loc1, Location loc2) {
@@ -85,5 +86,4 @@ public class Area extends DBEntity implements DBLoadable, DBSaveable {
         }
         return false;
     }
-
 }

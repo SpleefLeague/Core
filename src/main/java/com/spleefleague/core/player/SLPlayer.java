@@ -4,12 +4,12 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.cosmetics.Collectibles;
-import com.spleefleague.core.io.DBLoad;
-import com.spleefleague.core.io.DBSave;
-import com.spleefleague.core.io.TypeConverter.RankStringConverter;
-import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
+import com.spleefleague.core.io.typeconverters.RankConverter;
 import com.spleefleague.core.queue.Challenge;
 import com.spleefleague.core.utils.UtilChat;
+import com.spleefleague.entitybuilder.DBLoad;
+import com.spleefleague.entitybuilder.DBSave;
+import com.spleefleague.entitybuilder.TypeConverter.UUIDStringConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -51,13 +51,13 @@ public class SLPlayer extends GeneralPlayer {
         this.sendingChannel = ChatChannel.GLOBAL;
     }
 
-    @DBSave(fieldName = "rank", typeConverter = RankStringConverter.class)
+    @DBSave(fieldName = "rank", typeConverter = RankConverter.class)
     public Rank getRank() {
         checkRankForExpiration();
         return rank;
     }
 
-    @DBLoad(fieldName = "rank", typeConverter = RankStringConverter.class)
+    @DBLoad(fieldName = "rank", typeConverter = RankConverter.class)
     public void setRank(final Rank rank) {
         this.rank = rank;
         if (isOnline()) {
@@ -76,12 +76,12 @@ public class SLPlayer extends GeneralPlayer {
         }
     }
 
-    @DBSave(fieldName = "eternalRank", typeConverter = RankStringConverter.class)
+    @DBSave(fieldName = "eternalRank", typeConverter = RankConverter.class)
     public Rank getEternalRank() {
         return eternalRank;
     }
 
-    @DBLoad(fieldName = "eternalRank", typeConverter = RankStringConverter.class)
+    @DBLoad(fieldName = "eternalRank", typeConverter = RankConverter.class)
     public void setEternalRank(Rank rank) {
         this.eternalRank = rank;
     }

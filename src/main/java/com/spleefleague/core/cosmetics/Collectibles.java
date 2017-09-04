@@ -1,12 +1,12 @@
 package com.spleefleague.core.cosmetics;
 
-import com.spleefleague.core.io.DBEntity;
-import com.spleefleague.core.io.DBLoad;
-import com.spleefleague.core.io.DBLoadable;
-import com.spleefleague.core.io.DBSave;
-import com.spleefleague.core.io.DBSaveable;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.GamePlugin;
+import com.spleefleague.entitybuilder.DBEntity;
+import com.spleefleague.entitybuilder.DBLoad;
+import com.spleefleague.entitybuilder.DBLoadable;
+import com.spleefleague.entitybuilder.DBSave;
+import com.spleefleague.entitybuilder.DBSaveable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;

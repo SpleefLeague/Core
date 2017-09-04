@@ -5,8 +5,12 @@
  */
 package com.spleefleague.core.player;
 
-import com.spleefleague.core.io.*;
-import com.spleefleague.core.io.TypeConverter.UUIDStringConverter;
+import com.spleefleague.entitybuilder.DBEntity;
+import com.spleefleague.entitybuilder.DBLoad;
+import com.spleefleague.entitybuilder.DBLoadable;
+import com.spleefleague.entitybuilder.DBSave;
+import com.spleefleague.entitybuilder.DBSaveable;
+import com.spleefleague.entitybuilder.TypeConverter.UUIDStringConverter;
 import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.bukkit.*;
 import org.bukkit.block.Block;

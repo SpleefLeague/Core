@@ -10,13 +10,13 @@ import org.bukkit.Location;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.spleefleague.core.SpleefLeague;
-import com.spleefleague.core.io.DBEntity;
-import com.spleefleague.core.io.DBLoad;
-import com.spleefleague.core.io.DBLoadable;
-import com.spleefleague.core.io.DBSave;
-import com.spleefleague.core.io.DBSaveable;
-import com.spleefleague.core.io.EntityBuilder;
-import com.spleefleague.core.io.TypeConverter;
+import com.spleefleague.core.io.typeconverters.LocationConverter;
+import com.spleefleague.entitybuilder.DBEntity;
+import com.spleefleague.entitybuilder.DBLoad;
+import com.spleefleague.entitybuilder.DBLoadable;
+import com.spleefleague.entitybuilder.DBSave;
+import com.spleefleague.entitybuilder.DBSaveable;
+import com.spleefleague.entitybuilder.EntityBuilder;
 import org.bukkit.Bukkit;
 
 public class Warp extends DBEntity implements DBLoadable, DBSaveable, Comparable<Warp> {
@@ -25,8 +25,8 @@ public class Warp extends DBEntity implements DBLoadable, DBSaveable, Comparable
     @DBSave(fieldName = "name")
     private String name;
 
-    @DBLoad(fieldName = "location", typeConverter = TypeConverter.LocationConverter.class)
-    @DBSave(fieldName = "location", typeConverter = TypeConverter.LocationConverter.class)
+    @DBLoad(fieldName = "location", typeConverter = LocationConverter.class)
+    @DBSave(fieldName = "location", typeConverter = LocationConverter.class)
     private Location location;
 
     public Warp(String name, Location location) {

@@ -7,6 +7,12 @@ package com.spleefleague.core.io;
 
 import com.mongodb.client.MongoCursor;
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.io.typeconverters.LocationConverter;
+import com.spleefleague.entitybuilder.DBEntity;
+import com.spleefleague.entitybuilder.DBLoad;
+import com.spleefleague.entitybuilder.DBLoadable;
+import com.spleefleague.entitybuilder.DBSaveable;
+import com.spleefleague.entitybuilder.EntityBuilder;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -168,7 +174,7 @@ public class Settings {
 
     public static class LocationWrapper extends DBEntity implements DBLoadable, DBSaveable {
 
-        @DBLoad(fieldName = "location", typeConverter = TypeConverter.LocationConverter.class)
+        @DBLoad(fieldName = "location", typeConverter = LocationConverter.class)
         public Location location;
     }
 }

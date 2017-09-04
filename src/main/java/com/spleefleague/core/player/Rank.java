@@ -7,7 +7,11 @@ package com.spleefleague.core.player;
 
 import com.mongodb.client.MongoCursor;
 import com.spleefleague.core.SpleefLeague;
-import com.spleefleague.core.io.*;
+import com.spleefleague.entitybuilder.DBEntity;
+import com.spleefleague.entitybuilder.DBLoad;
+import com.spleefleague.entitybuilder.DBLoadable;
+import com.spleefleague.entitybuilder.EntityBuilder;
+import com.spleefleague.entitybuilder.TypeConverter;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

@@ -1,9 +1,13 @@
 package com.spleefleague.core.portals;
 
 import com.spleefleague.core.SpleefLeague;
-import com.spleefleague.core.io.*;
+import com.spleefleague.core.io.typeconverters.LocationConverter;
 import com.spleefleague.core.listeners.PortalListener;
 import com.spleefleague.core.utils.DatabaseConnection;
+import com.spleefleague.entitybuilder.DBEntity;
+import com.spleefleague.entitybuilder.DBLoad;
+import com.spleefleague.entitybuilder.DBLoadable;
+import com.spleefleague.entitybuilder.EntityBuilder;
 import org.bson.Document;
 import org.bukkit.Location;
 
@@ -43,11 +47,11 @@ public class PortalManager {
 
     public static class Portal extends DBEntity implements DBLoadable {
 
-        @DBLoad(fieldName = "locationOne", typeConverter = TypeConverter.LocationConverter.class)
+        @DBLoad(fieldName = "locationOne", typeConverter = LocationConverter.class)
         private Location locationOne;
-        @DBLoad(fieldName = "locationTwo", typeConverter = TypeConverter.LocationConverter.class)
+        @DBLoad(fieldName = "locationTwo", typeConverter = LocationConverter.class)
         private Location locationTwo;
-        @DBLoad(fieldName = "teleport", typeConverter = TypeConverter.LocationConverter.class)
+        @DBLoad(fieldName = "teleport", typeConverter = LocationConverter.class)
         private Location teleport;
 
         public Portal(Location teleport) {

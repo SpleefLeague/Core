@@ -9,11 +9,9 @@ import com.mongodb.client.MongoDatabase;
 import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.cosmetics.CosmeticsManager;
 import com.spleefleague.core.io.Config;
-import com.spleefleague.core.io.EntityBuilder;
 import com.spleefleague.core.io.Settings;
-import com.spleefleague.core.io.TypeConverter;
-import com.spleefleague.core.io.TypeConverter.LocationConverter;
 import com.spleefleague.core.io.connections.ConnectionClient;
+import com.spleefleague.core.io.typeconverters.LocationConverter;
 import com.spleefleague.core.listeners.*;
 import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
 import com.spleefleague.core.player.PlayerManager;
@@ -28,6 +26,7 @@ import com.spleefleague.core.spawn.SpawnManager.SpawnLocation;
 import com.spleefleague.core.utils.*;
 import com.spleefleague.core.utils.debugger.DebuggerHostManager;
 import com.spleefleague.core.utils.fakeentity.FakeEntitiesManager;
+import com.spleefleague.entitybuilder.EntityBuilder;
 import com.spleefleague.fakeblocks.FakeBlocks;
 import com.spleefleague.fakeblocks.packet.FakeBlockHandler;
 import org.bukkit.Bukkit;
@@ -118,7 +117,7 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         String defaultWorld = Settings.getString("default_world").orElse("world");
         CorePlugin.DEFAULT_WORLD = Bukkit.getWorld(defaultWorld);
         //Spawn handling
-        LocationConverter lc = new TypeConverter.LocationConverter();
+        LocationConverter lc = new LocationConverter();
         Optional<List> oldSpawn = Settings.getRaw("spawn", List.class);
         List<List> spawns = Settings.getList("spawn_new").orElse(new ArrayList<>());
         if(oldSpawn.isPresent()) {
