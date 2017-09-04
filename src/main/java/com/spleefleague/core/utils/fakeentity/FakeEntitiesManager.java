@@ -66,7 +66,7 @@ public class FakeEntitiesManager implements Listener {
     public FakeEntitiesManager() {
         Bukkit.getPluginManager().registerEvents(this, SpleefLeague.getInstance());
         Task.schedule(() -> FakeCreature.getAlive().forEach(FakeCreature::tick), 0l, 40l);
-        SpleefLeague.getProtocolManager().addPacketListener(new PacketAdapter(
+        SpleefLeague.getInstance().getProtocolManager().addPacketListener(new PacketAdapter(
             SpleefLeague.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Client.USE_ENTITY) {
 
                 @Override

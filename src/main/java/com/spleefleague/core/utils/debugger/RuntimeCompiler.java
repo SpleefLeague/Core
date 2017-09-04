@@ -1,6 +1,7 @@
-package com.spleefleague.core.utils;
+package com.spleefleague.core.utils.debugger;
 
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.utils.Debugger;
 import com.spleefleague.core.utils.Debugger.CommandExecutor;
 import com.spleefleague.core.utils.Debugger.Stoppable;
 import com.spleefleague.core.utils.debugger.DebuggerStartResult;

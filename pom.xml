@@ -50,6 +50,11 @@
     
     <repositories>
         <repository>
+            <id>spleefleague-maven</id>
+            <name>spleefleague-maven</name>
+            <url>https://maven.spleefleague.com</url>
+        </repository>
+        <repository>
             <id>dmulloy2-repo</id>
             <url>http://repo.dmulloy2.net/nexus/repository/public/</url>
         </repository>
@@ -64,6 +69,11 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>com.spleefleague</groupId>
+            <artifactId>fakeblocks</artifactId>
+            <version>1.0</version>
+        </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>

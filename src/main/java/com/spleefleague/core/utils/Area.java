@@ -11,7 +11,7 @@ import com.spleefleague.core.io.DBLoad;
 import com.spleefleague.core.io.DBLoadable;
 import com.spleefleague.core.io.DBSave;
 import com.spleefleague.core.io.DBSaveable;
-import com.spleefleague.core.utils.fakeblock.MultiBlockChangeUtil;
+import java.util.HashSet;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -66,7 +66,15 @@ public class Area extends DBEntity implements DBLoadable, DBSaveable {
     }
 
     public Block[] getBlocks() {
-        return MultiBlockChangeUtil.getBlocksInArea(high, low).toArray(new Block[0]);
+        HashSet<Block> blocks = new HashSet<>();
+        for (int x = low.getBlockX(); x <= high.getBlockX(); x++) {
+            for (int y = low.getBlockY(); y <= high.getBlockY(); y++) {
+                for (int z = low.getBlockZ(); z <= high.getBlockZ(); z++) {
+                    blocks.add(new Location(low.getWorld(), x, y, z).getBlock());
+                }
+            }
+        }
+        return blocks.toArray(new Block[0]);
     }
 
     public static boolean isInAny(Location loc, Area... areas) {

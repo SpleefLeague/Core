@@ -1,7 +1,7 @@
 package com.spleefleague.core;
 
-import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.spleefleague.core.utils.debugger.RuntimeCompiler;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -27,8 +27,9 @@ import com.spleefleague.core.spawn.SpawnManager;
 import com.spleefleague.core.spawn.SpawnManager.SpawnLocation;
 import com.spleefleague.core.utils.*;
 import com.spleefleague.core.utils.debugger.DebuggerHostManager;
-import com.spleefleague.core.utils.fakeblock.MultiBlockChangeUtil;
 import com.spleefleague.core.utils.fakeentity.FakeEntitiesManager;
+import com.spleefleague.fakeblocks.FakeBlocks;
+import com.spleefleague.fakeblocks.packet.FakeBlockHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -52,12 +53,6 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
 
     public static final String BROADCAST_FORMAT = ChatColor.DARK_GRAY + "[" + ChatColor.LIGHT_PURPLE + "Broadcast"
             + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY + "%s";
-    
-    private static ProtocolManager manager;
-    
-    public static ProtocolManager getProtocolManager() {
-        return manager;
-    }
 
     private MongoClient mongo;
     private Rank minimumJoinRank;
@@ -70,6 +65,7 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
     private PortalManager portalManager;
     private DebuggerHostManager debuggerHostManager;
     private ServerType serverType;
+    private FakeBlockHandler fakeBlockHandler;
     
     public SpleefLeague() {
         super(ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
@@ -79,7 +75,6 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
     public void start() {
         //The order is important
         instance = this;
-        manager = ProtocolLibrary.getProtocolManager();
         Config.loadConfig();
         initMongo();
         Settings.loadSettings();
@@ -89,8 +84,7 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         Rank.init();
         loadJoinSettings();
         ChatManager.init();
-        MultiBlockChangeUtil.init();
-        FakeBlockHandler.init();
+        fakeBlockHandler = FakeBlockHandler.init();
         VisibilityListener.init();
         EnvironmentListener.init();
         InfractionListener.init();
@@ -219,6 +213,10 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
     public MongoClient getMongo() {
         return mongo;
     }
+    
+    public FakeBlockHandler getFakeBlockHandler() {
+        return fakeBlockHandler;
+    }
 
     public SpawnManager getSpawnManager() {
         return spawnManager;
@@ -246,6 +244,10 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
     
     public ServerType getServerType() {
         return serverType;
+    }
+    
+    public ProtocolManager getProtocolManager() {
+        return FakeBlocks.getInstance().getProtocolManager();
     }
 
     // Use the SpawnManager instead.
