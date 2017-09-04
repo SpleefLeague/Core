@@ -5,7 +5,6 @@
  */
 package com.spleefleague.core.utils;
 
-import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.io.typeconverters.LocationConverter;
 import com.spleefleague.entitybuilder.DBEntity;
 import com.spleefleague.entitybuilder.DBLoad;
@@ -28,7 +27,8 @@ public class Area extends DBEntity implements DBLoadable, DBSaveable {
     @DBLoad(fieldName = "high", typeConverter = LocationConverter.class)
     @DBSave(fieldName = "high", typeConverter = LocationConverter.class)
     private Location high;
-
+    
+    
     public Area(Location loc1, Location loc2) {
         setLocations(loc1, loc2);
     }
