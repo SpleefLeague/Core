@@ -7,7 +7,6 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 import com.spleefleague.core.chat.ChatManager;
-import com.spleefleague.core.cosmetics.CosmeticsManager;
 import com.spleefleague.core.io.Config;
 import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.io.connections.ConnectionClient;
@@ -88,7 +87,6 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         EnvironmentListener.init();
         InfractionListener.init();
         InventoryMenuListener.init();
-        CosmeticsManager.init();
         ConnectionListener.init();
         AfkListener.init();
         InventoryMenuTemplateRepository.initTemplates();

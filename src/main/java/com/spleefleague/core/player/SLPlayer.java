@@ -3,7 +3,6 @@ package com.spleefleague.core.player;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.Theme;
-import com.spleefleague.core.cosmetics.Collectibles;
 import com.spleefleague.core.io.typeconverters.RankConverter;
 import com.spleefleague.core.queue.Challenge;
 import com.spleefleague.core.utils.UtilChat;
@@ -35,7 +34,6 @@ public class SLPlayer extends GeneralPlayer {
     private ChatChannel sendingChannel;
     private PlayerState state = PlayerState.IDLE;
     private PlayerOptions options;
-    private Collectibles collectibles;
     private boolean hasForumAccount = false;
     private Map<UUID, Challenge> activeChallenges;
     private ChatColor chatArrowColor = ChatColor.DARK_GRAY;
@@ -57,9 +55,10 @@ public class SLPlayer extends GeneralPlayer {
         return rank;
     }
 
-    @DBLoad(fieldName = "rank", typeConverter = RankConverter.class)
+    @DBLoad(fieldName = "rank", typeConverter = RankConverter.class, priority = 2)
     public void setRank(final Rank rank) {
         this.rank = rank;
+        this.eternalRank = rank;//If eternalRank does not exist.
         if (isOnline()) {
             setPlayerListName(rank.getColor() + getName());
             setDisplayName(rank.getColor() + getName());
@@ -81,7 +80,7 @@ public class SLPlayer extends GeneralPlayer {
         return eternalRank;
     }
 
-    @DBLoad(fieldName = "eternalRank", typeConverter = RankConverter.class)
+    @DBLoad(fieldName = "eternalRank", typeConverter = RankConverter.class, priority = 1)
     public void setEternalRank(Rank rank) {
         this.eternalRank = rank;
     }
@@ -188,22 +187,12 @@ public class SLPlayer extends GeneralPlayer {
         return options;
     }
 
-    @DBLoad(fieldName = "options", priority = 1)
+    @DBLoad(fieldName = "options", priority = -1)
     private void setOptions(PlayerOptions options) {
         this.options = options;
         options.apply(this);
     }
     
-    @DBSave(fieldName = "collectibles")
-    public Collectibles getCollectibles() {
-        return collectibles;
-    }
-    
-    @DBLoad(fieldName = "collectibles", priority = -100)
-    private void setCollectibles(Collectibles collectibles) {
-        this.collectibles = collectibles;
-    }
-
     protected void setReceivingChatChannels(HashSet<ChatChannel> chatChannels) {
         this.chatChannels = chatChannels;
     }
@@ -277,13 +266,9 @@ public class SLPlayer extends GeneralPlayer {
         if(this.getPlayer() != null && this.getPlayer().isOnline()) {
             try {
                 if(this.options == null) {
-                    this.options = PlayerOptions.getDefault();
-                    this.options.apply(this);
+                    this.setOptions(PlayerOptions.getDefault());
                 }
-                if(this.collectibles == null)
-                    this.collectibles = Collectibles.getDefault();
             } finally {
-                this.collectibles.apply(this);
             }
         }
     }
@@ -331,11 +316,5 @@ public class SLPlayer extends GeneralPlayer {
 
     public long getAreaMessageCooldown() {
         return areaMessageCooldown;
-    }
-    
-    public void reapplyCollectibles() {
-        Collectibles col = getCollectibles();
-        if(col != null)
-            col.reapply(this);
     }
 }

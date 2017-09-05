@@ -85,7 +85,9 @@ public class ChatManager {
         if (slp == null || slp.getRank() == null) {
             return Collections.emptySet();
         }
-        return channels.stream().filter(channel -> channel.isVisible() && slp.getRank().hasPermission(channel.getMinRank()))
+        return channels
+                .stream()
+                .filter(channel -> channel.isVisible() && slp.getRank().hasPermission(channel.getMinRank()))
                 .collect(Collectors.toSet());
     }
 

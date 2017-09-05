@@ -34,8 +34,7 @@ public class SLMenu {
                 .description("various things")
                 //Gamemode submenus added by game plugins
                 .component(createOptionsMenu())
-                .component(createStaffMenu())
-                .component(8, CosmeticsMenu.init());
+                .component(createStaffMenu());
         Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
             slMenu = slMenuBuilder.build();
             InventoryMenuTemplateRepository.addMenu(slMenu);

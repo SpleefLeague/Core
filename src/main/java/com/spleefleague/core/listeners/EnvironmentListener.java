@@ -8,7 +8,6 @@ package com.spleefleague.core.listeners;
 import com.mongodb.client.model.Projections;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.Theme;
-import com.spleefleague.core.cosmetics.DonorRewards;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.io.*;
 import com.spleefleague.core.player.GeneralPlayer;
@@ -335,7 +334,6 @@ public class EnvironmentListener implements Listener {
                     return;
                 }
             }
-            DonorRewards.checkWhetherShouldGetCredits(slPlayer);
         }
     }
 
