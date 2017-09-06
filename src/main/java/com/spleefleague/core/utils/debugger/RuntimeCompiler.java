@@ -335,7 +335,7 @@ public class RuntimeCompiler {
             instance = new ClassFilter();
         }
     }
-
+    
     //Can be necessary on some windows and java versions.
     static {
         if (ToolProvider.getSystemJavaCompiler() == null || ToolProvider.getSystemJavaCompiler().getStandardFileManager(null, null, null) == null) {
