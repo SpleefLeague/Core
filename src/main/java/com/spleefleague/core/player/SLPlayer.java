@@ -58,7 +58,10 @@ public class SLPlayer extends GeneralPlayer {
     @DBLoad(fieldName = "rank", typeConverter = RankConverter.class, priority = 2)
     public void setRank(final Rank rank) {
         this.rank = rank;
-        this.eternalRank = rank;//If eternalRank does not exist.
+        //If eternalRank does not exist.
+        if(this.eternalRank == null) {
+            this.eternalRank = rank;
+        }
         if (isOnline()) {
             setPlayerListName(rank.getColor() + getName());
             setDisplayName(rank.getColor() + getName());

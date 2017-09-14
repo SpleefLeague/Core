@@ -1,5 +1,6 @@
 package com.spleefleague.core;
 
+import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.spleefleague.core.utils.debugger.RuntimeCompiler;
 import com.mongodb.MongoClient;
@@ -26,8 +27,6 @@ import com.spleefleague.core.utils.*;
 import com.spleefleague.core.utils.debugger.DebuggerHostManager;
 import com.spleefleague.core.utils.fakeentity.FakeEntitiesManager;
 import com.spleefleague.entitybuilder.EntityBuilder;
-import com.spleefleague.fakeblocks.FakeBlocks;
-import com.spleefleague.fakeblocks.packet.FakeBlockHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -63,7 +62,6 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
     private PortalManager portalManager;
     private DebuggerHostManager debuggerHostManager;
     private ServerType serverType;
-    private FakeBlockHandler fakeBlockHandler;
     
     public SpleefLeague() {
         super(ChatColor.GRAY + "[" + ChatColor.GOLD + "SpleefLeague" + ChatColor.GRAY + "]" + ChatColor.RESET);
@@ -82,7 +80,6 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         Rank.init();
         loadJoinSettings();
         ChatManager.init();
-        fakeBlockHandler = FakeBlockHandler.init();
         VisibilityListener.init();
         EnvironmentListener.init();
         InfractionListener.init();
@@ -210,10 +207,6 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
     public MongoClient getMongo() {
         return mongo;
     }
-    
-    public FakeBlockHandler getFakeBlockHandler() {
-        return fakeBlockHandler;
-    }
 
     public SpawnManager getSpawnManager() {
         return spawnManager;
@@ -242,9 +235,9 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
     public ServerType getServerType() {
         return serverType;
     }
-    
+
     public ProtocolManager getProtocolManager() {
-        return FakeBlocks.getInstance().getProtocolManager();
+        return ProtocolLibrary.getProtocolManager();
     }
 
     // Use the SpawnManager instead.
