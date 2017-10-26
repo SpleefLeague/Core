@@ -22,6 +22,8 @@ import com.spleefleague.entitybuilder.DBSaveable;
 import com.spleefleague.entitybuilder.EntityBuilder;
 import com.spleefleague.entitybuilder.TypeConverter;
 import com.spleefleague.entitybuilder.TypeConverter.DateConverter;
+import com.spleefleague.virtualworld.event.FakeBlockBreakEvent;
+import com.spleefleague.virtualworld.event.FakeBlockPlaceEvent;
 import org.bson.Document;
 import org.bukkit.*;
 import org.bukkit.block.*;
@@ -278,6 +280,16 @@ public class EnvironmentListener implements Listener {
         if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onFakePlace(FakeBlockPlaceEvent event) {
+        event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onFakeBreak(FakeBlockBreakEvent event) {
+        event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
