@@ -32,7 +32,6 @@ public abstract class CorePlugin extends JavaPlugin {
     @Override
     public final void onEnable() {
         plugins.add(this);
-        DEFAULT_WORLD = Bukkit.getWorlds().get(0);
         start();
     }
 
@@ -70,5 +69,9 @@ public abstract class CorePlugin extends JavaPlugin {
 
     public static Collection<CorePlugin> getAll() {
         return plugins;
+    }
+    
+    static {
+        DEFAULT_WORLD = Bukkit.getWorlds().get(0);
     }
 }
