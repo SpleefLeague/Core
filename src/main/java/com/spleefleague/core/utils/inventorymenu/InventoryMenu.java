@@ -123,15 +123,7 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
         if (!this.hasAccess(slp)) {
             player.sendMessage(ChatColor.RED + "You are not allowed to open this InventoryMenu");
         } else {
-
-            Inventory current = player.getOpenInventory().getTopInventory();
-
-            if (current == null) {
-                player.openInventory(inventory);
-            } else {
-                player.closeInventory();
-                player.openInventory(inventory);
-            }
+            player.openInventory(inventory);
         }
     }
 
