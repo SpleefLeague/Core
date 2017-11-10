@@ -14,6 +14,7 @@ import com.spleefleague.core.io.connections.ConnectionClient;
 import com.spleefleague.core.io.typeconverters.LocationConverter;
 import com.spleefleague.core.listeners.*;
 import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
+import com.spleefleague.core.packets.PingCalculationAdapter;
 import com.spleefleague.core.player.PlayerManager;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
@@ -89,6 +90,7 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         InventoryMenuTemplateRepository.initTemplates();
         Warp.init();
         Challenge.init();
+        getProtocolManager().addPacketListener(new PingCalculationAdapter(20));
         new FakeEntitiesManager();
         autoBroadcaster = new AutoBroadcaster(getMongo().getDatabase("SpleefLeague").getCollection("AutoBroadcaster"));
         playerManager = new PlayerManager<>(this, SLPlayer.class);

@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 
 /**
  *
@@ -41,7 +42,8 @@ public class SLPlayer extends GeneralPlayer {
     private long areaMessageCooldown = 0L;
     private int premiumCreditsGotThatMonth;
     private long premiumCreditsLastReceptionTime;
-
+    private int aimedPing;
+    
     public SLPlayer() {
         super();
         this.chatChannels = new HashSet<>();
@@ -276,19 +278,6 @@ public class SLPlayer extends GeneralPlayer {
         }
     }
 
-    @Override
-    public void setDefaults() {
-        super.setDefaults();
-        setRank(Rank.DEFAULT);
-        setEternalRank(Rank.DEFAULT);
-        this.setRankExpirationTime(0);
-        setCoins(0);
-        setPremiumCredits(0);
-        this.chatChannels.clear();
-        this.chatChannels.add(ChatChannel.GLOBAL);
-        setSendingChannel(ChatChannel.GLOBAL);
-    }
-
     public void setChatArrowColor(ChatColor c) {
         this.chatArrowColor = c;
     }
@@ -319,5 +308,30 @@ public class SLPlayer extends GeneralPlayer {
 
     public long getAreaMessageCooldown() {
         return areaMessageCooldown;
+    }
+    
+    public void setAimedPing(int aimedPing) {
+        this.aimedPing = aimedPing;
+    }
+    
+    public int getAimedPing() {
+        return aimedPing;
+    }
+    
+    public int getPing() {
+        return ((CraftPlayer)getPlayer()).getHandle().ping;
+    }
+
+    @Override
+    public void setDefaults() {
+        super.setDefaults();
+        setRank(Rank.DEFAULT);
+        setEternalRank(Rank.DEFAULT);
+        this.setRankExpirationTime(0);
+        setCoins(0);
+        setPremiumCredits(0);
+        this.chatChannels.clear();
+        this.chatChannels.add(ChatChannel.GLOBAL);
+        setSendingChannel(ChatChannel.GLOBAL);
     }
 }
