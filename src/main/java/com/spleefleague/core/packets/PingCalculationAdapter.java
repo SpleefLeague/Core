@@ -39,7 +39,7 @@ public class PingCalculationAdapter extends PacketAdapter {
                     PacketPlayOutKeepAlive ppoka = PacketPlayOutKeepAlive.class.getConstructor(long.class).newInstance(-System.currentTimeMillis());
                     ((CraftPlayer)player).getHandle().playerConnection.sendPacket(ppoka);
                 } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                    Logger.getLogger(ArtificialThrottleAdapter.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(PingCalculationAdapter.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }, refreshRate, refreshRate);
@@ -64,7 +64,7 @@ public class PingCalculationAdapter extends PacketAdapter {
                 event.setCancelled(true);
             }
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(ArtificialThrottleAdapter.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PingCalculationAdapter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

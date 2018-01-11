@@ -41,7 +41,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  *
@@ -98,7 +97,6 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         connectionClient = new ConnectionClient();
         debuggerHostManager = new DebuggerHostManager();
         Settings.getList("debugger_hosts").ifPresent(hosts -> debuggerHostManager.reloadAll(hosts));
-        loadServerType();
     }
 
     @Override
@@ -137,8 +135,17 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
                 .map(SpawnManager.SpawnLocation::new)
                 .collect(Collectors.toList());
         spawnManager = new SpawnManager(spawnLocations, Settings.getInteger("spawn_max_players").orElse(50));
+        
         Settings.getInteger("max_players").ifPresent(s -> setSlotSize(s));
+        
         Settings.getDocument("game_rules").ifPresent(d -> d.forEach((String key, Object object) -> CorePlugin.DEFAULT_WORLD.setGameRuleValue(key, object.toString())));
+        
+        if(Config.hasKey("server_type")) {
+            serverType = ServerType.valueOf(Config.getString("server_type").toUpperCase());
+        }
+        else {
+            serverType = ServerType.MAIN;
+        }
     }
 
     private void loadJoinSettings() {
@@ -161,7 +168,7 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
     private void initMongo() {
         List<MongoCredential> credentials = Config.getCredentials();
         try {
-            ServerAddress address = new ServerAddress(Config.DB_HOST, Config.DB_PORT);
+            ServerAddress address = new ServerAddress(Config.getString("host"), Config.getInteger("port"));
             mongo = new MongoClient(address, credentials);
         } catch (Exception ex) {
             Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
@@ -176,26 +183,16 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
     public void setSlotSize(int size) {
         try {
             String bukkitversion = Bukkit.getServer().getClass().getPackage().getName().substring(23);
-            Object playerlist = Class.forName("org.bukkit.craftbukkit." + bukkitversion + ".CraftServer").getDeclaredMethod("getHandle", null).invoke(Bukkit.getServer(), null);
+            Object playerlist = Class
+                    .forName("org.bukkit.craftbukkit." + bukkitversion + ".CraftServer")
+                    .getDeclaredMethod("getHandle")
+                    .invoke(Bukkit.getServer());
             Field maxplayers = playerlist.getClass().getSuperclass().getDeclaredField("maxPlayers");
             maxplayers.setAccessible(true);
             maxplayers.set(playerlist, size);
         } catch (IllegalArgumentException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | SecurityException | NoSuchFieldException | InvocationTargetException ex) {
             Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-    private void loadServerType() {
-        serverType = ServerType.MAIN;
-        FileConfiguration config = getConfig();
-        if(!config.isSet("server_type")) {
-            config.set("server_type", "MAIN");
-            saveConfig();
-            return;
-        }
-        try {
-            serverType = ServerType.valueOf(config.getString("server_type").toUpperCase());
-        }catch(Exception ex) {}
     }
 
     public Rank getMinimumJoinRank() {

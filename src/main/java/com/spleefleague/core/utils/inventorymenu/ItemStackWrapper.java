@@ -6,7 +6,6 @@
 package com.spleefleague.core.utils.inventorymenu;
 
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.utils.UtilChat;
 import com.spleefleague.core.utils.function.Dynamic;
 import java.util.List;
 import org.bukkit.Material;
@@ -35,12 +34,13 @@ public class ItemStackWrapper {
 
     public ItemStack construct(SLPlayer slp) {
         ItemStack baseStack = displayItem.get(slp);
-        if(baseStack != null)
-            return baseStack.clone();
-        return constructItemStackFromValues(new ItemStack(Material.STONE, 1), displayIcon.get(slp), displayName.get(slp), displayNumber.get(slp), displayDescription.get(slp));
+        return constructItemStackFromValues(baseStack, displayIcon.get(slp), displayName.get(slp), displayNumber.get(slp), displayDescription.get(slp));
     }
 
     private ItemStack constructItemStackFromValues(ItemStack baseStack, Material icon, String name, Integer number, List<String> description) {
+        if(baseStack == null) {
+            baseStack = new ItemStack(Material.AIR, 0);
+        }
         ItemStack is = baseStack.clone();
 
         if (icon != null) {

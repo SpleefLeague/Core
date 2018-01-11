@@ -6,6 +6,7 @@
 package com.spleefleague.core.io;
 
 import com.mongodb.MongoCredential;
+import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.player.Rank;
 
 import java.io.BufferedReader;
@@ -19,10 +20,12 @@ import java.util.stream.Collectors;
  * @author Jonas
  */
 public class Config {
-
+    
+    @Deprecated
     public static String DB_HOST;
+    @Deprecated
     public static int DB_PORT;
-    private static HashMap<String, String> ADDITIONAL_CONFIG;
+    private final static HashMap<String, String> ADDITIONAL_CONFIG;
     private static boolean configLoaded = false;
     
     static {
@@ -34,11 +37,19 @@ public class Config {
     }
 
     public static void loadConfig() {
-        if (!new File("db.conf").exists()) {
-            return;
-        }
         try {
-            BufferedReader br = new BufferedReader(new FileReader("db.conf"));
+            File file = new File("sl.conf");
+            if(!file.exists()) {
+                file = new File("db.conf");
+                if(file.exists()) {
+                    SpleefLeague.getInstance().getLogger().warning("Usage of db.conf is deprecated. Please rename the file to sl.conf");
+                }
+            }
+            if(!file.exists()) {
+                SpleefLeague.getInstance().getLogger().warning("Config file could not be found.");
+                return;
+            }
+            BufferedReader br = new BufferedReader(new FileReader(file));
             String s;
             while ((s = br.readLine()) != null) {
                 s = s.trim();
@@ -55,14 +66,13 @@ public class Config {
                     } else if (key.equalsIgnoreCase("port")) {
                         DB_PORT = Integer.valueOf(val);
 
-                    } else {
-                        ADDITIONAL_CONFIG.put(key, val);
-                    }
+                    } 
+                    ADDITIONAL_CONFIG.put(key, val);
                 }
             }
             configLoaded = true;
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            ex.printStackTrace();
         }
     }
 

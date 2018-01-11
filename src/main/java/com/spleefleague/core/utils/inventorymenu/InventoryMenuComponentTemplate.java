@@ -29,7 +29,7 @@ public abstract class InventoryMenuComponentTemplate<C> {
         this.displayName = Dynamic.getConstant("");
         this.visibilityController = Dynamic.getConstant(true);
         this.accessController = (SLPlayer slp) -> slp.getRank().hasPermission(Rank.DEFAULT);
-        this.displayIcon = Dynamic.getConstant(Material.STONE);
+        this.displayIcon = Dynamic.getConstant(null);
         this.displayNumber = Dynamic.getConstant(1);
         this.displayDescription = Dynamic.getConstant(new ArrayList<>()); //Always returns the same(!) object
     }
@@ -45,9 +45,6 @@ public abstract class InventoryMenuComponentTemplate<C> {
     }
 
     public ItemStack getDisplayItemStack(SLPlayer slp) {
-        ItemStack item = displayItem.get(slp);
-        if(item != null)
-            return item;
         return getDisplayItemStackWrapper().construct(slp);
     }
 
