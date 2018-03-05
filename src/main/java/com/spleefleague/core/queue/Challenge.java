@@ -26,7 +26,7 @@ public abstract class Challenge {
 
     private final SLPlayer challenger;
     private boolean active = true;
-    private int secondsLeft = 30;
+    private int secondsLeft = 60;
     private final boolean[] accepted;
     private final SLPlayer[] players;
 

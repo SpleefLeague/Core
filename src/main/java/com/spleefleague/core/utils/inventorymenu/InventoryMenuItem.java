@@ -7,8 +7,8 @@ public class InventoryMenuItem extends InventoryMenuComponent {
 
     private final InventoryMenuClickListener onClick;
 
-    public InventoryMenuItem(ItemStackWrapper displayItem, InventoryMenuClickListener onClick, Dynamic<Boolean> visibilityController, Dynamic<Boolean> accessController) {
-        super(displayItem, visibilityController, accessController);
+    public InventoryMenuItem(ItemStackWrapper displayItem, InventoryMenuClickListener onClick, Dynamic<Boolean> visibilityController, Dynamic<Boolean> accessController, boolean overwritePageBehavior) {
+        super(displayItem, visibilityController, accessController, overwritePageBehavior);
         this.onClick = onClick;
     }
 

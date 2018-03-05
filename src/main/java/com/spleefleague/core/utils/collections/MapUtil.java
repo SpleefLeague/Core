@@ -11,6 +11,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
+import java.util.NavigableSet;
+import java.util.TreeMap;
 
 /**
  *
@@ -42,6 +45,18 @@ public class MapUtil {
                 return ((o1.getKey()).compareTo(o2.getKey()) * (descending ? -1 : 1));
             }
         });
+    }
+    
+    public static <V, T extends NavigableMap<Integer, V>> T compress(T map) {
+        TreeMap<Integer, V> result = new TreeMap<>();
+        Integer targetCursor = map.firstKey();
+        Integer sourceCursor = map.firstKey() - 1;
+        while(map.higherKey(sourceCursor) != null) {
+            sourceCursor = map.higherKey(sourceCursor);
+            result.put(targetCursor, map.get(sourceCursor));
+            targetCursor++;
+        }
+        return (T) result;
     }
 
     public static <K, V, T extends Map<K, V>> T sort(T map, Comparator<Map.Entry<K, V>> c) {

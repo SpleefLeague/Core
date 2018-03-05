@@ -92,6 +92,11 @@ public abstract class InventoryMenuComponentTemplateBuilder<C, T extends Invento
         buildingObj.setAccessController(accessController);
         return actualBuilder;
     }
+    
+    public B overwritePageBehavior(boolean overwritePageBehavior) {
+        buildingObj.setOverwritePageBehavoir(overwritePageBehavior);
+        return actualBuilder;
+    }
 
     public T build() {
         return buildingObj;

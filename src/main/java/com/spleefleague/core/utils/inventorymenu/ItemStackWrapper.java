@@ -9,6 +9,7 @@ import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.function.Dynamic;
 import java.util.List;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -54,7 +55,8 @@ public class ItemStackWrapper {
         }
 
         ItemMeta im = is.getItemMeta();
-
+        im.setUnbreakable(true);
+        im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
         if (name != null) {
             im.setDisplayName(name);
         }

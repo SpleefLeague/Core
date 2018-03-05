@@ -74,6 +74,40 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
         return component(++dynamic, menuTemplateBuilder.build());
     }
 
+        public InventoryMenuTemplateBuilder staticComponent(int x, int y, InventoryMenuItemTemplateBuilder itemTemplateBuilder) {
+        return staticComponent(x, y, itemTemplateBuilder.build());
+    }
+
+    public InventoryMenuTemplateBuilder staticComponent(int x, int y, InventoryMenuItemTemplate itemTemplate) {
+        return staticComponent(y * ROWSIZE + x, itemTemplate);
+    }
+
+    public InventoryMenuTemplateBuilder staticComponent(int position, InventoryMenuItemTemplateBuilder itemTemplateBuilder) {
+        return staticComponent(position, itemTemplateBuilder.build());
+    }
+
+    public InventoryMenuTemplateBuilder staticComponent(int position, InventoryMenuItemTemplate itemTemplate) {
+        buildingObj.addStaticComponent(position, itemTemplate);
+        return this;
+    }
+
+    public InventoryMenuTemplateBuilder staticComponent(int x, int y, InventoryMenuTemplateBuilder menuTemplateBuilder) {
+        return staticComponent(x, y, menuTemplateBuilder.build());
+    }
+
+    public InventoryMenuTemplateBuilder staticComponent(int x, int y, InventoryMenuTemplate menuTemplate) {
+        return staticComponent(y * ROWSIZE + x, menuTemplate);
+    }
+
+    public InventoryMenuTemplateBuilder staticComponent(int position, InventoryMenuTemplateBuilder menuTemplateBuilder) {
+        return staticComponent(position, menuTemplateBuilder.build());
+    }
+
+    public InventoryMenuTemplateBuilder staticComponent(int position, InventoryMenuTemplate menuTemplate) {
+        buildingObj.addStaticComponent(position, menuTemplate);
+        return this;
+    }
+    
     public InventoryMenuTemplateBuilder exitOnClickOutside(boolean exitOnClickOutside) {
         buildingObj.setExitOnClickOutside(exitOnClickOutside);
         return this;

@@ -23,10 +23,12 @@ public abstract class InventoryMenuComponentTemplate<C> {
     private Dynamic<List<String>> displayDescription;
     private Dynamic<Boolean> visibilityController;
     private Dynamic<Boolean> accessController;
-
+    private boolean overwritePageBehavior;
+    
     protected InventoryMenuComponentTemplate() {
+        this.overwritePageBehavior = false;
         this.displayItem = Dynamic.getConstant(null);
-        this.displayName = Dynamic.getConstant("");
+        this.displayName = Dynamic.getConstant(null);
         this.visibilityController = Dynamic.getConstant(true);
         this.accessController = (SLPlayer slp) -> slp.getRank().hasPermission(Rank.DEFAULT);
         this.displayIcon = Dynamic.getConstant(null);
@@ -75,6 +77,10 @@ public abstract class InventoryMenuComponentTemplate<C> {
     protected Dynamic<Boolean> getVisibilityController() {
         return visibilityController;
     }
+    
+    protected boolean getOverwritePageBehavior() {
+        return overwritePageBehavior;
+    }
 
     public boolean hasAccess(SLPlayer slp) {
         return accessController.get(slp);
@@ -88,7 +94,11 @@ public abstract class InventoryMenuComponentTemplate<C> {
         ItemStackWrapper wrapper = new ItemStackWrapper(displayItem, displayIcon, displayName, displayNumber, displayDescription);
         return wrapper;
     }
-
+    
+    protected void setOverwritePageBehavoir(boolean overwritePageBehavior) {
+        this.overwritePageBehavior = overwritePageBehavior;
+    }
+    
     protected void setDisplayItem(ItemStack displayItem) {
         setDisplayItem(Dynamic.getConstant(displayItem));
     }

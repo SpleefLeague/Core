@@ -9,12 +9,18 @@ public abstract class InventoryMenuComponent {
 
     private final ItemStackWrapper displayItem;
     private InventoryMenu parent;
+    private final boolean overwritePageBehavior;
     private final Dynamic<Boolean> visibilityController, accessController;
 
-    public InventoryMenuComponent(ItemStackWrapper displayItem, Dynamic<Boolean> visibilityController, Dynamic<Boolean> accessController) {
+    public InventoryMenuComponent(ItemStackWrapper displayItem, Dynamic<Boolean> visibilityController, Dynamic<Boolean> accessController, boolean overwritePageBehavior) {
         this.displayItem = displayItem;
         this.visibilityController = visibilityController;
         this.accessController = accessController;
+        this.overwritePageBehavior = overwritePageBehavior;
+    }
+    
+    protected boolean getOverwritePageBehavior() {
+        return this.overwritePageBehavior;
     }
 
     protected ItemStackWrapper getDisplayItemWrapper() {
