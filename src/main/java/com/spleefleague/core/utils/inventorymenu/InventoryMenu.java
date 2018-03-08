@@ -140,10 +140,10 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
                 .entrySet()
                 .stream()
                 .filter((entry) -> (entry.getKey() >= 0 && entry.getValue().isVisible(slp)))
-                .collect(Collectors.groupingBy(e -> e.getKey() / pagesize,
+                .collect(Collectors.groupingBy(e -> e.getKey() / (e.getValue().getOverwritePageBehavior() ? MAX_PAGE_SIZE : pagesize),
                         TreeMap::new,
                         Collectors.toMap(
-                                e -> e.getKey() / (e.getValue().getOverwritePageBehavior() ? MAX_PAGE_SIZE : pagesize), 
+                                e -> e.getKey() % (e.getValue().getOverwritePageBehavior() ? MAX_PAGE_SIZE : pagesize), 
                                 e -> e.getValue().construct(slp))));
         return pageMap;
     }

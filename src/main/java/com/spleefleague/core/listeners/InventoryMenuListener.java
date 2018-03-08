@@ -93,7 +93,6 @@ public class InventoryMenuListener implements Listener {
             if (event.getWhoClicked() instanceof Player) {
                 Player player = (Player) event.getWhoClicked();
                 if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) {
-
                     exitMenuIfClickOutSide(menu, player);
 
                 } else {
