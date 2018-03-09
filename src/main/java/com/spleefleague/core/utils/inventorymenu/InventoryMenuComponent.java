@@ -53,8 +53,7 @@ public abstract class InventoryMenuComponent {
         } else {
             return parent.getRoot();
         }
-
     }
-
-    abstract void selected(ClickType clickType);
+    
+    protected abstract void selected(ClickType clickType);
 }
