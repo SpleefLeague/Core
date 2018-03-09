@@ -1,9 +1,7 @@
 package com.spleefleague.core.utils.inventorymenu;
 
-import java.util.function.Consumer;
-
-import com.spleefleague.core.player.Rank;
-import com.spleefleague.core.utils.function.Dynamic;
+import com.spleefleague.core.player.SLPlayer;
+import java.util.function.Function;
 
 public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplateBuilder<InventoryMenu, InventoryMenuTemplate, InventoryMenuTemplateBuilder> {
 
@@ -19,7 +17,7 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
         return this;
     }
 
-    public InventoryMenuTemplateBuilder title(Dynamic<String> title) {
+    public InventoryMenuTemplateBuilder title(Function<SLPlayer, String> title) {
         buildingObj.setTitle(title);
         return this;
     }
@@ -108,13 +106,10 @@ public class InventoryMenuTemplateBuilder extends InventoryMenuComponentTemplate
         return this;
     }
     
-    public InventoryMenuTemplateBuilder exitOnClickOutside(boolean exitOnClickOutside) {
-        buildingObj.setExitOnClickOutside(exitOnClickOutside);
-        return this;
-    }
-
-    public InventoryMenuTemplateBuilder menuControls(boolean menuControls) {
-        buildingObj.setMenuControls(menuControls);
+    public InventoryMenuTemplateBuilder flags(InventoryMenuFlag... flags) {
+        for(InventoryMenuFlag flag : flags) {
+            buildingObj.addFlag(flag);
+        }
         return this;
     }
 

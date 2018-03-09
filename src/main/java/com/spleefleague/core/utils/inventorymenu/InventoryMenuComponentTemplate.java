@@ -1,14 +1,14 @@
 package com.spleefleague.core.utils.inventorymenu;
 
+import com.sk89q.worldedit.internal.expression.runtime.Function.Dynamic;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.utils.function.Dynamic;
-import com.spleefleague.core.utils.function.DynamicDefault;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -16,30 +16,30 @@ import org.bukkit.inventory.ItemStack;
 public abstract class InventoryMenuComponentTemplate<C> {
 
     //private InventoryMenuTemplate parent;
-    private Dynamic<ItemStack> displayItem;
-    private Dynamic<String> displayName;
-    private Dynamic<Material> displayIcon;
-    private Dynamic<Integer> displayNumber;
-    private Dynamic<List<String>> displayDescription;
-    private Dynamic<Boolean> visibilityController;
-    private Dynamic<Boolean> accessController;
+    private Function<SLPlayer, ItemStack> displayItem;
+    private Function<SLPlayer, String> displayName;
+    private Function<SLPlayer, Material> displayIcon;
+    private Function<SLPlayer, Integer> displayNumber;
+    private Function<SLPlayer, List<String>> displayDescription;
+    private Function<SLPlayer, Boolean> visibilityController;
+    private Function<SLPlayer, Boolean> accessController;
     private boolean overwritePageBehavior;
     
     protected InventoryMenuComponentTemplate() {
         this.overwritePageBehavior = false;
-        this.displayItem = Dynamic.getConstant(null);
-        this.displayName = Dynamic.getConstant(null);
-        this.visibilityController = Dynamic.getConstant(true);
-        this.accessController = (SLPlayer slp) -> slp.getRank().hasPermission(Rank.DEFAULT);
-        this.displayIcon = Dynamic.getConstant(null);
-        this.displayNumber = Dynamic.getConstant(1);
-        this.displayDescription = Dynamic.getConstant(new ArrayList<>()); //Always returns the same(!) object
+        this.displayItem = s -> null;
+        this.displayName = s -> null;
+        this.visibilityController = s -> true;
+        this.accessController = slp -> slp.getRank().hasPermission(Rank.DEFAULT);
+        this.displayIcon = s -> null;
+        this.displayNumber = s -> 1;
+        this.displayDescription = s -> new ArrayList<>();
     }
 
     public abstract C construct(SLPlayer slp);
 
     public String getDisplayName(SLPlayer slp) {
-        return displayName.get(slp);
+        return displayName.apply(slp);
     }
 
     protected ItemStackWrapper getDisplayItemStackWrapper() {
@@ -51,30 +51,30 @@ public abstract class InventoryMenuComponentTemplate<C> {
     }
 
     protected ItemStack getDisplayItem(SLPlayer slp) {
-        return displayItem.get(slp);
+        return displayItem.apply(slp);
     }
 
     public Material getDisplayIcon(SLPlayer slp) {
-        return displayIcon.get(slp);
+        return displayIcon.apply(slp);
     }
 
     public int getDisplayNumber(SLPlayer slp) {
-        return displayNumber.get(slp);
+        return displayNumber.apply(slp);
     }
 
     public List<String> getDisplayDescription(SLPlayer slp) {
-        return displayDescription.get(slp);
+        return displayDescription.apply(slp);
     }
 
     public List<String> getDisplayDescription() {
-        return displayDescription.get(null);
+        return displayDescription.apply(null);
     }
 
     public boolean isVisible(SLPlayer slp) {
-        return visibilityController.get(slp);
+        return visibilityController.apply(slp);
     }
 
-    protected Dynamic<Boolean> getVisibilityController() {
+    protected Function<SLPlayer, Boolean> getVisibilityController() {
         return visibilityController;
     }
     
@@ -83,10 +83,10 @@ public abstract class InventoryMenuComponentTemplate<C> {
     }
 
     public boolean hasAccess(SLPlayer slp) {
-        return accessController.get(slp);
+        return accessController.apply(slp);
     }
 
-    protected Dynamic<Boolean> getAccessController() {
+    protected Function<SLPlayer, Boolean> getAccessController() {
         return accessController;
     }
 
@@ -100,74 +100,68 @@ public abstract class InventoryMenuComponentTemplate<C> {
     }
     
     protected void setDisplayItem(ItemStack displayItem) {
-        setDisplayItem(Dynamic.getConstant(displayItem));
+        setDisplayItem(s -> displayItem);
     }
 
-    protected void setDisplayItem(Dynamic<ItemStack> displayItem) {
+    protected void setDisplayItem(Function<SLPlayer, ItemStack> displayItem) {
         this.displayItem = displayItem;
     }
 
     protected void setDisplayName(String displayName) {
-        this.displayName = Dynamic.getConstant(displayName);
+        this.displayName = s -> displayName;
     }
 
-    protected void setDisplayName(Dynamic<String> displayName) {
+    protected void setDisplayName(Function<SLPlayer, String> displayName) {
         this.displayName = displayName;
     }
 
     protected void setDisplayIcon(Material displayIcon) {
-        this.displayIcon = Dynamic.getConstant(displayIcon);
+        this.displayIcon = s -> displayIcon;
     }
 
-    protected void setDisplayIcon(Dynamic<Material> displayIcon) {
+    protected void setDisplayIcon(Function<SLPlayer, Material> displayIcon) {
         this.displayIcon = displayIcon;
     }
 
     protected void setDisplayNumber(int displayNumber) {
-        this.displayNumber = Dynamic.getConstant(displayNumber);
+        this.displayNumber = s -> displayNumber;
     }
 
-    protected void setDisplayNumber(Dynamic<Integer> displayNumber) {
+    protected void setDisplayNumber(Function<SLPlayer, Integer> displayNumber) {
         this.displayNumber = displayNumber;
     }
 
-    protected void setVisibilityController(Dynamic<Boolean> visibilityController) {
+    protected void setVisibilityController(Function<SLPlayer, Boolean> visibilityController) {
         this.visibilityController = visibilityController;
     }
 
-    protected void setAccessController(Dynamic<Boolean> accessController) {
+    protected void setAccessController(Function<SLPlayer, Boolean> accessController) {
         this.accessController = accessController;
     }
 
-    protected void addDescriptionLine(String line) {
-        this.getDisplayDescription().add(line);
-    }
-
     protected void addDescriptionLine(SLPlayer slp, String line) {
-        if (displayDescription instanceof DynamicDefault) {
-            displayDescription = new Dynamic<List<String>>() {
-                private final Map<UUID, List<String>> map = new HashMap<>();
-                private final ArrayList<String> oldDefault = (ArrayList) displayDescription.get(null);
+        displayDescription = new Function<SLPlayer, List<String>>() {
+            private final Map<UUID, List<String>> map = new HashMap<>();
+            private final ArrayList<String> oldDefault = (ArrayList) displayDescription.apply(null);
 
-                @Override
-                public List<String> get(SLPlayer slp) {
-                    List<String> result;
-                    if (slp == null) {
-                        result = oldDefault;
-                    } else if (map.containsKey(slp.getUniqueId())) {
-                        result = map.get(slp.getUniqueId());
-                    } else {
-                        result = (List<String>) oldDefault.clone();
-                        map.put(slp.getUniqueId(), result);
-                    }
-                    return result;
+            @Override
+            public List<String> apply(SLPlayer slp) {
+                List<String> result;
+                if (slp == null) {
+                    result = oldDefault;
+                } else if (map.containsKey(slp.getUniqueId())) {
+                    result = map.get(slp.getUniqueId());
+                } else {
+                    result = (List<String>) oldDefault.clone();
+                    map.put(slp.getUniqueId(), result);
                 }
-            };
-        }
-        this.getDisplayDescription(slp).add(line);
+                return result;
+            }
+        };
+        displayDescription.apply(slp).add(line);
     }
 
-    protected void setDescription(Dynamic<List<String>> displayDescription) {
+    protected void setDescription(Function<SLPlayer, List<String>> displayDescription) {
         this.displayDescription = displayDescription;
     }
 }

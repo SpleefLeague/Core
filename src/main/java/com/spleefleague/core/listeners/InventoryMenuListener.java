@@ -27,6 +27,7 @@ import com.spleefleague.core.menus.SLMenu;
 import com.spleefleague.core.player.GeneralPlayer;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenu;
+import com.spleefleague.core.utils.inventorymenu.InventoryMenuFlag;
 import org.bukkit.Material;
 import org.bukkit.event.block.BlockPlaceEvent;
 
@@ -120,7 +121,7 @@ public class InventoryMenuListener implements Listener {
     }
 
     private void exitMenuIfClickOutSide(InventoryMenu menu, Player player) {
-        if (menu.exitOnClickOutside()) {
+        if (menu.isSet(InventoryMenuFlag.EXIT_ON_CLICK_OUTSIDE)) {
             menu.close(player);
         }
     }

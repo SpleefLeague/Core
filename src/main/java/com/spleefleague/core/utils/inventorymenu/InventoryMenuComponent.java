@@ -1,7 +1,7 @@
 package com.spleefleague.core.utils.inventorymenu;
 
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.utils.function.Dynamic;
+import java.util.function.Function;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,9 +10,9 @@ public abstract class InventoryMenuComponent {
     private final ItemStackWrapper displayItem;
     private InventoryMenu parent;
     private final boolean overwritePageBehavior;
-    private final Dynamic<Boolean> visibilityController, accessController;
+    private final Function<SLPlayer, Boolean> visibilityController, accessController;
 
-    public InventoryMenuComponent(ItemStackWrapper displayItem, Dynamic<Boolean> visibilityController, Dynamic<Boolean> accessController, boolean overwritePageBehavior) {
+    public InventoryMenuComponent(ItemStackWrapper displayItem, Function<SLPlayer, Boolean> visibilityController, Function<SLPlayer, Boolean> accessController, boolean overwritePageBehavior) {
         this.displayItem = displayItem;
         this.visibilityController = visibilityController;
         this.accessController = accessController;
@@ -32,11 +32,11 @@ public abstract class InventoryMenuComponent {
     }
 
     public boolean isVisible(SLPlayer slp) {
-        return visibilityController.get(slp);
+        return visibilityController.apply(slp);
     }
 
     public boolean hasAccess(SLPlayer slp) {
-        return accessController.get(slp);
+        return accessController.apply(slp);
     }
 
     public InventoryMenu getParent() {

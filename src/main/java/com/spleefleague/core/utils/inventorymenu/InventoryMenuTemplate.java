@@ -1,38 +1,33 @@
 package com.spleefleague.core.utils.inventorymenu;
 
-import com.spleefleague.core.listeners.InventoryMenuListener;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.utils.function.Dynamic;
+import java.util.function.Function;
 
 public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<InventoryMenu> {
 
-    private Dynamic<String> title;
+    private Function<SLPlayer, String> title;
 
     private final Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> components, staticComponents;
-
-    private boolean exitOnClickOutside;
-
-    private boolean menuControls;
+    
+    private int flags;
 
     protected InventoryMenuTemplate() {
-        this.title = Dynamic.getConstant("");
+        this.title = s -> "";
         this.components = new HashMap<>();
         this.staticComponents = new HashMap<>();
-        this.exitOnClickOutside = true;
-        this.menuControls = false;
+        this.flags = 0;
+        this.flags = InventoryMenuFlag.set(flags, InventoryMenuFlag.EXIT_ON_CLICK_OUTSIDE);
     }
 
     public void setTitle(String title) {
-        this.title = Dynamic.getConstant(title);
+        this.title = s -> title;
     }
 
-    public void setTitle(Dynamic<String> title) {
-        this.title = Dynamic.getDynamicDefault(title, "Title", "Title");
+    public void setTitle(Function<SLPlayer, String> title) {
+        this.title = title;
     }
 
     public void addComponent(int position, InventoryMenuComponentTemplate<? extends InventoryMenuComponent> component) {
@@ -46,16 +41,16 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
 //    public void dynamicComponents(Consumer<InventoryMenuDynamicComponents> dynamicComponents) {
 //        this.dynamicComponents = dynamicComponents;
 //    }
-    public void setExitOnClickOutside(boolean exitOnClickOutside) {
-        this.exitOnClickOutside = exitOnClickOutside;
+    public void addFlag(InventoryMenuFlag flag) {
+        this.flags = InventoryMenuFlag.set(flags, flag);
     }
 
-    public void setMenuControls(boolean menuControls) {
-        this.menuControls = menuControls;
+    public void removeFlag(InventoryMenuFlag flag) {
+        this.flags = InventoryMenuFlag.unset(flags, flag);
     }
 
     public String getTitle(SLPlayer slp) {
-        return title.get(slp);
+        return title.apply(slp);
     }
 
     @Override
@@ -71,7 +66,7 @@ public class InventoryMenuTemplate extends InventoryMenuComponentTemplate<Invent
 //                .collect(Collectors.toMap(
 //                        entry -> entry.getKey(),
 //                        entry -> entry.getValue().construct(slp)));
-        InventoryMenu menu = new InventoryMenu(is, getTitle(slp), components, staticComponents, exitOnClickOutside, menuControls, super.getAccessController(), super.getVisibilityController(), slp, super.getOverwritePageBehavior());
+        InventoryMenu menu = new InventoryMenu(is, getTitle(slp), components, staticComponents, super.getAccessController(), super.getVisibilityController(), slp, flags);
 //        addMenuControls(actualComponents);
 //        menu.populateInventory();
         return menu;

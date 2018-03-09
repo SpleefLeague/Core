@@ -6,8 +6,8 @@
 package com.spleefleague.core.utils.inventorymenu;
 
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.utils.function.Dynamic;
 import java.util.List;
+import java.util.function.Function;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -19,13 +19,13 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class ItemStackWrapper {
 
-    private final Dynamic<ItemStack> displayItem;
-    private final Dynamic<String> displayName;
-    private final Dynamic<Material> displayIcon;
-    private final Dynamic<Integer> displayNumber;
-    private final Dynamic<List<String>> displayDescription;
+    private final Function<SLPlayer, ItemStack> displayItem;
+    private final Function<SLPlayer, String> displayName;
+    private final Function<SLPlayer, Material> displayIcon;
+    private final Function<SLPlayer, Integer> displayNumber;
+    private final Function<SLPlayer, List<String>> displayDescription;
 
-    protected ItemStackWrapper(Dynamic<ItemStack> displayItem, Dynamic<Material> displayIcon, Dynamic<String> displayName, Dynamic<Integer> displayNumber, Dynamic<List<String>> displayDescription) {
+    protected ItemStackWrapper(Function<SLPlayer, ItemStack> displayItem, Function<SLPlayer, Material> displayIcon, Function<SLPlayer, String> displayName, Function<SLPlayer, Integer> displayNumber, Function<SLPlayer, List<String>> displayDescription) {
         this.displayItem = displayItem;
         this.displayIcon = displayIcon;
         this.displayName = displayName;
@@ -34,8 +34,8 @@ public class ItemStackWrapper {
     }
 
     public ItemStack construct(SLPlayer slp) {
-        ItemStack baseStack = displayItem.get(slp);
-        return constructItemStackFromValues(baseStack, displayIcon.get(slp), displayName.get(slp), displayNumber.get(slp), displayDescription.get(slp));
+        ItemStack baseStack = displayItem.apply(slp);
+        return constructItemStackFromValues(baseStack, displayIcon.apply(slp), displayName.apply(slp), displayNumber.apply(slp), displayDescription.apply(slp));
     }
 
     private ItemStack constructItemStackFromValues(ItemStack baseStack, Material icon, String name, Integer number, List<String> description) {

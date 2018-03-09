@@ -10,12 +10,12 @@ import org.bukkit.inventory.InventoryHolder;
 
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.collections.MapUtil;
-import com.spleefleague.core.utils.function.Dynamic;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.ClickType;
@@ -30,23 +30,28 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
 
     private final TreeMap<Integer, Inventory> inventories;
     private final Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> allComponents, staticComponents;
-    private final boolean exitOnClickOutside;
-    private final boolean menuControls;
     private final String title;
     private final SLPlayer slp;
     private final Map<Integer, Map<Integer, InventoryMenuComponent>> currentComponents;
     private final int pagesize = ROWSIZE * COLUMNSIZE - PAGE_NAVIGATION_SIZE;
-    private final boolean skipSingleSubmenu = false;
+    private final int flags;
     private int currentPage = 0;
     
-    protected InventoryMenu(ItemStackWrapper displayItem, String title, Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> components, Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> staticComponents, boolean exitOnClickOutside, boolean menuControls, Dynamic<Boolean> accessController, Dynamic<Boolean> visibilityController, SLPlayer slp, boolean overwritePageBehavior) {
-        super(displayItem, visibilityController, accessController, overwritePageBehavior);
+    protected InventoryMenu(
+            ItemStackWrapper displayItem, 
+            String title, 
+            Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> components, 
+            Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> staticComponents, 
+            Function<SLPlayer, Boolean> accessController, 
+            Function<SLPlayer, Boolean> visibilityController, 
+            SLPlayer slp, 
+            int flags) {
+        super(displayItem, visibilityController, accessController, InventoryMenuFlag.isSet(flags, InventoryMenuFlag.IGNORE_PAGE_OVERFLOW));
+        this.flags = flags;
         this.slp = slp;
         this.allComponents = components;
         this.staticComponents = staticComponents;
         this.inventories = new TreeMap<>();
-        this.exitOnClickOutside = exitOnClickOutside;
-        this.menuControls = menuControls;
         this.title = title;
         this.currentComponents = new HashMap<>();
         addMenuControls();
@@ -171,7 +176,7 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
     }
 
     protected void addMenuControls() {
-        if (menuControls) {
+        if (InventoryMenuFlag.isSet(flags, InventoryMenuFlag.MENU_CONTROL)) {
             InventoryMenuComponent rootComp = getRoot();
 
             if (rootComp instanceof InventoryMenu) {
@@ -210,7 +215,7 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
     @Override
     public void selected(ClickType clickType) {
         //Directly opening submenu if it's the only option available
-        if(skipSingleSubmenu && currentComponents.size() == 1) {
+        if(InventoryMenuFlag.isSet(flags, InventoryMenuFlag.SKIP_SINGLE_SUBMENU) && currentComponents.size() == 1) {
             Map<Integer, InventoryMenuComponent> pageOne = currentComponents.get(0);
             if(pageOne != null) {
                 if(pageOne.size() == 1) {
@@ -272,9 +277,13 @@ public class InventoryMenu extends InventoryMenuComponent implements InventoryHo
     public Inventory getInventory() {
         return inventories.get(currentPage);
     }
-
-    public boolean exitOnClickOutside() {
-        return exitOnClickOutside;
+    
+    public boolean isSet(InventoryMenuFlag flag) {
+        return InventoryMenuFlag.isSet(flags, flag);
+    }
+    
+    public int getFlags() {
+        return flags;
     }
 
     public void update() {
