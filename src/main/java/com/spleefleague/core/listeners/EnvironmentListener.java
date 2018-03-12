@@ -336,7 +336,7 @@ public class EnvironmentListener implements Listener {
             if(slPlayer.isOnline()) {
                 if(!slPlayer.getRank().hasPermission(SpleefLeague.getInstance().getMinimumJoinRank())
                         && !SpleefLeague.getInstance().getExtraJoinRanks().contains(slPlayer.getRank())) {
-                    event.getPlayer().kickPlayer("You don't have permission to join this server!");
+                    event.getPlayer().kickPlayer(ChatColor.RED + "You don't have permission to join this server!");
                     return;
                 }
             }
@@ -355,7 +355,7 @@ public class EnvironmentListener implements Listener {
             if(rank == null || (!rank.hasPermission(SpleefLeague.getInstance().getMinimumJoinRank())
                     && !SpleefLeague.getInstance().getExtraJoinRanks().contains(rank))) {
                 e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
-                e.setKickMessage(ChatColor.RED + "You are not of rank to join this server!");
+                e.setKickMessage(ChatColor.RED + "You don't have permission to join this server!");
             }
         }
     }
