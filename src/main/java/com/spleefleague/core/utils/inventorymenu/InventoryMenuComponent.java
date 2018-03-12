@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 public abstract class InventoryMenuComponent {
 
     private final ItemStackWrapper displayItem;
-    private InventoryMenu parent;
+    private AbstractInventoryMenu parent;
     private final boolean overwritePageBehavior;
     private final Function<SLPlayer, Boolean> visibilityController, accessController;
 
@@ -39,11 +39,11 @@ public abstract class InventoryMenuComponent {
         return accessController.apply(slp);
     }
 
-    public InventoryMenu getParent() {
+    public AbstractInventoryMenu getParent() {
         return parent;
     }
 
-    protected void setParent(InventoryMenu parent) {
+    protected void setParent(AbstractInventoryMenu parent) {
         this.parent = parent;
     }
 
