@@ -5,10 +5,18 @@
  */
 package com.spleefleague.core.utils.inventorymenu.dialog;
 
+import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponent;
+import com.spleefleague.core.utils.inventorymenu.ItemStackWrapper;
+import java.util.function.Function;
+
 /**
  *
  * @author jonas
  */
-public class InventoryMenuDialogComponent {
-    
+public class InventoryMenuDialogComponent extends InventoryMenuComponent{
+
+    public InventoryMenuDialogComponent(ItemStackWrapper displayItem, Function<SLPlayer, Boolean> visibilityController, Function<SLPlayer, Boolean> accessController, boolean overwritePageBehavior) {
+        super(displayItem, visibilityController, accessController, overwritePageBehavior);
+    }
 }

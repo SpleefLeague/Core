@@ -21,7 +21,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
-public abstract class AbstractInventoryMenu extends InventoryMenuComponent implements InventoryHolder {
+public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> extends ClickableInventoryMenuComponent implements InventoryHolder {
 
     private static final int ROWSIZE = 9;
     private static final int COLUMNSIZE = 6;
@@ -29,10 +29,11 @@ public abstract class AbstractInventoryMenu extends InventoryMenuComponent imple
     private final int MAX_PAGE_SIZE = ROWSIZE * COLUMNSIZE;
 
     private final TreeMap<Integer, Inventory> inventories;
-    private final Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> allComponents, staticComponents;
+    private final Map<Integer, InventoryMenuComponentTemplate<? extends C>> standardTemplates, staticTemplates;
+    private final Function<ClickableInventoryMenuComponent, C> componentMapper;
     private final String title;
     private final SLPlayer slp;
-    private final Map<Integer, Map<Integer, InventoryMenuComponent>> currentComponents;
+    private final Map<Integer, Map<Integer, C>> renderedComponents;
     private final int pagesize = ROWSIZE * COLUMNSIZE - PAGE_NAVIGATION_SIZE;
     private final int flags;
     private int currentPage = 0;
@@ -40,8 +41,9 @@ public abstract class AbstractInventoryMenu extends InventoryMenuComponent imple
     protected AbstractInventoryMenu(
             ItemStackWrapper displayItem, 
             String title, 
-            Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> components, 
-            Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> staticComponents, 
+            Map<Integer, InventoryMenuComponentTemplate<? extends C>> components, 
+            Map<Integer, InventoryMenuComponentTemplate<? extends C>> staticComponents, 
+            Function<ClickableInventoryMenuComponent, C> componentMapper,
             Function<SLPlayer, Boolean> accessController, 
             Function<SLPlayer, Boolean> visibilityController, 
             SLPlayer slp, 
@@ -49,12 +51,12 @@ public abstract class AbstractInventoryMenu extends InventoryMenuComponent imple
         super(displayItem, visibilityController, accessController, InventoryMenuFlag.isSet(flags, InventoryMenuFlag.IGNORE_PAGE_OVERFLOW));
         this.flags = flags;
         this.slp = slp;
-        this.allComponents = components;
-        this.staticComponents = staticComponents;
+        this.standardTemplates = components;
+        this.staticTemplates = staticComponents;
         this.inventories = new TreeMap<>();
         this.title = title;
-        this.currentComponents = new HashMap<>();
-        addMenuControls();
+        this.renderedComponents = new HashMap<>();
+        this.componentMapper = componentMapper;
         populateInventory();
     }
 
@@ -63,7 +65,7 @@ public abstract class AbstractInventoryMenu extends InventoryMenuComponent imple
     }
     
     private void setParents() {
-        currentComponents
+        renderedComponents
                 .values()
                 .stream()
                 .flatMap(m -> m.values().stream())
@@ -73,25 +75,24 @@ public abstract class AbstractInventoryMenu extends InventoryMenuComponent imple
     protected void populateInventory() {
         int highestDefined = 0;
         int count = 0;
-        for(Entry<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> e : allComponents.entrySet()) {
+        for(Entry<Integer, InventoryMenuComponentTemplate<? extends C>> e : standardTemplates.entrySet()) {
             if(!e.getValue().isVisible(slp)) continue;
             count++;
             highestDefined = Math.max(highestDefined, e.getKey());
         }
         boolean multiPage = Math.max(count, highestDefined) > pagesize;
+        TreeMap<Integer, Map<Integer, C>> componentPageMap = generateComponentPageMap(standardTemplates);
         
-        TreeMap<Integer, Map<Integer, InventoryMenuComponent>> componentPageMap = generateComponentPageMap(allComponents);
-        
-        Queue<InventoryMenuComponent> fillupQueue = new LinkedList<>(allComponents
+        Queue<C> fillupQueue = new LinkedList<>(standardTemplates
                 .keySet()
                 .stream()
                 .sorted((i1, i2) -> Integer.compare(i2, i1))
                 .filter(key -> key < 0)
-                .map(key -> allComponents.get(key).construct(slp))
+                .map(key -> standardTemplates.get(key).construct(slp))
                 .filter(m -> m.isVisible(slp))
                 .collect(Collectors.toList()));
         for(int page = 0; !fillupQueue.isEmpty(); page++) {
-            Map<Integer, InventoryMenuComponent> slots = componentPageMap.getOrDefault(page, new HashMap<>());
+            Map<Integer, C> slots = componentPageMap.getOrDefault(page, new HashMap<>());
             if(slots.size() >= pagesize) continue;
             for (int slot = 0; !fillupQueue.isEmpty() && slot < pagesize; slot++) {
                 if(slots.containsKey(slot)) continue;
@@ -106,31 +107,31 @@ public abstract class AbstractInventoryMenu extends InventoryMenuComponent imple
         componentPageMap.values()
                 .stream()
                 .forEach(m -> {
-                    staticComponents
+                    staticTemplates
                             .forEach((i, imct) -> m.put(i, imct.construct(slp)));
                 });
         //Adding page navigation
         if(multiPage) {
             int max = componentPageMap.lastKey();
             for (int page = 0; page <= max; page++) {
-                Map<Integer, InventoryMenuComponent> slots = componentPageMap.get(page);
+                Map<Integer, C> slots = componentPageMap.get(page);
                 if(page > 0) {
-                    InventoryMenuComponent lastPage = createPreviousPageItem(page).construct(slp);
+                    C lastPage = componentMapper.apply(createPreviousPageItem(page).construct(slp));
                     lastPage.setParent(this);
                     slots.put(MAX_PAGE_SIZE - 9, lastPage);
                 }
                 if(page < max) {
-                    InventoryMenuComponent nextPage = createNextPageItem(page).construct(slp);
+                    C nextPage = componentMapper.apply(createNextPageItem(page).construct(slp));
                     nextPage.setParent(this);
-                    slots.put(MAX_PAGE_SIZE - 1, createNextPageItem(page).construct(slp));
+                    slots.put(MAX_PAGE_SIZE - 1, componentMapper.apply(createNextPageItem(page).construct(slp)));
                 }
             }
         }
         //Creating Bukkit inventories
         inventories.clear();
-        currentComponents.clear();
-        currentComponents.putAll(componentPageMap);
-        for(Entry<Integer, Map<Integer, InventoryMenuComponent>> e : componentPageMap.entrySet()) {
+        renderedComponents.clear();
+        renderedComponents.putAll(componentPageMap);
+        for(Entry<Integer, Map<Integer, C>> e : componentPageMap.entrySet()) {
             int max = e.getValue()
                     .keySet()
                     .stream()
@@ -145,8 +146,8 @@ public abstract class AbstractInventoryMenu extends InventoryMenuComponent imple
         setParents();
     }
     
-    private TreeMap<Integer, Map<Integer, InventoryMenuComponent>> generateComponentPageMap(Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuComponent>> allComponents) {
-        TreeMap<Integer, Map<Integer, InventoryMenuComponent>> pageMap = allComponents
+    private TreeMap<Integer, Map<Integer, C>> generateComponentPageMap(Map<Integer, InventoryMenuComponentTemplate<? extends C>> allComponents) {
+        TreeMap<Integer, Map<Integer, C>> pageMap = allComponents
                 .entrySet()
                 .stream()
                 .filter((entry) -> (entry.getKey() >= 0 && entry.getValue().isVisible(slp)))
@@ -155,6 +156,37 @@ public abstract class AbstractInventoryMenu extends InventoryMenuComponent imple
                         Collectors.toMap(
                                 e -> e.getKey() % (e.getValue().getOverwritePageBehavior() ? MAX_PAGE_SIZE : pagesize), 
                                 e -> e.getValue().construct(slp))));
+        TreeMap<Integer, Map<Integer, C>> controlMap = getMenuControls()
+                .entrySet()
+                .stream()
+                .filter((entry) -> (entry.getKey() >= 0 && entry.getValue().isVisible(slp)))
+                .collect(Collectors.groupingBy(e -> e.getKey() / (e.getValue().getOverwritePageBehavior() ? MAX_PAGE_SIZE : pagesize),
+                        TreeMap::new,
+                        Collectors.toMap(
+                                e -> e.getKey() % (e.getValue().getOverwritePageBehavior() ? MAX_PAGE_SIZE : pagesize), 
+                                e -> componentMapper.apply(e.getValue().construct(slp)))));
+        Integer fp = pageMap.firstKey();
+        Integer fc = controlMap.firstKey();
+        while(fc != null) {
+            if(fc.equals(fp)) {
+                Map<Integer, C> mp = pageMap.get(fp);
+                Map<Integer, C> mc = controlMap.get(fc);
+                for(Entry<Integer, C> e : mc.entrySet()) {
+                    mp.put(e.getKey(), e.getValue());
+                }
+                fp = pageMap.higherKey(fp);
+                fc = controlMap.higherKey(fc);
+            }
+            else if(fp == null) {
+                pageMap.put(fc, controlMap.get(fc));
+            }
+            else if(fc < fp) {
+                fc = controlMap.higherKey(fc);
+            }
+            else if(fp < fc) {
+                fp = controlMap.higherKey(fp);
+            }
+        }
         return pageMap;
     }
     
@@ -180,12 +212,13 @@ public abstract class AbstractInventoryMenu extends InventoryMenuComponent imple
                 .build();
     }
 
-    protected void addMenuControls() {
+    protected Map<Integer, InventoryMenuItemTemplate> getMenuControls() {
+        Map<Integer, InventoryMenuItemTemplate> components = new HashMap<>();
         if (InventoryMenuFlag.isSet(flags, InventoryMenuFlag.MENU_CONTROL)) {
             InventoryMenuComponent rootComp = getRoot();
             if (rootComp instanceof InventoryMenu) {
                 if (getParent() != null) {
-                    InventoryMenuItemTemplate goBackItem = InventoryMenuAPI.item()
+                    components.put(0, InventoryMenuAPI.item()
                             .displayIcon(Material.ANVIL)
                             .displayName(ChatColor.GREEN + "Go back")
                             .description("Click to go back one menu level")
@@ -196,23 +229,24 @@ public abstract class AbstractInventoryMenu extends InventoryMenuComponent imple
                                     event.getPlayer().closeInventory();
                                 }
                             })
-                            .build();
-                    allComponents.put(0, goBackItem);
+                            .build());
+                    return components;
                 }
             }
         }
+        return components;
     }
     
     @Override
-    public void selected(ClickType clickType) {
+    protected void selected(ClickType clickType) {
         //Directly opening submenu if it's the only option available
-        if(this.isSet(InventoryMenuFlag.SKIP_SINGLE_SUBMENU) && currentComponents.size() == 1) {
-            Map<Integer, InventoryMenuComponent> pageOne = currentComponents.get(0);
+        if(this.isSet(InventoryMenuFlag.SKIP_SINGLE_SUBMENU) && renderedComponents.size() == 1) {
+            Map<Integer, C> pageOne = renderedComponents.get(0);
             if(pageOne != null) {
                 if(pageOne.size() == 1) {
-                    InventoryMenuComponent imc = pageOne.values().stream().findAny().orElse(null);
+                    C imc = pageOne.values().stream().findAny().orElse(null);
                     if(imc instanceof InventoryMenu) {
-                        imc.selected(clickType);
+                        ((InventoryMenu) imc).selected(clickType);
                         return;
                     }
                 }
@@ -260,8 +294,8 @@ public abstract class AbstractInventoryMenu extends InventoryMenuComponent imple
         return slp;
     }
 
-    protected Map<Integer, Map<Integer, InventoryMenuComponent>> getCurrentComponents() {
-        return currentComponents;
+    protected Map<Integer, Map<Integer, C>> getCurrentComponents() {
+        return renderedComponents;
     }
 
     protected int getCurrentPage() {

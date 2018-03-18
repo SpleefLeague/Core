@@ -9,6 +9,7 @@ package com.spleefleague.core.utils.inventorymenu.dialog;
  *
  * @author jonas
  */
-public class InventoryMenuDialogComponentTemplateBuilder {
+public interface InventoryMenuDialogClickListener<B> {
     
+    void onClick(InventoryMenuDialogClickEvent<B> event);
 }
