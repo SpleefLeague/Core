@@ -6,10 +6,10 @@ import java.util.Map;
 import com.spleefleague.core.player.SLPlayer;
 import java.util.function.Function;
 
-public abstract class AbstractInventoryMenuTemplate<C extends AbstractInventoryMenu, I extends InventoryMenuComponent> extends InventoryMenuComponentTemplate<C> {
+public abstract class AbstractInventoryMenuTemplate<C extends AbstractInventoryMenu> extends InventoryMenuComponentTemplate<C> {
 
     private Function<SLPlayer, String> title;
-    protected final Map<Integer, InventoryMenuComponentTemplate<? extends I>> components, staticComponents;
+    protected final Map<Integer, AbstractInventoryMenuComponentTemplate<? extends InventoryMenuComponent>> components, staticComponents;
     
     protected int flags;
 
@@ -29,11 +29,11 @@ public abstract class AbstractInventoryMenuTemplate<C extends AbstractInventoryM
         this.title = title;
     }
 
-    public void addComponent(int position, InventoryMenuComponentTemplate<? extends I> component) {
+    public void addComponent(int position, AbstractInventoryMenuComponentTemplate<? extends InventoryMenuComponent> component) {
         components.put(position, component);
     }
 
-    public void addStaticComponent(int position, InventoryMenuComponentTemplate<? extends I> component) {
+    public void addStaticComponent(int position, AbstractInventoryMenuComponentTemplate<? extends InventoryMenuComponent> component) {
         staticComponents.put(position, component);
     }
 

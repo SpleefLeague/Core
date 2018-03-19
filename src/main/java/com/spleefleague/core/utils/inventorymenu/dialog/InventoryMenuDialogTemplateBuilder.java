@@ -7,6 +7,7 @@ package com.spleefleague.core.utils.inventorymenu.dialog;
 
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponentTemplateBuilder;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
@@ -14,14 +15,25 @@ import java.util.function.Function;
  * @author jonas
  */
 public class InventoryMenuDialogTemplateBuilder<B> extends InventoryMenuComponentTemplateBuilder<InventoryMenuDialog<B>, InventoryMenuDialogTemplate<B>, InventoryMenuDialogTemplateBuilder<B>> {
-
-    public InventoryMenuDialogTemplateBuilder() {
-
-    }
-
-    public InventoryMenuDialogTemplateBuilder builderFactory(Function<SLPlayer, B> builderFactory) {
+    
+    public InventoryMenuDialogTemplateBuilder<B> builder(Function<SLPlayer, B> builderFactory) {
         buildingObj.setBuilderFactory(builderFactory);
-        return this;
+        return actualBuilder;
+    }
+    
+    public InventoryMenuDialogTemplateBuilder<B> onDone(BiConsumer<SLPlayer, B> completionListener) {
+        buildingObj.setCompletionListener(completionListener);
+        return actualBuilder;
+    }
+    
+    public InventoryMenuDialogTemplateBuilder<B> start(Function<SLPlayer, InventoryMenuDialogHolderTemplate<B>> start) {
+        buildingObj.setStart(start);
+        return actualBuilder;
+    }
+    
+    public InventoryMenuDialogTemplateBuilder<B> start(InventoryMenuDialogHolderTemplate<B> start) {
+        buildingObj.setStart((x) -> start);
+        return actualBuilder;
     }
 
     @Override
@@ -31,6 +43,6 @@ public class InventoryMenuDialogTemplateBuilder<B> extends InventoryMenuComponen
 
     @Override
     protected InventoryMenuDialogTemplate<B> getObj() {
-        return new InventoryMenuDialogTemplate();
+        return new InventoryMenuDialogTemplate<>();
     }
 }

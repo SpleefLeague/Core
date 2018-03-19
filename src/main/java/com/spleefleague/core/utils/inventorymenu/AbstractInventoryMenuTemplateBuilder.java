@@ -22,6 +22,31 @@ public abstract class AbstractInventoryMenuTemplateBuilder<C extends AbstractInv
         return (B)this;
     }
 
+    public B component(int x, int y, AbstractInventoryMenuComponentTemplateBuilder itemTemplateBuilder) {
+        return component(x, y, itemTemplateBuilder.build());
+    }
+
+    public B component(int x, int y, AbstractInventoryMenuComponentTemplate itemTemplate) {
+        return component(y * ROWSIZE + x, itemTemplate);
+    }
+
+    public B component(int position, AbstractInventoryMenuComponentTemplateBuilder itemTemplateBuilder) {
+        return component(position, itemTemplateBuilder.build());
+    }
+
+    public B component(AbstractInventoryMenuComponentTemplate menuItemTemplate) {
+        return component(--dynamic, menuItemTemplate);
+    }
+
+    public B component(AbstractInventoryMenuComponentTemplateBuilder menuItemTemplateBuilder) {
+        return component(--dynamic, menuItemTemplateBuilder.build());
+    }
+
+    public B component(int position, AbstractInventoryMenuComponentTemplate itemTemplate) {
+        buildingObj.addComponent(position, itemTemplate);
+        return (B)this;
+    }
+
     public B component(int x, int y, InventoryMenuItemTemplateBuilder itemTemplateBuilder) {
         return component(x, y, itemTemplateBuilder.build());
     }
@@ -50,7 +75,7 @@ public abstract class AbstractInventoryMenuTemplateBuilder<C extends AbstractInv
     public B component(int x, int y, AbstractInventoryMenuTemplateBuilder<C, T, B> menuTemplateBuilder) {
         return component(x, y, menuTemplateBuilder.build());
     }
-
+    
     public B component(int x, int y, AbstractInventoryMenuTemplate<C> menuTemplate) {
         return component(y * ROWSIZE + x, menuTemplate);
     }

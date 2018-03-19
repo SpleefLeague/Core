@@ -1,6 +1,5 @@
 package com.spleefleague.core.utils.inventorymenu;
 
-import com.sk89q.worldedit.internal.expression.runtime.Function.Dynamic;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import java.util.function.Function;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public abstract class InventoryMenuComponentTemplate<C> {
+public abstract class InventoryMenuComponentTemplate<C> extends AbstractInventoryMenuComponentTemplate<C> {
 
     //private InventoryMenuTemplate parent;
     private Function<SLPlayer, ItemStack> displayItem;
@@ -35,9 +34,6 @@ public abstract class InventoryMenuComponentTemplate<C> {
         this.displayNumber = s -> 1;
         this.displayDescription = s -> new ArrayList<>();
     }
-
-    public abstract C construct(SLPlayer slp);
-
     public String getDisplayName(SLPlayer slp) {
         return displayName.apply(slp);
     }

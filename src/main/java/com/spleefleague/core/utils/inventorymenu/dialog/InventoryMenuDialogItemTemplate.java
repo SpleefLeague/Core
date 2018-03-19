@@ -7,6 +7,8 @@ package com.spleefleague.core.utils.inventorymenu.dialog;
 
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponentTemplate;
+import com.spleefleague.core.utils.inventorymenu.ItemStackWrapper;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -15,15 +17,21 @@ import java.util.function.Function;
  */
 public class InventoryMenuDialogItemTemplate<B> extends InventoryMenuComponentTemplate<InventoryMenuDialogItem<B>>{
 
-    private Function<SLPlayer, InventoryMenuDialogTemplate<B>> next;
+    private Function<SLPlayer, Optional<InventoryMenuDialogHolderTemplateBuilder<B>>> next;
     private InventoryMenuDialogClickListener<B> listener;
     
-    public void setNext(Function<SLPlayer, InventoryMenuDialogTemplate<B>> next) {
-        this.next = next;
+    public InventoryMenuDialogItemTemplate() {
+        super();
+        this.next = (x) -> Optional.empty();
+        this.listener = (e) -> e.getBuilder();
     }
     
-    public void setNext(InventoryMenuDialogTemplate<B> next) {
-        setNext((s) -> next);
+    public void setNext(Function<SLPlayer, InventoryMenuDialogHolderTemplateBuilder<B>> next) {
+        this.next = (slp) -> Optional.ofNullable(next.apply(slp));
+    }
+    
+    public void setNext(InventoryMenuDialogHolderTemplateBuilder<B> next) {
+        this.next = (s) -> Optional.ofNullable(next);
     }
     
     public void setClickListener(InventoryMenuDialogClickListener<B> listener) {
@@ -32,6 +40,7 @@ public class InventoryMenuDialogItemTemplate<B> extends InventoryMenuComponentTe
     
     @Override
     public InventoryMenuDialogItem<B> construct(SLPlayer slp) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ItemStackWrapper isw = constructDisplayItem();
+        return new InventoryMenuDialogItem(isw, getVisibilityController(), getAccessController(), getOverwritePageBehavior(), listener, () -> next.apply(slp).map(i -> i.build()).orElse(null));
     }
 }

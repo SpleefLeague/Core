@@ -6,58 +6,55 @@
 package com.spleefleague.core.utils.inventorymenu.dialog;
 
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.utils.inventorymenu.AbstractInventoryMenu;
-import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponent;
-import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponentTemplate;
 import com.spleefleague.core.utils.inventorymenu.ItemStackWrapper;
-import java.util.Map;
+import com.spleefleague.core.utils.inventorymenu.SelectableInventoryMenuComponent;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
 
 /**
  *
  * @author jonas
- * @param <B> Builder
  */
-public class InventoryMenuDialog<B> extends AbstractInventoryMenu<InventoryMenuDialogComponent> {
+public class InventoryMenuDialog<B> extends SelectableInventoryMenuComponent {
 
-    private final B builder;
     private final BiConsumer<SLPlayer, B> completionListener;
-    private static final Function<InventoryMenuComponent, InventoryMenuDialogComponent> mapper;
+    private final B builder;
+    private final SLPlayer slp;
+    private final InventoryMenuDialogHolderTemplate<B> start;
     
-    static {
-        mapper = null;
-    }
-    
-    protected InventoryMenuDialog(
+    public InventoryMenuDialog(
             ItemStackWrapper displayItem, 
-            String title, 
-            Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuDialogComponent>> components, 
-            Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuDialogComponent>> staticComponents, 
+            Function<SLPlayer, Boolean> visibilityController, 
             Function<SLPlayer, Boolean> accessController, 
-            Function<SLPlayer, Boolean> visibilityController,
+            boolean overwritePageBehavior,
+            B builder, 
             SLPlayer slp, 
-            int flags,
-            B builder,
-            BiConsumer<SLPlayer, B> completionListener) {
-        super(displayItem, title, components, staticComponents, mapper, accessController, visibilityController, slp, flags);
+            BiConsumer<SLPlayer, B> completionListener, 
+            InventoryMenuDialogHolderTemplate<B> start) {
+        super(displayItem, visibilityController, accessController, overwritePageBehavior);
         this.builder = builder;
+        this.slp = slp;
         this.completionListener = completionListener;
+        this.start = start;
+        System.out.println("The builder: " + builder);
     }
-    
+
     @Override
-    public void selectItem(int index, ClickType clickType) {
-        if (getCurrentComponents().get(getCurrentPage()).containsKey(index)) {
-            InventoryMenuDialogComponent component = getCurrentComponents().get(getCurrentPage()).get(index);
-            if (component.hasAccess(getSLP())) {
-                //Select the item
-            } else {
-                getSLP().closeInventory();
-                getSLP().sendMessage(ChatColor.RED + "You don't have access to this");
-            }
+    public void selected(ClickType clickType) {
+        if(start != null) {
+            InventoryMenuDialogHolder<B> holder = start.construct(slp);
+            holder.setParent(this.getParent());
+            holder.setBuilder(builder);
+            holder.setDialogRoot(this);
+            holder.open();
+        }
+        else {
+            completed();
         }
     }
     
+    public void completed() {
+        completionListener.accept(slp, builder);
+    }
 }

@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.spleefleague.core.utils.inventorymenu.dialog;
+package com.spleefleague.core.utils.inventorymenu;
+
+import org.bukkit.event.inventory.ClickType;
 
 /**
  *
  * @author jonas
  */
-public interface InventoryMenuDialogClickListener<B> {
+public interface Selectable {
     
-    B onClick(InventoryMenuDialogClickEvent<B> event);
+    public void selected(ClickType clickType);
 }

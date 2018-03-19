@@ -55,17 +55,18 @@ public class ItemStackWrapper {
         }
 
         ItemMeta im = is.getItemMeta();
-        im.setUnbreakable(true);
-        im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
-        if (name != null) {
-            im.setDisplayName(name);
-        }
-        if (!description.isEmpty()) {
-            im.setLore(description);
-        }
+        if(im != null) {
+            im.setUnbreakable(true);
+            im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+            if (name != null) {
+                im.setDisplayName(name);
+            }
+            if (!description.isEmpty()) {
+                im.setLore(description);
+            }
 
-        is.setItemMeta(im);
-
+            is.setItemMeta(im);
+        }
         return is;
     }
 }

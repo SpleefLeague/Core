@@ -26,7 +26,7 @@ import static com.spleefleague.core.menus.InventoryMenuTemplateRepository.openMe
 import com.spleefleague.core.menus.SLMenu;
 import com.spleefleague.core.player.GeneralPlayer;
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.utils.inventorymenu.InventoryMenu;
+import com.spleefleague.core.utils.inventorymenu.AbstractInventoryMenu;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuFlag;
 import org.bukkit.Material;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -89,8 +89,8 @@ public class InventoryMenuListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
-        if (inventory.getHolder() instanceof InventoryMenu) {
-            InventoryMenu menu = (InventoryMenu) inventory.getHolder();
+        if (inventory.getHolder() instanceof AbstractInventoryMenu) {
+            AbstractInventoryMenu menu = (AbstractInventoryMenu) inventory.getHolder();
             if (event.getWhoClicked() instanceof Player) {
                 Player player = (Player) event.getWhoClicked();
                 if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) {
@@ -120,7 +120,7 @@ public class InventoryMenuListener implements Listener {
 
     }
 
-    private void exitMenuIfClickOutSide(InventoryMenu menu, Player player) {
+    private void exitMenuIfClickOutSide(AbstractInventoryMenu menu, Player player) {
         if (menu.isSet(InventoryMenuFlag.EXIT_ON_CLICK_OUTSIDE)) {
             menu.close(player);
         }

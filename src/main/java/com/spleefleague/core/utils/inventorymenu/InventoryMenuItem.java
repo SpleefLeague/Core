@@ -4,7 +4,7 @@ import com.spleefleague.core.player.SLPlayer;
 import java.util.function.Function;
 import org.bukkit.event.inventory.ClickType;
 
-public class InventoryMenuItem extends ClickableInventoryMenuComponent {
+public class InventoryMenuItem extends SelectableInventoryMenuComponent {
 
     private final InventoryMenuClickListener onClick;
 

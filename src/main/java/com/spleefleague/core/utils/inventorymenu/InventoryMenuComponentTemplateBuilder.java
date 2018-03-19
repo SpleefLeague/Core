@@ -8,20 +8,7 @@ import java.util.List;
 import java.util.function.Function;
 import org.bukkit.inventory.ItemStack;
 
-public abstract class InventoryMenuComponentTemplateBuilder<C, T extends InventoryMenuComponentTemplate<C>, B extends InventoryMenuComponentTemplateBuilder<C, T, B>> {
-
-    //Needed for super fancy Builder inheritance
-    protected B actualBuilder;
-    protected T buildingObj;
-
-    protected abstract B getThis();
-
-    protected abstract T getObj();
-
-    public InventoryMenuComponentTemplateBuilder() {
-        actualBuilder = getThis();
-        buildingObj = getObj();
-    }
+public abstract class InventoryMenuComponentTemplateBuilder<C, T extends InventoryMenuComponentTemplate<C>, B extends InventoryMenuComponentTemplateBuilder<C, T, B>> extends AbstractInventoryMenuComponentTemplateBuilder<C, T, B> {
 
     public B displayName(String displayName) {
         buildingObj.setDisplayName(displayName);
@@ -96,14 +83,4 @@ public abstract class InventoryMenuComponentTemplateBuilder<C, T extends Invento
         buildingObj.setOverwritePageBehavoir(overwritePageBehavior);
         return actualBuilder;
     }
-
-    public T build() {
-        return buildingObj;
-    }
-
-    /*
-     public C construct(){
-     return buildingObj.construct();
-     }
-     */
 }

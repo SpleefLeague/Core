@@ -6,7 +6,7 @@
 package com.spleefleague.core.utils.inventorymenu.dialog;
 
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.utils.inventorymenu.AbstractInventoryMenuTemplate;
+import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponentTemplate;
 import com.spleefleague.core.utils.inventorymenu.ItemStackWrapper;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -15,10 +15,18 @@ import java.util.function.Function;
  *
  * @author jonas
  */
-public class InventoryMenuDialogTemplate<B> extends AbstractInventoryMenuTemplate<InventoryMenuDialog<B>, InventoryMenuDialogComponent> {
+public class InventoryMenuDialogTemplate<B> extends InventoryMenuComponentTemplate<InventoryMenuDialog<B>> {
 
+    
     private Function<SLPlayer, B> builderFactory;
+    private Function<SLPlayer, InventoryMenuDialogHolderTemplate<B>> start;
     private BiConsumer<SLPlayer, B> completionListener;
+    
+    public InventoryMenuDialogTemplate() {
+        builderFactory = (slp) -> null;
+        completionListener = (slp, b) -> {};
+        start = (slp) -> null;
+    }
     
     public void setBuilderFactory(Function<SLPlayer, B> builderFactory) {
         this.builderFactory = builderFactory;
@@ -27,12 +35,15 @@ public class InventoryMenuDialogTemplate<B> extends AbstractInventoryMenuTemplat
     public void setCompletionListener(BiConsumer<SLPlayer, B> completionListener) {
         this.completionListener = completionListener;
     }
-    
-    @Override
-    public InventoryMenuDialog construct(SLPlayer slp) {
-        ItemStackWrapper is = constructDisplayItem();
-        InventoryMenuDialog menu = new InventoryMenuDialog(is, getTitle(slp), components, staticComponents, super.getAccessController(), super.getVisibilityController(), slp, flags, builderFactory.apply(slp), completionListener);
-        return menu;
+
+    public void setStart(Function<SLPlayer, InventoryMenuDialogHolderTemplate<B>> start) {
+        this.start = start;
     }
     
+    @Override
+    public InventoryMenuDialog<B> construct(SLPlayer slp) {
+        B builder = builderFactory.apply(slp);
+        ItemStackWrapper isw = constructDisplayItem();
+        return new InventoryMenuDialog<>(isw, getVisibilityController(), getAccessController(), getOverwritePageBehavior(), builder, slp, completionListener, start.apply(slp));
+    }
 }

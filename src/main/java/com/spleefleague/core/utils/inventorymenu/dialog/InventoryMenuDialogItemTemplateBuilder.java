@@ -19,12 +19,12 @@ public class InventoryMenuDialogItemTemplateBuilder<B> extends InventoryMenuComp
 
     }
 
-    public InventoryMenuDialogItemTemplateBuilder<B> next(Function<SLPlayer, InventoryMenuDialogTemplate<B>> next) {
-        buildingObj.setNext(next);
+    public InventoryMenuDialogItemTemplateBuilder<B> next(Function<SLPlayer, InventoryMenuDialogHolderTemplateBuilder<B>> next) {
+        buildingObj.setNext(slp -> next.apply(slp));
         return this;
     }
 
-    public InventoryMenuDialogItemTemplateBuilder<B> next(InventoryMenuDialogTemplate<B> next) {
+    public InventoryMenuDialogItemTemplateBuilder<B> next(InventoryMenuDialogHolderTemplateBuilder<B> next) {
         buildingObj.setNext(next);
         return this;
     }

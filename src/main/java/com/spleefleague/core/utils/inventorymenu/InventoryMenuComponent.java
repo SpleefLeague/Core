@@ -4,7 +4,7 @@ import com.spleefleague.core.player.SLPlayer;
 import java.util.function.Function;
 import org.bukkit.inventory.ItemStack;
 
-public abstract class InventoryMenuComponent {
+public abstract class InventoryMenuComponent extends AbstractInventoryMenuComponent {
 
     private final ItemStackWrapper displayItem;
     private AbstractInventoryMenu parent;
@@ -17,12 +17,20 @@ public abstract class InventoryMenuComponent {
         this.accessController = accessController;
         this.overwritePageBehavior = overwritePageBehavior;
     }
+
+    public Function<SLPlayer, Boolean> getVisibilityController() {
+        return visibilityController;
+    }
+
+    public Function<SLPlayer, Boolean> getAccessController() {
+        return accessController;
+    }
     
-    protected boolean getOverwritePageBehavior() {
+    public boolean getOverwritePageBehavior() {
         return this.overwritePageBehavior;
     }
 
-    protected ItemStackWrapper getDisplayItemWrapper() {
+    public ItemStackWrapper getDisplayItemWrapper() {
         return displayItem;
     }
 
@@ -36,14 +44,6 @@ public abstract class InventoryMenuComponent {
 
     public boolean hasAccess(SLPlayer slp) {
         return accessController.apply(slp);
-    }
-
-    public AbstractInventoryMenu getParent() {
-        return parent;
-    }
-
-    protected void setParent(AbstractInventoryMenu parent) {
-        this.parent = parent;
     }
 
     public InventoryMenuComponent getRoot() {

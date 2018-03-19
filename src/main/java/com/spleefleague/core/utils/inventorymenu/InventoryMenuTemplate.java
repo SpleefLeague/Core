@@ -2,25 +2,17 @@ package com.spleefleague.core.utils.inventorymenu;
 
 
 import com.spleefleague.core.player.SLPlayer;
+import java.util.Map;
 
 public class InventoryMenuTemplate extends AbstractInventoryMenuTemplate<InventoryMenu> {
 
     @Override
     public InventoryMenu construct(SLPlayer slp) {
         ItemStackWrapper is = constructDisplayItem();
-
-        //Construct components
-//        Map<Integer, InventoryMenuComponent> actualComponents = components.entrySet().stream()
-//                .collect(Collectors.toMap(
-//                        entry -> entry.getKey(),
-//                        entry -> entry.getValue().construct(slp)));
-//        Map<Integer, InventoryMenuComponent> actualStaticComponents = staticComponents.entrySet().stream()
-//                .collect(Collectors.toMap(
-//                        entry -> entry.getKey(),
-//                        entry -> entry.getValue().construct(slp)));
-        InventoryMenu menu = new InventoryMenu(is, getTitle(slp), components, staticComponents, super.getAccessController(), super.getVisibilityController(), slp, flags);
-//        addMenuControls(actualComponents);
-//        menu.populateInventory();
+        //TODO Fix this ugly cast with generics, I honestly don't know how right now..
+        Map<Integer, InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>> cp = (Map<Integer, InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>>)((Object)this.components);
+        Map<Integer, InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>> scp = (Map<Integer, InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>>)((Object)this.staticComponents);
+        InventoryMenu menu = new InventoryMenu(is, getTitle(slp), cp, scp, super.getAccessController(), super.getVisibilityController(), slp, flags);
         return menu;
     }
 }

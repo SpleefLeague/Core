@@ -45,13 +45,10 @@ public class PredicateScheduler {
             
             {
                 task = supplier.apply(() -> {
-                    System.out.println("tick: " + tick);
                     if(!p.test(tick++)) {
-                        System.out.println(false);
                         task.cancel();
                     }
                     else {
-                        System.out.println(true);
                         run.run();
                     }
                 });

@@ -7,17 +7,14 @@ package com.spleefleague.core.utils.inventorymenu;
 
 import com.spleefleague.core.player.SLPlayer;
 import java.util.function.Function;
-import org.bukkit.event.inventory.ClickType;
 
 /**
  *
  * @author jonas
  */
-public abstract class ClickableInventoryMenuComponent extends InventoryMenuComponent {
+public abstract class SelectableInventoryMenuComponent extends InventoryMenuComponent implements Selectable {
 
-    public ClickableInventoryMenuComponent(ItemStackWrapper displayItem, Function<SLPlayer, Boolean> visibilityController, Function<SLPlayer, Boolean> accessController, boolean overwritePageBehavior) {
+    public SelectableInventoryMenuComponent(ItemStackWrapper displayItem, Function<SLPlayer, Boolean> visibilityController, Function<SLPlayer, Boolean> accessController, boolean overwritePageBehavior) {
         super(displayItem, visibilityController, accessController, overwritePageBehavior);
     }
-    
-    protected abstract void selected(ClickType clickType);
 }

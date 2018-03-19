@@ -6,17 +6,25 @@
 package com.spleefleague.core.utils.inventorymenu.dialog;
 
 import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.utils.inventorymenu.SelectableInventoryMenuComponent;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponent;
 import com.spleefleague.core.utils.inventorymenu.ItemStackWrapper;
 import java.util.function.Function;
+import org.bukkit.event.inventory.ClickType;
 
 /**
  *
  * @author jonas
  */
-public class InventoryMenuDialogComponent extends InventoryMenuComponent{
+public abstract class InventoryMenuDialogComponent<B> extends InventoryMenuComponent{
 
     public InventoryMenuDialogComponent(ItemStackWrapper displayItem, Function<SLPlayer, Boolean> visibilityController, Function<SLPlayer, Boolean> accessController, boolean overwritePageBehavior) {
         super(displayItem, visibilityController, accessController, overwritePageBehavior);
     }
+
+    protected InventoryMenuDialogComponent(SelectableInventoryMenuComponent cimc) {
+        super(cimc.getDisplayItemWrapper(), cimc.getVisibilityController(), cimc.getAccessController(), cimc.getOverwritePageBehavior());
+    }
+    
+    protected abstract void selected(ClickType clickType, B builder);
 }

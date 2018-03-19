@@ -21,7 +21,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
-public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> extends ClickableInventoryMenuComponent implements InventoryHolder {
+public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> extends SelectableInventoryMenuComponent implements InventoryHolder {
 
     private static final int ROWSIZE = 9;
     private static final int COLUMNSIZE = 6;
@@ -30,7 +30,7 @@ public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> ex
 
     private final TreeMap<Integer, Inventory> inventories;
     private final Map<Integer, InventoryMenuComponentTemplate<? extends C>> standardTemplates, staticTemplates;
-    private final Function<ClickableInventoryMenuComponent, C> componentMapper;
+    private final Function<SelectableInventoryMenuComponent, C> componentMapper;
     private final String title;
     private final SLPlayer slp;
     private final Map<Integer, Map<Integer, C>> renderedComponents;
@@ -43,7 +43,7 @@ public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> ex
             String title, 
             Map<Integer, InventoryMenuComponentTemplate<? extends C>> components, 
             Map<Integer, InventoryMenuComponentTemplate<? extends C>> staticComponents, 
-            Function<ClickableInventoryMenuComponent, C> componentMapper,
+            Function<SelectableInventoryMenuComponent, C> componentMapper,
             Function<SLPlayer, Boolean> accessController, 
             Function<SLPlayer, Boolean> visibilityController, 
             SLPlayer slp, 
@@ -165,8 +165,8 @@ public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> ex
                         Collectors.toMap(
                                 e -> e.getKey() % (e.getValue().getOverwritePageBehavior() ? MAX_PAGE_SIZE : pagesize), 
                                 e -> componentMapper.apply(e.getValue().construct(slp)))));
-        Integer fp = pageMap.firstKey();
-        Integer fc = controlMap.firstKey();
+        Integer fp = pageMap.isEmpty() ? null : pageMap.firstKey();
+        Integer fc = controlMap.isEmpty() ? null : controlMap.firstKey();
         while(fc != null) {
             if(fc.equals(fp)) {
                 Map<Integer, C> mp = pageMap.get(fp);
@@ -238,7 +238,7 @@ public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> ex
     }
     
     @Override
-    protected void selected(ClickType clickType) {
+    public void selected(ClickType clickType) {
         //Directly opening submenu if it's the only option available
         if(this.isSet(InventoryMenuFlag.SKIP_SINGLE_SUBMENU) && renderedComponents.size() == 1) {
             Map<Integer, C> pageOne = renderedComponents.get(0);

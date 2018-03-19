@@ -8,13 +8,13 @@ import com.spleefleague.core.player.SLPlayer;
 import java.util.function.Function;
 import org.bukkit.event.inventory.ClickType;
 
-public class InventoryMenu extends AbstractInventoryMenu<ClickableInventoryMenuComponent> {
+public class InventoryMenu extends AbstractInventoryMenu<SelectableInventoryMenuComponent> {
     
     protected InventoryMenu(
             ItemStackWrapper displayItem, 
             String title, 
-            Map<Integer, InventoryMenuComponentTemplate<? extends ClickableInventoryMenuComponent>> components, 
-            Map<Integer, InventoryMenuComponentTemplate<? extends ClickableInventoryMenuComponent>> staticComponents,
+            Map<Integer, InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>> components, 
+            Map<Integer, InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>> staticComponents,
             Function<SLPlayer, Boolean> accessController, 
             Function<SLPlayer, Boolean> visibilityController, 
             SLPlayer slp, 
@@ -25,7 +25,7 @@ public class InventoryMenu extends AbstractInventoryMenu<ClickableInventoryMenuC
     @Override
     public void selectItem(int index, ClickType clickType) {
         if (getCurrentComponents().get(getCurrentPage()).containsKey(index)) {
-            ClickableInventoryMenuComponent component = getCurrentComponents().get(getCurrentPage()).get(index);
+            SelectableInventoryMenuComponent component = getCurrentComponents().get(getCurrentPage()).get(index);
             if (component.hasAccess(getSLP())) {
                 component.selected(clickType);
             } else {
