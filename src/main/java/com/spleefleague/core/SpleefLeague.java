@@ -86,7 +86,6 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         InventoryMenuListener.init();
         ConnectionListener.init();
         AfkListener.init();
-        InventoryMenuTemplateRepository.initTemplates();
         Warp.init();
         Challenge.init();
         getProtocolManager().addPacketListener(new PingCalculationAdapter(20));
@@ -96,6 +95,7 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         portalManager = new PortalManager();
         connectionClient = new ConnectionClient();
         debuggerHostManager = new DebuggerHostManager();
+        InventoryMenuTemplateRepository.initTemplates();
         Settings.getList("debugger_hosts").ifPresent(hosts -> debuggerHostManager.reloadAll(hosts));
     }
 

@@ -3,13 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.spleefleague.core.utils.inventorymenu.dialog;
+package com.spleefleague.core.utils;
 
 /**
  *
  * @author jonas
  */
-public interface InventoryMenuDialogClickListener<B> {
-    
-    void onClick(InventoryMenuDialogClickEvent<B> event);
+public class Tuple<X, Y> {
+
+    public final X x;
+    public final Y y;
+
+    public Tuple(X x, Y y) {
+        this.x = x;
+        this.y = y;
+    }
 }

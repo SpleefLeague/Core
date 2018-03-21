@@ -3,13 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.spleefleague.core.utils.inventorymenu.dialog;
+package com.spleefleague.core.menus;
+
+import org.bukkit.entity.Player;
 
 /**
  *
  * @author jonas
+ * @param <T>
  */
-public interface InventoryMenuDialogClickListener<B> {
+public interface PlayerBuilder<T extends Player> {
     
-    void onClick(InventoryMenuDialogClickEvent<B> event);
+    public void setPlayer(T p);
+    public T getPlayer();
 }

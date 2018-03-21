@@ -6,12 +6,15 @@
 package com.spleefleague.core.utils.inventorymenu.dialog;
 
 import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.utils.Tuple;
 import com.spleefleague.core.utils.inventorymenu.AbstractInventoryMenu;
+import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponentAlignment;
 import com.spleefleague.core.utils.inventorymenu.SelectableInventoryMenuComponent;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponentTemplate;
 import com.spleefleague.core.utils.inventorymenu.ItemStackWrapper;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
 
@@ -24,6 +27,7 @@ public class InventoryMenuDialogHolder<B> extends AbstractInventoryMenu<Inventor
     
     private B builder;
     private InventoryMenuDialog<B> dialogRoot;
+    private final Supplier<InventoryMenuDialogHolderTemplate<B>> next;
     
     private static <B> Function<SelectableInventoryMenuComponent, InventoryMenuDialogComponent<B>> generateMapper(){
         return cimc -> {
@@ -47,13 +51,19 @@ public class InventoryMenuDialogHolder<B> extends AbstractInventoryMenu<Inventor
     protected InventoryMenuDialogHolder(
             ItemStackWrapper displayItem, 
             String title, 
-            Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuDialogComponent<B>>> components, 
-            Map<Integer, InventoryMenuComponentTemplate<? extends InventoryMenuDialogComponent<B>>> staticComponents, 
+            Map<Integer, Tuple<Supplier<InventoryMenuComponentTemplate<? extends InventoryMenuDialogComponent<B>>>, InventoryMenuComponentAlignment>> components, 
+            Map<Integer, Supplier<InventoryMenuComponentTemplate<? extends InventoryMenuDialogComponent<B>>>> staticComponents, 
             Function<SLPlayer, Boolean> accessController, 
             Function<SLPlayer, Boolean> visibilityController,
             SLPlayer slp, 
-            int flags) {
+            int flags,
+            Supplier<InventoryMenuDialogHolderTemplate<B>> next) {
         super(displayItem, title, components, staticComponents, generateMapper(), accessController, visibilityController, slp, flags);
+        this.next = next;
+    }
+
+    public Supplier<InventoryMenuDialogHolderTemplate<B>> getNext() {
+        return next;
     }
 
     public void setBuilder(B builder) {
@@ -61,8 +71,6 @@ public class InventoryMenuDialogHolder<B> extends AbstractInventoryMenu<Inventor
     }
     
     protected InventoryMenuDialogHolder<B> construct(InventoryMenuDialogHolderTemplate<B> template) {
-        System.out.println(this.getParent());
-        System.out.println(template);
         InventoryMenuDialogHolder<B> holder = template.construct(this.getParent().getOwner());
         holder.setParent(this.getParent());
         holder.setBuilder(builder);
@@ -72,7 +80,6 @@ public class InventoryMenuDialogHolder<B> extends AbstractInventoryMenu<Inventor
     
     @Override
     public void selectItem(int index, ClickType clickType) {
-        System.out.println("(H) Selecting " + index);
         if (getCurrentComponents().get(getCurrentPage()).containsKey(index)) {
             InventoryMenuDialogComponent<B> component = getCurrentComponents().get(getCurrentPage()).get(index);
             if (component.hasAccess(getSLP())) {

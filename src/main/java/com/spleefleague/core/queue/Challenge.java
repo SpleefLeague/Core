@@ -105,7 +105,13 @@ public abstract class Challenge {
     }
 
     public void sendMessages(String prefix, String arena, Collection<Player> target) {
-        BaseComponent[] intro = new ComponentBuilder(prefix).append(" ").append(challenger.getName() + " has challenged you to play on ").color(ChatColor.GREEN.asBungee()).append(arena + "!").color(ChatColor.RED.asBungee()).create();
+        BaseComponent[] intro;
+        if(arena != null) {
+            intro = new ComponentBuilder(prefix).append(" ").append(challenger.getName() + " has challenged you to play on ").color(ChatColor.GREEN.asBungee()).append(arena + "!").color(ChatColor.RED.asBungee()).create();
+        }
+        else {
+            intro = new ComponentBuilder(prefix).append(" ").append(challenger.getName() + " has challenged you to play").append(arena + "!").color(ChatColor.RED.asBungee()).create();
+        }
         BaseComponent[] accept
                 = new ComponentBuilder(prefix)
                 .append(" [").color(ChatColor.GRAY.asBungee()).append("Accept").color(ChatColor.DARK_GREEN.asBungee()).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/challenge accept " + challenger.getName())).append("]").color(ChatColor.GRAY.asBungee())

@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 
 /**
  *
@@ -42,7 +41,6 @@ public class SLPlayer extends GeneralPlayer {
     private long areaMessageCooldown = 0L;
     private int premiumCreditsGotThatMonth;
     private long premiumCreditsLastReceptionTime;
-    private int aimedPing;
     
     public SLPlayer() {
         super();
@@ -308,18 +306,6 @@ public class SLPlayer extends GeneralPlayer {
 
     public long getAreaMessageCooldown() {
         return areaMessageCooldown;
-    }
-    
-    public void setAimedPing(int aimedPing) {
-        this.aimedPing = aimedPing;
-    }
-    
-    public int getAimedPing() {
-        return aimedPing;
-    }
-    
-    public int getPing() {
-        return ((CraftPlayer)getPlayer()).getHandle().ping;
     }
 
     @Override

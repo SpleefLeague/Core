@@ -7,6 +7,7 @@ package com.spleefleague.core.utils.inventorymenu.dialog;
 
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.inventorymenu.AbstractInventoryMenu;
+import com.spleefleague.core.utils.inventorymenu.InventoryMenuFlag;
 import com.spleefleague.core.utils.inventorymenu.ItemStackWrapper;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -19,7 +20,7 @@ import org.bukkit.event.inventory.ClickType;
 public class InventoryMenuDialogItem<B> extends InventoryMenuDialogComponent<B> {
     
     private final InventoryMenuDialogClickListener<B> clickListener;
-    private final Supplier<InventoryMenuDialogHolderTemplate<B>> next;
+    private Supplier<InventoryMenuDialogHolderTemplate<B>> next;
     private InventoryMenuDialogHolder<B> holderInstance;
     
     public InventoryMenuDialogItem(
@@ -36,14 +37,20 @@ public class InventoryMenuDialogItem<B> extends InventoryMenuDialogComponent<B> 
     
     protected void setHolderInstance(InventoryMenuDialogHolder<B> holderInstance) {
         this.holderInstance = holderInstance;
+        Supplier<InventoryMenuDialogHolderTemplate<B>> oldNext = this.next;
+        this.next = () -> {
+            InventoryMenuDialogHolderTemplate<B> n = oldNext.get();
+            if(n == null) {
+                n = holderInstance.getNext().get();
+            }
+            return n;
+        };
     }
 
     @Override
     protected void selected(ClickType clickType, B builder) {
         clickListener.onClick(new InventoryMenuDialogClickEvent<>(this, clickType, this.getParent().getOwner(), builder));
         InventoryMenuDialogHolderTemplate<B> nextDialog = next.get();
-        System.out.println("Selected. Next: " + nextDialog);
-        System.out.println("Builder: " + builder);
         if(nextDialog != null) {
             holderInstance.construct(nextDialog);
             InventoryMenuDialogHolder<B> dialog = holderInstance.construct(nextDialog);
@@ -52,7 +59,7 @@ public class InventoryMenuDialogItem<B> extends InventoryMenuDialogComponent<B> 
         else {
             holderInstance.getDialogRoot().completed();
             AbstractInventoryMenu aim = holderInstance.getDialogRoot().getParent();
-            if(aim != null) {
+            if(aim != null && !aim.isSet(InventoryMenuFlag.EXIT_ON_COMPLETE_DIALOG)) {
                 aim.update();
                 aim.open();
             }

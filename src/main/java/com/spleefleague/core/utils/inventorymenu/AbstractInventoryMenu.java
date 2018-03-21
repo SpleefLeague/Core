@@ -9,13 +9,18 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.utils.Tuple;
 import com.spleefleague.core.utils.collections.MapUtil;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
+import java.util.OptionalInt;
 import java.util.Queue;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.ClickType;
@@ -23,13 +28,14 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> extends SelectableInventoryMenuComponent implements InventoryHolder {
 
-    private static final int ROWSIZE = 9;
-    private static final int COLUMNSIZE = 6;
+    public static final int ROWSIZE = 9;
+    public static final int COLUMNSIZE = 6;
     private static final int PAGE_NAVIGATION_SIZE = ROWSIZE * 2;
     private final int MAX_PAGE_SIZE = ROWSIZE * COLUMNSIZE;
 
     private final TreeMap<Integer, Inventory> inventories;
-    private final Map<Integer, InventoryMenuComponentTemplate<? extends C>> standardTemplates, staticTemplates;
+    private final Map<Integer, Tuple<Supplier<InventoryMenuComponentTemplate<? extends C>>, InventoryMenuComponentAlignment>> standardTemplates;
+    private final Map<Integer, Supplier<InventoryMenuComponentTemplate<? extends C>>> staticTemplates;
     private final Function<SelectableInventoryMenuComponent, C> componentMapper;
     private final String title;
     private final SLPlayer slp;
@@ -41,8 +47,8 @@ public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> ex
     protected AbstractInventoryMenu(
             ItemStackWrapper displayItem, 
             String title, 
-            Map<Integer, InventoryMenuComponentTemplate<? extends C>> components, 
-            Map<Integer, InventoryMenuComponentTemplate<? extends C>> staticComponents, 
+            Map<Integer, Tuple<Supplier<InventoryMenuComponentTemplate<? extends C>>, InventoryMenuComponentAlignment>> components, 
+            Map<Integer, Supplier<InventoryMenuComponentTemplate<? extends C>>> staticComponents, 
             Function<SelectableInventoryMenuComponent, C> componentMapper,
             Function<SLPlayer, Boolean> accessController, 
             Function<SLPlayer, Boolean> visibilityController, 
@@ -74,47 +80,72 @@ public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> ex
 
     protected void populateInventory() {
         int highestDefined = 0;
-        int count = 0;
-        for(Entry<Integer, InventoryMenuComponentTemplate<? extends C>> e : standardTemplates.entrySet()) {
-            if(!e.getValue().isVisible(slp)) continue;
-            count++;
+        Predicate<C> displayEmptyMenu = (c) -> {
+            if(c instanceof AbstractInventoryMenu && this.isSet(InventoryMenuFlag.HIDE_EMPTY_SUBMENU)) {
+                return ((AbstractInventoryMenu) c).isEmpty();
+            }
+            return true;
+        };
+        Map<Integer, Tuple<C, InventoryMenuComponentAlignment>> visibleStandardComponents = this.standardTemplates
+                .entrySet()
+                .stream()
+                .map(e -> new Tuple<>(e.getKey(), new Tuple<InventoryMenuComponentTemplate<? extends C>, InventoryMenuComponentAlignment>(e.getValue().x.get(), e.getValue().y)))
+                .filter(e -> e.y.x.isVisible(slp)) //Avoid constructing invisible components
+                .map(e -> new Tuple<>(e.x, new Tuple<>(e.y.x.construct(slp), e.y.y)))
+                .filter(e -> displayEmptyMenu.test(e.y.x))
+                .collect(Collectors.toMap(e -> e.x, e -> e.y));
+        Map<Integer, C> visibleStaticComponents = this.staticTemplates
+                .entrySet()
+                .stream()
+                .map(e -> new Tuple<>(e.getKey(), e.getValue().get()))
+                .filter(e -> e.y.isVisible(slp))
+                .map(e -> new Tuple<>(e.x, e.y.construct(slp)))
+                .filter(e -> displayEmptyMenu.test(e.y))
+                .collect(Collectors.toMap(e -> e.x, e -> e.y));
+        for(Entry<Integer, ?> e : visibleStandardComponents.entrySet()) {
             highestDefined = Math.max(highestDefined, e.getKey());
         }
-        boolean multiPage = Math.max(count, highestDefined) > pagesize;
-        TreeMap<Integer, Map<Integer, C>> componentPageMap = generateComponentPageMap(standardTemplates);
-        
-        Queue<C> fillupQueue = new LinkedList<>(standardTemplates
-                .keySet()
+        boolean multiPage = Math.max(visibleStandardComponents.size(), highestDefined) > pagesize;
+        final TreeMap<Integer, Map<Integer, C>> visibleComponentPageMap = generateComponentPageMap(visibleStandardComponents);
+        SortedMap<InventoryMenuComponentAlignment, Queue<C>> fillupQueueMap = visibleStandardComponents
+                .entrySet()
                 .stream()
-                .sorted((i1, i2) -> Integer.compare(i2, i1))
-                .filter(key -> key < 0)
-                .map(key -> standardTemplates.get(key).construct(slp))
-                .filter(m -> m.isVisible(slp))
-                .collect(Collectors.toList()));
-        for(int page = 0; !fillupQueue.isEmpty(); page++) {
-            Map<Integer, C> slots = componentPageMap.getOrDefault(page, new HashMap<>());
-            if(slots.size() >= pagesize) continue;
-            for (int slot = 0; !fillupQueue.isEmpty() && slot < pagesize; slot++) {
-                if(slots.containsKey(slot)) continue;
-                slots.put(slot, fillupQueue.poll());
+                .sorted((e1, e2) -> Integer.compare(e2.getKey(), e1.getKey()))
+                .filter(e -> e.getKey() < 0)
+                .map(e -> new Tuple<>(e.getValue().x, e.getValue().y))
+                .collect(Collectors.groupingBy(t -> t.y, () -> new TreeMap<>(), Collectors.mapping(t -> t.x, Collectors.toCollection(() -> new LinkedList<>()))));
+        fillupQueueMap.forEach((align, fillupQueue) -> {
+            for(int page = 0; !fillupQueue.isEmpty(); page++) {
+                Map<Integer, C> slots = visibleComponentPageMap.getOrDefault(page, new HashMap<>());
+                int items = slots.size() + fillupQueue.size();
+                int pageHeight = (items + ROWSIZE - 1) / ROWSIZE;
+                pageHeight = Math.min(pageHeight, this.pagesize / ROWSIZE);
+                if(slots.size() >= pagesize) continue;
+                OptionalInt slotOpt = OptionalInt.of(align.getStart(pageHeight));
+                while(!fillupQueue.isEmpty() && slotOpt.isPresent()) {
+                    int slot = slotOpt.getAsInt();
+                    if(!slots.containsKey(slot)) {
+                        C c = fillupQueue.poll();
+                        slots.put(slot, c);
+                        
+                    }
+                    slotOpt = align.next(slot, pageHeight);
+                }
+                visibleComponentPageMap.put(page, slots);
             }
-            componentPageMap.put(page, slots);
-        }
-        //Compressing menu page structure ([2,3,6,8,9] -> [0,1,2,3,4])
-        componentPageMap.put(-1, null);
-        componentPageMap = MapUtil.compress(componentPageMap);
-        componentPageMap.remove(-1);
-        componentPageMap.values()
+        });
+        //Compressing menu page structure to avoid gaps ([2,3,6,8,9] -> [0,1,2,3,4])
+        visibleComponentPageMap.put(-1, null);
+        TreeMap<Integer, Map<Integer, C>> compressedComponentPageMap = MapUtil.compress(visibleComponentPageMap);
+        compressedComponentPageMap.remove(-1);
+        compressedComponentPageMap.values()
                 .stream()
-                .forEach(m -> {
-                    staticTemplates
-                            .forEach((i, imct) -> m.put(i, imct.construct(slp)));
-                });
+                .forEach(m -> m.putAll(visibleStaticComponents));
         //Adding page navigation
         if(multiPage) {
-            int max = componentPageMap.lastKey();
+            int max = compressedComponentPageMap.lastKey();
             for (int page = 0; page <= max; page++) {
-                Map<Integer, C> slots = componentPageMap.get(page);
+                Map<Integer, C> slots = compressedComponentPageMap.get(page);
                 if(page > 0) {
                     C lastPage = componentMapper.apply(createPreviousPageItem(page).construct(slp));
                     lastPage.setParent(this);
@@ -130,8 +161,8 @@ public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> ex
         //Creating Bukkit inventories
         inventories.clear();
         renderedComponents.clear();
-        renderedComponents.putAll(componentPageMap);
-        for(Entry<Integer, Map<Integer, C>> e : componentPageMap.entrySet()) {
+        renderedComponents.putAll(compressedComponentPageMap);
+        for(Entry<Integer, Map<Integer, C>> e : compressedComponentPageMap.entrySet()) {
             int max = e.getValue()
                     .keySet()
                     .stream()
@@ -146,20 +177,22 @@ public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> ex
         setParents();
     }
     
-    private TreeMap<Integer, Map<Integer, C>> generateComponentPageMap(Map<Integer, InventoryMenuComponentTemplate<? extends C>> allComponents) {
-        TreeMap<Integer, Map<Integer, C>> pageMap = allComponents
+    //Creates a map with each component that has a defined position on its (provisional) page
+    private TreeMap<Integer, Map<Integer, C>> generateComponentPageMap(Map<Integer, Tuple<C, InventoryMenuComponentAlignment>> visibleComponents) {
+        TreeMap<Integer, Map<Integer, C>> pageMap = visibleComponents
                 .entrySet()
                 .stream()
-                .filter((entry) -> (entry.getKey() >= 0 && entry.getValue().isVisible(slp)))
-                .collect(Collectors.groupingBy(e -> e.getKey() / (e.getValue().getOverwritePageBehavior() ? MAX_PAGE_SIZE : pagesize),
+                .filter((entry) -> (entry.getKey() >= 0))
+                .collect(Collectors.groupingBy(e -> e.getKey() / (e.getValue().x.getOverwritePageBehavior() ? MAX_PAGE_SIZE : pagesize),
                         TreeMap::new,
                         Collectors.toMap(
-                                e -> e.getKey() % (e.getValue().getOverwritePageBehavior() ? MAX_PAGE_SIZE : pagesize), 
-                                e -> e.getValue().construct(slp))));
+                                e -> e.getKey() % (e.getValue().x.getOverwritePageBehavior() ? MAX_PAGE_SIZE : pagesize), 
+                                e -> e.getValue().x)));
+        
         TreeMap<Integer, Map<Integer, C>> controlMap = getMenuControls()
                 .entrySet()
                 .stream()
-                .filter((entry) -> (entry.getKey() >= 0 && entry.getValue().isVisible(slp)))
+                .filter((entry) -> (entry.getKey() >= 0))
                 .collect(Collectors.groupingBy(e -> e.getKey() / (e.getValue().getOverwritePageBehavior() ? MAX_PAGE_SIZE : pagesize),
                         TreeMap::new,
                         Collectors.toMap(
@@ -179,6 +212,7 @@ public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> ex
             }
             else if(fp == null) {
                 pageMap.put(fc, controlMap.get(fc));
+                fc = controlMap.higherKey(fc);
             }
             else if(fc < fp) {
                 fc = controlMap.higherKey(fc);
@@ -263,12 +297,18 @@ public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> ex
             this.currentPage = page;
             Inventory i = inventories.get(page);
             if(i == null) {
-                player.closeInventory();
+                if(isSet(InventoryMenuFlag.CLOSE_EMPTY_SUBMENU)) {    
+                    player.closeInventory();
+                }
             }
             else {
                 player.openInventory(i);
             }
         }
+    }
+    
+    public boolean isEmpty() {
+        return inventories.isEmpty();
     }
 
     public void open() {

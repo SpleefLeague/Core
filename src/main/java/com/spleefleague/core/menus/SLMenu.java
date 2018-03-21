@@ -13,10 +13,16 @@ import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.GamePlugin;
+import static com.spleefleague.core.utils.inventorymenu.InventoryMenuAPI.dialog;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplate;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplateBuilder;
+import com.spleefleague.core.utils.inventorymenu.dialog.InventoryMenuDialogHolderTemplate;
+import com.spleefleague.core.utils.inventorymenu.dialog.InventoryMenuDialogHolderTemplateBuilder;
+import com.spleefleague.core.utils.inventorymenu.dialog.InventoryMenuDialogTemplateBuilder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 import org.bukkit.ChatColor;
 
 public class SLMenu {
@@ -34,11 +40,53 @@ public class SLMenu {
                 .description("various things")
                 //Gamemode submenus added by game plugins
                 .component(createOptionsMenu())
-                .component(createStaffMenu());
+                .component(createStaffMenu())
+                .component(exampleDialog()
+                        .displayIcon(Material.DIAMOND)
+                );
         Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
             slMenu = slMenuBuilder.build();
             InventoryMenuTemplateRepository.addMenu(slMenu);
         }); //Gets called after all plugins were loaded
+    }
+    
+    private static InventoryMenuDialogTemplateBuilder exampleDialog() {
+        Supplier<InventoryMenuDialogHolderTemplate<BuilderWithConfirm>> player = () -> {
+            InventoryMenuDialogHolderTemplateBuilder<BuilderWithConfirm> confirm = InventoryMenuTemplateRepository.confirmDialog(item().displayIcon(Material.SKULL_ITEM), BuilderWithConfirm.onConfirm());
+            InventoryMenuDialogHolderTemplateBuilder<BuilderWithConfirm> instance = InventoryMenuTemplateRepository.playerSelector();
+            instance.next(confirm);
+            return instance.build();
+        };
+        return dialog(BuilderWithConfirm.class)
+                .builder(x -> new BuilderWithConfirm())
+                .start(player)
+                .onDone((slp, b) -> {
+                    slp.sendMessage(String.valueOf(b.getPlayer() != null));
+                });
+    }
+    
+    public static class BuilderWithConfirm implements PlayerBuilder<SLPlayer> {
+        
+        private SLPlayer slp;
+        
+        @Override
+        public void setPlayer(SLPlayer p) {
+            slp = p;
+        }
+
+        @Override
+        public SLPlayer getPlayer() {
+            return slp;
+        }
+        
+        public static BiConsumer<BuilderWithConfirm, Boolean> onConfirm() {
+            return (bu, bo) -> {
+                if(!bo) {
+                    bu.setPlayer(null);
+                }
+            };
+        }
+        
     }
 
     private static InventoryMenuTemplateBuilder createOptionsMenu() {

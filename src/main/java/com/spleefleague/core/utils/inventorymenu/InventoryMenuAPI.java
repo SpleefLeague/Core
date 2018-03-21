@@ -25,4 +25,16 @@ public class InventoryMenuAPI {
     public static <B> InventoryMenuDialogItemTemplateBuilder<B> dialogItem(Class<B> b) {
         return new InventoryMenuDialogItemTemplateBuilder<>();
     }
+    
+    public static <B> InventoryMenuDialogTemplateBuilder<B> dialog() {
+        return new InventoryMenuDialogTemplateBuilder<>();
+    }
+    
+    public static <B> InventoryMenuDialogHolderTemplateBuilder<B> dialogMenu() {
+        return new InventoryMenuDialogHolderTemplateBuilder<>();
+    }
+    
+    public static <B> InventoryMenuDialogItemTemplateBuilder<B> dialogItem() {
+        return new InventoryMenuDialogItemTemplateBuilder<>();
+    }
 }

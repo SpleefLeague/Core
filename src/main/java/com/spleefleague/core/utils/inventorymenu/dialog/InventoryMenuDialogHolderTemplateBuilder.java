@@ -5,7 +5,10 @@
  */
 package com.spleefleague.core.utils.inventorymenu.dialog;
 
+import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.inventorymenu.AbstractInventoryMenuTemplateBuilder;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  *
@@ -15,6 +18,21 @@ public class InventoryMenuDialogHolderTemplateBuilder<B> extends AbstractInvento
 
     public InventoryMenuDialogHolderTemplateBuilder() {
     
+    }
+
+    public InventoryMenuDialogHolderTemplateBuilder<B> next(Function<SLPlayer, InventoryMenuDialogHolderTemplateBuilder<B>> next) {
+        buildingObj.setNext(slp -> next.apply(slp));
+        return this;
+    }
+
+    public InventoryMenuDialogHolderTemplateBuilder<B> next(InventoryMenuDialogHolderTemplateBuilder<B> next) {
+        buildingObj.setNext(next);
+        return this;
+    }
+
+    public InventoryMenuDialogHolderTemplateBuilder<B> next(Supplier<InventoryMenuDialogHolderTemplateBuilder<B>> next) {
+        buildingObj.setNext(next);
+        return this;
     }
 
     @Override

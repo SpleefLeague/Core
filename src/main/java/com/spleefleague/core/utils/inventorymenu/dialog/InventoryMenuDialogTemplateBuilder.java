@@ -9,6 +9,7 @@ import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponentTemplateBuilder;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  *
@@ -26,6 +27,10 @@ public class InventoryMenuDialogTemplateBuilder<B> extends InventoryMenuComponen
         return actualBuilder;
     }
     
+    public InventoryMenuDialogTemplateBuilder<B> start(InventoryMenuDialogHolderTemplateBuilder<B> start) {
+        return start(start.build());
+    }
+    
     public InventoryMenuDialogTemplateBuilder<B> start(Function<SLPlayer, InventoryMenuDialogHolderTemplate<B>> start) {
         buildingObj.setStart(start);
         return actualBuilder;
@@ -33,6 +38,11 @@ public class InventoryMenuDialogTemplateBuilder<B> extends InventoryMenuComponen
     
     public InventoryMenuDialogTemplateBuilder<B> start(InventoryMenuDialogHolderTemplate<B> start) {
         buildingObj.setStart((x) -> start);
+        return actualBuilder;
+    }
+    
+    public InventoryMenuDialogTemplateBuilder<B> start(Supplier<InventoryMenuDialogHolderTemplate<B>> start) {
+        buildingObj.setStart((x) -> start.get());
         return actualBuilder;
     }
 

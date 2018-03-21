@@ -5,7 +5,9 @@ import java.util.Map;
 import org.bukkit.ChatColor;
 
 import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.utils.Tuple;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import org.bukkit.event.inventory.ClickType;
 
 public class InventoryMenu extends AbstractInventoryMenu<SelectableInventoryMenuComponent> {
@@ -13,8 +15,8 @@ public class InventoryMenu extends AbstractInventoryMenu<SelectableInventoryMenu
     protected InventoryMenu(
             ItemStackWrapper displayItem, 
             String title, 
-            Map<Integer, InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>> components, 
-            Map<Integer, InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>> staticComponents,
+            Map<Integer, Tuple<Supplier<InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>>, InventoryMenuComponentAlignment>> components, 
+            Map<Integer, Supplier<InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>>> staticComponents,
             Function<SLPlayer, Boolean> accessController, 
             Function<SLPlayer, Boolean> visibilityController, 
             SLPlayer slp, 
@@ -29,8 +31,10 @@ public class InventoryMenu extends AbstractInventoryMenu<SelectableInventoryMenu
             if (component.hasAccess(getSLP())) {
                 component.selected(clickType);
             } else {
-                getSLP().closeInventory();
-                getSLP().sendMessage(ChatColor.RED + "You don't have access to this");
+                if(this.isSet(InventoryMenuFlag.EXIT_ON_NO_PERMISSION)) {
+                    getSLP().closeInventory();
+                    getSLP().sendMessage(ChatColor.RED + "You don't have access to this");
+                }
             }
         }
     }

@@ -6,10 +6,12 @@
 package com.spleefleague.core.utils.inventorymenu.dialog;
 
 import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.utils.inventorymenu.InventoryMenuFlag;
 import com.spleefleague.core.utils.inventorymenu.ItemStackWrapper;
 import com.spleefleague.core.utils.inventorymenu.SelectableInventoryMenuComponent;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
 
 /**
@@ -37,17 +39,24 @@ public class InventoryMenuDialog<B> extends SelectableInventoryMenuComponent {
         this.slp = slp;
         this.completionListener = completionListener;
         this.start = start;
-        System.out.println("The builder: " + builder);
     }
 
     @Override
     public void selected(ClickType clickType) {
         if(start != null) {
-            InventoryMenuDialogHolder<B> holder = start.construct(slp);
-            holder.setParent(this.getParent());
-            holder.setBuilder(builder);
-            holder.setDialogRoot(this);
-            holder.open();
+            if(start.hasAccess(slp)) {
+                InventoryMenuDialogHolder<B> holder = start.construct(slp);
+                holder.setParent(this.getParent());
+                holder.setBuilder(builder);
+                holder.setDialogRoot(this);
+                holder.open();
+            }
+            else {
+                if(this.getParent().isSet(InventoryMenuFlag.EXIT_ON_NO_PERMISSION)) {
+                    slp.closeInventory();
+                    slp.sendMessage(ChatColor.RED + "You don't have access to this");
+                }
+            }
         }
         else {
             completed();

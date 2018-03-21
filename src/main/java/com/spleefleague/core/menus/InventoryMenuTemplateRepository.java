@@ -12,9 +12,11 @@ import static com.spleefleague.core.utils.inventorymenu.InventoryMenuAPI.dialogM
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuItemTemplateBuilder;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplate;
 import com.spleefleague.core.utils.inventorymenu.dialog.InventoryMenuDialogHolderTemplateBuilder;
+import com.spleefleague.core.utils.inventorymenu.dialog.InventoryMenuDialogItemTemplateBuilder;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -47,30 +49,30 @@ public class InventoryMenuTemplateRepository {
         }
     }
     
-    public static InventoryMenuDialogHolderTemplateBuilder<Boolean> confirmDialog(InventoryMenuItemTemplateBuilder item) {
-        InventoryMenuDialogHolderTemplateBuilder<Boolean> holder = dialogMenu(Boolean.class)
-                .title("Confirm?");
+    public static <B> InventoryMenuDialogHolderTemplateBuilder<B> confirmDialog(InventoryMenuItemTemplateBuilder item, BiConsumer<B, Boolean> onConfirm) {
+        InventoryMenuDialogHolderTemplateBuilder<B> holder = dialogMenu();
+        holder.title("Confirm?");
         //Confirm & Decline
-        holder.component(2, dialogItem(Boolean.class)
+        holder.component(2, ((InventoryMenuDialogItemTemplateBuilder<B>)dialogItem())
                 .displayItem(new ItemStack(Material.DIAMOND_AXE, (short)10))
-                .onClick((e) -> false)
+                .onClick((e) -> onConfirm.accept(e.getBuilder(), false))
         );
-        holder.component(6, dialogItem(Boolean.class)
+        holder.component(6, ((InventoryMenuDialogItemTemplateBuilder<B>)dialogItem())
                 .displayItem(new ItemStack(Material.DIAMOND_AXE, (short)11))
-                .onClick((e) -> true)
+                .onClick((e) -> onConfirm.accept(e.getBuilder(), true))
         );
         //What are we confirming/declining?
         holder.component(4, item);
         return holder;
     }
     
-    public static InventoryMenuDialogHolderTemplateBuilder<SLPlayer> playerSelector() {
+    public static <B extends PlayerBuilder<SLPlayer>> InventoryMenuDialogHolderTemplateBuilder<B> playerSelector() {
         return playerSelector((s) -> true);
     }
     
-    public static InventoryMenuDialogHolderTemplateBuilder<SLPlayer> playerSelector(Predicate<SLPlayer> include) {
-        InventoryMenuDialogHolderTemplateBuilder<SLPlayer> holder = dialogMenu(SLPlayer.class)
-                .title("Select a player");
+    public static <B extends PlayerBuilder<SLPlayer>> InventoryMenuDialogHolderTemplateBuilder<B> playerSelector(Predicate<SLPlayer> include) {
+        InventoryMenuDialogHolderTemplateBuilder<B> holder = dialogMenu();
+        holder.title("Select a player");
         SpleefLeague.getInstance().getPlayerManager()
                 .getAll()
                 .stream()
@@ -82,11 +84,12 @@ public class InventoryMenuTemplateRepository {
                     SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
                     skullMeta.setOwner(p.getName());
                     skull.setItemMeta(skullMeta);
-                    holder.component(dialogItem(SLPlayer.class)
+                    InventoryMenuDialogItemTemplateBuilder<B> item = dialogItem();
+                    holder.component(item
                             .displayItem(skull)
                             .displayName(p.getName())
                             .onClick(e -> {
-                                return p;
+                                ((PlayerBuilder<SLPlayer>)e.getBuilder()).setPlayer(p);
                             })
                     );
                 });

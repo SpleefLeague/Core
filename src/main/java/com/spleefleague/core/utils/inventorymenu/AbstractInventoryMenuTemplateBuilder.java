@@ -2,6 +2,7 @@ package com.spleefleague.core.utils.inventorymenu;
 
 import com.spleefleague.core.player.SLPlayer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public abstract class AbstractInventoryMenuTemplateBuilder<C extends AbstractInventoryMenu, T extends AbstractInventoryMenuTemplate<C>, B extends AbstractInventoryMenuTemplateBuilder<C, T, B>> extends InventoryMenuComponentTemplateBuilder<C, T, B> {
 
@@ -19,6 +20,24 @@ public abstract class AbstractInventoryMenuTemplateBuilder<C extends AbstractInv
 
     public B title(Function<SLPlayer, String> title) {
         buildingObj.setTitle(title);
+        return (B)this;
+    }
+
+    public B component(int x, int y, Supplier<AbstractInventoryMenuComponentTemplate<? extends C>> itemTemplate) {
+        return component(y * ROWSIZE + x, itemTemplate);
+    }
+
+    public B component(Supplier<AbstractInventoryMenuComponentTemplate<? extends C>> menuItemTemplate) {
+        return component(--dynamic, menuItemTemplate);
+    }
+
+    public B component(InventoryMenuComponentAlignment alignment, Supplier<AbstractInventoryMenuComponentTemplate<? extends C>> menuItemTemplate) {
+        buildingObj.addComponent(--dynamic, menuItemTemplate, alignment);
+        return (B)this;
+    }
+
+    public B component(int position, Supplier<AbstractInventoryMenuComponentTemplate<? extends C>> itemTemplate) {
+        buildingObj.addComponent(position, itemTemplate);
         return (B)this;
     }
 
@@ -42,36 +61,20 @@ public abstract class AbstractInventoryMenuTemplateBuilder<C extends AbstractInv
         return component(--dynamic, menuItemTemplateBuilder.build());
     }
 
+    public B component(InventoryMenuComponentAlignment alignment, AbstractInventoryMenuComponentTemplateBuilder menuItemTemplateBuilder) {
+        return component(alignment, menuItemTemplateBuilder.build());
+    }
+
+    public B component(InventoryMenuComponentAlignment alignment, AbstractInventoryMenuComponentTemplate menuItemTemplate) {
+        buildingObj.addComponent(--dynamic, menuItemTemplate, alignment);
+        return (B)this;
+    }
+
     public B component(int position, AbstractInventoryMenuComponentTemplate itemTemplate) {
         buildingObj.addComponent(position, itemTemplate);
         return (B)this;
     }
-
-    public B component(int x, int y, InventoryMenuItemTemplateBuilder itemTemplateBuilder) {
-        return component(x, y, itemTemplateBuilder.build());
-    }
-
-    public B component(int x, int y, InventoryMenuItemTemplate itemTemplate) {
-        return component(y * ROWSIZE + x, itemTemplate);
-    }
-
-    public B component(int position, InventoryMenuItemTemplateBuilder itemTemplateBuilder) {
-        return component(position, itemTemplateBuilder.build());
-    }
-
-    public B component(int position, InventoryMenuItemTemplate itemTemplate) {
-        buildingObj.addComponent(position, itemTemplate);
-        return (B)this;
-    }
-
-    public B component(InventoryMenuItemTemplate menuItemTemplate) {
-        return component(--dynamic, menuItemTemplate);
-    }
-
-    public B component(InventoryMenuItemTemplateBuilder menuItemTemplateBuilder) {
-        return component(--dynamic, menuItemTemplateBuilder.build());
-    }
-
+    
     public B component(int x, int y, AbstractInventoryMenuTemplateBuilder<C, T, B> menuTemplateBuilder) {
         return component(x, y, menuTemplateBuilder.build());
     }
@@ -89,6 +92,15 @@ public abstract class AbstractInventoryMenuTemplateBuilder<C extends AbstractInv
         return (B)this;
     }
 
+    public B component(InventoryMenuComponentAlignment alignment, AbstractInventoryMenuTemplateBuilder<C, T, B> menuTemplateBuilder) {
+        return component(alignment, menuTemplateBuilder.build());
+    }
+
+    public B component(InventoryMenuComponentAlignment alignment, AbstractInventoryMenuTemplate<C> menuTemplate) {
+        buildingObj.addComponent(--dynamic, menuTemplate, alignment);
+        return (B)this;
+    }
+
     public B component(AbstractInventoryMenuTemplate<C> menuTemplate) {
         return component(++dynamic, menuTemplate);
     }
@@ -96,20 +108,29 @@ public abstract class AbstractInventoryMenuTemplateBuilder<C extends AbstractInv
     public B component(AbstractInventoryMenuTemplateBuilder<C, T, B> menuTemplateBuilder) {
         return component(++dynamic, menuTemplateBuilder.build());
     }
+
+    public B staticComponent(int x, int y, Supplier<AbstractInventoryMenuComponentTemplate<? extends C>> menuTemplate) {
+        return staticComponent(y * ROWSIZE + x, menuTemplate);
+    }
+
+    public B staticComponent(int position, Supplier<AbstractInventoryMenuComponentTemplate<? extends C>> menuTemplate) {
+        buildingObj.addStaticComponent(position, menuTemplate);
+        return (B)this;
+    }
     
-    public B staticComponent(int x, int y, InventoryMenuItemTemplateBuilder itemTemplateBuilder) {
+    public B staticComponent(int x, int y, AbstractInventoryMenuComponentTemplateBuilder itemTemplateBuilder) {
         return staticComponent(x, y, itemTemplateBuilder.build());
     }
 
-    public B staticComponent(int x, int y, InventoryMenuItemTemplate itemTemplate) {
+    public B staticComponent(int x, int y, AbstractInventoryMenuComponentTemplate itemTemplate) {
         return staticComponent(y * ROWSIZE + x, itemTemplate);
     }
 
-    public B staticComponent(int position, InventoryMenuItemTemplateBuilder itemTemplateBuilder) {
+    public B staticComponent(int position, AbstractInventoryMenuComponentTemplateBuilder itemTemplateBuilder) {
         return staticComponent(position, itemTemplateBuilder.build());
     }
 
-    public B staticComponent(int position, InventoryMenuItemTemplate itemTemplate) {
+    public B staticComponent(int position, AbstractInventoryMenuComponentTemplate itemTemplate) {
         buildingObj.addStaticComponent(position, itemTemplate);
         return (B)this;
     }

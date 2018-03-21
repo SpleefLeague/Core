@@ -82,7 +82,11 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
         Player p = getPlayer();
         return p != null && p.isOnline();
     }
-
+    
+    public int getPing() {
+        return ((CraftPlayer)getPlayer()).getHandle().ping;
+    }
+    
     /**
      * Get the time that this player instance was created. Mainly for debug
      * purposes (e.g. for the ghost player issue).
