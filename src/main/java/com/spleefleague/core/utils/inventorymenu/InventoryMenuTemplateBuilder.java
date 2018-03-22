@@ -1,6 +1,6 @@
 package com.spleefleague.core.utils.inventorymenu;
 
-public class InventoryMenuTemplateBuilder extends AbstractInventoryMenuTemplateBuilder<InventoryMenu, InventoryMenuTemplate, InventoryMenuTemplateBuilder> {
+public class InventoryMenuTemplateBuilder extends AbstractInventoryMenuTemplateBuilder<InventoryMenu, SelectableInventoryMenuComponent, InventoryMenuTemplate, InventoryMenuTemplateBuilder> {
 
     @Override
     protected InventoryMenuTemplateBuilder getThis() {

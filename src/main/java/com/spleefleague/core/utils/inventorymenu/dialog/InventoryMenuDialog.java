@@ -6,6 +6,7 @@
 package com.spleefleague.core.utils.inventorymenu.dialog;
 
 import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.utils.inventorymenu.AbstractInventoryMenu;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuFlag;
 import com.spleefleague.core.utils.inventorymenu.ItemStackWrapper;
 import com.spleefleague.core.utils.inventorymenu.SelectableInventoryMenuComponent;
@@ -23,9 +24,10 @@ public class InventoryMenuDialog<B> extends SelectableInventoryMenuComponent {
     private final BiConsumer<SLPlayer, B> completionListener;
     private final B builder;
     private final SLPlayer slp;
-    private final InventoryMenuDialogHolderTemplate<B> start;
+    private final InventoryMenuDialogHolder<B> start;
     
     public InventoryMenuDialog(
+            AbstractInventoryMenu parent,
             ItemStackWrapper displayItem, 
             Function<SLPlayer, Boolean> visibilityController, 
             Function<SLPlayer, Boolean> accessController, 
@@ -34,22 +36,20 @@ public class InventoryMenuDialog<B> extends SelectableInventoryMenuComponent {
             SLPlayer slp, 
             BiConsumer<SLPlayer, B> completionListener, 
             InventoryMenuDialogHolderTemplate<B> start) {
-        super(displayItem, visibilityController, accessController, overwritePageBehavior);
+        super(parent, displayItem, visibilityController, accessController, overwritePageBehavior);
         this.builder = builder;
         this.slp = slp;
         this.completionListener = completionListener;
-        this.start = start;
+        this.start = start.construct(parent, slp);
     }
 
     @Override
     public void selected(ClickType clickType) {
         if(start != null) {
             if(start.hasAccess(slp)) {
-                InventoryMenuDialogHolder<B> holder = start.construct(slp);
-                holder.setParent(this.getParent());
-                holder.setBuilder(builder);
-                holder.setDialogRoot(this);
-                holder.open();
+                start.setBuilder(builder);
+                start.setDialogRoot(this);
+                start.open();
             }
             else {
                 if(this.getParent().isSet(InventoryMenuFlag.EXIT_ON_NO_PERMISSION)) {
@@ -65,5 +65,9 @@ public class InventoryMenuDialog<B> extends SelectableInventoryMenuComponent {
     
     public void completed() {
         completionListener.accept(slp, builder);
+    }
+
+    public boolean isEmpty() {
+        return start.isEmpty();
     }
 }

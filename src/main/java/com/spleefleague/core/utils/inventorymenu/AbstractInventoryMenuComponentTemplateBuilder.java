@@ -1,6 +1,6 @@
 package com.spleefleague.core.utils.inventorymenu;
 
-public abstract class AbstractInventoryMenuComponentTemplateBuilder<C, T extends AbstractInventoryMenuComponentTemplate<C>, B extends AbstractInventoryMenuComponentTemplateBuilder<C, T, B>> {
+public abstract class AbstractInventoryMenuComponentTemplateBuilder<C extends AbstractInventoryMenuComponent, T extends AbstractInventoryMenuComponentTemplate<C>, B extends AbstractInventoryMenuComponentTemplateBuilder<C, T, B>> {
 
     //Needed for super fancy Builder inheritance
     protected B actualBuilder;

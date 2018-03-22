@@ -8,8 +8,8 @@ public class InventoryMenuItem extends SelectableInventoryMenuComponent {
 
     private final InventoryMenuClickListener onClick;
 
-    public InventoryMenuItem(ItemStackWrapper displayItem, InventoryMenuClickListener onClick, Function<SLPlayer, Boolean> visibilityController, Function<SLPlayer, Boolean> accessController, boolean overwritePageBehavior) {
-        super(displayItem, visibilityController, accessController, overwritePageBehavior);
+    public InventoryMenuItem(AbstractInventoryMenu parent, ItemStackWrapper displayItem, InventoryMenuClickListener onClick, Function<SLPlayer, Boolean> visibilityController, Function<SLPlayer, Boolean> accessController, boolean overwritePageBehavior) {
+        super(parent, displayItem, visibilityController, accessController, overwritePageBehavior);
         this.onClick = onClick;
     }
 

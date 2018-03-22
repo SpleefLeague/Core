@@ -11,6 +11,7 @@ import com.spleefleague.core.utils.inventorymenu.AbstractInventoryMenu;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponentAlignment;
 import com.spleefleague.core.utils.inventorymenu.SelectableInventoryMenuComponent;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponentTemplate;
+import com.spleefleague.core.utils.inventorymenu.InventoryMenuFlag;
 import com.spleefleague.core.utils.inventorymenu.ItemStackWrapper;
 import java.util.Map;
 import java.util.function.Function;
@@ -49,6 +50,7 @@ public class InventoryMenuDialogHolder<B> extends AbstractInventoryMenu<Inventor
     }
     
     protected InventoryMenuDialogHolder(
+            AbstractInventoryMenu parent,
             ItemStackWrapper displayItem, 
             String title, 
             Map<Integer, Tuple<Supplier<InventoryMenuComponentTemplate<? extends InventoryMenuDialogComponent<B>>>, InventoryMenuComponentAlignment>> components, 
@@ -58,7 +60,7 @@ public class InventoryMenuDialogHolder<B> extends AbstractInventoryMenu<Inventor
             SLPlayer slp, 
             int flags,
             Supplier<InventoryMenuDialogHolderTemplate<B>> next) {
-        super(displayItem, title, components, staticComponents, generateMapper(), accessController, visibilityController, slp, flags);
+        super(parent, displayItem, title, components, staticComponents, generateMapper(), accessController, visibilityController, slp, flags);
         this.next = next;
     }
 
@@ -71,8 +73,7 @@ public class InventoryMenuDialogHolder<B> extends AbstractInventoryMenu<Inventor
     }
     
     protected InventoryMenuDialogHolder<B> construct(InventoryMenuDialogHolderTemplate<B> template) {
-        InventoryMenuDialogHolder<B> holder = template.construct(this.getParent().getOwner());
-        holder.setParent(this.getParent());
+        InventoryMenuDialogHolder<B> holder = template.construct(this.getParent(), this.getParent().getOwner());
         holder.setBuilder(builder);
         holder.setDialogRoot(dialogRoot);
         return holder;
@@ -83,13 +84,15 @@ public class InventoryMenuDialogHolder<B> extends AbstractInventoryMenu<Inventor
         if (getCurrentComponents().get(getCurrentPage()).containsKey(index)) {
             InventoryMenuDialogComponent<B> component = getCurrentComponents().get(getCurrentPage()).get(index);
             if (component.hasAccess(getSLP())) {
-                if(component instanceof InventoryMenuDialogItem) {
-                    ((InventoryMenuDialogItem<B>) component).setHolderInstance(this);
+                if(component instanceof InventoryMenuDialogButton) {
+                    ((InventoryMenuDialogButton<B>) component).setHolderInstance(this);
                 }
                 component.selected(clickType, builder);
             } else {
-                getSLP().closeInventory();
-                getSLP().sendMessage(ChatColor.RED + "You don't have access to this");
+                if(this.isSet(InventoryMenuFlag.EXIT_ON_NO_PERMISSION)) {
+                    getSLP().closeInventory();
+                    getSLP().sendMessage(ChatColor.RED + "You don't have access to this");
+                }
             }
         }
     }

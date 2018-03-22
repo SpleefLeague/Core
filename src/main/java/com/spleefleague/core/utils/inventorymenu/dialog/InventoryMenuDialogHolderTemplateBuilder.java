@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  *
  * @author jonas
  */
-public class InventoryMenuDialogHolderTemplateBuilder<B> extends AbstractInventoryMenuTemplateBuilder<InventoryMenuDialogHolder<B>, InventoryMenuDialogHolderTemplate<B>, InventoryMenuDialogHolderTemplateBuilder<B>> {
+public class InventoryMenuDialogHolderTemplateBuilder<B> extends AbstractInventoryMenuTemplateBuilder<InventoryMenuDialogHolder<B>, InventoryMenuDialogComponent<B>, InventoryMenuDialogHolderTemplate<B>, InventoryMenuDialogHolderTemplateBuilder<B>> {
 
     public InventoryMenuDialogHolderTemplateBuilder() {
     

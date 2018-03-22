@@ -13,6 +13,7 @@ import org.bukkit.event.inventory.ClickType;
 public class InventoryMenu extends AbstractInventoryMenu<SelectableInventoryMenuComponent> {
     
     protected InventoryMenu(
+            AbstractInventoryMenu parent,
             ItemStackWrapper displayItem, 
             String title, 
             Map<Integer, Tuple<Supplier<InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>>, InventoryMenuComponentAlignment>> components, 
@@ -21,7 +22,7 @@ public class InventoryMenu extends AbstractInventoryMenu<SelectableInventoryMenu
             Function<SLPlayer, Boolean> visibilityController, 
             SLPlayer slp, 
             int flags) {
-        super(displayItem, title, components, staticComponents, Function.identity(), accessController, visibilityController, slp, flags);
+        super(parent, displayItem, title, components, staticComponents, Function.identity(), accessController, visibilityController, slp, flags);
     }
     
     @Override

@@ -11,13 +11,13 @@ package com.spleefleague.core.utils.inventorymenu;
  */
 public class AbstractInventoryMenuComponent {
     
-    private AbstractInventoryMenu parent;
-
+    private final AbstractInventoryMenu parent;
+    
+    public AbstractInventoryMenuComponent(AbstractInventoryMenu parent) {
+        this.parent = parent;
+    }
+    
     public AbstractInventoryMenu getParent() {
         return parent;
-    }
-
-    public void setParent(AbstractInventoryMenu parent) {
-        this.parent = parent;
     }
 }

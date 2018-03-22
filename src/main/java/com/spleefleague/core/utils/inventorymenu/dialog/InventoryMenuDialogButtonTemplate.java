@@ -7,43 +7,41 @@ package com.spleefleague.core.utils.inventorymenu.dialog;
 
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.inventorymenu.AbstractInventoryMenu;
-import com.spleefleague.core.utils.inventorymenu.AbstractInventoryMenuTemplate;
+import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponentTemplate;
 import com.spleefleague.core.utils.inventorymenu.ItemStackWrapper;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  *
  * @author jonas
  */
-public class InventoryMenuDialogHolderTemplate<B> extends AbstractInventoryMenuTemplate<InventoryMenuDialogHolder<B>, InventoryMenuDialogComponent<B>> {
-    
+public class InventoryMenuDialogButtonTemplate<B> extends InventoryMenuComponentTemplate<InventoryMenuDialogButton<B>>{
+
     private Function<SLPlayer, Optional<InventoryMenuDialogHolderTemplateBuilder<B>>> next;
+    private InventoryMenuDialogClickListener<B> listener;
     
-    public InventoryMenuDialogHolderTemplate() {
+    public InventoryMenuDialogButtonTemplate() {
+        super();
         this.next = (x) -> Optional.empty();
+        this.listener = (e) -> e.getBuilder();
     }
     
     public void setNext(Function<SLPlayer, InventoryMenuDialogHolderTemplateBuilder<B>> next) {
         this.next = (slp) -> Optional.ofNullable(next.apply(slp));
     }
     
-    public void setNext(Supplier<InventoryMenuDialogHolderTemplateBuilder<B>> next) {
-        this.next = (slp) -> {
-            return Optional.ofNullable(next.get());
-        };
-    }
-    
     public void setNext(InventoryMenuDialogHolderTemplateBuilder<B> next) {
         this.next = (s) -> Optional.ofNullable(next);
     }
     
-    @Override
-    public InventoryMenuDialogHolder construct(AbstractInventoryMenu parent, SLPlayer slp) {
-        ItemStackWrapper is = constructDisplayItem();
-        InventoryMenuDialogHolder menu = new InventoryMenuDialogHolder(parent, is, getTitle(slp), components, staticComponents, super.getAccessController(), super.getVisibilityController(), slp, flags, () -> next.apply(slp).map(i -> i.build()).orElse(null));
-        return menu;
+    public void setClickListener(InventoryMenuDialogClickListener<B> listener) {
+        this.listener = listener;
     }
     
+    @Override
+    public InventoryMenuDialogButton<B> construct(AbstractInventoryMenu parent, SLPlayer slp) {
+        ItemStackWrapper isw = constructDisplayItem();
+        return new InventoryMenuDialogButton(parent, isw, getVisibilityController(), getAccessController(), getOverwritePageBehavior(), listener, () -> next.apply(slp).map(i -> i.build()).orElse(null));
+    }
 }

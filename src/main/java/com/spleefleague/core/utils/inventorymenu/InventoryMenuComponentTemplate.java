@@ -12,7 +12,7 @@ import java.util.function.Function;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public abstract class InventoryMenuComponentTemplate<C> extends AbstractInventoryMenuComponentTemplate<C> {
+public abstract class InventoryMenuComponentTemplate<C extends InventoryMenuComponent> extends AbstractInventoryMenuComponentTemplate<C> {
 
     //private InventoryMenuTemplate parent;
     private Function<SLPlayer, ItemStack> displayItem;

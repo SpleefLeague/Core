@@ -6,6 +6,7 @@
 package com.spleefleague.core.utils.inventorymenu.dialog;
 
 import com.spleefleague.core.player.SLPlayer;
+import com.spleefleague.core.utils.inventorymenu.AbstractInventoryMenu;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponentTemplate;
 import com.spleefleague.core.utils.inventorymenu.ItemStackWrapper;
 import java.util.function.BiConsumer;
@@ -41,9 +42,9 @@ public class InventoryMenuDialogTemplate<B> extends InventoryMenuComponentTempla
     }
     
     @Override
-    public InventoryMenuDialog<B> construct(SLPlayer slp) {
+    public InventoryMenuDialog<B> construct(AbstractInventoryMenu parent, SLPlayer slp) {
         B builder = builderFactory.apply(slp);
         ItemStackWrapper isw = constructDisplayItem();
-        return new InventoryMenuDialog<>(isw, getVisibilityController(), getAccessController(), getOverwritePageBehavior(), builder, slp, completionListener, start.apply(slp));
+        return new InventoryMenuDialog<>(parent, isw, getVisibilityController(), getAccessController(), getOverwritePageBehavior(), builder, slp, completionListener, start.apply(slp));
     }
 }

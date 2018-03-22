@@ -14,7 +14,7 @@ import java.util.function.Function;
  */
 public abstract class SelectableInventoryMenuComponent extends InventoryMenuComponent implements Selectable {
 
-    public SelectableInventoryMenuComponent(ItemStackWrapper displayItem, Function<SLPlayer, Boolean> visibilityController, Function<SLPlayer, Boolean> accessController, boolean overwritePageBehavior) {
-        super(displayItem, visibilityController, accessController, overwritePageBehavior);
+    public SelectableInventoryMenuComponent(AbstractInventoryMenu parent, ItemStackWrapper displayItem, Function<SLPlayer, Boolean> visibilityController, Function<SLPlayer, Boolean> accessController, boolean overwritePageBehavior) {
+        super(parent, displayItem, visibilityController, accessController, overwritePageBehavior);
     }
 }

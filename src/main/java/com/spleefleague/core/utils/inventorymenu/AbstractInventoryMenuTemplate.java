@@ -8,11 +8,11 @@ import com.spleefleague.core.utils.Tuple;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public abstract class AbstractInventoryMenuTemplate<C extends AbstractInventoryMenu> extends InventoryMenuComponentTemplate<C> {
+public abstract class AbstractInventoryMenuTemplate<C extends AbstractInventoryMenu<T>, T extends InventoryMenuComponent> extends InventoryMenuComponentTemplate<C> {
 
     private Function<SLPlayer, String> title;
-    protected final Map<Integer, Tuple<Supplier<AbstractInventoryMenuComponentTemplate<? extends C>>, InventoryMenuComponentAlignment>> components;
-    protected final Map<Integer, Supplier<AbstractInventoryMenuComponentTemplate<? extends C>>> staticComponents;
+    protected final Map<Integer, Tuple<Supplier<AbstractInventoryMenuComponentTemplate<? extends T>>, InventoryMenuComponentAlignment>> components;
+    protected final Map<Integer, Supplier<AbstractInventoryMenuComponentTemplate<? extends T>>> staticComponents;
     
     protected int flags;
 
@@ -23,7 +23,7 @@ public abstract class AbstractInventoryMenuTemplate<C extends AbstractInventoryM
         this.flags = 0;
         this.flags = InventoryMenuFlag.set(flags, InventoryMenuFlag.EXIT_ON_CLICK_OUTSIDE);
         this.flags = InventoryMenuFlag.set(flags, InventoryMenuFlag.EXIT_ON_NO_PERMISSION);
-        this.flags = InventoryMenuFlag.set(flags, InventoryMenuFlag.FORBID_EMPTY_SUBMENU);
+        this.flags = InventoryMenuFlag.set(flags, InventoryMenuFlag.HIDE_EMPTY_SUBMENU);
     }
 
     public void setTitle(String title) {
@@ -34,27 +34,27 @@ public abstract class AbstractInventoryMenuTemplate<C extends AbstractInventoryM
         this.title = title;
     }
 
-    public void addComponent(int position, AbstractInventoryMenuComponentTemplate<? extends C> component) {
+    public void addComponent(int position, AbstractInventoryMenuComponentTemplate<? extends T> component) {
         addComponent(position, () -> component);
     }
 
-    public void addComponent(int position, Supplier<AbstractInventoryMenuComponentTemplate<? extends C>> component) {
+    public void addComponent(int position, Supplier<AbstractInventoryMenuComponentTemplate<? extends T>> component) {
         addComponent(position, component, InventoryMenuComponentAlignment.DEFAULT);
     }
 
-    public void addComponent(int position, AbstractInventoryMenuComponentTemplate<? extends C> component, InventoryMenuComponentAlignment alignment) {
+    public void addComponent(int position, AbstractInventoryMenuComponentTemplate<? extends T> component, InventoryMenuComponentAlignment alignment) {
         addComponent(position, () -> component, alignment);
     }
 
-    public void addComponent(int position, Supplier<AbstractInventoryMenuComponentTemplate<? extends C>> component, InventoryMenuComponentAlignment alignment) {
+    public void addComponent(int position, Supplier<AbstractInventoryMenuComponentTemplate<? extends T>> component, InventoryMenuComponentAlignment alignment) {
         components.put(position, new Tuple<>(component, alignment));
     }
 
-    public void addStaticComponent(int position, AbstractInventoryMenuComponentTemplate<? extends C> component) {
+    public void addStaticComponent(int position, AbstractInventoryMenuComponentTemplate<? extends T> component) {
         addStaticComponent(position, () -> component);
     }
 
-    public void addStaticComponent(int position, Supplier<AbstractInventoryMenuComponentTemplate<? extends C>> component) {
+    public void addStaticComponent(int position, Supplier<AbstractInventoryMenuComponentTemplate<? extends T>> component) {
         staticComponents.put(position, component);
     }
     

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.Function;
 import org.bukkit.inventory.ItemStack;
 
-public abstract class InventoryMenuComponentTemplateBuilder<C, T extends InventoryMenuComponentTemplate<C>, B extends InventoryMenuComponentTemplateBuilder<C, T, B>> extends AbstractInventoryMenuComponentTemplateBuilder<C, T, B> {
+public abstract class InventoryMenuComponentTemplateBuilder<C extends InventoryMenuComponent, T extends InventoryMenuComponentTemplate<C>, B extends InventoryMenuComponentTemplateBuilder<C, T, B>> extends AbstractInventoryMenuComponentTemplateBuilder<C, T, B> {
 
     public B displayName(String displayName) {
         buildingObj.setDisplayName(displayName);

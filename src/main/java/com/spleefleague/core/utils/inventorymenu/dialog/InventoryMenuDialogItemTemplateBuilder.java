@@ -5,9 +5,7 @@
  */
 package com.spleefleague.core.utils.inventorymenu.dialog;
 
-import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponentTemplateBuilder;
-import java.util.function.Function;
 
 /**
  *
@@ -15,26 +13,6 @@ import java.util.function.Function;
  */
 public class InventoryMenuDialogItemTemplateBuilder<B> extends InventoryMenuComponentTemplateBuilder<InventoryMenuDialogItem<B>, InventoryMenuDialogItemTemplate<B>, InventoryMenuDialogItemTemplateBuilder<B>> {
 
-    public InventoryMenuDialogItemTemplateBuilder() {
-
-    }
-
-    public InventoryMenuDialogItemTemplateBuilder<B> next(Function<SLPlayer, InventoryMenuDialogHolderTemplateBuilder<B>> next) {
-        buildingObj.setNext(slp -> next.apply(slp));
-        return this;
-    }
-
-    public InventoryMenuDialogItemTemplateBuilder<B> next(InventoryMenuDialogHolderTemplateBuilder<B> next) {
-        buildingObj.setNext(next);
-        return this;
-    }
-
-    public InventoryMenuDialogItemTemplateBuilder<B> onClick(InventoryMenuDialogClickListener<B> listener) {
-        buildingObj.setClickListener(listener);
-        return this;
-    }
-
-    //Needed for Builder Inheritance
     @Override
     protected InventoryMenuDialogItemTemplateBuilder<B> getThis() {
         return this;
@@ -42,6 +20,6 @@ public class InventoryMenuDialogItemTemplateBuilder<B> extends InventoryMenuComp
 
     @Override
     protected InventoryMenuDialogItemTemplate<B> getObj() {
-        return new InventoryMenuDialogItemTemplate();
+        return new InventoryMenuDialogItemTemplate<>();
     }
 }

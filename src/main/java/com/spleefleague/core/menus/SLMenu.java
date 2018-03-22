@@ -14,6 +14,7 @@ import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.GamePlugin;
 import static com.spleefleague.core.utils.inventorymenu.InventoryMenuAPI.dialog;
+import static com.spleefleague.core.utils.inventorymenu.InventoryMenuAPI.dialogItem;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplate;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplateBuilder;
 import com.spleefleague.core.utils.inventorymenu.dialog.InventoryMenuDialogHolderTemplate;
@@ -52,7 +53,10 @@ public class SLMenu {
     
     private static InventoryMenuDialogTemplateBuilder exampleDialog() {
         Supplier<InventoryMenuDialogHolderTemplate<BuilderWithConfirm>> player = () -> {
-            InventoryMenuDialogHolderTemplateBuilder<BuilderWithConfirm> confirm = InventoryMenuTemplateRepository.confirmDialog(item().displayIcon(Material.SKULL_ITEM), BuilderWithConfirm.onConfirm());
+            InventoryMenuDialogHolderTemplateBuilder<BuilderWithConfirm> confirm = InventoryMenuTemplateRepository.confirmDialog(
+                    dialogItem(BuilderWithConfirm.class)
+                            .displayIcon(Material.SKULL_ITEM), BuilderWithConfirm.onConfirm()
+            );
             InventoryMenuDialogHolderTemplateBuilder<BuilderWithConfirm> instance = InventoryMenuTemplateRepository.playerSelector();
             instance.next(confirm);
             return instance.build();
@@ -119,6 +123,7 @@ public class SLMenu {
                     }));
         }
         InventoryMenuTemplateBuilder builder = menu()
+                .title("Options")
                 .displayName("Options")
                 .displayIcon(Material.SIGN)
                 .description("Various options")

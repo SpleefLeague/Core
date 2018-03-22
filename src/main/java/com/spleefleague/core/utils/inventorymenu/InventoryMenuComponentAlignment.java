@@ -129,9 +129,11 @@ public class InventoryMenuComponentAlignment implements Comparable<InventoryMenu
     }
     
     public static final InventoryMenuComponentAlignment DEFAULT;
+    public static final InventoryMenuComponentAlignment REVERSE;
     
     static {
         DEFAULT = new InventoryMenuComponentAlignment(Direction.RIGHT, Direction.DOWN);
+        REVERSE = new InventoryMenuComponentAlignment(Direction.LEFT, Direction.UP);
     }
     
     @Override

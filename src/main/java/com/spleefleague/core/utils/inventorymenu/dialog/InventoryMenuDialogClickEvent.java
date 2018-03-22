@@ -6,18 +6,18 @@ import org.bukkit.event.inventory.ClickType;
 public class InventoryMenuDialogClickEvent<B> {
 
     private final B builder;
-    private final InventoryMenuDialogItem<B> item;
+    private final InventoryMenuDialogButton<B> item;
     private final ClickType clickType;
     private final Player player;
     
-    public InventoryMenuDialogClickEvent(InventoryMenuDialogItem<B> item, ClickType clickType, Player player, B builder) {
+    public InventoryMenuDialogClickEvent(InventoryMenuDialogButton<B> item, ClickType clickType, Player player, B builder) {
         this.item = item;
         this.clickType = clickType;
         this.player = player;
         this.builder = builder;
     }
     
-    public InventoryMenuDialogItem<B> getItem() {
+    public InventoryMenuDialogButton<B> getItem() {
         return item;
     }
     

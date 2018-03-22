@@ -7,12 +7,10 @@ package com.spleefleague.core.menus;
 
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.player.SLPlayer;
-import static com.spleefleague.core.utils.inventorymenu.InventoryMenuAPI.dialogItem;
 import static com.spleefleague.core.utils.inventorymenu.InventoryMenuAPI.dialogMenu;
-import com.spleefleague.core.utils.inventorymenu.InventoryMenuItemTemplateBuilder;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplate;
 import com.spleefleague.core.utils.inventorymenu.dialog.InventoryMenuDialogHolderTemplateBuilder;
-import com.spleefleague.core.utils.inventorymenu.dialog.InventoryMenuDialogItemTemplateBuilder;
+import com.spleefleague.core.utils.inventorymenu.dialog.InventoryMenuDialogButtonTemplateBuilder;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -21,6 +19,8 @@ import java.util.function.Predicate;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import static com.spleefleague.core.utils.inventorymenu.InventoryMenuAPI.dialogButton;
+import com.spleefleague.core.utils.inventorymenu.dialog.InventoryMenuDialogItemTemplateBuilder;
 
 /**
  *
@@ -45,19 +45,19 @@ public class InventoryMenuTemplateRepository {
     public static void openMenu(ItemStack is, SLPlayer slp) {
         Optional<InventoryMenuTemplate> oimt = menus.stream().filter((template) -> (template.getDisplayItemStack(slp).equals(is))).findFirst();
         if (oimt.isPresent()) {
-            oimt.get().construct(slp).open();
+            oimt.get().construct(null, slp).open();
         }
     }
     
-    public static <B> InventoryMenuDialogHolderTemplateBuilder<B> confirmDialog(InventoryMenuItemTemplateBuilder item, BiConsumer<B, Boolean> onConfirm) {
+    public static <B> InventoryMenuDialogHolderTemplateBuilder<B> confirmDialog(InventoryMenuDialogItemTemplateBuilder<B> item, BiConsumer<B, Boolean> onConfirm) {
         InventoryMenuDialogHolderTemplateBuilder<B> holder = dialogMenu();
         holder.title("Confirm?");
         //Confirm & Decline
-        holder.component(2, ((InventoryMenuDialogItemTemplateBuilder<B>)dialogItem())
+        holder.component(2, ((InventoryMenuDialogButtonTemplateBuilder<B>)dialogButton())
                 .displayItem(new ItemStack(Material.DIAMOND_AXE, (short)10))
                 .onClick((e) -> onConfirm.accept(e.getBuilder(), false))
         );
-        holder.component(6, ((InventoryMenuDialogItemTemplateBuilder<B>)dialogItem())
+        holder.component(6, ((InventoryMenuDialogButtonTemplateBuilder<B>)dialogButton())
                 .displayItem(new ItemStack(Material.DIAMOND_AXE, (short)11))
                 .onClick((e) -> onConfirm.accept(e.getBuilder(), true))
         );
@@ -84,7 +84,7 @@ public class InventoryMenuTemplateRepository {
                     SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
                     skullMeta.setOwner(p.getName());
                     skull.setItemMeta(skullMeta);
-                    InventoryMenuDialogItemTemplateBuilder<B> item = dialogItem();
+                    InventoryMenuDialogButtonTemplateBuilder<B> item = dialogButton();
                     holder.component(item
                             .displayItem(skull)
                             .displayName(p.getName())
