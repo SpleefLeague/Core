@@ -104,7 +104,7 @@ public abstract class Challenge {
         return active && secondsLeft > 0;
     }
 
-    public void sendMessages(String prefix, String arena, Collection<Player> target) {
+    public void sendMessages(String prefix, String arena, Collection<? extends Player> target) {
         BaseComponent[] intro;
         if(arena != null) {
             intro = new ComponentBuilder(prefix).append(" ").append(challenger.getName() + " has challenged you to play on ").color(ChatColor.GREEN.asBungee()).append(arena + "!").color(ChatColor.RED.asBungee()).create();

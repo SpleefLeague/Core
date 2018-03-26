@@ -6,12 +6,14 @@
 package com.spleefleague.core.queue;
 
 import com.spleefleague.core.SpleefLeague;
+import com.spleefleague.core.player.GeneralPlayer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -22,15 +24,15 @@ import org.bukkit.scheduler.BukkitTask;
  * @param <Q>
  * @param <P>
  */
-public class RatedGameQueue<Q extends QueueableArena, P extends RatedPlayer> extends GameQueue<Q, P> {
+public class RatedGameQueue<Q extends QueueableArena, P extends GeneralPlayer> extends GameQueue<Q, P> {
 
     private RatedBattleManager<Q, P, ? extends Battle> battleManager;
+    private Function<P, Integer> ratingFunction;
     public static final int TICK_DURATION = 15 * 20;
     public static final int WAIT_TIME_INCOMPLETE_MATCH = 2;
 
     
     protected RatedGameQueue() {
-        super();
         getQueues().put(null, new HashSet<>());
         gameQueues.add(this);
         if (tickTask == null) {
@@ -38,10 +40,10 @@ public class RatedGameQueue<Q extends QueueableArena, P extends RatedPlayer> ext
         }
     }
 
-    public RatedGameQueue(RatedBattleManager<Q, P, ? extends Battle> battleHandler) {
-        super();
+    public RatedGameQueue(RatedBattleManager<Q, P, ? extends Battle> battleHandler, Function<P, Integer> ratingFunction) {
         getQueues().put(null, new HashSet<>());
         this.battleManager = battleHandler;
+        this.ratingFunction = ratingFunction;
         gameQueues.add(this);
         if (tickTask == null) {
             tickTask = tickRunnable.runTaskTimer(SpleefLeague.getInstance(), 0, TICK_DURATION);
@@ -144,7 +146,7 @@ public class RatedGameQueue<Q extends QueueableArena, P extends RatedPlayer> ext
         allowedPlayers = allowedPlayers
                 .stream()
                 .filter((p) -> queue == null || queue.isAvailable(p))
-                .sorted((p1, p2) -> Double.compare(Math.abs(p1.getRating() - player.getRating()), Math.abs(p2.getRating() - player.getRating())))
+                .sorted((p1, p2) -> Double.compare(Math.abs(ratingFunction.apply(p1) - ratingFunction.apply(player)), Math.abs(ratingFunction.apply(p2) - ratingFunction.apply(player))))
                 .limit(Math.min(allowedPlayers.size(), Math.max(Math.round(allowedPlayers.size() * MATCHMAKING_ACCURICY), MIN_AVAILABLE_PLAYERS)))
                 .collect(Collectors.toList());
         return allowedPlayers;

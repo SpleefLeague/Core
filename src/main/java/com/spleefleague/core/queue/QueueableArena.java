@@ -6,6 +6,7 @@
 package com.spleefleague.core.queue;
 
 import com.spleefleague.core.player.GeneralPlayer;
+import java.util.List;
 
 /**
  *
@@ -27,4 +28,6 @@ public interface QueueableArena<P extends GeneralPlayer> {
     public boolean isQueued();
 
     public boolean isPaused();
+    
+    public List<String> getDescription();
 }

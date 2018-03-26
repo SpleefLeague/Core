@@ -5,6 +5,9 @@
  */
 package com.spleefleague.core.queue;
 
+import com.spleefleague.core.player.GeneralPlayer;
+import java.util.function.Function;
+
 /**
  *
  * @author Jonas
@@ -12,11 +15,11 @@ package com.spleefleague.core.queue;
  * @param <P>
  * @param <B>
  */
-public abstract class RatedBattleManager<Q extends QueueableArena, P extends RatedPlayer, B extends Battle<Q, P>> extends BattleManager<Q, P, B> {
+public abstract class RatedBattleManager<Q extends QueueableArena, P extends GeneralPlayer, B extends Battle<Q, P>> extends BattleManager<Q, P, B> {
 
-    public RatedBattleManager() {
+    public RatedBattleManager(Function<P, Integer> ratingFunction) {
         super(null);
-        this.setGameQueue(new RatedGameQueue<>(this));
+        this.setGameQueue(new RatedGameQueue<>(this, ratingFunction));
     }
 
     public RatedBattleManager(RatedGameQueue<Q, P> gameQueue) {

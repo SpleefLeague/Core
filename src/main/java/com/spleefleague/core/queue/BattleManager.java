@@ -21,7 +21,7 @@ public abstract class BattleManager<Q extends QueueableArena, P extends GeneralP
 
     private final HashSet<B> activeBattles;
     private GameQueue<Q, P> gameQueue;
-
+    
     public BattleManager(GameQueue<Q, P> gameQueue) {
         this.activeBattles = new HashSet<>();
         this.gameQueue = gameQueue;
