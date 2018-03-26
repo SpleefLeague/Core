@@ -42,6 +42,6 @@ public class InventoryMenuDialogButtonTemplate<B> extends InventoryMenuComponent
     @Override
     public InventoryMenuDialogButton<B> construct(AbstractInventoryMenu parent, SLPlayer slp) {
         ItemStackWrapper isw = constructDisplayItem();
-        return new InventoryMenuDialogButton(parent, isw, getVisibilityController(), getAccessController(), getOverwritePageBehavior(), listener, () -> next.apply(slp).map(i -> i.build()).orElse(null));
+        return new InventoryMenuDialogButton(parent, isw, getVisibilityController(), getAccessController(), getComponentFlags(), listener, () -> next.apply(slp).map(i -> i.build()).orElse(null));
     }
 }

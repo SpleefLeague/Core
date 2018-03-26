@@ -22,10 +22,10 @@ public abstract class InventoryMenuComponentTemplate<C extends InventoryMenuComp
     private Function<SLPlayer, List<String>> displayDescription;
     private Function<SLPlayer, Boolean> visibilityController;
     private Function<SLPlayer, Boolean> accessController;
-    private boolean overwritePageBehavior;
+    private int flags;
     
     protected InventoryMenuComponentTemplate() {
-        this.overwritePageBehavior = false;
+        this.flags = 0;
         this.displayItem = s -> null;
         this.displayName = s -> null;
         this.visibilityController = s -> true;
@@ -74,8 +74,16 @@ public abstract class InventoryMenuComponentTemplate<C extends InventoryMenuComp
         return visibilityController;
     }
     
-    protected boolean getOverwritePageBehavior() {
-        return overwritePageBehavior;
+    protected int getComponentFlags() {
+        return flags;
+    }
+    
+    protected void addFlag(InventoryMenuComponentFlag flag) {
+        this.flags = InventoryMenuComponentFlag.set(flags, flag);
+    }
+
+    protected void removeFlag(InventoryMenuComponentFlag flag) {
+        this.flags = InventoryMenuComponentFlag.unset(flags, flag);
     }
 
     public boolean hasAccess(SLPlayer slp) {
@@ -89,10 +97,6 @@ public abstract class InventoryMenuComponentTemplate<C extends InventoryMenuComp
     protected ItemStackWrapper constructDisplayItem() {
         ItemStackWrapper wrapper = new ItemStackWrapper(displayItem, displayIcon, displayName, displayNumber, displayDescription);
         return wrapper;
-    }
-    
-    protected void setOverwritePageBehavoir(boolean overwritePageBehavior) {
-        this.overwritePageBehavior = overwritePageBehavior;
     }
     
     protected void setDisplayItem(ItemStack displayItem) {

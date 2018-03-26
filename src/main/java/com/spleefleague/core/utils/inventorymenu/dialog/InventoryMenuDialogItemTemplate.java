@@ -19,6 +19,6 @@ public class InventoryMenuDialogItemTemplate<B> extends InventoryMenuComponentTe
     @Override
     public InventoryMenuDialogItem<B> construct(AbstractInventoryMenu parent, SLPlayer slp) {
         ItemStackWrapper isw = constructDisplayItem();
-        return new InventoryMenuDialogItem(parent, isw, getVisibilityController(), getAccessController(), getOverwritePageBehavior());
+        return new InventoryMenuDialogItem(parent, isw, getVisibilityController(), getAccessController(), getComponentFlags());
     }
 }

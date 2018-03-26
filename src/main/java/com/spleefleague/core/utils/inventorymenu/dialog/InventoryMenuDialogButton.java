@@ -7,7 +7,6 @@ package com.spleefleague.core.utils.inventorymenu.dialog;
 
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.inventorymenu.AbstractInventoryMenu;
-import com.spleefleague.core.utils.inventorymenu.InventoryMenuFlag;
 import com.spleefleague.core.utils.inventorymenu.ItemStackWrapper;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -28,10 +27,10 @@ public class InventoryMenuDialogButton<B> extends InventoryMenuDialogComponent<B
             ItemStackWrapper displayItem, 
             Function<SLPlayer, Boolean> visibilityController, 
             Function<SLPlayer, Boolean> accessController, 
-            boolean overwritePageBehavior, 
+            int flags,
             InventoryMenuDialogClickListener<B> clickListener, 
             Supplier<InventoryMenuDialogHolderTemplate<B>> next) {
-        super(parent, displayItem, visibilityController, accessController, overwritePageBehavior);
+        super(parent, displayItem, visibilityController, accessController, flags);
         this.clickListener = clickListener;
         this.next = next;
     }
@@ -60,7 +59,7 @@ public class InventoryMenuDialogButton<B> extends InventoryMenuDialogComponent<B
         else {
             holderInstance.getDialogRoot().completed();
             AbstractInventoryMenu aim = holderInstance.getDialogRoot().getParent();
-            if(aim != null && !aim.isSet(InventoryMenuFlag.EXIT_ON_COMPLETE_DIALOG)) {
+            if(aim != null && !holderInstance.getDialogRoot().isSet(InventoryMenuDialogFlag.EXIT_ON_COMPLETE_DIALOG)) {
                 aim.update();
                 aim.open();
             }

@@ -42,7 +42,7 @@ public class InventoryMenuDialogHolderTemplate<B> extends AbstractInventoryMenuT
     @Override
     public InventoryMenuDialogHolder construct(AbstractInventoryMenu parent, SLPlayer slp) {
         ItemStackWrapper is = constructDisplayItem();
-        InventoryMenuDialogHolder menu = new InventoryMenuDialogHolder(parent, is, getTitle(slp), components, staticComponents, super.getAccessController(), super.getVisibilityController(), slp, flags, () -> next.apply(slp).map(i -> i.build()).orElse(null));
+        InventoryMenuDialogHolder menu = new InventoryMenuDialogHolder(parent, is, getTitle(slp), components, staticComponents, super.getAccessController(), super.getVisibilityController(), slp, getComponentFlags(), flags, () -> next.apply(slp).map(i -> i.build()).orElse(null));
         return menu;
     }
     

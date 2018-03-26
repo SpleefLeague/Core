@@ -55,9 +55,10 @@ public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> ex
             Function<SLPlayer, Boolean> accessController, 
             Function<SLPlayer, Boolean> visibilityController, 
             SLPlayer slp, 
-            int flags) {
-        super(parent, displayItem, visibilityController, accessController, InventoryMenuFlag.isSet(flags, InventoryMenuFlag.IGNORE_PAGE_OVERFLOW));
-        this.flags = flags;
+            int componentFlags,
+            int menuFlags) {
+        super(parent, displayItem, visibilityController, accessController, componentFlags);
+        this.flags = menuFlags;
         this.slp = slp;
         this.standardTemplates = components;
         this.staticTemplates = staticComponents;
@@ -187,10 +188,10 @@ public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> ex
                 .entrySet()
                 .stream()
                 .filter((entry) -> (entry.getKey() >= 0))
-                .collect(Collectors.groupingBy(e -> e.getKey() / (e.getValue().x.getOverwritePageBehavior() ? MAX_PAGE_SIZE : pagesize),
+                .collect(Collectors.groupingBy(e -> e.getKey() / (e.getValue().x.isSet(InventoryMenuComponentFlag.IGNORE_PAGE_OVERFLOW) ? MAX_PAGE_SIZE : pagesize),
                         TreeMap::new,
                         Collectors.toMap(
-                                e -> e.getKey() % (e.getValue().x.getOverwritePageBehavior() ? MAX_PAGE_SIZE : pagesize), 
+                                e -> e.getKey() % (e.getValue().x.isSet(InventoryMenuComponentFlag.IGNORE_PAGE_OVERFLOW) ? MAX_PAGE_SIZE : pagesize), 
                                 e -> e.getValue().x)));
 //        
 //        TreeMap<Integer, Map<Integer, C>> controlMap = getMenuControls()

@@ -22,7 +22,6 @@ public abstract class AbstractInventoryMenuTemplate<C extends AbstractInventoryM
         this.staticComponents = new HashMap<>();
         this.flags = 0;
         this.flags = InventoryMenuFlag.set(flags, InventoryMenuFlag.EXIT_ON_CLICK_OUTSIDE);
-        this.flags = InventoryMenuFlag.set(flags, InventoryMenuFlag.EXIT_ON_NO_PERMISSION);
         this.flags = InventoryMenuFlag.set(flags, InventoryMenuFlag.HIDE_EMPTY_SUBMENU);
     }
 

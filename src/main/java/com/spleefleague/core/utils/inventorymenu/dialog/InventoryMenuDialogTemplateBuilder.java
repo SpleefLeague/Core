@@ -27,6 +27,20 @@ public class InventoryMenuDialogTemplateBuilder<B> extends InventoryMenuComponen
         return actualBuilder;
     }
     
+    public InventoryMenuDialogTemplateBuilder<B>  flags(InventoryMenuDialogFlag... flags) {
+        for(InventoryMenuDialogFlag flag : flags) {
+            buildingObj.addFlag(flag);
+        }
+        return actualBuilder;
+    }
+    
+    public InventoryMenuDialogTemplateBuilder<B>  unsetFlags(InventoryMenuDialogFlag... flags) {
+        for(InventoryMenuDialogFlag flag : flags) {
+            buildingObj.removeFlag(flag);
+        }
+        return actualBuilder;
+    }
+    
     public InventoryMenuDialogTemplateBuilder<B> start(InventoryMenuDialogHolderTemplateBuilder<B> start) {
         return start(start.build());
     }

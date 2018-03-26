@@ -79,8 +79,17 @@ public abstract class InventoryMenuComponentTemplateBuilder<C extends InventoryM
         return actualBuilder;
     }
     
-    public B overwritePageBehavior(boolean overwritePageBehavior) {
-        buildingObj.setOverwritePageBehavoir(overwritePageBehavior);
-        return actualBuilder;
+    public B flags(InventoryMenuComponentFlag... flags) {
+        for(InventoryMenuComponentFlag flag : flags) {
+            buildingObj.addFlag(flag);
+        }
+        return (B)this;
+    }
+    
+    public B unsetFlags(InventoryMenuComponentFlag... flags) {
+        for(InventoryMenuComponentFlag flag : flags) {
+            buildingObj.removeFlag(flag);
+        }
+        return (B)this;
     }
 }

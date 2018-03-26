@@ -7,15 +7,15 @@ import org.bukkit.inventory.ItemStack;
 public abstract class InventoryMenuComponent extends AbstractInventoryMenuComponent {
 
     private final ItemStackWrapper displayItem;
-    private final boolean overwritePageBehavior;
+    private final int flags;
     private final Function<SLPlayer, Boolean> visibilityController, accessController;
 
-    public InventoryMenuComponent(AbstractInventoryMenu parent, ItemStackWrapper displayItem, Function<SLPlayer, Boolean> visibilityController, Function<SLPlayer, Boolean> accessController, boolean overwritePageBehavior) {
+    public InventoryMenuComponent(AbstractInventoryMenu parent, ItemStackWrapper displayItem, Function<SLPlayer, Boolean> visibilityController, Function<SLPlayer, Boolean> accessController, int flags) {
         super(parent);
         this.displayItem = displayItem;
         this.visibilityController = visibilityController;
         this.accessController = accessController;
-        this.overwritePageBehavior = overwritePageBehavior;
+        this.flags = flags;
     }
 
     public Function<SLPlayer, Boolean> getVisibilityController() {
@@ -26,8 +26,12 @@ public abstract class InventoryMenuComponent extends AbstractInventoryMenuCompon
         return accessController;
     }
     
-    public boolean getOverwritePageBehavior() {
-        return this.overwritePageBehavior;
+    public int getComponentFlags() {
+        return this.flags;
+    }
+    
+    public boolean isSet(InventoryMenuComponentFlag flag) {
+        return InventoryMenuComponentFlag.isSet(flags, flag);
     }
 
     public ItemStackWrapper getDisplayItemWrapper() {

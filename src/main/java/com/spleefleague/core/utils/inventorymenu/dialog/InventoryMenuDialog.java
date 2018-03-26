@@ -7,7 +7,7 @@ package com.spleefleague.core.utils.inventorymenu.dialog;
 
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.inventorymenu.AbstractInventoryMenu;
-import com.spleefleague.core.utils.inventorymenu.InventoryMenuFlag;
+import com.spleefleague.core.utils.inventorymenu.InventoryMenuComponentFlag;
 import com.spleefleague.core.utils.inventorymenu.ItemStackWrapper;
 import com.spleefleague.core.utils.inventorymenu.SelectableInventoryMenuComponent;
 import java.util.function.BiConsumer;
@@ -25,22 +25,25 @@ public class InventoryMenuDialog<B> extends SelectableInventoryMenuComponent {
     private final B builder;
     private final SLPlayer slp;
     private final InventoryMenuDialogHolder<B> start;
+    private final int flags;
     
     public InventoryMenuDialog(
             AbstractInventoryMenu parent,
             ItemStackWrapper displayItem, 
             Function<SLPlayer, Boolean> visibilityController, 
             Function<SLPlayer, Boolean> accessController, 
-            boolean overwritePageBehavior,
+            int flags,
+            int dialogFlags,
             B builder, 
             SLPlayer slp, 
             BiConsumer<SLPlayer, B> completionListener, 
             InventoryMenuDialogHolderTemplate<B> start) {
-        super(parent, displayItem, visibilityController, accessController, overwritePageBehavior);
+        super(parent, displayItem, visibilityController, accessController, flags);
         this.builder = builder;
         this.slp = slp;
         this.completionListener = completionListener;
         this.start = start.construct(parent, slp);
+        this.flags = dialogFlags;
     }
 
     @Override
@@ -52,7 +55,7 @@ public class InventoryMenuDialog<B> extends SelectableInventoryMenuComponent {
                 start.open();
             }
             else {
-                if(this.getParent().isSet(InventoryMenuFlag.EXIT_ON_NO_PERMISSION)) {
+                if(start.isSet(InventoryMenuComponentFlag.EXIT_ON_NO_PERMISSION)) {
                     slp.closeInventory();
                     slp.sendMessage(ChatColor.RED + "You don't have access to this");
                 }
@@ -61,6 +64,10 @@ public class InventoryMenuDialog<B> extends SelectableInventoryMenuComponent {
         else {
             completed();
         }
+    }
+    
+    public boolean isSet(InventoryMenuDialogFlag flag) {
+        return InventoryMenuDialogFlag.isSet(flags, flag);
     }
     
     public void completed() {

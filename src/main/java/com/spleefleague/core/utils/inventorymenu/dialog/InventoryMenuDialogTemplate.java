@@ -22,6 +22,7 @@ public class InventoryMenuDialogTemplate<B> extends InventoryMenuComponentTempla
     private Function<SLPlayer, B> builderFactory;
     private Function<SLPlayer, InventoryMenuDialogHolderTemplate<B>> start;
     private BiConsumer<SLPlayer, B> completionListener;
+    private int flags = 0;
     
     public InventoryMenuDialogTemplate() {
         builderFactory = (slp) -> null;
@@ -41,10 +42,22 @@ public class InventoryMenuDialogTemplate<B> extends InventoryMenuComponentTempla
         this.start = start;
     }
     
+    protected int getDialogFlags() {
+        return flags;
+    }
+    
+    protected void addFlag(InventoryMenuDialogFlag flag) {
+        this.flags = InventoryMenuDialogFlag.set(flags, flag);
+    }
+
+    protected void removeFlag(InventoryMenuDialogFlag flag) {
+        this.flags = InventoryMenuDialogFlag.unset(flags, flag);
+    }
+    
     @Override
     public InventoryMenuDialog<B> construct(AbstractInventoryMenu parent, SLPlayer slp) {
         B builder = builderFactory.apply(slp);
         ItemStackWrapper isw = constructDisplayItem();
-        return new InventoryMenuDialog<>(parent, isw, getVisibilityController(), getAccessController(), getOverwritePageBehavior(), builder, slp, completionListener, start.apply(slp));
+        return new InventoryMenuDialog<>(parent, isw, getVisibilityController(), getAccessController(), getComponentFlags(), getDialogFlags(), builder, slp, completionListener, start.apply(slp));
     }
 }

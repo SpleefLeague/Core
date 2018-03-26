@@ -3,22 +3,22 @@ package com.spleefleague.core.utils;
 /**
  * Created by Josh on 05/02/2016.
  */
-public class ModifiableFinal<T> {
+public class Value<T> {
 
     private T value;
 
-    public ModifiableFinal() {
+    public Value() {
     }
 
-    public ModifiableFinal(T initialValue) {
+    public Value(T initialValue) {
         this.value = initialValue;
     }
 
-    public T getValue() {
+    public T get() {
         return this.value;
     }
 
-    public void setValue(T newValue) {
+    public void set(T newValue) {
         this.value = newValue;
     }
 

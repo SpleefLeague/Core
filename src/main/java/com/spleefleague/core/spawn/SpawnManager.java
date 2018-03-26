@@ -1,7 +1,7 @@
 package com.spleefleague.core.spawn;
 
 import com.spleefleague.core.SpleefLeague;
-import com.spleefleague.core.utils.ModifiableFinal;
+import com.spleefleague.core.utils.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -88,12 +88,12 @@ public class SpawnManager {
          */
         public void calculatePlayerRadius() {
             double radiusSquared = RADIUS * RADIUS;
-            ModifiableFinal<Integer> result = new ModifiableFinal<>(0);
+            Value<Integer> result = new Value<>(0);
             location.getWorld().getPlayers().stream().filter((Player player) -> player.getLocation().distanceSquared(location) <= radiusSquared)
                     .forEach((Player player) -> {
-                result.setValue(result.getValue() + 1);
+                result.set(result.get() + 1);
             });
-            this.playersInRadius = result.getValue();
+            this.playersInRadius = result.get();
         }
 
     }

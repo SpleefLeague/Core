@@ -22,8 +22,8 @@ public class InventoryMenuDialogItem<B> extends InventoryMenuDialogComponent<B> 
             ItemStackWrapper displayItem, 
             Function<SLPlayer, Boolean> visibilityController, 
             Function<SLPlayer, Boolean> accessController, 
-            boolean overwritePageBehavior) {
-        super(parent, displayItem, visibilityController, accessController, overwritePageBehavior);
+            int flags) {
+        super(parent, displayItem, visibilityController, accessController, flags);
     }
     
     @Override

@@ -14,7 +14,7 @@ public class InventoryMenuTemplate extends AbstractInventoryMenuTemplate<Invento
         //TODO Fix this ugly cast with generics, I honestly don't know how right now..
         Map<Integer, Tuple<Supplier<InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>>, InventoryMenuComponentAlignment>> cp = (Map<Integer, Tuple<Supplier<InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>>, InventoryMenuComponentAlignment>>)((Object)this.components);
         Map<Integer, Supplier<InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>>> scp = (Map<Integer, Supplier<InventoryMenuComponentTemplate<? extends SelectableInventoryMenuComponent>>>)((Object)this.staticComponents);
-        InventoryMenu menu = new InventoryMenu(parent, is, getTitle(slp), cp, scp, super.getAccessController(), super.getVisibilityController(), slp, flags);
+        InventoryMenu menu = new InventoryMenu(parent, is, getTitle(slp), cp, scp, super.getAccessController(), super.getVisibilityController(), slp, this.getComponentFlags(), flags);
         return menu;
     }
 }
