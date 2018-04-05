@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -25,24 +26,15 @@ import org.bukkit.scheduler.BukkitTask;
  * @param <P>
  */
 public class RatedGameQueue<Q extends QueueableArena, P extends GeneralPlayer> extends GameQueue<Q, P> {
-
-    private RatedBattleManager<Q, P, ? extends Battle> battleManager;
+    
+    private Consumer<Match> matchConsumer;
     private Function<P, Integer> ratingFunction;
     public static final int TICK_DURATION = 15 * 20;
     public static final int WAIT_TIME_INCOMPLETE_MATCH = 2;
 
-    
-    protected RatedGameQueue() {
+    public RatedGameQueue(Consumer<Match> matchConsumer, Function<P, Integer> ratingFunction) {
         getQueues().put(null, new HashSet<>());
-        gameQueues.add(this);
-        if (tickTask == null) {
-            tickTask = tickRunnable.runTaskTimer(SpleefLeague.getInstance(), 0, TICK_DURATION);
-        }
-    }
-
-    public RatedGameQueue(RatedBattleManager<Q, P, ? extends Battle> battleHandler, Function<P, Integer> ratingFunction) {
-        getQueues().put(null, new HashSet<>());
-        this.battleManager = battleHandler;
+        this.matchConsumer = matchConsumer;
         this.ratingFunction = ratingFunction;
         gameQueues.add(this);
         if (tickTask == null) {
@@ -56,20 +48,20 @@ public class RatedGameQueue<Q extends QueueableArena, P extends GeneralPlayer> e
             for (P player : match.getPlayers()) {
                 dequeuePlayer(player);
             }
-            battleManager.startBattle(match.getQueue(), match.getPlayers());
+            matchConsumer.accept(match);
         }
         while ((match = nextMatch(false)) != null) {
             for (P player : match.getPlayers()) {
                 dequeuePlayer(player);
             }
-            battleManager.startBattle(match.getQueue(), match.getPlayers());
+            matchConsumer.accept(match);
         }
         getQueues().keySet().stream().filter((q) -> (q != null)).forEach((q) -> {
             this.getMetadata(q).setSkipped(false);
         });
     }
 
-    private Match nextMatch(boolean forceFullTeam) {
+    protected Match nextMatch(boolean forceFullTeam) {
         for (Entry<Q, Set<P>> entry : getQueues().entrySet()) {
             if (entry.getKey() == null || !entry.getKey().isPaused()) {
                 for (P p1 : entry.getValue()) {
@@ -136,7 +128,7 @@ public class RatedGameQueue<Q extends QueueableArena, P extends GeneralPlayer> e
         return null;
     }
 
-    private List<P> getAllowed(P player, Q queue) {
+    protected List<P> getAllowed(P player, Q queue) {
         List<P> allowedPlayers = new ArrayList<>();
         allowedPlayers.addAll(getQueues().get(queue));
         if (queue != null) {
@@ -171,7 +163,7 @@ public class RatedGameQueue<Q extends QueueableArena, P extends GeneralPlayer> e
         };
     }
 
-    private class Match {
+    public class Match {
 
         private final List<P> players;
         private final Q queue;

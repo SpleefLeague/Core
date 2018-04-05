@@ -8,7 +8,6 @@ package com.spleefleague.core.queue;
 import com.spleefleague.core.player.GeneralPlayer;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  *
@@ -105,6 +104,4 @@ public abstract class BattleManager<Q extends QueueableArena, P extends GeneralP
     public boolean isIngame(P p) {
         return getBattle(p) != null;
     }
-
-    public abstract void startBattle(Q queue, List<P> players);
 }

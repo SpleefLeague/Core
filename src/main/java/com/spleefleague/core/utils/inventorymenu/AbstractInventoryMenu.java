@@ -288,6 +288,10 @@ public abstract class AbstractInventoryMenu<C extends InventoryMenuComponent> ex
                         ((InventoryMenu) imc).selected(clickType);
                         return;
                     }
+                    else if(imc instanceof InventoryMenuDialog) {
+                        ((InventoryMenuDialog) imc).selected(clickType);
+                        return;
+                    }
                 }
             }
         }
