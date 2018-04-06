@@ -6,4 +6,4 @@ name: SpleefLeagueCore
 url: http://www.spleefleague.com/
 version: 1.1
 softdepend: [ProtocolLib, FakeBlocks]
-loadbefore: [Commands, SuperJump, SuperSpleef]
+loadbefore: [Commands, Parkour, SuperSpleef]

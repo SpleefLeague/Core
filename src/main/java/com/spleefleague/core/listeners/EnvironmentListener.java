@@ -14,7 +14,6 @@ import com.spleefleague.core.player.GeneralPlayer;
 import com.spleefleague.core.player.PlayerState;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.plugin.GamePlugin;
 import com.spleefleague.core.spawn.SpawnManager.SpawnLocation;
 import com.spleefleague.entitybuilder.DBEntity;
 import com.spleefleague.entitybuilder.DBSave;
@@ -103,7 +102,6 @@ public class EnvironmentListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         //event.setQuitMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has left the server");
         event.setQuitMessage(null);
-        GamePlugin.unspectateGlobal(event.getPlayer());
         logConnection(event.getPlayer(), false);
     }
 

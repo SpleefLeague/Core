@@ -12,7 +12,6 @@ import com.spleefleague.core.chat.ChatManager;
 import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.plugin.GamePlugin;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplate;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuTemplateBuilder;
 import java.util.ArrayList;
@@ -120,8 +119,8 @@ public class SLMenu {
                         .description("running matches")
                         .onClick(event -> {
                             event.getPlayer().closeInventory();
-                            GamePlugin.cancelAllMatches();
-                            event.getPlayer().sendMessage(Theme.SUCCESS + "All games have been cancelled.");
+                            //GamePlugin.cancelAllMatches();
+                            //event.getPlayer().sendMessage(Theme.SUCCESS + "All games have been cancelled.");
                         })
                 );
         return builder;

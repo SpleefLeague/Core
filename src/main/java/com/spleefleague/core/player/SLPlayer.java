@@ -4,7 +4,6 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.Theme;
 import com.spleefleague.core.io.typeconverters.RankConverter;
-import com.spleefleague.core.queue.Challenge;
 import com.spleefleague.core.utils.UtilChat;
 import com.spleefleague.entitybuilder.DBLoad;
 import com.spleefleague.entitybuilder.DBSave;
@@ -14,9 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.scoreboard.Team;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -35,7 +32,6 @@ public class SLPlayer extends GeneralPlayer {
     private PlayerState state = PlayerState.IDLE;
     private PlayerOptions options;
     private boolean hasForumAccount = false;
-    private Map<UUID, Challenge> activeChallenges;
     private ChatColor chatArrowColor = ChatColor.DARK_GRAY;
     private String tabName = null;
     private long areaMessageCooldown = 0L;
@@ -45,7 +41,6 @@ public class SLPlayer extends GeneralPlayer {
     public SLPlayer() {
         super();
         this.chatChannels = new HashSet<>();
-        this.activeChallenges = new HashMap<>();
         this.sendingChannel = ChatChannel.GLOBAL;
     }
 
@@ -250,19 +245,7 @@ public class SLPlayer extends GeneralPlayer {
             }
         }
     }
-
-    public void addChallenge(Challenge challenge) {
-        activeChallenges.put(challenge.getChallengingPlayer().getUniqueId(), challenge);
-    }
-
-    public void removeChallenge(Challenge challenge) {
-        activeChallenges.remove(challenge.getChallengingPlayer().getUniqueId());
-    }
-
-    public Challenge getChallenge(SLPlayer challenger) {
-        return activeChallenges.get(challenger.getUniqueId());
-    }
-
+    
     @Override
     public void done() {
         //Don't do this for fake players

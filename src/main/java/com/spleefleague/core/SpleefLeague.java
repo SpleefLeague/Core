@@ -15,13 +15,12 @@ import com.spleefleague.core.io.typeconverters.LocationConverter;
 import com.spleefleague.core.listeners.*;
 import com.spleefleague.core.menus.InventoryMenuTemplateRepository;
 import com.spleefleague.core.packets.PingCalculationAdapter;
-import com.spleefleague.core.player.PlayerManager;
+import com.spleefleague.core.player.DBPlayerManager;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.plugin.CorePlugin;
 import com.spleefleague.core.plugin.PlayerHandling;
 import com.spleefleague.core.portals.PortalManager;
-import com.spleefleague.core.queue.Challenge;
 import com.spleefleague.core.spawn.SpawnManager;
 import com.spleefleague.core.spawn.SpawnManager.SpawnLocation;
 import com.spleefleague.core.utils.*;
@@ -54,7 +53,7 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
     private MongoClient mongo;
     private Rank minimumJoinRank;
     private List<Rank> extraJoinRanks;
-    private PlayerManager<SLPlayer> playerManager;
+    private DBPlayerManager<SLPlayer> playerManager;
     private AutoBroadcaster autoBroadcaster;
     private Location spawn;
     private ConnectionClient connectionClient;
@@ -80,18 +79,16 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         Rank.init();
         loadJoinSettings();
         ChatManager.init();
-        VisibilityListener.init();
         EnvironmentListener.init();
         InfractionListener.init();
         InventoryMenuListener.init();
         ConnectionListener.init();
         AfkListener.init();
         Warp.init();
-        Challenge.init();
         getProtocolManager().addPacketListener(new PingCalculationAdapter(20));
         new FakeEntitiesManager();
         autoBroadcaster = new AutoBroadcaster(getMongo().getDatabase("SpleefLeague").getCollection("AutoBroadcaster"));
-        playerManager = new PlayerManager<>(this, SLPlayer.class);
+        playerManager = new DBPlayerManager<>(this, SLPlayer.class);
         portalManager = new PortalManager();
         connectionClient = new ConnectionClient();
         debuggerHostManager = new DebuggerHostManager();
@@ -215,7 +212,7 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         return portalManager;
     }
 
-    public PlayerManager<SLPlayer> getPlayerManager() {
+    public DBPlayerManager<SLPlayer> getPlayerManager() {
         return playerManager;
     }
 

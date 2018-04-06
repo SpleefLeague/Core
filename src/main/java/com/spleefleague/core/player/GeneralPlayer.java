@@ -55,6 +55,12 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     public GeneralPlayer() {
         this.created = System.currentTimeMillis();
     }
+    
+    public GeneralPlayer(UUID uuid, String username) {
+        this();
+        this.uuid = uuid;
+        this.username = username;
+    }
 
     @DBSave(fieldName = "uuid", typeConverter = UUIDStringConverter.class)
     @Override
