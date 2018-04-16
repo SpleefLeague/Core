@@ -59,12 +59,13 @@ public abstract class PlayerManager<G extends GeneralPlayer> implements Listener
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
-        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> load(event.getPlayer()));
+        load(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent event) {
         final G gp = get(event.getPlayer());
+        if(gp == null) return;
         try {
             this.map.remove(event.getPlayer().getUniqueId());
         } catch (Exception e) {

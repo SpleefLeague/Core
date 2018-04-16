@@ -7,6 +7,7 @@ package com.spleefleague.core.player;
 
 import com.spleefleague.core.plugin.CorePlugin;
 import java.lang.reflect.InvocationTargetException;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
@@ -18,6 +19,9 @@ public class LocalPlayerManager<G extends GeneralPlayer> extends PlayerManager<G
     
     public LocalPlayerManager(CorePlugin corePlugin, Class<G> playerClass) {
         super(corePlugin, playerClass);
+        Bukkit.getOnlinePlayers().stream().forEach((player) -> {
+            load(player);
+        });
     }
 
     @Override
@@ -27,6 +31,7 @@ public class LocalPlayerManager<G extends GeneralPlayer> extends PlayerManager<G
             gp.setName(player.getName());
             gp.setUUID(player.getUniqueId());
             gp.done();
+            map.put(player.getUniqueId(), gp);
         } catch(IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
             e.printStackTrace();
         }

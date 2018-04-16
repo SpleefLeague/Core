@@ -54,10 +54,10 @@ public class DBPlayerManager<G extends GeneralPlayer> extends PlayerManager<G> {
                 }
             });
         }, 1200, 1200);
-
         Bukkit.getOnlinePlayers().stream().forEach((player) -> {
             load(player);
         });
+        
     }
     
     public G loadFake(Document query) {
@@ -91,29 +91,48 @@ public class DBPlayerManager<G extends GeneralPlayer> extends PlayerManager<G> {
     
     @Override
     protected void load(final Player player) {
-        DatabaseConnection.find(db.getCollection("Players"), new Document("uuid", player.getUniqueId().toString()), (result) -> {
-            Document doc = result.first();
-            Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
-                try {
-                    G generalPlayer;
-                    if (doc == null) {
-                        generalPlayer = getPlayerClass().newInstance();
-                        generalPlayer.setName(player.getName());
-                        generalPlayer.setUUID(player.getUniqueId());
-                        generalPlayer.setDefaults();
-                        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
-                            EntityBuilder.save(generalPlayer, db.getCollection("Players"));
-                        });
-                    } else {
-                        generalPlayer = EntityBuilder.load(doc, getPlayerClass());
-                        generalPlayer.setName(player.getName());
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+            DatabaseConnection.find(db.getCollection("Players"), new Document("uuid", player.getUniqueId().toString()), (result) -> {
+                Document doc = result.first();
+                Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
+                    try {
+                        G generalPlayer = null;
+                        boolean broken = false;
+                        if (doc != null) {
+                            try {
+                                generalPlayer = EntityBuilder.load(doc, getPlayerClass());
+                                generalPlayer.setName(player.getName());
+                            } catch(Exception e) {
+                                broken = true;
+                                e.printStackTrace();
+                            }
+                        }
+                        if (broken || doc == null) {
+                            generalPlayer = getPlayerClass().newInstance();
+                            generalPlayer.setName(player.getName());
+                            generalPlayer.setUUID(player.getUniqueId());
+                            generalPlayer.setDefaults();
+                            if(doc != null) {
+                                generalPlayer.saveProfile(doc);
+                                generalPlayer.setObjectId(doc.getObjectId("_id"));
+                            }
+                            G toSave = generalPlayer;
+                            Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+                                EntityBuilder.save(toSave, db.getCollection("Players"));
+                            });
+                        }
+                        if(generalPlayer != null) {
+                            map.put(player.getUniqueId(), generalPlayer);
+                            callEvent(generalPlayer, doc == null);
+                        }
+                        else {
+                            player.kickPlayer("Error loading player data!");
+                        }
+                    } catch (InstantiationException | IllegalAccessException ex) {
+                        Logger.getLogger(DBPlayerManager.class.getName()).log(Level.SEVERE, null, ex);
+                        player.kickPlayer("Error loading player data!");
                     }
-                    map.put(player.getUniqueId(), generalPlayer);
-                    callEvent(generalPlayer, doc == null);
-
-                } catch (InstantiationException | IllegalAccessException ex) {
-                    Logger.getLogger(DBPlayerManager.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                });
             });
         });
     }

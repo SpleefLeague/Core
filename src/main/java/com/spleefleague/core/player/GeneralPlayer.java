@@ -35,6 +35,7 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.Attribute;
 import java.net.InetSocketAddress;
 import java.util.*;
+import org.bson.Document;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.PistonMoveReaction;
@@ -51,7 +52,10 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     private UUID uuid;
     private Player cached;
     private final long created;
-
+    @DBLoad(fieldName = "brokenProfiles")
+    @DBSave(fieldName = "brokenProfiles")
+    protected List<PlayerDataBackup> brokenProfiles;
+    
     public GeneralPlayer() {
         this.created = System.currentTimeMillis();
     }
@@ -60,6 +64,13 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
         this();
         this.uuid = uuid;
         this.username = username;
+    }
+    
+    protected void saveProfile(Document document) {
+        if(brokenProfiles == null) {
+            brokenProfiles = new ArrayList<>();
+        }
+        brokenProfiles.add(new PlayerDataBackup(document, new Date()));
     }
 
     @DBSave(fieldName = "uuid", typeConverter = UUIDStringConverter.class)

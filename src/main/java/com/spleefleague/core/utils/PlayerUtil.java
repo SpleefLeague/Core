@@ -27,14 +27,24 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 public class PlayerUtil {
 
     public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-        CraftPlayer craftplayer = (CraftPlayer) player;
-        PlayerConnection connection = craftplayer.getHandle().playerConnection;
         IChatBaseComponent titleJSON = ChatSerializer.a("{\"text\": \"" + title + "\"}");
         IChatBaseComponent subtitleJSON = ChatSerializer.a("{\"text\": \"" + subtitle + "\"}");
-        PacketPlayOutTitle titlePacket = new PacketPlayOutTitle(EnumTitleAction.TITLE, titleJSON, fadeIn, stay, fadeOut);
-        PacketPlayOutTitle subtitlePacket = new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, subtitleJSON);
+        title(player, EnumTitleAction.ACTIONBAR, titleJSON, fadeIn, stay, fadeOut);
+        title(player, EnumTitleAction.ACTIONBAR, subtitleJSON);
+    }
+    
+    public static void title(Player player, EnumTitleAction action, IChatBaseComponent chat, int fadeIn, int stay, int fadeOut) {
+        CraftPlayer craftplayer = (CraftPlayer) player.getPlayer();
+        PlayerConnection connection = craftplayer.getHandle().playerConnection;
+        PacketPlayOutTitle titlePacket = new PacketPlayOutTitle(action, chat, fadeIn, stay, fadeOut);
         connection.sendPacket(titlePacket);
-        connection.sendPacket(subtitlePacket);
+    }
+    
+    public static void title(Player player, EnumTitleAction action, IChatBaseComponent chat) {
+        CraftPlayer craftplayer = (CraftPlayer) player.getPlayer();
+        PlayerConnection connection = craftplayer.getHandle().playerConnection;
+        PacketPlayOutTitle titlePacket = new PacketPlayOutTitle(action, chat);
+        connection.sendPacket(titlePacket);
     }
 
     public static void clearPermissions(Player player) {
