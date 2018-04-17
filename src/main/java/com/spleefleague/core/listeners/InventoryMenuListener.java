@@ -51,10 +51,20 @@ public class InventoryMenuListener implements Listener {
         GeneralPlayer gp = event.getGeneralPlayer();
         if (gp instanceof SLPlayer) {
             SLPlayer slp = (SLPlayer) gp;
-            if (slp.getInventory().getItem(0) == null || slp.getInventory().getItem(0).getType() == Material.AIR) {
+            Inventory inv = slp.getInventory();
+            if (inv.getItem(0) == null || inv.getItem(0).getType() == Material.AIR || isMenuItem(inv.getItem(0), slp)) {
                 slp.getInventory().setItem(0, SLMenu.getInstance().getDisplayItemStack(slp));
-            } else if (!isMenuItem(slp.getInventory().getItem(0), slp)) {
-                slp.sendMessage(Theme.ERROR + "You did not recieve the SLMenu because your inventory's first slot was occupied. Remove the item and reconnect to receive the menu.");
+            } else if (!isMenuItem(inv.getItem(0), slp)) {
+                ItemStack[] storageContents = inv.getStorageContents();
+                for (int i = 0; i < storageContents.length; i++) {
+                    if(storageContents[i] == null || storageContents[i].getType() == Material.AIR) {
+                        storageContents[i] = inv.getItem(0);
+                        storageContents[0] = SLMenu.getInstance().getDisplayItemStack(slp);
+                        inv.setStorageContents(storageContents);
+                        return;
+                    }
+                }
+                slp.sendMessage(Theme.ERROR + "You did not recieve the SpleefLeague Menu because your inventory is already full. Remove an item and reconnect to receive the menu.");
             }
         }
     }

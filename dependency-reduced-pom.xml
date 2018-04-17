@@ -7,6 +7,13 @@
   <version>1.1</version>
   <url>http://www.spleefleague.com/</url>
   <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh-external</artifactId>
+        <version>2.10</version>
+      </extension>
+    </extensions>
     <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
@@ -123,6 +130,13 @@
       </exclusions>
     </dependency>
   </dependencies>
+  <distributionManagement>
+    <repository>
+      <id>ssh-repository</id>
+      <name>ssh-repository</name>
+      <url>scpexe://maven.spleefleague.com/var/www/maven</url>
+    </repository>
+  </distributionManagement>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <build.number>unknown</build.number>
