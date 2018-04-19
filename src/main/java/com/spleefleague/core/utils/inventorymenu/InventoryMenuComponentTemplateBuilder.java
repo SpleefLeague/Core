@@ -5,6 +5,7 @@ import com.spleefleague.core.player.SLPlayer;
 import org.bukkit.Material;
 
 import java.util.List;
+import java.util.Vector;
 import java.util.function.Function;
 import org.bukkit.inventory.ItemStack;
 
@@ -49,14 +50,48 @@ public abstract class InventoryMenuComponentTemplateBuilder<C extends InventoryM
         buildingObj.setDisplayNumber(displayNumber);
         return actualBuilder;
     }
+    
+    private Integer LINE_WRAP = 20;
+    
+    private Vector<String> wrapLine(String line) {
+        Vector<String> wrapped = new Vector<>();
+        String newline = "";
+	int last = 0, next = 0;
+	int cLen = 0; // Current length
+	int wLen = 0; // Word length
+	while((next = line.indexOf("\n", last)) != -1) {
+		wLen = next - last;
+		if(cLen + wLen > LINE_WRAP) {
+                    wrapped.add(newline);
+                    newline = "";
+                    cLen = 0;
+		}
+                else {
+                    cLen++;
+                }
+                if(cLen > 1) {
+                    newline = newline + " ";
+                }
+		newline = newline + line.substring(last, next);
+		last = next + 1;
+		cLen += wLen;
+	}
+	next = line.length() - 1;
+        newline = newline + line.substring(last, next);
+        if(newline.length() > 0)
+            wrapped.add(newline);
+	return wrapped;
+    }
 
     public B description(String line) {
-        buildingObj.addDescriptionLine(null, line);
+        for(String l : wrapLine(line))
+            buildingObj.addDescriptionLine(null, l);
         return actualBuilder;
     }
 
     public B description(SLPlayer slp, String line) {
-        buildingObj.addDescriptionLine(slp, line);
+        for(String l : wrapLine(line))
+            buildingObj.addDescriptionLine(slp, l);
         return actualBuilder;
     }
 
