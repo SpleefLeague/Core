@@ -84,6 +84,7 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         InventoryMenuListener.init();
         ConnectionListener.init();
         AfkListener.init();
+        PlayerUtil.init();
         Warp.init();
         getProtocolManager().addPacketListener(new PingCalculationAdapter(20));
         new FakeEntitiesManager();

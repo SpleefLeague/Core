@@ -10,6 +10,11 @@ import com.google.common.io.ByteStreams;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.plugin.CorePlugin;
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import net.minecraft.server.v1_12_R1.ChatMessage;
 import net.minecraft.server.v1_12_R1.Entity;
 import net.minecraft.server.v1_12_R1.IChatBaseComponent;
 import net.minecraft.server.v1_12_R1.IChatBaseComponent.ChatSerializer;
@@ -20,27 +25,61 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitTask;
 /**
  *
  * @author Jonas
  */
-public class PlayerUtil {
+public class PlayerUtil implements Listener{
 
-    public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-        IChatBaseComponent titleJSON = ChatSerializer.a("{\"text\": \"" + title + "\"}");
-        IChatBaseComponent subtitleJSON = ChatSerializer.a("{\"text\": \"" + subtitle + "\"}");
-        title(player, EnumTitleAction.ACTIONBAR, titleJSON, fadeIn, stay, fadeOut);
-        title(player, EnumTitleAction.ACTIONBAR, subtitleJSON);
+    private static PlayerUtil instance;
+    private final BukkitTask actionBarRunner;
+    
+    private PlayerUtil() {
+        Bukkit.getPluginManager().registerEvents(this, SpleefLeague.getInstance());
+        actionBarRunner = Bukkit.getScheduler().runTaskTimer(SpleefLeague.getInstance(), () -> {
+            Iterator<Entry<Player, ActionBarData>> iter = activeActionBars.entrySet().iterator();
+            while(iter.hasNext()) {
+                Entry<Player, ActionBarData> entry = iter.next();
+                ActionBarData abd = entry.getValue();
+                if(abd.isDone()) {
+                    if(!abd.fadeOut) {
+                        rawTitle(entry.getKey(), EnumTitleAction.ACTIONBAR, new ChatMessage(""));
+                    }
+                    iter.remove();
+                }
+                else if(abd.shouldRefresh()) {
+                    rawTitle(entry.getKey(), EnumTitleAction.ACTIONBAR, abd.message);
+                }
+                abd.tick();
+            }
+        }, 0, 1);
     }
     
-    public static void title(Player player, EnumTitleAction action, IChatBaseComponent chat, int fadeIn, int stay, int fadeOut) {
+    public static void init() {
+        if(instance == null) {
+            instance = new PlayerUtil();
+        }
+    }
+    
+    public static void title(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        IChatBaseComponent titleJSON = ChatSerializer.a("{\"text\": \"" + title + "\"}");
+        IChatBaseComponent subtitleJSON = ChatSerializer.a("{\"text\": \"" + subtitle + "\"}");
+        if(title != null) rawTitle(player, EnumTitleAction.TITLE, titleJSON, fadeIn, stay, fadeOut);
+        if(subtitle != null) rawTitle(player, EnumTitleAction.SUBTITLE, subtitleJSON);
+    }
+    
+    public static void rawTitle(Player player, EnumTitleAction action, IChatBaseComponent chat, int fadeIn, int stay, int fadeOut) {
         CraftPlayer craftplayer = (CraftPlayer) player.getPlayer();
         PlayerConnection connection = craftplayer.getHandle().playerConnection;
         PacketPlayOutTitle titlePacket = new PacketPlayOutTitle(action, chat, fadeIn, stay, fadeOut);
         connection.sendPacket(titlePacket);
     }
     
-    public static void title(Player player, EnumTitleAction action, IChatBaseComponent chat) {
+    public static void rawTitle(Player player, EnumTitleAction action, IChatBaseComponent chat) {
         CraftPlayer craftplayer = (CraftPlayer) player.getPlayer();
         PlayerConnection connection = craftplayer.getHandle().playerConnection;
         PacketPlayOutTitle titlePacket = new PacketPlayOutTitle(action, chat);
@@ -78,4 +117,59 @@ public class PlayerUtil {
             player.sendPluginMessage(SpleefLeague.getInstance(), "BungeeCord", out.toByteArray());
         });
     }
+    
+    public static void actionbar(Player player, IChatBaseComponent chat) {
+        activeActionBars.remove(player);
+        CraftPlayer craftplayer = (CraftPlayer) player.getPlayer();
+        PlayerConnection connection = craftplayer.getHandle().playerConnection;
+        PacketPlayOutTitle titlePacket = new PacketPlayOutTitle(EnumTitleAction.ACTIONBAR, chat);
+        connection.sendPacket(titlePacket);
+    }
+    
+    public static void actionbar(Player player, IChatBaseComponent chat, int duration, boolean fadeOut) {
+        actionbar(player, chat);
+        activeActionBars.put(player, new ActionBarData(chat, duration, fadeOut));
+    }
+    
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        activeActionBars.remove(event.getPlayer());
+    }
+    
+    private static final Map<Player, ActionBarData> activeActionBars = new HashMap<>();
+    
+    private static class ActionBarData {
+        private final IChatBaseComponent message;
+        private final boolean fadeOut;
+        private int durationLeft;
+        private int nextRefresh;
+        
+        public ActionBarData(IChatBaseComponent message, int duration, boolean fadeOut) {
+            this.message = message;
+            this.nextRefresh = Math.min(20, duration);
+            this.durationLeft = duration;
+            this.fadeOut = fadeOut;
+        }
+        
+        public boolean shouldRefresh() {
+            return !isDone() && nextRefresh == 0;
+        }
+        
+        public boolean isDone() {
+            return durationLeft <= 0;
+        }
+        
+        public void tick() {
+            durationLeft--;
+            nextRefresh--;
+            if(nextRefresh < 0) {
+                nextRefresh = Math.min(20, durationLeft);
+            }
+        }
+    }
+    
+    /*
+    20
+    2
+    */
 }
