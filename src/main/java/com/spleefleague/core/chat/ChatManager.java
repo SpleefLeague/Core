@@ -58,6 +58,13 @@ public class ChatManager {
     public static void sendMessage(ChatChannel c, BaseComponent... baseComponents) {
         sendMessage(baseComponents, c);
     }
+    
+    public static void sendTitle(final String t, final String s, int fadeIn, int stay, int fadeOut, final ChatChannel c) {
+        Bukkit.getConsoleSender().sendMessage(t + " : " + s);
+        SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(c))).forEach((slp) -> {
+            slp.sendTitle(t, s, fadeIn, stay, fadeOut);
+        });
+    }
 
     private static final HashSet<ChatChannel> channels = new HashSet<>();
 
