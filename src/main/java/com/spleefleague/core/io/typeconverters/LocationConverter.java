@@ -70,6 +70,10 @@ public class LocationConverter extends TypeConverter<List, Location> {
         bdbl.add(v.getX());
         bdbl.add(v.getY());
         bdbl.add(v.getZ());
+        if(v.getYaw() != 0.0 || v.getPitch() != 0.0) {
+            bdbl.add(v.getYaw());
+            bdbl.add(v.getPitch());
+        }
         if (v.getWorld() != SpleefLeague.DEFAULT_WORLD) {
             bdbl.add(v.getWorld().getName());
         }

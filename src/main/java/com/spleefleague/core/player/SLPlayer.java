@@ -8,12 +8,15 @@ import com.spleefleague.core.utils.UtilChat;
 import com.spleefleague.entitybuilder.DBLoad;
 import com.spleefleague.entitybuilder.DBSave;
 import com.spleefleague.entitybuilder.TypeConverter.UUIDStringConverter;
+import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.scoreboard.Team;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.UUID;
 
 /**
@@ -22,9 +25,10 @@ import java.util.UUID;
  */
 public class SLPlayer extends GeneralPlayer {
 
-    private Rank rank;
-    private Rank eternalRank;
-    private long rankExpirationTime;
+    private Rank baseRank;
+    private TemporaryRank tempRank;
+    private List<TemporaryRank> tempRankList;
+    
     private UUID lastChatPartner;
     private int coins, premiumCredits;
     private HashSet<ChatChannel> chatChannels;
@@ -37,75 +41,97 @@ public class SLPlayer extends GeneralPlayer {
     private long areaMessageCooldown = 0L;
     private int premiumCreditsGotThatMonth;
     private long premiumCreditsLastReceptionTime;
+    private Checkpoint checkpoint;
     
     public SLPlayer() {
         super();
         this.chatChannels = new HashSet<>();
+        this.tempRankList = new ArrayList<>();
         this.sendingChannel = ChatChannel.GLOBAL;
     }
 
-    @DBSave(fieldName = "rank", typeConverter = RankConverter.class)
     public Rank getRank() {
-        checkRankForExpiration();
+        Rank rank = getActiveRank();
+        setPlayerListName(rank.getColor() + getName());
+        setDisplayName(rank.getColor() + getName());
         return rank;
+    }
+    
+    @DBSave(fieldName = "rank", typeConverter = RankConverter.class)
+    public Rank getBaseRank() {
+        return baseRank;
     }
 
     @DBLoad(fieldName = "rank", typeConverter = RankConverter.class, priority = 2)
     public void setRank(final Rank rank) {
-        this.rank = rank;
-        //If eternalRank does not exist.
-        if(this.eternalRank == null) {
-            this.eternalRank = rank;
+        this.baseRank = rank;
+    }
+    
+    @DBLoad(fieldName = "temporaryRank")
+    public void setTemporaryRank(TemporaryRank tempRank) {
+        this.tempRank = tempRank;
+    }
+    
+    @DBSave(fieldName = "temporaryRank", priority = 2)
+    public TemporaryRank getTemporaryRank() {
+        if(tempRank == null || tempRank.isExpired()) {
+            return null;
         }
-        if (isOnline()) {
-            setPlayerListName(rank.getColor() + getName());
-            setDisplayName(rank.getColor() + getName());
-            for (Team t : Bukkit.getScoreboardManager().getMainScoreboard().getTeams()) {
-                t.removeEntry(getName());
+        return tempRank;
+    }
+    
+    public void removeTemporaryRanksOfType(Rank rank) {
+        tempRankList.removeIf(tr -> tr.getRank() == rank);
+    }
+    
+    @DBLoad(fieldName = "temporaryRankList", priority = 2)
+    public void setTemporaryRankList(List<TemporaryRank> tempRankList) {
+        this.tempRankList = tempRankList;
+    }
+    
+    @DBSave(fieldName = "temporaryRankList", priority = 2)
+    public List<TemporaryRank> getTemporaryRankList() {
+        return tempRankList;
+    }
+    
+    public void addTemporaryRank(TemporaryRank tempRank) {
+        if(tempRank.isExpired()) return;
+        ListIterator<TemporaryRank> iter = tempRankList.listIterator();
+        while(iter.hasNext()) {
+            if(iter.next().getRank().getLadder() <= tempRank.getRank().getLadder()) {
+                iter.previous();
+                iter.add(tempRank);
+                return;
             }
-            getRank().getScoreboardTeam().addEntry(getName());
-            if (rank.hasPermission(Rank.DEVELOPER)) {
-                setGameMode(GameMode.CREATIVE);
-            } else {
-                setGameMode(GameMode.SURVIVAL);
-            }
-            rank.managePermissions(this);
         }
-    }
-
-    @DBSave(fieldName = "eternalRank", typeConverter = RankConverter.class)
-    public Rank getEternalRank() {
-        return eternalRank;
-    }
-
-    @DBLoad(fieldName = "eternalRank", typeConverter = RankConverter.class, priority = 1)
-    public void setEternalRank(Rank rank) {
-        this.eternalRank = rank;
-    }
-
-    @DBSave(fieldName = "rankExpirationTime")
-    public long getRankExpirationTime() {
-        return rankExpirationTime;
+        iter.add(tempRank);
     }
     
-    @DBLoad(fieldName = "rankExpirationTime")
-    public void setRankExpirationTime(long expirationgTime) {
-        this.rankExpirationTime = expirationgTime;
+    private Rank getActiveRank() {
+        if(tempRank != null && !tempRank.isExpired()) {
+            return tempRank.getRank();
+        }
+        tempRank = null;
+        tempRankList.removeIf(TemporaryRank::isExpired);
+        if(!tempRankList.isEmpty()) {
+            return tempRankList.get(0).getRank();
+        }
+        return baseRank;
     }
     
-    private void checkRankForExpiration() {
-        if(this.rankExpirationTime == 0) {
-            return;
+    @DBSave(fieldName = "checkpoint")
+    public Checkpoint getCheckpoint() {
+        if(checkpoint != null && checkpoint.isValid()) {
+            return checkpoint;
         }
-        if(System.currentTimeMillis() > this.rankExpirationTime) {
-            setRankExpirationTime(0);
-            setRank(this.eternalRank);
-        }
+        return null;
     }
     
-    public void setExpiringRank(Rank rank, long rankExpirationTime) {
-        setRankExpirationTime(rankExpirationTime);
-        setRank(rank);
+    @DBLoad(fieldName = "checkpoint")
+    public void setCheckpoint(Checkpoint checkpoint) {
+        if(checkpoint == null || checkpoint.isValid()) {
+            this.checkpoint = checkpoint;
+        }
     }
     
     public boolean isDonor() {
@@ -256,6 +282,19 @@ public class SLPlayer extends GeneralPlayer {
                 }
             } finally {
             }
+            Rank rank = getRank();
+            setPlayerListName(rank.getColor() + getName());
+            setDisplayName(rank.getColor() + getName());
+            for (Team t : Bukkit.getScoreboardManager().getMainScoreboard().getTeams()) {
+                t.removeEntry(getName());
+            }
+            rank.getScoreboardTeam().addEntry(getName());
+            if (rank.hasPermission(Rank.DEVELOPER)) {
+                setGameMode(GameMode.CREATIVE);
+            } else {
+                setGameMode(GameMode.SURVIVAL);
+            }
+            rank.managePermissions(this);
         }
     }
 
@@ -295,8 +334,6 @@ public class SLPlayer extends GeneralPlayer {
     public void setDefaults() {
         super.setDefaults();
         setRank(Rank.DEFAULT);
-        setEternalRank(Rank.DEFAULT);
-        this.setRankExpirationTime(0);
         setCoins(0);
         setPremiumCredits(0);
         this.chatChannels.clear();

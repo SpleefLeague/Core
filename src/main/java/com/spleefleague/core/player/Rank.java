@@ -46,8 +46,19 @@ public class Rank extends DBEntity implements DBLoadable {
     private String[] exclusivePermissions = new String[0];
     private Team scoreboardTeam;
 
-    private Rank() {
+    protected Rank() {
         
+    }
+    
+    protected Rank(Rank rank) {
+        this.name = rank.name;
+        this.displayName = rank.displayName;
+        this.ladder = rank.ladder;
+        this.hasOp = rank.hasOp;
+        this.color = rank.color;
+        this.permissions = rank.permissions;
+        this.exclusivePermissions = rank.exclusivePermissions;
+        this.scoreboardTeam = rank.scoreboardTeam;
     }
 
     public String getName() {
