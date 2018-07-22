@@ -26,9 +26,9 @@ public class SLMenu {
 
     public static void init() {
         slMenuBuilder = menu()
-                .title("SpleefLeague Menu")
+                .title("SLMenu")
                 .displayIcon(Material.COMPASS)
-                .displayName(ChatColor.GREEN + "" + ChatColor.BOLD + "SpleefLeague Menu")
+                .displayName("SL Menu")
                 .description("A menu for doing")
                 .description("various things")
                 //Gamemode submenus added by game plugins
