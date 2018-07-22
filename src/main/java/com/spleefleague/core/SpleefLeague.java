@@ -25,7 +25,6 @@ import com.spleefleague.core.spawn.SpawnManager;
 import com.spleefleague.core.spawn.SpawnManager.SpawnLocation;
 import com.spleefleague.core.utils.*;
 import com.spleefleague.core.utils.debugger.DebuggerHostManager;
-import com.spleefleague.core.utils.fakeentity.FakeEntitiesManager;
 import com.spleefleague.entitybuilder.EntityBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -87,7 +86,6 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         PlayerUtil.init();
         Warp.init();
         getProtocolManager().addPacketListener(new PingCalculationAdapter(20));
-        new FakeEntitiesManager();
         autoBroadcaster = new AutoBroadcaster(getMongo().getDatabase("SpleefLeague").getCollection("AutoBroadcaster"));
         playerManager = new DBPlayerManager<>(this, SLPlayer.class);
         portalManager = new PortalManager();

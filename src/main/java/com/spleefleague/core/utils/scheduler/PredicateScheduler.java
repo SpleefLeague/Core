@@ -73,6 +73,11 @@ public class PredicateScheduler {
             public void cancel() {
                 task.cancel();
             }
+
+            @Override
+            public boolean isCancelled() {
+                return task.isCancelled();
+            }
         };
     }
 }

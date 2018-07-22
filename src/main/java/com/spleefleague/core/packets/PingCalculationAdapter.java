@@ -18,9 +18,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import net.minecraft.server.v1_12_R1.PacketPlayOutKeepAlive;
-import net.minecraft.server.v1_12_R1.PacketPlayInKeepAlive;
+import org.bukkit.craftbukkit.v1_13_R1.entity.CraftPlayer;
+import net.minecraft.server.v1_13_R1.PacketPlayOutKeepAlive;
+import net.minecraft.server.v1_13_R1.PacketPlayInKeepAlive;
 
 /**
  *

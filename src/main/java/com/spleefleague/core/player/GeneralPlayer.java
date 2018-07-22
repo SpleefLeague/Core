@@ -11,12 +11,12 @@ import com.spleefleague.entitybuilder.DBLoadable;
 import com.spleefleague.entitybuilder.DBSave;
 import com.spleefleague.entitybuilder.DBSaveable;
 import com.spleefleague.entitybuilder.TypeConverter.UUIDStringConverter;
-import net.minecraft.server.v1_12_R1.EntityPlayer;
+import net.minecraft.server.v1_13_R1.EntityPlayer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_13_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -39,6 +39,7 @@ import org.bson.Document;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.PistonMoveReaction;
+import org.bukkit.block.data.BlockData;
 
 /**
  *
@@ -46,9 +47,9 @@ import org.bukkit.block.PistonMoveReaction;
  */
 public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSaveable, Player {
 
-    @DBLoad(fieldName = "username", priority = Integer.MIN_VALUE)
+    @DBLoad(fieldName = "username", priority = Integer.MAX_VALUE)
     private String username;
-    @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class, priority = Integer.MIN_VALUE)
+    @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class, priority = Integer.MAX_VALUE)
     private UUID uuid;
     private Player cached;
     private final long created;
@@ -285,12 +286,6 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Deprecated
     public boolean sendChunkChange(Location loc, int sx, int sy, int sz, byte[] data) {
         return getPlayer().sendChunkChange(loc, sx, sy, sz, data);
-    }
-
-    @Override
-    @Deprecated
-    public void sendBlockChange(Location loc, int material, byte data) {
-        getPlayer().sendBlockChange(loc, material, data);
     }
 
     @Override
@@ -790,20 +785,8 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     }
 
     @Override
-    @Deprecated
-    public Block getTargetBlock(HashSet<Byte> transparent, int maxDistance) {
-        return getPlayer().getTargetBlock(transparent, maxDistance);
-    }
-
-    @Override
     public Block getTargetBlock(Set<Material> transparent, int maxDistance) {
         return getPlayer().getTargetBlock(transparent, maxDistance);
-    }
-
-    @Override
-    @Deprecated
-    public List<Block> getLastTwoTargetBlocks(HashSet<Byte> transparent, int maxDistance) {
-        return getPlayer().getLastTwoTargetBlocks(transparent, maxDistance);
     }
 
     @Override
@@ -1628,5 +1611,30 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Override
     public PistonMoveReaction getPistonMoveReaction() {
         return getPlayer().getPistonMoveReaction();
+    }
+
+    @Override
+    public void sendBlockChange(Location lctn, BlockData bd) {
+        getPlayer().sendBlockChange(lctn, bd);
+    }
+
+    @Override
+    public void hidePlayer(Plugin plugin, Player player) {
+        getPlayer().hidePlayer(plugin, player);
+    }
+
+    @Override
+    public void showPlayer(Plugin plugin, Player player) {
+        getPlayer().showPlayer(plugin, player);
+    }
+
+    @Override
+    public boolean isSwimming() {
+        return getPlayer().isSwimming();
+    }
+
+    @Override
+    public void setSwimming(boolean bln) {
+        getPlayer().setSwimming(bln);
     }
 }

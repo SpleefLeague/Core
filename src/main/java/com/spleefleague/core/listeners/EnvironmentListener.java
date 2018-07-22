@@ -180,7 +180,7 @@ public class EnvironmentListener implements Listener {
                         slp.getRank().getLadder() < Rank.MODERATOR.getLadder()) {
                     shouldCancel = true;
                     break;
-                } else if (min.getType() == Material.SIGN_POST || min.getType() == Material.WALL_SIGN) {
+                } else if (min.getType() == Material.SIGN || min.getType() == Material.WALL_SIGN) {
                     Sign sign = (Sign) min.getState();
                     String first = ChatColor.stripColor(sign.getLine(0)).toLowerCase();
 
@@ -292,7 +292,7 @@ public class EnvironmentListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onDrop(PlayerDropItemEvent event) {
-        event.setCancelled(event.getItemDrop().getItemStack().getType() != Material.RED_ROSE && event.getPlayer().getGameMode() != GameMode.CREATIVE);
+        event.setCancelled(event.getItemDrop().getItemStack().getType() != Material.ROSE_RED && event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
 
     @EventHandler
@@ -313,7 +313,7 @@ public class EnvironmentListener implements Listener {
                 Material clicked = event.getClickedBlock().getType();
                 if (clicked == Material.CAULDRON) {
                     event.getPlayer().setItemInHand(null);
-                } else if (Arrays.asList(/*Material.CHEST, Material.FURNACE, */Material.DROPPER, Material.ITEM_FRAME, Material.REDSTONE_COMPARATOR, Material.DIODE, Material.DISPENSER, Material.ANVIL, Material.TRAP_DOOR, Material.BED, Material.HOPPER, Material.HOPPER_MINECART).contains(clicked)) {
+                } else if (Arrays.asList(/*Material.CHEST, Material.FURNACE, */Material.DROPPER, Material.ITEM_FRAME, Material.COMPARATOR, Material.REPEATER, Material.DISPENSER, Material.ANVIL, Material.OAK_TRAPDOOR, Material.RED_BED, Material.HOPPER, Material.HOPPER_MINECART).contains(clicked)) {
                     event.setCancelled(true);
                 } else if (item != null && Arrays.asList(Material.WATER_BUCKET, Material.LAVA_BUCKET, Material.BUCKET).contains(item.getType())) {
                     event.setCancelled(true);
@@ -364,8 +364,8 @@ public class EnvironmentListener implements Listener {
         if(slPlayer == null || slPlayer.getRank().hasPermission(Rank.MODERATOR_BUILDER)) {
             return;
         }
-        if(e.getTo().getBlock().getBiome() == Biome.HELL) {
-            if(e.getFrom().getBlock().getBiome() == Biome.HELL) {
+        if(e.getTo().getBlock().getBiome() == Biome.NETHER) {
+            if(e.getFrom().getBlock().getBiome() == Biome.NETHER) {
                 slPlayer.teleport(SpleefLeague.getInstance().getSpawnManager().getNext().getLocation());
             } else {
                 Location balancedFrom = e.getFrom().clone();
@@ -396,7 +396,7 @@ public class EnvironmentListener implements Listener {
 
     @EventHandler
     public void onEntityInteract(EntityInteractEvent event) {
-        if (event.getBlock().getType() == Material.SOIL && event.getEntity() instanceof Creature) {
+        if (event.getBlock().getType() == Material.FARMLAND && event.getEntity() instanceof Creature) {
             event.setCancelled(true);
         }
     }

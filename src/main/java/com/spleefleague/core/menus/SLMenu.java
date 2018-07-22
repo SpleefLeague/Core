@@ -44,7 +44,7 @@ public class SLMenu {
         InventoryMenuTemplateBuilder chatOptions = menu()
                 .title("Chat options")
                 .displayName("Chat options")
-                .displayIcon(Material.BOOK_AND_QUILL);
+                .displayIcon(Material.WRITABLE_BOOK);
         for (ChatChannel channel : ChatManager.getVisibleChatChannels()) {
             chatOptions.component(item()
                     .displayName(channel.getDisplayName())
@@ -88,11 +88,11 @@ public class SLMenu {
                 .component(menu()
                         .title("Reload Menu")
                         .displayName("Reload Menu")
-                        .displayIcon(Material.WATCH)
+                        .displayIcon(Material.CLOCK)
                         .description("Reloading various things")
                         .component(item()
                                 .displayName("Server")
-                                .displayIcon(Material.REDSTONE_TORCH_ON)
+                                .displayIcon(Material.REDSTONE_TORCH)
                                 .description("Reloads the server")
                                 .onClick(event -> {
                                     event.getPlayer().closeInventory();
@@ -100,7 +100,7 @@ public class SLMenu {
                                 })
                         ).component(item()
                                 .displayName("Ranks")
-                                .displayIcon(Material.BOOK_AND_QUILL)
+                                .displayIcon(Material.WRITABLE_BOOK)
                                 .description("Reloads all ranks")
                                 .onClick(event -> {
                                     event.getPlayer().closeInventory();
@@ -114,7 +114,7 @@ public class SLMenu {
                 )
                 .component(item()
                         .displayName("Cancel all")
-                        .displayIcon(Material.DIAMOND_SPADE)
+                        .displayIcon(Material.DIAMOND_SHOVEL)
                         .description("Cancels all currently")
                         .description("running matches")
                         .onClick(event -> {
