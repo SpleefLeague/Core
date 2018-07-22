@@ -4,10 +4,14 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.spleefleague.core.utils.debugger.RuntimeCompiler;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
+import com.spleefleague.core.chat.ChatChannel;
 import com.spleefleague.core.chat.ChatManager;
+import com.spleefleague.core.infraction.Infraction;
+import com.spleefleague.core.infraction.InfractionType;
 import com.spleefleague.core.io.Config;
 import com.spleefleague.core.io.Settings;
 import com.spleefleague.core.io.connections.ConnectionClient;
@@ -37,9 +41,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import org.bson.Document;
 
 /**
  *
@@ -167,7 +175,8 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         List<MongoCredential> credentials = Config.getCredentials();
         try {
             ServerAddress address = new ServerAddress(Config.getString("host"), Config.getInteger("port"));
-            mongo = new MongoClient(address, credentials);
+            //mongo = new MongoClient(address, credentials);
+            mongo = new MongoClient(new MongoClientURI("mongodb://spleefleague:A0yqcqrTcAYg3PBVFcYHlvExbL1XvbCWGUYizS3aD3caSEVnC1R8Hz3yiowS4G0PPheT0enKUM4mkQus9c4G5A==@spleefleague.documents.azure.com:10255/?ssl=true&replicaSet=globaldb"));
         } catch (Exception ex) {
             Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -270,6 +279,23 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         if(version.equals("unknown"))
             return "";
         return version.split("\\-")[1];
+    }
+    
+    public void performBan(SLPlayer target, UUID sender, String senderName, String message) {
+        Bukkit.getScheduler().runTaskAsynchronously(SpleefLeague.getInstance(), () -> {
+            Infraction ban = new Infraction(target.getUniqueId(), sender, InfractionType.BAN, System.currentTimeMillis(), -1, message);
+            SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions").deleteMany(new Document("uuid", target.getUniqueId().toString()));
+            EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("Infractions"), false);
+            EntityBuilder.save(ban, SpleefLeague.getInstance().getPluginDB().getCollection("ActiveInfractions"), false);
+        });
+        ChatManager
+                .sendMessage(new ComponentBuilder(SpleefLeague.getInstance().getChatPrefix() + " ")
+                    .append(target.getName() + " has been banned by " + senderName + "!")
+                    .color(net.md_5.bungee.api.ChatColor.GRAY)
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Reason: " + message)
+                        .color(net.md_5.bungee.api.ChatColor.GRAY).create())
+                    ).create(), ChatChannel.STAFF_NOTIFICATIONS
+                );
     }
 
     private static SpleefLeague instance;
