@@ -176,7 +176,7 @@ public class Rank extends DBEntity implements DBLoadable {
             if (rank.getDisplayName().equalsIgnoreCase(Rank.DEFAULT.getDisplayName())) {
                 t.setPrefix(rank.getColor().toString());
             } else {
-                t.setPrefix(rank.getColor() + "[" + rank.getDisplayName() + "] ");
+                t.setPrefix(rank.getColor() + "[" + rank.getDisplayName() + "]");
             }
             t.setSuffix(ChatColor.RESET.toString());
             rank.scoreboardTeam = t;
