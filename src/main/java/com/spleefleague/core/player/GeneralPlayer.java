@@ -11,12 +11,12 @@ import com.spleefleague.entitybuilder.DBLoadable;
 import com.spleefleague.entitybuilder.DBSave;
 import com.spleefleague.entitybuilder.DBSaveable;
 import com.spleefleague.entitybuilder.TypeConverter.UUIDStringConverter;
-import net.minecraft.server.v1_13_R1.EntityPlayer;
+import net.minecraft.server.v1_13_R2.EntityPlayer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.craftbukkit.v1_13_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -38,8 +38,11 @@ import java.util.*;
 import org.bson.Document;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.RayTraceResult;
 
 /**
  *
@@ -1636,5 +1639,122 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Override
     public void setSwimming(boolean bln) {
         getPlayer().setSwimming(bln);
+    }
+
+    @Override
+    public String getPlayerListHeader() {
+        return getPlayer().getPlayerListHeader();
+    }
+
+    @Override
+    public String getPlayerListFooter() {
+        return getPlayer().getPlayerListFooter();
+    }
+
+    @Override
+    public void setPlayerListHeader(String string) {
+        getPlayer().setPlayerListHeader(string);
+    }
+
+    @Override
+    public void setPlayerListFooter(String string) {
+        getPlayer().setPlayerListFooter(string);
+    }
+
+    @Override
+    public void setPlayerListHeaderFooter(String string, String string1) {
+        getPlayer().setPlayerListHeaderFooter(string, string1);
+    }
+
+    @Override
+    public int getClientViewDistance() {
+        return getPlayer().getClientViewDistance();
+    }
+
+    @Override
+    public void updateCommands() {
+        getPlayer().updateCommands();
+    }
+
+    @Override
+    public boolean sleep(Location lctn, boolean bln) {
+        return getPlayer().sleep(lctn, bln);
+    }
+
+    @Override
+    public void wakeup(boolean bln) {
+        getPlayer().wakeup(bln);
+    }
+
+    @Override
+    public Location getBedLocation() {
+        return getPlayer().getBedLocation();
+    }
+
+    @Override
+    public boolean discoverRecipe(NamespacedKey nk) {
+        return getPlayer().discoverRecipe(nk);
+    }
+
+    @Override
+    public int discoverRecipes(Collection<NamespacedKey> clctn) {
+        return getPlayer().discoverRecipes(clctn);
+    }
+
+    @Override
+    public boolean undiscoverRecipe(NamespacedKey nk) {
+        return getPlayer().undiscoverRecipe(nk);
+    }
+
+    @Override
+    public int undiscoverRecipes(Collection<NamespacedKey> clctn) {
+        return getPlayer().undiscoverRecipes(clctn);
+    }
+
+    @Override
+    public Block getTargetBlockExact(int i) {
+        return getPlayer().getTargetBlockExact(i);
+    }
+
+    @Override
+    public Block getTargetBlockExact(int i, FluidCollisionMode fcm) {
+        return getPlayer().getTargetBlockExact(i, fcm);
+    }
+
+    @Override
+    public RayTraceResult rayTraceBlocks(double d) {
+        return getPlayer().rayTraceBlocks(d);
+    }
+
+    @Override
+    public RayTraceResult rayTraceBlocks(double d, FluidCollisionMode fcm) {
+        return getPlayer().rayTraceBlocks(d, fcm);
+    }
+
+    @Override
+    public boolean isRiptiding() {
+        return getPlayer().isRiptiding();
+    }
+
+    @Override
+    public BoundingBox getBoundingBox() {
+        return getPlayer().getBoundingBox();
+    }
+
+    @Override
+    @Deprecated
+    public boolean isPersistent() {
+        return getPlayer().isPersistent();
+    }
+
+    @Override
+    @Deprecated
+    public void setPersistent(boolean bln) {
+        getPlayer().setPersistent(bln);
+    }
+
+    @Override
+    public BlockFace getFacing() {
+        return getPlayer().getFacing();
     }
 }

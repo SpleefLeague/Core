@@ -49,12 +49,17 @@ public class SLPlayer extends GeneralPlayer {
         this.tempRankList = new ArrayList<>();
         this.sendingChannel = ChatChannel.GLOBAL;
     }
-
-    public Rank getRank() {
+    
+    private void updateDisplayName() {
+        if(getPlayer() == null) return;
         Rank rank = getActiveRank();
         setPlayerListName(rank.getColor() + getName());
         setDisplayName(rank.getColor() + getName());
-        return rank;
+    }
+
+    public Rank getRank() {
+        updateDisplayName();
+        return getActiveRank();
     }
     
     @DBSave(fieldName = "rank", typeConverter = RankConverter.class)
