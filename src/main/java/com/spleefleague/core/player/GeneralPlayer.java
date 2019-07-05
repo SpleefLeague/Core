@@ -1757,4 +1757,9 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     public BlockFace getFacing() {
         return getPlayer().getFacing();
     }
+
+    @Override
+    public void setRotation(float pitch, float yaw) {
+        getPlayer().setRotation(pitch, yaw);
+    }
 }
