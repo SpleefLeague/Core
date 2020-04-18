@@ -14,17 +14,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import net.minecraft.server.v1_13_R2.ChatMessage;
-import net.minecraft.server.v1_13_R2.Entity;
-import net.minecraft.server.v1_13_R2.IChatBaseComponent;
-import net.minecraft.server.v1_13_R2.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_13_R2.PacketPlayOutTitle;
-import net.minecraft.server.v1_13_R2.PacketPlayOutTitle.EnumTitleAction;
-import net.minecraft.server.v1_13_R2.PlayerConnection;
+import net.minecraft.server.v1_15_R1.ChatMessage;
+import net.minecraft.server.v1_15_R1.Entity;
+import net.minecraft.server.v1_15_R1.IChatBaseComponent;
+import net.minecraft.server.v1_15_R1.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_15_R1.PacketPlayOutTitle;
+import net.minecraft.server.v1_15_R1.PacketPlayOutTitle.EnumTitleAction;
+import net.minecraft.server.v1_15_R1.PlayerConnection;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -107,7 +107,8 @@ public class PlayerUtil implements Listener{
         Entity e = ((CraftPlayer) player).getHandle();
         //Find
         //return this.world.a(this.getBoundingBox().f(0.10000000149011612, 0.4000000059604645, 0.10000000149011612), Material.LAVA); in nms Entity
-        return e.ax();
+        //return e.ax();
+        return e.isInWater();
     }
 
     public static void sendToServer(Player player, String server) {

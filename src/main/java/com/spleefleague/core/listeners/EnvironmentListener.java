@@ -5,7 +5,6 @@
  */
 package com.spleefleague.core.listeners;
 
-import com.comphenix.protocol.PacketType;
 import com.mongodb.client.model.Projections;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.Theme;
@@ -234,7 +233,7 @@ public class EnvironmentListener implements Listener {
                         slp.getRank().getLadder() < Rank.MODERATOR.getLadder()) {
                     shouldCancel = true;
                     break;
-                } else if (min.getType() == Material.SIGN || min.getType() == Material.WALL_SIGN) {
+                } else if (min.getType().toString().toLowerCase().contains("sign")) {
                     Sign sign = (Sign) min.getState();
                     String first = ChatColor.stripColor(sign.getLine(0)).toLowerCase();
 
@@ -254,7 +253,6 @@ public class EnvironmentListener implements Listener {
                         }
                     } else if (first.equalsIgnoreCase("[jump]")) {
                         doVelocity(player, sign);
-                        continue;
                     } else if (first.equalsIgnoreCase("[teleport]")) {
                         try {
 
@@ -267,8 +265,6 @@ public class EnvironmentListener implements Listener {
                             ), PlayerTeleportEvent.TeleportCause.PLUGIN);
                         } catch (NumberFormatException ex) {
                         }
-
-                        continue;
                     } else if (sign.getLine(0).equalsIgnoreCase("[effect]")) {
                         try {
                             int id = Integer.valueOf(sign.getLine(1));
@@ -279,8 +275,6 @@ public class EnvironmentListener implements Listener {
                                     new PotionEffect(PotionEffectType.getById(id), time, level, false), true);
                         } catch (NumberFormatException ex) {
                         }
-
-                        continue;
                     }
                 }
             }
@@ -346,7 +340,8 @@ public class EnvironmentListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onDrop(PlayerDropItemEvent event) {
-        event.setCancelled(event.getItemDrop().getItemStack().getType() != Material.ROSE_RED && event.getPlayer().getGameMode() != GameMode.CREATIVE);
+        // Why lmao
+        event.setCancelled(event.getItemDrop().getItemStack().getType() != Material.RED_DYE && event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
 
     @EventHandler

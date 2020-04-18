@@ -11,12 +11,10 @@ import com.spleefleague.entitybuilder.DBLoadable;
 import com.spleefleague.entitybuilder.DBSave;
 import com.spleefleague.entitybuilder.DBSaveable;
 import com.spleefleague.entitybuilder.TypeConverter.UUIDStringConverter;
-import net.minecraft.server.v1_13_R2.EntityPlayer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -41,6 +39,9 @@ import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+import org.bukkit.entity.memory.MemoryKey;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 
@@ -304,21 +305,6 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Override
     public void updateInventory() {
         getPlayer().updateInventory();
-    }
-
-    @Override
-    public void awardAchievement(Achievement achievement) {
-        getPlayer().awardAchievement(achievement);
-    }
-
-    @Override
-    public void removeAchievement(Achievement achievement) {
-        getPlayer().removeAchievement(achievement);
-    }
-
-    @Override
-    public boolean hasAchievement(Achievement achievement) {
-        return getPlayer().hasAchievement(achievement);
     }
 
     @Override
@@ -635,10 +621,6 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Override
     public void setHealthScale(double scale) throws IllegalArgumentException {
         getPlayer().setHealthScale(scale);
-    }
-
-    public EntityPlayer getHandle() {
-        return ((CraftPlayer) getPlayer()).getHandle();
     }
 
     @Override
@@ -1761,5 +1743,70 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Override
     public void setRotation(float pitch, float yaw) {
         getPlayer().setRotation(pitch, yaw);
+    }
+
+    @Override
+    public void sendSignChange(Location lctn, String[] strings, DyeColor dc) throws IllegalArgumentException {
+        getPlayer().sendSignChange(lctn, strings, dc);
+    }
+
+    @Override
+    public void sendExperienceChange(float f) {
+        getPlayer().sendExperienceChange(f);
+    }
+
+    @Override
+    public void sendExperienceChange(float f, int i) {
+        getPlayer().sendExperienceChange(f, i);
+    }
+
+    @Override
+    public void openBook(ItemStack is) {
+        getPlayer().openBook(is);
+    }
+
+    @Override
+    public void attack(Entity entity) {
+        getPlayer().attack(entity);
+    }
+
+    @Override
+    public void swingMainHand() {
+        getPlayer().swingMainHand();
+    }
+
+    @Override
+    public void swingOffHand() {
+        getPlayer().swingOffHand();
+    }
+
+    @Override
+    public <T> T getMemory(MemoryKey<T> mk) {
+        return getPlayer().getMemory(mk);
+    }
+
+    @Override
+    public <T> void setMemory(MemoryKey<T> mk, T t) {
+        getPlayer().setMemory(mk, t);
+    }
+
+    @Override
+    public double getAbsorptionAmount() {
+        return getPlayer().getAbsorptionAmount();
+    }
+
+    @Override
+    public void setAbsorptionAmount(double d) {
+        getPlayer().setAbsorptionAmount(d);
+    }
+
+    @Override
+    public Pose getPose() {
+        return getPlayer().getPose();
+    }
+
+    @Override
+    public PersistentDataContainer getPersistentDataContainer() {
+        return getPlayer().getPersistentDataContainer();
     }
 }

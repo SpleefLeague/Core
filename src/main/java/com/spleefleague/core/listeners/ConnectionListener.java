@@ -85,7 +85,7 @@ public class ConnectionListener implements Listener {
             send.put("action", "UPDATE_INFO");
             SpleefLeague.getInstance().getConnectionClient().send("sessions", send);
         }
-    }       
+    }
 
     public static void sendTicket(String playerName, String shownName, UUID playerUUID, String message, String server, ChatColor chatColor) {
         ChatManager.sendMessage(ChatChannel.STAFF,

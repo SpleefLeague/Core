@@ -45,6 +45,11 @@ public class Rank extends DBEntity implements DBLoadable {
     @DBLoad(fieldName = "exclusivePermissions")
     private String[] exclusivePermissions = new String[0];
     private Team scoreboardTeam;
+    
+    @Override
+    public String toString() {
+        return name + ", " + displayName + ", " + ladder + ", " + hasOp + ", " + color + ", ";
+    }
 
     protected Rank() {
         
@@ -158,7 +163,8 @@ public class Rank extends DBEntity implements DBLoadable {
         teams.forEach(Team::unregister);
         MongoCursor<Document> dbc = SpleefLeague.getInstance().getPluginDB().getCollection("Ranks").find().iterator();
         while (dbc.hasNext()) {
-            Rank rank = EntityBuilder.load(dbc.next(), Rank.class);
+            Document doc = dbc.next();
+            Rank rank = EntityBuilder.load(doc, Rank.class);
             Rank staticRank = getField(rank.getName());
             if (staticRank != null) {
                 staticRank.name = rank.name;

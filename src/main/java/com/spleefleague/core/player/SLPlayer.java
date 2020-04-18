@@ -18,6 +18,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Pose;
+import org.bukkit.entity.memory.MemoryKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
 
 /**
  *
@@ -345,4 +352,70 @@ public class SLPlayer extends GeneralPlayer {
         this.chatChannels.add(ChatChannel.GLOBAL);
         setSendingChannel(ChatChannel.GLOBAL);
     }
+
+    @Override
+    public void sendSignChange(Location lctn, String[] strings, DyeColor dc) throws IllegalArgumentException {
+        getPlayer().sendSignChange(lctn, strings);
+    }
+
+    @Override
+    public void sendExperienceChange(float f) {
+        getPlayer().sendExperienceChange(f);
+    }
+
+    @Override
+    public void sendExperienceChange(float f, int i) {
+        getPlayer().sendExperienceChange(f, i);
+    }
+
+    @Override
+    public void openBook(ItemStack is) {
+        getPlayer().openBook(is);
+    }
+
+    @Override
+    public void attack(Entity entity) {
+        getPlayer().attack(entity);
+    }
+
+    @Override
+    public void swingMainHand() {
+        getPlayer().swingMainHand();
+    }
+
+    @Override
+    public void swingOffHand() {
+        getPlayer().swingOffHand();
+    }
+
+    @Override
+    public <T> T getMemory(MemoryKey<T> mk) {
+        return getPlayer().getMemory(mk);
+    }
+
+    @Override
+    public <T> void setMemory(MemoryKey<T> mk, T t) {
+        getPlayer().setMemory(mk, t);
+    }
+
+    @Override
+    public double getAbsorptionAmount() {
+        return getPlayer().getAbsorptionAmount();
+    }
+
+    @Override
+    public void setAbsorptionAmount(double d) {
+        getPlayer().setAbsorptionAmount(d);
+    }
+
+    @Override
+    public Pose getPose() {
+        return getPlayer().getPose();
+    }
+
+    @Override
+    public PersistentDataContainer getPersistentDataContainer() {
+        return getPlayer().getPersistentDataContainer();
+    }
+    
 }

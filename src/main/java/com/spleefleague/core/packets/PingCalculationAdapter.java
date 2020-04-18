@@ -16,11 +16,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.minecraft.server.v1_15_R1.PacketPlayInKeepAlive;
+import net.minecraft.server.v1_15_R1.PacketPlayOutKeepAlive;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
-import net.minecraft.server.v1_13_R2.PacketPlayOutKeepAlive;
-import net.minecraft.server.v1_13_R2.PacketPlayInKeepAlive;
 
 /**
  *
@@ -35,8 +35,9 @@ public class PingCalculationAdapter extends PacketAdapter {
         });
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for(Player player : Bukkit.getOnlinePlayers()) {
+                PacketPlayOutKeepAlive ppoka;
                 try {
-                    PacketPlayOutKeepAlive ppoka = PacketPlayOutKeepAlive.class.getConstructor(long.class).newInstance(-System.currentTimeMillis());
+                    ppoka = PacketPlayOutKeepAlive.class.getConstructor(long.class).newInstance(-System.currentTimeMillis());
                     ((CraftPlayer)player).getHandle().playerConnection.sendPacket(ppoka);
                 } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                     Logger.getLogger(PingCalculationAdapter.class.getName()).log(Level.SEVERE, null, ex);
@@ -60,7 +61,7 @@ public class PingCalculationAdapter extends PacketAdapter {
             long timestamp = f.getLong(ppika);
             if(timestamp < 0) {
                 long ping = timestamp - -System.currentTimeMillis();
-                ((CraftPlayer)event.getPlayer()).getHandle().ping = (int)ping;
+                ((CraftPlayer)event.getPlayer().getPlayer()).getHandle().ping = (int)ping;
                 event.setCancelled(true);
             }
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {

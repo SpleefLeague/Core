@@ -4,6 +4,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.spleefleague.core.utils.debugger.RuntimeCompiler;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
@@ -162,6 +163,12 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
     }
 
     private void initMongo() {
+        System.setProperty("DEBUG.MONGO", "false");
+        System.setProperty("DB.TRACE", "false");
+        Logger.getLogger("org.mongodb").setLevel(Level.OFF);
+        MongoClientURI uri = new MongoClientURI("mongodb://Nick:MeadNick0313@cluster0-shard-00-00-tgzfr.mongodb.net:27017,cluster0-shard-00-01-tgzfr.mongodb.net:27017,cluster0-shard-00-02-tgzfr.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority");
+        mongo = new MongoClient(uri);
+        /*
         List<MongoCredential> credentials = Config.getCredentials();
         try {
             ServerAddress address = new ServerAddress(Config.getString("host"), Config.getInteger("port"));
@@ -169,6 +176,7 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         } catch (Exception ex) {
             Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
         }
+        */
     }
 
     @Override

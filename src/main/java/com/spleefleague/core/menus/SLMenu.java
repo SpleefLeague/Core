@@ -41,6 +41,7 @@ public class SLMenu {
     }
 
     private static InventoryMenuTemplateBuilder createOptionsMenu() {
+        System.out.println("Creating Options Menu");
         InventoryMenuTemplateBuilder chatOptions = menu()
                 .title("Chat options")
                 .displayName("Chat options")
@@ -72,7 +73,7 @@ public class SLMenu {
         InventoryMenuTemplateBuilder builder = menu()
                 .title("Options")
                 .displayName("Options")
-                .displayIcon(Material.SIGN)
+                .displayIcon(Material.ACACIA_SIGN)
                 .description("Various options")
                 .component(chatOptions);
         return builder;
