@@ -1,5 +1,6 @@
 package com.spleefleague.core;
 
+import ch.qos.logback.classic.LoggerContext;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.spleefleague.core.utils.debugger.RuntimeCompiler;
@@ -27,6 +28,9 @@ import com.spleefleague.core.spawn.SpawnManager.SpawnLocation;
 import com.spleefleague.core.utils.*;
 import com.spleefleague.core.utils.debugger.DebuggerHostManager;
 import com.spleefleague.entitybuilder.EntityBuilder;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -37,9 +41,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -162,21 +168,61 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         extraJoinRanks = result;
     }
 
+    /**
+     * Initializes MongoDB from sl.conf file, if a port is
+     * not specified then it's assumed that the port is
+     * already in the host string
+     */
     private void initMongo() {
-        System.setProperty("DEBUG.MONGO", "false");
-        System.setProperty("DB.TRACE", "false");
-        Logger.getLogger("org.mongodb").setLevel(Level.OFF);
-        MongoClientURI uri = new MongoClientURI("mongodb://Nick:MeadNick0313@cluster0-shard-00-00-tgzfr.mongodb.net:27017,cluster0-shard-00-01-tgzfr.mongodb.net:27017,cluster0-shard-00-02-tgzfr.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority");
-        mongo = new MongoClient(uri);
         /*
-        List<MongoCredential> credentials = Config.getCredentials();
+        FileInputStream file = null;
         try {
-            ServerAddress address = new ServerAddress(Config.getString("host"), Config.getInteger("port"));
+            // Disables mongodb connection messages
+            LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+            ch.qos.logback.classic.Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
+            rootLogger.setLevel(ch.qos.logback.classic.Level.OFF);
+            
+            Properties mongoProps = new Properties();
+            String mongoPath = System.getProperty("user.dir") + "\\mongo.cfg";
+            file = new FileInputStream(mongoPath);
+            mongoProps.load(file);
+            file.close();
+            
+            String mongoPrefix = mongoProps.getProperty("prefix", "mongodb://");
+            String credentials = mongoProps.getProperty("credentials", "");
+            if (!credentials.isEmpty()) credentials = credentials.concat("@");
+            String host = mongoProps.getProperty("host", "localhost:27017") + "/";
+            String defaultauthdb = mongoProps.getProperty("defaultauthdb", "admin") + "?";
+            String options = mongoProps.getProperty("options", "");
+            MongoClientURI uri = new MongoClientURI(mongoPrefix + credentials + host + defaultauthdb + options);
+            System.out.println(uri.toString());
+            mongo = new MongoClient(uri);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        */
+        
+        
+        /*
+        As soon as I figure out how these per-database passwords work this is outta here
+        */
+        
+        try {
+            List<MongoCredential> credentials = Config.getCredentials();
+            String host = Config.getString("host");
+            String port = Config.getString("port");
+            ServerAddress address;
+            if (port != null) {
+                address = new ServerAddress(host + ":" + port);
+            } else {
+                address = new ServerAddress(host);
+            }
             mongo = new MongoClient(address, credentials);
         } catch (Exception ex) {
             Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
         }
-        */
     }
 
     @Override

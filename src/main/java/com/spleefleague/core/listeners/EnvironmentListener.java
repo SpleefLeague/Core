@@ -5,6 +5,7 @@
  */
 package com.spleefleague.core.listeners;
 
+import com.google.common.collect.Lists;
 import com.mongodb.client.model.Projections;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.Theme;
@@ -474,9 +475,11 @@ public class EnvironmentListener implements Listener {
         }
     }
 
+    List<SpawnReason> validSpawnReasons = Lists.newArrayList(SpawnReason.SPAWNER_EGG, SpawnReason.SHOULDER_ENTITY);
+    
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        event.setCancelled(event.getSpawnReason() != SpawnReason.SPAWNER_EGG);
+        event.setCancelled(!validSpawnReasons.contains(event.getSpawnReason()));
     }
 
     @EventHandler
