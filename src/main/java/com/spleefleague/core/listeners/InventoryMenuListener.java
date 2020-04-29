@@ -28,6 +28,7 @@ import com.spleefleague.core.player.GeneralPlayer;
 import com.spleefleague.core.player.SLPlayer;
 import com.spleefleague.core.utils.inventorymenu.AbstractInventoryMenu;
 import com.spleefleague.core.utils.inventorymenu.InventoryMenuFlag;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.block.BlockPlaceEvent;
 
@@ -69,7 +70,7 @@ public class InventoryMenuListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority=EventPriority.LOWEST)
     public void onRightClick(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             ItemStack is = event.getItem();
@@ -77,6 +78,7 @@ public class InventoryMenuListener implements Listener {
                 SLPlayer slp = getSLPlayer(event.getPlayer());
                 if (isMenuItem(is, slp)) {
                     openMenu(is, slp);
+                    event.setCancelled(true);
                 }
             }
         }
@@ -105,7 +107,6 @@ public class InventoryMenuListener implements Listener {
                 Player player = (Player) event.getWhoClicked();
                 if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) {
                     exitMenuIfClickOutSide(menu, player);
-
                 } else {
                     int index = event.getRawSlot();
                     if (index < inventory.getSize()) {
@@ -123,7 +124,9 @@ public class InventoryMenuListener implements Listener {
     public void onInventoryAction(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player) {
             Player p = (Player) event.getWhoClicked();
-            if (event.getCurrentItem() != null && isMenuItem(event.getCurrentItem(), getSLPlayer(p))) {
+            if (p.getGameMode() != GameMode.CREATIVE
+                    && event.getCurrentItem() != null
+                    && isMenuItem(event.getCurrentItem(), getSLPlayer(p))) {
                 event.setCancelled(true);
             }
         }

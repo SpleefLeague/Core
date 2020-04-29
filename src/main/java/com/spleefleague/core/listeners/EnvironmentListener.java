@@ -48,6 +48,7 @@ import org.bukkit.util.Vector;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.server.TabCompleteEvent;
 
@@ -475,11 +476,14 @@ public class EnvironmentListener implements Listener {
         }
     }
 
-    List<SpawnReason> validSpawnReasons = Lists.newArrayList(SpawnReason.SPAWNER_EGG, SpawnReason.SHOULDER_ENTITY);
+    List<SpawnReason> validSpawnReasons = Lists.newArrayList(SpawnReason.SPAWNER_EGG, SpawnReason.SHOULDER_ENTITY,
+            SpawnReason.LIGHTNING, SpawnReason.DEFAULT);
     
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        event.setCancelled(!validSpawnReasons.contains(event.getSpawnReason()));
+        if (!(event.getEntity() instanceof ArmorStand)) {
+            event.setCancelled(!validSpawnReasons.contains(event.getSpawnReason()));
+        }
     }
 
     @EventHandler

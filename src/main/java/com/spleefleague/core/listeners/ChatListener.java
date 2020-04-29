@@ -53,7 +53,7 @@ public class ChatListener implements Listener {
         SLPlayer slp = SpleefLeague.getInstance().getPlayerManager().get(event.getPlayer().getUniqueId());
         if (!lastMessage.containsKey(slp.getUniqueId()) || System.currentTimeMillis() - lastMessage.get(slp.getUniqueId()) > 2000) {
             String message = event.getMessage();
-            if(antiCapsPattern.matcher(message).matches())
+            if(antiCapsPattern.matcher(message).matches() && !slp.getRank().hasPermission(Rank.valueOf("$")))
                 event.setMessage(message.toLowerCase());
             String prefix = "";
             if (!slp.getRank().getDisplayName().equals("Default")) {

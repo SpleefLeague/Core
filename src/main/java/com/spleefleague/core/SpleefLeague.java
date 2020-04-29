@@ -28,6 +28,7 @@ import com.spleefleague.core.spawn.SpawnManager.SpawnLocation;
 import com.spleefleague.core.utils.*;
 import com.spleefleague.core.utils.debugger.DebuggerHostManager;
 import com.spleefleague.entitybuilder.EntityBuilder;
+import com.spleefleague.virtualworld.VirtualWorld;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -114,6 +115,7 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         //Main world
         String defaultWorld = Settings.getString("default_world").orElse("world");
         CorePlugin.DEFAULT_WORLD = Bukkit.getWorld(defaultWorld);
+        VirtualWorld.getInstance().setDefaultWorld(DEFAULT_WORLD);
         //Spawn handling
         LocationConverter lc = new LocationConverter();
         Optional<List> oldSpawn = Settings.getRaw("spawn", List.class);
@@ -208,6 +210,11 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         /*
         As soon as I figure out how these per-database passwords work this is outta here
         */
+        
+        // Disables mongodb connection messages
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ch.qos.logback.classic.Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
+        rootLogger.setLevel(ch.qos.logback.classic.Level.OFF);
         
         try {
             List<MongoCredential> credentials = Config.getCredentials();
