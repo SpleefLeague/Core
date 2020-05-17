@@ -371,10 +371,7 @@ public class EnvironmentListener implements Listener {
             if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 ItemStack item = event.getItem();
                 Material clicked = event.getClickedBlock().getType();
-                if (clicked == Material.CAULDRON) {
-                    event.getPlayer().getInventory().setItemInMainHand(null);
-                } 
-                else if (NO_INTERACT.contains(clicked)) {
+                if (NO_INTERACT.contains(clicked)) {
                     event.setCancelled(true);
                 } 
                 else if (item != null && Arrays.asList(Material.WATER_BUCKET, Material.LAVA_BUCKET, Material.BUCKET).contains(item.getType())) {

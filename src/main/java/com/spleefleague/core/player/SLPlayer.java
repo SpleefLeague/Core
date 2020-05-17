@@ -49,6 +49,7 @@ public class SLPlayer extends GeneralPlayer {
     private int premiumCreditsGotThatMonth;
     private long premiumCreditsLastReceptionTime;
     private Checkpoint checkpoint;
+    private UUID married = null;
     
     public SLPlayer() {
         super();
@@ -62,6 +63,26 @@ public class SLPlayer extends GeneralPlayer {
         Rank rank = getActiveRank();
         setPlayerListName(rank.getColor() + getName());
         setDisplayName(rank.getColor() + getName());
+    }
+    
+    /*
+    @DBSave(fieldName = "married")
+    public String saveMarried() {
+        return married.toString();
+    }
+    
+    @DBLoad(fieldName = "married")
+    public void loadMarried(String uuid) {
+        married = UUID.fromString(uuid);
+    }
+    */
+    
+    public void setMarried(UUID uuid) {
+        married = uuid;
+    }
+    
+    public UUID getMarried() {
+        return married;
     }
 
     public Rank getRank() {
