@@ -115,7 +115,6 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         //Main world
         String defaultWorld = Settings.getString("default_world").orElse("world");
         CorePlugin.DEFAULT_WORLD = Bukkit.getWorld(defaultWorld);
-        VirtualWorld.getInstance().setDefaultWorld(DEFAULT_WORLD);
         //Spawn handling
         LocationConverter lc = new LocationConverter();
         Optional<List> oldSpawn = Settings.getRaw("spawn", List.class);
@@ -176,41 +175,6 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
      * already in the host string
      */
     private void initMongo() {
-        /*
-        FileInputStream file = null;
-        try {
-            // Disables mongodb connection messages
-            LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-            ch.qos.logback.classic.Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
-            rootLogger.setLevel(ch.qos.logback.classic.Level.OFF);
-            
-            Properties mongoProps = new Properties();
-            String mongoPath = System.getProperty("user.dir") + "\\mongo.cfg";
-            file = new FileInputStream(mongoPath);
-            mongoProps.load(file);
-            file.close();
-            
-            String mongoPrefix = mongoProps.getProperty("prefix", "mongodb://");
-            String credentials = mongoProps.getProperty("credentials", "");
-            if (!credentials.isEmpty()) credentials = credentials.concat("@");
-            String host = mongoProps.getProperty("host", "localhost:27017") + "/";
-            String defaultauthdb = mongoProps.getProperty("defaultauthdb", "admin") + "?";
-            String options = mongoProps.getProperty("options", "");
-            MongoClientURI uri = new MongoClientURI(mongoPrefix + credentials + host + defaultauthdb + options);
-            System.out.println(uri.toString());
-            mongo = new MongoClient(uri);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        */
-        
-        
-        /*
-        As soon as I figure out how these per-database passwords work this is outta here
-        */
-        
         // Disables mongodb connection messages
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         ch.qos.logback.classic.Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");

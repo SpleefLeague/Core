@@ -104,8 +104,8 @@
     </repository>
   </distributionManagement>
   <properties>
-    <build.number>unknown</build.number>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <build.number>unknown</build.number>
   </properties>
 </project>
 
