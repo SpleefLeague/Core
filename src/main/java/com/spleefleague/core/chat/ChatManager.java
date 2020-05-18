@@ -35,24 +35,28 @@ public class ChatManager {
     }
 
     public static void sendMessage(final String m, final ChatChannel c) {
-        ChatChannelMessageEvent event = new ChatChannelMessageEvent(c, m);
-        Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            Bukkit.getConsoleSender().sendMessage(m);
-            SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(event.getChannel()))).forEach((slp) -> {
-                slp.sendMessage(event.getMessage());
-            });
-        }
+        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
+            ChatChannelMessageEvent event = new ChatChannelMessageEvent(c, m);
+            Bukkit.getPluginManager().callEvent(event);
+            if (!event.isCancelled()) {
+                Bukkit.getConsoleSender().sendMessage(m);
+                SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(event.getChannel()))).forEach((slp) -> {
+                    slp.sendMessage(event.getMessage());
+                });
+            }
+        });
     }
 
     public static void sendMessage(final BaseComponent[] m, final ChatChannel c) {
-        ChatChannelBaseComponentMessageEvent event = new ChatChannelBaseComponentMessageEvent(c, m);
-        Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(event.getChannel()))).forEach((slp) -> {
-                slp.spigot().sendMessage(event.getMessage());
-            });
-        }
+        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
+            ChatChannelBaseComponentMessageEvent event = new ChatChannelBaseComponentMessageEvent(c, m);
+            Bukkit.getPluginManager().callEvent(event);
+            if (!event.isCancelled()) {
+                SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(event.getChannel()))).forEach((slp) -> {
+                    slp.spigot().sendMessage(event.getMessage());
+                });
+            }
+        });
     }
 
     public static void sendMessage(ChatChannel c, BaseComponent... baseComponents) {
@@ -60,9 +64,11 @@ public class ChatManager {
     }
     
     public static void sendTitle(final String t, final String s, int fadeIn, int stay, int fadeOut, final ChatChannel c) {
-        Bukkit.getConsoleSender().sendMessage(t + " : " + s);
-        SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(c))).forEach((slp) -> {
-            slp.sendTitle(t, s, fadeIn, stay, fadeOut);
+        Bukkit.getScheduler().runTask(SpleefLeague.getInstance(), () -> {
+            Bukkit.getConsoleSender().sendMessage(t + " : " + s);
+            SpleefLeague.getInstance().getPlayerManager().getAll().stream().filter((slp) -> (slp.isInChatChannel(c))).forEach((slp) -> {
+                slp.sendTitle(t, s, fadeIn, stay, fadeOut);
+            });
         });
     }
 

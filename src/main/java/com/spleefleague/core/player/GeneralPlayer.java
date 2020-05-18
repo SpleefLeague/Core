@@ -11,12 +11,10 @@ import com.spleefleague.entitybuilder.DBLoadable;
 import com.spleefleague.entitybuilder.DBSave;
 import com.spleefleague.entitybuilder.DBSaveable;
 import com.spleefleague.entitybuilder.TypeConverter.UUIDStringConverter;
-import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -38,7 +36,14 @@ import java.util.*;
 import org.bson.Document;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+import org.bukkit.entity.memory.MemoryKey;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.RayTraceResult;
 
 /**
  *
@@ -46,9 +51,9 @@ import org.bukkit.block.PistonMoveReaction;
  */
 public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSaveable, Player {
 
-    @DBLoad(fieldName = "username", priority = Integer.MIN_VALUE)
+    @DBLoad(fieldName = "username", priority = Integer.MAX_VALUE)
     private String username;
-    @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class, priority = Integer.MIN_VALUE)
+    @DBLoad(fieldName = "uuid", typeConverter = UUIDStringConverter.class, priority = Integer.MAX_VALUE)
     private UUID uuid;
     private Player cached;
     private final long created;
@@ -288,12 +293,6 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     }
 
     @Override
-    @Deprecated
-    public void sendBlockChange(Location loc, int material, byte data) {
-        getPlayer().sendBlockChange(loc, material, data);
-    }
-
-    @Override
     public void sendSignChange(Location loc, String[] lines) throws IllegalArgumentException {
         getPlayer().sendSignChange(loc, lines);
     }
@@ -306,21 +305,6 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Override
     public void updateInventory() {
         getPlayer().updateInventory();
-    }
-
-    @Override
-    public void awardAchievement(Achievement achievement) {
-        getPlayer().awardAchievement(achievement);
-    }
-
-    @Override
-    public void removeAchievement(Achievement achievement) {
-        getPlayer().removeAchievement(achievement);
-    }
-
-    @Override
-    public boolean hasAchievement(Achievement achievement) {
-        return getPlayer().hasAchievement(achievement);
     }
 
     @Override
@@ -639,10 +623,6 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
         getPlayer().setHealthScale(scale);
     }
 
-    public EntityPlayer getHandle() {
-        return ((CraftPlayer) getPlayer()).getHandle();
-    }
-
     @Override
     public double getHealthScale() {
         return getPlayer().getHealthScale();
@@ -790,20 +770,8 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     }
 
     @Override
-    @Deprecated
-    public Block getTargetBlock(HashSet<Byte> transparent, int maxDistance) {
-        return getPlayer().getTargetBlock(transparent, maxDistance);
-    }
-
-    @Override
     public Block getTargetBlock(Set<Material> transparent, int maxDistance) {
         return getPlayer().getTargetBlock(transparent, maxDistance);
-    }
-
-    @Override
-    @Deprecated
-    public List<Block> getLastTwoTargetBlocks(HashSet<Byte> transparent, int maxDistance) {
-        return getPlayer().getLastTwoTargetBlocks(transparent, maxDistance);
     }
 
     @Override
@@ -1628,5 +1596,222 @@ public abstract class GeneralPlayer extends DBEntity implements DBLoadable, DBSa
     @Override
     public PistonMoveReaction getPistonMoveReaction() {
         return getPlayer().getPistonMoveReaction();
+    }
+
+    @Override
+    public void sendBlockChange(Location lctn, BlockData bd) {
+        getPlayer().sendBlockChange(lctn, bd);
+    }
+
+    @Override
+    public void hidePlayer(Plugin plugin, Player player) {
+        getPlayer().hidePlayer(plugin, player);
+    }
+
+    @Override
+    public void showPlayer(Plugin plugin, Player player) {
+        getPlayer().showPlayer(plugin, player);
+    }
+
+    @Override
+    public boolean isSwimming() {
+        return getPlayer().isSwimming();
+    }
+
+    @Override
+    public void setSwimming(boolean bln) {
+        getPlayer().setSwimming(bln);
+    }
+
+    @Override
+    public String getPlayerListHeader() {
+        return getPlayer().getPlayerListHeader();
+    }
+
+    @Override
+    public String getPlayerListFooter() {
+        return getPlayer().getPlayerListFooter();
+    }
+
+    @Override
+    public void setPlayerListHeader(String string) {
+        getPlayer().setPlayerListHeader(string);
+    }
+
+    @Override
+    public void setPlayerListFooter(String string) {
+        getPlayer().setPlayerListFooter(string);
+    }
+
+    @Override
+    public void setPlayerListHeaderFooter(String string, String string1) {
+        getPlayer().setPlayerListHeaderFooter(string, string1);
+    }
+
+    @Override
+    public int getClientViewDistance() {
+        return getPlayer().getClientViewDistance();
+    }
+
+    @Override
+    public void updateCommands() {
+        getPlayer().updateCommands();
+    }
+
+    @Override
+    public boolean sleep(Location lctn, boolean bln) {
+        return getPlayer().sleep(lctn, bln);
+    }
+
+    @Override
+    public void wakeup(boolean bln) {
+        getPlayer().wakeup(bln);
+    }
+
+    @Override
+    public Location getBedLocation() {
+        return getPlayer().getBedLocation();
+    }
+
+    @Override
+    public boolean discoverRecipe(NamespacedKey nk) {
+        return getPlayer().discoverRecipe(nk);
+    }
+
+    @Override
+    public int discoverRecipes(Collection<NamespacedKey> clctn) {
+        return getPlayer().discoverRecipes(clctn);
+    }
+
+    @Override
+    public boolean undiscoverRecipe(NamespacedKey nk) {
+        return getPlayer().undiscoverRecipe(nk);
+    }
+
+    @Override
+    public int undiscoverRecipes(Collection<NamespacedKey> clctn) {
+        return getPlayer().undiscoverRecipes(clctn);
+    }
+
+    @Override
+    public Block getTargetBlockExact(int i) {
+        return getPlayer().getTargetBlockExact(i);
+    }
+
+    @Override
+    public Block getTargetBlockExact(int i, FluidCollisionMode fcm) {
+        return getPlayer().getTargetBlockExact(i, fcm);
+    }
+
+    @Override
+    public RayTraceResult rayTraceBlocks(double d) {
+        return getPlayer().rayTraceBlocks(d);
+    }
+
+    @Override
+    public RayTraceResult rayTraceBlocks(double d, FluidCollisionMode fcm) {
+        return getPlayer().rayTraceBlocks(d, fcm);
+    }
+
+    @Override
+    public boolean isRiptiding() {
+        return getPlayer().isRiptiding();
+    }
+
+    @Override
+    public BoundingBox getBoundingBox() {
+        return getPlayer().getBoundingBox();
+    }
+
+    @Override
+    @Deprecated
+    public boolean isPersistent() {
+        return getPlayer().isPersistent();
+    }
+
+    @Override
+    @Deprecated
+    public void setPersistent(boolean bln) {
+        getPlayer().setPersistent(bln);
+    }
+
+    @Override
+    public BlockFace getFacing() {
+        return getPlayer().getFacing();
+    }
+
+    @Override
+    public void setRotation(float pitch, float yaw) {
+        getPlayer().setRotation(pitch, yaw);
+    }
+
+    @Override
+    public void sendSignChange(Location lctn, String[] strings, DyeColor dc) throws IllegalArgumentException {
+        getPlayer().sendSignChange(lctn, strings, dc);
+    }
+
+    @Override
+    public void sendExperienceChange(float f) {
+        getPlayer().sendExperienceChange(f);
+    }
+
+    @Override
+    public void sendExperienceChange(float f, int i) {
+        getPlayer().sendExperienceChange(f, i);
+    }
+
+    @Override
+    public void openBook(ItemStack is) {
+        getPlayer().openBook(is);
+    }
+
+    @Override
+    public void attack(Entity entity) {
+        getPlayer().attack(entity);
+    }
+
+    @Override
+    public void swingMainHand() {
+        getPlayer().swingMainHand();
+    }
+
+    @Override
+    public void swingOffHand() {
+        getPlayer().swingOffHand();
+    }
+
+    @Override
+    public <T> T getMemory(MemoryKey<T> mk) {
+        return getPlayer().getMemory(mk);
+    }
+
+    @Override
+    public <T> void setMemory(MemoryKey<T> mk, T t) {
+        getPlayer().setMemory(mk, t);
+    }
+
+    @Override
+    public double getAbsorptionAmount() {
+        return getPlayer().getAbsorptionAmount();
+    }
+
+    @Override
+    public void setAbsorptionAmount(double d) {
+        getPlayer().setAbsorptionAmount(d);
+    }
+
+    @Override
+    public Pose getPose() {
+        return getPlayer().getPose();
+    }
+
+    @Override
+    public PersistentDataContainer getPersistentDataContainer() {
+        return getPlayer().getPersistentDataContainer();
+    }
+    
+    @Override
+    public float getAttackCooldown() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

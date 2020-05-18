@@ -54,7 +54,7 @@ public class Config {
             while ((s = br.readLine()) != null) {
                 s = s.trim();
                 if (!s.startsWith("#") && s.contains(":")) {
-                    String[] command = s.split(":");
+                    String[] command = s.split(":", 2);
                     if (command.length < 2) {
                         continue;
                     }
@@ -95,9 +95,11 @@ public class Config {
     public static String getString(String key) {
         return (String) ADDITIONAL_CONFIG.get(key);
     }
-
+    
     public static int getInteger(String key) {
-        return Integer.parseInt(ADDITIONAL_CONFIG.get(key));
+        if (ADDITIONAL_CONFIG.containsKey(key))
+            return Integer.parseInt(ADDITIONAL_CONFIG.get(key));
+        return 0;
     }
 
     public static boolean getBoolean(String key) {

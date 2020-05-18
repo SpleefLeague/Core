@@ -79,8 +79,7 @@ public class InventoryMenuTemplateRepository {
                 .filter(include)
                 .sorted((p1, p2) -> p1.getName().compareTo(p2.getName()))
                 .forEach(p -> {
-                    ItemStack skull = new ItemStack(Material.SKULL_ITEM);
-                    skull.setDurability((short) 3);
+                    ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
                     SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
                     skullMeta.setOwner(p.getName());
                     skull.setItemMeta(skullMeta);

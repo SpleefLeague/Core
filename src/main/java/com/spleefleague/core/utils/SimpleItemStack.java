@@ -93,7 +93,7 @@ public class SimpleItemStack extends ItemStack {
     
     public SimpleItemStack setUnbreakable(boolean value) {
         ItemMeta im = getItemMeta();
-        im.spigot().setUnbreakable(value);
+        im.setUnbreakable(true);
         setItemMeta(im);
         return this;
     }

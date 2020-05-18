@@ -1,9 +1,11 @@
 package com.spleefleague.core;
 
+import ch.qos.logback.classic.LoggerContext;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.spleefleague.core.utils.debugger.RuntimeCompiler;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
@@ -25,8 +27,11 @@ import com.spleefleague.core.spawn.SpawnManager;
 import com.spleefleague.core.spawn.SpawnManager.SpawnLocation;
 import com.spleefleague.core.utils.*;
 import com.spleefleague.core.utils.debugger.DebuggerHostManager;
-import com.spleefleague.core.utils.fakeentity.FakeEntitiesManager;
 import com.spleefleague.entitybuilder.EntityBuilder;
+import com.spleefleague.virtualworld.VirtualWorld;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -37,9 +42,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -87,7 +94,6 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         PlayerUtil.init();
         Warp.init();
         getProtocolManager().addPacketListener(new PingCalculationAdapter(20));
-        new FakeEntitiesManager();
         autoBroadcaster = new AutoBroadcaster(getMongo().getDatabase("SpleefLeague").getCollection("AutoBroadcaster"));
         playerManager = new DBPlayerManager<>(this, SLPlayer.class);
         portalManager = new PortalManager();
@@ -163,10 +169,27 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         extraJoinRanks = result;
     }
 
+    /**
+     * Initializes MongoDB from sl.conf file, if a port is
+     * not specified then it's assumed that the port is
+     * already in the host string
+     */
     private void initMongo() {
-        List<MongoCredential> credentials = Config.getCredentials();
+        // Disables mongodb connection messages
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ch.qos.logback.classic.Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
+        rootLogger.setLevel(ch.qos.logback.classic.Level.OFF);
+        
         try {
-            ServerAddress address = new ServerAddress(Config.getString("host"), Config.getInteger("port"));
+            List<MongoCredential> credentials = Config.getCredentials();
+            String host = Config.getString("host");
+            String port = Config.getString("port");
+            ServerAddress address;
+            if (port != null) {
+                address = new ServerAddress(host + ":" + port);
+            } else {
+                address = new ServerAddress(host);
+            }
             mongo = new MongoClient(address, credentials);
         } catch (Exception ex) {
             Logger.getLogger(SpleefLeague.class.getName()).log(Level.SEVERE, null, ex);

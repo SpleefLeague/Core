@@ -5,6 +5,7 @@
  */
 package com.spleefleague.core.listeners;
 
+import com.google.common.collect.Lists;
 import com.mongodb.client.model.Projections;
 import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.chat.Theme;
@@ -47,6 +48,8 @@ import org.bukkit.util.Vector;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.server.TabCompleteEvent;
 
 /**
@@ -55,6 +58,22 @@ import org.bukkit.event.server.TabCompleteEvent;
  */
 public class EnvironmentListener implements Listener {
 
+    private static final Set<Material> NO_INTERACT = new HashSet<>(
+            Arrays.asList(
+                    Material.DROPPER, 
+                    Material.ITEM_FRAME, 
+                    Material.COMPARATOR, 
+                    Material.REPEATER, 
+                    Material.DISPENSER, 
+                    Material.ANVIL, 
+                    Material.OAK_TRAPDOOR, 
+                    Material.RED_BED, 
+                    Material.HOPPER, 
+                    Material.HOPPER_MINECART,
+                    Material.DAYLIGHT_DETECTOR
+            )    
+    );
+    
     private static Listener instance;
 
     public static void init() {
@@ -67,7 +86,6 @@ public class EnvironmentListener implements Listener {
     private EnvironmentListener() {
 
     }
-
     
     @EventHandler
     public void onTabComplete(TabCompleteEvent event) {
@@ -79,6 +97,43 @@ public class EnvironmentListener implements Listener {
                     .filter(s -> s.toLowerCase().startsWith(event.getBuffer().toLowerCase()))
                     .collect(Collectors.toList()));
         }
+    }
+    
+    @EventHandler
+    public void onEntityInteractEntity(PlayerInteractEntityEvent event) {
+        if(event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
+        if(event.getRightClicked().getType() == EntityType.ITEM_FRAME) {
+            event.setCancelled(true);
+        }
+        else if(event.getRightClicked().getType() == EntityType.ARMOR_STAND) {
+            event.setCancelled(true);
+        }
+    }
+    
+    //Block TNT ignition. This is kinda annoying
+    @EventHandler
+    public void onIgnite(BlockIgniteEvent event) {
+        if(event.getIgnitingBlock() != null && event.getIgnitingBlock().getType() == Material.TNT) {
+            event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler(ignoreCancelled = true)
+    public void onExplode(ExplosionPrimeEvent event) {
+        event.setCancelled(event.getEntityType() == EntityType.PRIMED_TNT);
+    }
+    
+    @EventHandler
+    public void onTntPhysics(BlockPhysicsEvent event) {
+        if(event.getChangedType() == Material.TNT) {
+            event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler
+    public void onEntityLeash(PlayerLeashEntityEvent event) {
+        if(event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
+        event.setCancelled(true);
     }
     
     @EventHandler
@@ -180,7 +235,7 @@ public class EnvironmentListener implements Listener {
                         slp.getRank().getLadder() < Rank.MODERATOR.getLadder()) {
                     shouldCancel = true;
                     break;
-                } else if (min.getType() == Material.SIGN_POST || min.getType() == Material.WALL_SIGN) {
+                } else if (min.getType().toString().toLowerCase().contains("sign")) {
                     Sign sign = (Sign) min.getState();
                     String first = ChatColor.stripColor(sign.getLine(0)).toLowerCase();
 
@@ -200,7 +255,6 @@ public class EnvironmentListener implements Listener {
                         }
                     } else if (first.equalsIgnoreCase("[jump]")) {
                         doVelocity(player, sign);
-                        continue;
                     } else if (first.equalsIgnoreCase("[teleport]")) {
                         try {
 
@@ -213,8 +267,6 @@ public class EnvironmentListener implements Listener {
                             ), PlayerTeleportEvent.TeleportCause.PLUGIN);
                         } catch (NumberFormatException ex) {
                         }
-
-                        continue;
                     } else if (sign.getLine(0).equalsIgnoreCase("[effect]")) {
                         try {
                             int id = Integer.valueOf(sign.getLine(1));
@@ -225,8 +277,6 @@ public class EnvironmentListener implements Listener {
                                     new PotionEffect(PotionEffectType.getById(id), time, level, false), true);
                         } catch (NumberFormatException ex) {
                         }
-
-                        continue;
                     }
                 }
             }
@@ -292,7 +342,8 @@ public class EnvironmentListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onDrop(PlayerDropItemEvent event) {
-        event.setCancelled(event.getItemDrop().getItemStack().getType() != Material.RED_ROSE && event.getPlayer().getGameMode() != GameMode.CREATIVE);
+        // Why lmao
+        event.setCancelled(event.getItemDrop().getItemStack().getType() != Material.RED_DYE && event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
 
     @EventHandler
@@ -304,6 +355,15 @@ public class EnvironmentListener implements Listener {
             disp.update();
         }
     }
+    
+    @EventHandler
+    public void onInteractFlowerpot(PlayerInteractEvent event) {
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE || event.getClickedBlock() == null) return;
+        Material type = event.getClickedBlock().getType();
+        if(type == Material.FLOWER_POT || type.name().startsWith("POTTED_")) {//There isn't really much support for potted plants :(
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
@@ -311,17 +371,23 @@ public class EnvironmentListener implements Listener {
             if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 ItemStack item = event.getItem();
                 Material clicked = event.getClickedBlock().getType();
-                if (clicked == Material.CAULDRON) {
-                    event.getPlayer().setItemInHand(null);
-                } else if (Arrays.asList(/*Material.CHEST, Material.FURNACE, */Material.DROPPER, Material.ITEM_FRAME, Material.REDSTONE_COMPARATOR, Material.DIODE, Material.DISPENSER, Material.ANVIL, Material.TRAP_DOOR, Material.BED, Material.HOPPER, Material.HOPPER_MINECART).contains(clicked)) {
+                if (NO_INTERACT.contains(clicked)) {
                     event.setCancelled(true);
-                } else if (item != null && Arrays.asList(Material.WATER_BUCKET, Material.LAVA_BUCKET, Material.BUCKET).contains(item.getType())) {
-                    event.setCancelled(true);
-                }
-            } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                if (event.getClickedBlock().getType() == Material.FIRE) {
+                } 
+                else if (item != null && Arrays.asList(Material.WATER_BUCKET, Material.LAVA_BUCKET, Material.BUCKET).contains(item.getType())) {
                     event.setCancelled(true);
                 }
+            } 
+            else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                if (event.getClickedBlock().getRelative(BlockFace.UP).getType() == Material.FIRE) {
+                    event.setCancelled(true);
+                }
+            }
+        }
+        if(event.getAction() == Action.PHYSICAL) {
+            Material bType = event.getClickedBlock().getType();
+            if(bType == Material.FARMLAND || bType == Material.TURTLE_EGG) {
+                event.setCancelled(true);
             }
         }
     }
@@ -361,11 +427,11 @@ public class EnvironmentListener implements Listener {
     @EventHandler
     public void onNether(PlayerMoveEvent e) {
         SLPlayer slPlayer = SpleefLeague.getInstance().getPlayerManager().get(e.getPlayer());
-        if(slPlayer == null || slPlayer.getRank().hasPermission(Rank.MODERATOR_BUILDER)) {
+        if(slPlayer == null || slPlayer.getRank().hasPermission(Rank.MODERATOR) || slPlayer.getRank() == Rank.BUILDER) {
             return;
         }
-        if(e.getTo().getBlock().getBiome() == Biome.HELL) {
-            if(e.getFrom().getBlock().getBiome() == Biome.HELL) {
+        if(e.getTo().getBlock().getBiome() == Biome.NETHER) {
+            if(e.getFrom().getBlock().getBiome() == Biome.NETHER) {
                 slPlayer.teleport(SpleefLeague.getInstance().getSpawnManager().getNext().getLocation());
             } else {
                 Location balancedFrom = e.getFrom().clone();
@@ -396,14 +462,25 @@ public class EnvironmentListener implements Listener {
 
     @EventHandler
     public void onEntityInteract(EntityInteractEvent event) {
-        if (event.getBlock().getType() == Material.SOIL && event.getEntity() instanceof Creature) {
+        if (event.getBlock().getType() == Material.FARMLAND && event.getEntity() instanceof Creature) {
             event.setCancelled(true);
+        }
+        if (event.getBlock().getType() == Material.FIRE) {
+            event.setCancelled(true);
+            if (event.getEntity() instanceof Player) {
+                event.setCancelled(((Player) event.getEntity()).getGameMode() != GameMode.CREATIVE);
+            }
         }
     }
 
+    List<SpawnReason> validSpawnReasons = Lists.newArrayList(SpawnReason.SPAWNER_EGG, SpawnReason.SHOULDER_ENTITY,
+            SpawnReason.LIGHTNING, SpawnReason.DEFAULT);
+    
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        event.setCancelled(event.getSpawnReason() != SpawnReason.SPAWNER_EGG);
+        if (!(event.getEntity() instanceof ArmorStand)) {
+            event.setCancelled(!validSpawnReasons.contains(event.getSpawnReason()));
+        }
     }
 
     @EventHandler
