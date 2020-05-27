@@ -175,11 +175,6 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
      * already in the host string
      */
     private void initMongo() {
-        // Disables mongodb connection messages
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        ch.qos.logback.classic.Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
-        rootLogger.setLevel(ch.qos.logback.classic.Level.OFF);
-        
         try {
             List<MongoCredential> credentials = Config.getCredentials();
             String host = Config.getString("host");
