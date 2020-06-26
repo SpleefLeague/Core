@@ -1,4 +1,11 @@
-/SuperJump/target/
+bin/
+.classpath
+.project
+.settings/
+/src/main/java/com/spleefleague/core/debuggers/
+.idea/
+nb-configuration.xml
+nbactions.xml
+/nbproject/ 
 target/
 *.iml
-.idea
