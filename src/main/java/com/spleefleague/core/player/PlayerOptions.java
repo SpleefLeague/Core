@@ -28,10 +28,17 @@ public class PlayerOptions extends DBEntity implements DBLoadable, DBSaveable {
     @DBLoad(fieldName = "enabledChannels", typeConverter = ChatChannel.FromStringConverter.class)
     @DBSave(fieldName = "enabledChannels", typeConverter = ChatChannel.FromStringConverter.class)
     protected Set<ChatChannel> enabledChannels;
-    
+
     @DBLoad(fieldName = "visibilityMode")
     @DBSave(fieldName = "visibilityMode")
     private VisibilityMode visibilityMode;
+
+    @DBLoad(fieldName = "parkourRecordGhost.type")
+    @DBSave(fieldName = "parkourRecordGhost.type")
+    private ParkourRecordGhostType parkourRecordGhostType = ParkourRecordGhostType.NONE;
+    @DBLoad(fieldName = "parkourRecordGhost.offset")
+    @DBSave(fieldName = "parkourRecordGhost.offset")
+    private int parkourRecordGhostOffset = 0;
 
     protected void apply(SLPlayer slp) {
         setChatChannels(slp);
@@ -48,6 +55,22 @@ public class PlayerOptions extends DBEntity implements DBLoadable, DBSaveable {
             }
         }
         slp.setReceivingChatChannels(channels);
+    }
+
+    public ParkourRecordGhostType getParkourRecordGhostType() {
+        return parkourRecordGhostType;
+    }
+
+    public int getParkourRecordGhostOffset() {
+        return parkourRecordGhostOffset;
+    }
+
+    public void setParkourRecordGhostType(ParkourRecordGhostType parkourRecordGhostType) {
+        this.parkourRecordGhostType = parkourRecordGhostType;
+    }
+
+    public void setParkourRecordGhostOffset(int parkourRecordGhostOffset) {
+        this.parkourRecordGhostOffset = parkourRecordGhostOffset;
     }
 
     public void disableChatChannel(ChatChannel channel) {
@@ -83,6 +106,7 @@ public class PlayerOptions extends DBEntity implements DBLoadable, DBSaveable {
         po.disabledChannels = new HashSet<>();
         po.enabledChannels = new HashSet<>();
         po.visibilityMode = VisibilityMode.DEFAULT;
+        po.parkourRecordGhostType = ParkourRecordGhostType.NONE;
         return po;
     }
 
@@ -91,5 +115,11 @@ public class PlayerOptions extends DBEntity implements DBLoadable, DBSaveable {
         NONE,
         FRIENDS,
         DEFAULT;
+    }
+
+    public static enum ParkourRecordGhostType {
+        NONE,
+        OWN,
+        BEST;
     }
 }

@@ -11,6 +11,7 @@ import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.virtualworld.VirtualWorld;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -29,7 +30,7 @@ import org.bukkit.entity.Player;
 public class PingCalculationAdapter extends PacketAdapter {
     
     public PingCalculationAdapter(int refreshRate) {
-        super(VirtualWorld.getInstance(), ListenerPriority.LOW, new PacketType[]{ 
+        super(SpleefLeague.getInstance(), ListenerPriority.LOW, new PacketType[]{
             Client.KEEP_ALIVE,
             Server.KEEP_ALIVE
         });

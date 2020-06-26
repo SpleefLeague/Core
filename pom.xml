@@ -94,7 +94,7 @@
         <dependency>
             <groupId>com.spleefleague</groupId>
             <artifactId>entitybuilder</artifactId>
-            <version>1.4</version>
+            <version>1.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>

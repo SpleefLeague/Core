@@ -13,17 +13,18 @@ import com.spleefleague.core.SpleefLeague;
 import com.spleefleague.core.events.GeneralPlayerLoadedEvent;
 import com.spleefleague.core.player.Rank;
 import com.spleefleague.core.player.SLPlayer;
-import com.spleefleague.core.utils.collections.FixedSizeList;
-import java.util.HashMap;
-import java.util.Map;
+import com.spleefleague.core.utils.collections.LRUCache;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 
 /**
  *
@@ -65,6 +66,8 @@ public class DatabaseConnection {
     }
 
     public static UUID getUUID(String username) {
+        Player p = Bukkit.getPlayerExact(username);
+        if(p != null) return p.getUniqueId();
         UUID uuid = uuidCache.getUUID(username);
         if (uuid != null) {
             return uuid;
@@ -128,107 +131,65 @@ public class DatabaseConnection {
         });
     }
 
-    private static class UUIDCache {
+    private static class BiDirectionalCache<A, B> {
+        private final LRUCache<A, B> aToB;
+        private final LRUCache<B, A> bToA;
 
-        private final FixedSizeList<UUIDMapEntry> list;
-
-        public UUIDCache(int size) {
-            list = new FixedSizeList(size);
+        public BiDirectionalCache(int capacity) {
+            aToB = new LRUCache<>(capacity);
+            bToA = new LRUCache<>(capacity);
         }
 
-        public void insert(UUID uuid, String username) {
-            for (UUIDMapEntry e : list) {
-                if (e.username.equals(username) || e.uuid.equals(uuid)) {
-                    e.username = username;
-                    e.uuid = uuid;
-                    list.call(e);
-                    return;
-                }
-            }
-            list.add(new UUIDMapEntry(uuid, username));
+        public void insert(A a, B b) {
+            aToB.put(a, b);
+            bToA.put(b, a);
         }
 
-        public UUID getUUID(String username) {
-            for (UUIDMapEntry e : list) {
-                if (e.username.equals(username)) {
-                    list.call(e);
-                    return e.uuid;
-                }
-            }
-            return null;
+        public A getA(B b) {
+            return bToA.get(b);
         }
 
-        public String getUsername(UUID uuid) {
-            for (UUIDMapEntry e : list) {
-                if (e.uuid.equals(uuid)) {
-                    list.call(e);
-                    return e.username;
-                }
-            }
-            return null;
-        }
-
-        private static class UUIDMapEntry {
-
-            private UUID uuid;
-            private String username;
-
-            public UUIDMapEntry(UUID uuid, String username) {
-                this.uuid = uuid;
-                this.username = username;
-            }
+        public B getB(A a) {
+            return aToB.get(a);
         }
     }
 
+    private static class UUIDCache {
+
+        private final BiDirectionalCache<UUID, String> cache;
+
+        public UUIDCache(int size) {
+            cache = new BiDirectionalCache(size);
+        }
+
+        public void insert(UUID uuid, String username) {
+            cache.insert(uuid, username);
+        }
+
+        public UUID getUUID(String username) {
+            return cache.getA(username);
+        }
+
+        public String getUsername(UUID uuid) {
+            return cache.getB(uuid);
+        }
+    }
+
+
     private static class RankCache {
 
-        private final FixedSizeList<RankMapEntry> list;
+        private final LRUCache<UUID, Rank> cache;
 
         public RankCache(int size) {
-            list = new FixedSizeList(size);
+            cache = new LRUCache(size);
         }
 
         public void insert(UUID uuid, Rank rank) {
-            for (RankMapEntry e : list) {
-                if (e.rank == rank || e.uuid.equals(uuid)) {
-                    e.rank = rank;
-                    e.uuid = uuid;
-                    list.call(e);
-                    return;
-                }
-            }
-            list.add(new RankMapEntry(uuid, rank));
-        }
-
-        public UUID getUUID(Rank rank) {
-            for (RankMapEntry e : list) {
-                if (e.rank == rank) {
-                    list.call(e);
-                    return e.uuid;
-                }
-            }
-            return null;
+            cache.put(uuid, rank);
         }
 
         public Rank getRank(UUID uuid) {
-            for (RankMapEntry e : list) {
-                if (e.uuid.equals(uuid)) {
-                    list.call(e);
-                    return e.rank;
-                }
-            }
-            return null;
-        }
-
-        private static class RankMapEntry {
-
-            private Rank rank;
-            private UUID uuid;
-
-            public RankMapEntry(UUID uuid, Rank rank) {
-                this.uuid = uuid;
-                this.rank = rank;
-            }
+            return cache.get(uuid);
         }
     }
 }

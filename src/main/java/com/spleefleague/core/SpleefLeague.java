@@ -27,6 +27,7 @@ import com.spleefleague.core.spawn.SpawnManager;
 import com.spleefleague.core.spawn.SpawnManager.SpawnLocation;
 import com.spleefleague.core.utils.*;
 import com.spleefleague.core.utils.debugger.DebuggerHostManager;
+import com.spleefleague.core.utils.recording.RecordingManager;
 import com.spleefleague.entitybuilder.EntityBuilder;
 import com.spleefleague.virtualworld.VirtualWorld;
 import java.io.FileInputStream;
@@ -67,6 +68,7 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
     private SpawnManager spawnManager;
     private PortalManager portalManager;
     private DebuggerHostManager debuggerHostManager;
+    private RecordingManager recordingManager;
     private ServerType serverType;
     
     public SpleefLeague() {
@@ -94,6 +96,7 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
         PlayerUtil.init();
         Warp.init();
         getProtocolManager().addPacketListener(new PingCalculationAdapter(20));
+        recordingManager = new RecordingManager();
         autoBroadcaster = new AutoBroadcaster(getMongo().getDatabase("SpleefLeague").getCollection("AutoBroadcaster"));
         playerManager = new DBPlayerManager<>(this, SLPlayer.class);
         portalManager = new PortalManager();
@@ -175,11 +178,6 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
      * already in the host string
      */
     private void initMongo() {
-        // Disables mongodb connection messages
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        ch.qos.logback.classic.Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
-        rootLogger.setLevel(ch.qos.logback.classic.Level.OFF);
-        
         try {
             List<MongoCredential> credentials = Config.getCredentials();
             String host = Config.getString("host");
@@ -258,6 +256,10 @@ public class SpleefLeague extends CorePlugin implements PlayerHandling {
 
     public ProtocolManager getProtocolManager() {
         return ProtocolLibrary.getProtocolManager();
+    }
+
+    public RecordingManager getRecordingManager() {
+        return recordingManager;
     }
 
     // Use the SpawnManager instead.
